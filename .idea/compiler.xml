@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="accounts-services" />
+        <module name="card-services" />
+        <module name="loans-services" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="accounts-services" target="19" />
+      <module name="base-domain" target="19" />
+      <module name="card-services" target="19" />
+      <module name="loans-services" target="19" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="accounts-services" options="-parameters" />
+      <module name="base-domain" options="" />
+      <module name="card-services" options="-parameters" />
+      <module name="loans-services" options="-parameters" />
+    </option>
+  </component>
+</project>
