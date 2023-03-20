@@ -1,10 +1,10 @@
-package com.example.basedomain;
+package com.example.bankdata;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BaseDomainApplicationTests {
+class BankDataApplicationTests {
 
 	@Test
 	void contextLoads() {

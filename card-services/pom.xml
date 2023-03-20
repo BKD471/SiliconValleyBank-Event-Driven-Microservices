@@ -13,14 +13,13 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>card-services</name>
 	<description>Demo project for Cards</description>
-	<packaging>jar</packaging>
 	<properties>
 		<java.version>19</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.example</groupId>
-			<artifactId>base-domain</artifactId>
+			<artifactId>bank-data</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

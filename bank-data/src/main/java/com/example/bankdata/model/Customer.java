@@ -1,18 +1,26 @@
-package com.example.basedomain.dto;
+package com.example.bankdata.model;
+
+
+
+
+
+
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDate;
 
 
+
+@Entity
 @Getter
 @Setter
-@Entity
-public class Customer {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Customer extends Audit{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
@@ -27,7 +35,4 @@ public class Customer {
     @Column(nullable = false,unique = true,name="mobile_num")
     private String mobileNumber;
 
-    @CreatedDate
-    private LocalDate createdDate;
 }
-

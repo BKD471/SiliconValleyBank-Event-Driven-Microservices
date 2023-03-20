@@ -2,7 +2,7 @@ package com.example.accountsservices.controller;
 
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.repository.AccountsRepository;
-import com.example.basedomain.model.CustomerDto;
+import com.example.bankdata.dto.CustomerDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
