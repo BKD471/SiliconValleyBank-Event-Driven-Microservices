@@ -1,0 +1,58 @@
+package com.example.cardservices.services.Impl;
+
+import com.example.cardservices.dto.CardsDto;
+import com.example.cardservices.mapper.CardsMapper;
+import com.example.cardservices.model.Cards;
+import com.example.cardservices.repository.CardsRepository;
+import com.example.cardservices.services.CardsService;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class CardsServiceImpl implements CardsService {
+
+    private CardsRepository cardsRepository;
+
+    CardsServiceImpl(CardsRepository cardsRepository) {
+        this.cardsRepository = cardsRepository;
+    }
+
+    //Method to set expiry date of 5 years from date of issue
+    private Cards setExpiredDateForCard(Cards cards) {
+        LocalDateTime date = cards.getCreatedDate();
+        LocalDateTime expiredDate = date.plusYears(5);
+        cards.setExpiredDate(expiredDate);
+        return cards;
+    }
+
+    /**
+     * @param cardsDto
+     * @return
+     */
+    @Override
+    public CardsDto createCards(CardsDto cardsDto) {
+        Cards cards = CardsMapper.mapToCards(cardsDto);
+        Cards savedCard = cardsRepository.save(cards);
+
+        //Set expiry date of 5 years to card fom date of issue
+        Cards finalSavedCard = setExpiredDateForCard(savedCard);
+        Cards finalCard = cardsRepository.save(finalSavedCard);
+        return CardsMapper.mapToCardsDto(finalCard);
+    }
+
+    /**
+     * @param customerId
+     * @return
+     */
+    @Override
+    public List<CardsDto> getAllCardsByCustomerId(Long customerId) {
+        Optional<Cards> savedCardsList = Optional.of(cardsRepository.findById(customerId).get());
+        List<CardsDto> savedCardDtoList = savedCardsList.stream().map(card -> CardsMapper.mapToCardsDto(card)).collect(Collectors.toList());
+        return savedCardDtoList;
+    }
+}
