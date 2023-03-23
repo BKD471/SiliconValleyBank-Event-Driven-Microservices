@@ -13,14 +13,14 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
 
-
     CustomerServiceImpl(CustomerRepository customerRepository){
         this.customerRepository=customerRepository;
     }
 
     /**
      * @param customerDto
-     * @return Customer
+     * @paramType CustomerDto
+     * @ReturnType CustomerDto
      */
     @Override
     public CustomerDto createCustmer(CustomerDto customerDto) {
@@ -31,7 +31,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * @param id
-     * @return Customer
+     * @paramType Long
+     * @ReturnType CustomerDto
      */
     @Override
     public CustomerDto getCustmerById(Long id) {

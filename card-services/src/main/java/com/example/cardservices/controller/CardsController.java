@@ -17,6 +17,11 @@ public class CardsController {
         this.cardsService = cardsService;
     }
 
+    /**
+     * @param customerId
+     * @paramType Long
+     * @ReturnType ResponseEntity<List<CardsDto>>
+     */
     @GetMapping("/{id}")
     public ResponseEntity<List<CardsDto>> getCardListByCustomerId
             (@PathVariable(name = "id") Long customerId) {
@@ -24,6 +29,11 @@ public class CardsController {
         return new ResponseEntity<>(listOfCards, HttpStatus.OK);
     }
 
+    /**
+     * @param cardsDto
+     * @paramType CardsDto
+     * @ReturnType ResponseEntity<CardsDto>
+     */
     @PostMapping
     public ResponseEntity<CardsDto> createCards(@RequestBody CardsDto cardsDto) {
         CardsDto createdCard = cardsService.createCards(cardsDto);

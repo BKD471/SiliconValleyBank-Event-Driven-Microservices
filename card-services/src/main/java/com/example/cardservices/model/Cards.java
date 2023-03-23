@@ -14,7 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 public class Cards extends  Audit{
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cardId;

@@ -1,18 +1,11 @@
 package com.example.bankdata.model;
 
-
-
-
-
-
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 
 @Entity
@@ -34,5 +27,4 @@ public class Customer{
 
     @Column(nullable = false,unique = true,name="mobile_num")
     private String mobileNumber;
-
 }

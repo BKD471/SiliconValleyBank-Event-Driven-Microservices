@@ -8,9 +8,7 @@ import com.example.cardservices.services.CardsService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,36 +20,42 @@ public class CardsServiceImpl implements CardsService {
         this.cardsRepository = cardsRepository;
     }
 
-    //Method to set expiry date of 5 years from date of issue
-    private Cards setExpiredDateForCard(Cards cards) {
+    /**
+    *Method to set expiry date of 5 years from date of issue &
+    */
+    private Cards processCardInfo(Cards cards) {
         LocalDateTime date = cards.getCreatedDate();
         LocalDateTime expiredDate = date.plusYears(5);
         cards.setExpiredDate(expiredDate);
+        Long remainingBalance=cards.getTotalLimit()-cards.getAmountUsed();
+        cards.setAvailableAmount(remainingBalance);
         return cards;
     }
 
     /**
      * @param cardsDto
-     * @return
+     * @paramType CardsDto
+     * @ReturnType CardsDto
      */
     @Override
     public CardsDto createCards(CardsDto cardsDto) {
         Cards cards = CardsMapper.mapToCards(cardsDto);
         Cards savedCard = cardsRepository.save(cards);
 
-        //Set expiry date of 5 years to card fom date of issue
-        Cards finalSavedCard = setExpiredDateForCard(savedCard);
+        //Set expiry date of 5 years to card fom date of issue & calculate remaining balance
+        Cards finalSavedCard = processCardInfo(savedCard);
         Cards finalCard = cardsRepository.save(finalSavedCard);
         return CardsMapper.mapToCardsDto(finalCard);
     }
 
     /**
      * @param customerId
-     * @return
+     * @paramType Long
+     * @ReturnType List<CardsDto>
      */
     @Override
     public List<CardsDto> getAllCardsByCustomerId(Long customerId) {
-        Optional<Cards> savedCardsList = Optional.of(cardsRepository.findById(customerId).get());
+        List<Cards> savedCardsList =cardsRepository.findByCustomerId(customerId);
         List<CardsDto> savedCardDtoList = savedCardsList.stream().map(card -> CardsMapper.mapToCardsDto(card)).collect(Collectors.toList());
         return savedCardDtoList;
     }

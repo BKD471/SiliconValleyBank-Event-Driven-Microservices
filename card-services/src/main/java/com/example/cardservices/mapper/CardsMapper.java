@@ -5,6 +5,11 @@ import com.example.cardservices.model.Cards;
 
 public class CardsMapper {
 
+    /**
+     * @param cardsDto
+     * @paramType CardsDto
+     * @ReturnType Cards
+     */
     public static Cards mapToCards(CardsDto cardsDto){
         Cards cards=new Cards();
         cards.setCustomerId(cardsDto.getCustomerId());
@@ -16,6 +21,11 @@ public class CardsMapper {
         return cards;
     }
 
+    /**
+     * @param cards
+     * @paramType Cards
+     * @ReturnType CardsDto
+     */
     public static CardsDto mapToCardsDto(Cards cards){
         CardsDto cardsDto=new CardsDto();
         cardsDto.setCardId(cards.getCardId());

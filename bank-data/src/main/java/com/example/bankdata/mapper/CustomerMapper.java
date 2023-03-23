@@ -2,10 +2,14 @@ package com.example.bankdata.mapper;
 
 import com.example.bankdata.dto.CustomerDto;
 import com.example.bankdata.model.Customer;
-import org.springframework.context.annotation.Bean;
 
 public class CustomerMapper {
 
+    /**
+     * @param customerDto
+     * @paramType CustomerDto
+     * @ReturnType Customer
+     */
     public static Customer mapToCustomer(CustomerDto customerDto){
         Customer customer=new Customer();
         customer.setName(customerDto.getName());
@@ -14,6 +18,11 @@ public class CustomerMapper {
         return customer;
     }
 
+    /**
+     * @param customer
+     * @paramType Customer
+     * @ReturnType CustomerDto
+     */
     public static CustomerDto mapToCustomerDto(Customer customer){
         CustomerDto customerDto=new CustomerDto();
         customerDto.setCustomerId(customer.getCustomerId());

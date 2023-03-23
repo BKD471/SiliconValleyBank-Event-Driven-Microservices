@@ -16,12 +16,22 @@ public class AccountsServiceImpl {
        this.accountsRepository=accountsRepository;
    }
 
+    /**
+     * @param accountsDto
+     * @paramType AccountsDto
+     * @ReturnType AccountsDto
+     */
    public AccountsDto createAccount(@RequestBody AccountsDto accountsDto){
        Accounts acount= AccountsMapper.mapToAccounts(accountsDto);
        Accounts savedAccounts=accountsRepository.save(acount);
        return  AccountsMapper.mapToAccountsDto(savedAccounts);
    }
 
+    /**
+     * @param id
+     * @paramType Long
+     * @ReturnType AccountsDto
+     */
    public AccountsDto getAccount(Long id){
        Optional<Accounts> fetchedAccount= Optional.ofNullable(accountsRepository.findByCustomerId(id));
        return AccountsMapper.mapToAccountsDto(fetchedAccount.get());

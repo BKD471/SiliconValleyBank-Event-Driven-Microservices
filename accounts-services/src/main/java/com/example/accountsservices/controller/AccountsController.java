@@ -20,12 +20,23 @@ public class AccountsController {
         this.accountsService = accountsService;
     }
 
+    /**
+     * @param accountsDto
+     * @paramType AccountsDto
+     * @ReturnType ResponseEntity<AccountsDto>
+     */
     @PostMapping
     public ResponseEntity<AccountsDto> createAccounts(@RequestBody AccountsDto accountsDto) {
         AccountsDto createdAccount = accountsService.createAccount(accountsDto);
         return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
+
+    /**
+     * @param customerId
+     * @paramType Long
+     * @ReturnType ResponseEntity<AccountsDto>
+     */
     @GetMapping("/{id}")
     public ResponseEntity<AccountsDto> getAccountsByCustomerId
             (@PathVariable(name = "id") Long customerId) {

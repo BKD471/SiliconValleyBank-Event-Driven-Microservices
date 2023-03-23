@@ -10,18 +10,27 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/customer")
 public class CustomerController {
-
     private CustomerServiceImpl customerService;
     CustomerController(CustomerServiceImpl customerService){
         this.customerService=customerService;
     }
 
+    /**
+     * @param customerDto
+     * @paramType CustomerDto
+     * @ReturnType ResponseEntity<CustomerDto>
+     */
     @PostMapping
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto){
         CustomerDto createdCustomer=customerService.createCustmer(customerDto);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
+    /**
+     * @param customerId
+     * @paramType Long
+     * @ReturnType ResponseEntity<CustomerDto>
+     */
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDto> getCustomerById(@PathVariable(name="id") Long customerId){
         CustomerDto foundCustomer=customerService.getCustmerById(customerId);
