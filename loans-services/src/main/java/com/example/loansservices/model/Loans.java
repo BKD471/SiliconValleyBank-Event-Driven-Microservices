@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -22,18 +21,35 @@ public class Loans extends Audit{
     @Column(name = "customer_id")
     private Long customerId;
 
-    @Column(name="start_dt")
-    private LocalDateTime startDt;
+    @Column(name="end_dt")
+    private LocalDateTime endDt;
 
     @Column(name = "loan_type")
     private String loanType;
 
     @Column(name = "total_loan")
-    private Long totalLoan;
+    private Double totalLoan;
+
+    @Column(name = "loan_tenure")
+    private int loanTenureInYears;
 
     @Column(name = "amount_paid")
-    private Long amountPaid;
+    private Double amountPaid;
+
+    @Column(name="rate_of_interest")
+    private Double Rate_Of_Interest;
+
+    @Column(name = "emi_amnt")
+    private Double emiAmount;
+
+    @Column(name = "tot_inst")
+    private int totalInstallmentsInNumber;
+    @Column(name = "inst_patd")
+    private int installmentsPaidInNumber;
+
+    @Column(name = "inst_rem")
+    private int installmentsRemainingInNumber;
 
     @Column(name = "outstanding_amount")
-    private Long outstandingAmount;
+    private Double outstandingAmount;
 }

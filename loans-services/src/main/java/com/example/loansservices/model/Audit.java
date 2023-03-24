@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Audit {
 
     @CreatedDate
-    protected LocalDateTime createdDate;
+    protected LocalDateTime startDate;
 
     @CreatedBy
     protected String Issuer;
