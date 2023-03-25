@@ -20,12 +20,12 @@ public class LoansDto {
     private LocalDateTime startDt;
     private String loanType;
     private Double totalLoan;
-    private Long loanTenureInYears;
+    private int loanTenureInYears;
     private Double amountPaid;
     private Double emiAmount;
     private Double Rate_of_Interest;
-    private Long totalInstallmentsInNumber;
-    private Long installmentsPaidInNumber;
-    private Long installmentsRemainingInNumber;
+    private int totalInstallmentsInNumber;
+    private int installmentsPaidInNumber;
+    private int installmentsRemainingInNumber;
     private Double outstandingAmount;
 }

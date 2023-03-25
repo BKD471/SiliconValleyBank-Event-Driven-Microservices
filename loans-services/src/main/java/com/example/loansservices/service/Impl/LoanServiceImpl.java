@@ -24,6 +24,9 @@ public class LoanServiceImpl implements LoansService {
         this.loansRepository=loansRepository;
     }
 
+    /**
+     * Method to calculate emi
+     * */
     private Double calculateEmi(Double loanAmount,int tenure) throws TenureException {
 
          Double rate_of_interest= RateOfInterestHelper.getRateOfInterest(tenure);
@@ -37,6 +40,10 @@ public class LoanServiceImpl implements LoansService {
          return interest*emi_coeff;
     }
 
+    /**
+     *  Method to process critical information like  no of installments,
+     *  Maturity Date ,emi amount
+     * */
     private Loans processLoanInformationAndCreateLoan(Loans loans) throws TenureException {
         if(Objects.isNull(loans)) return null;
         Loans loan=loansRepository.save(loans);
@@ -54,8 +61,7 @@ public class LoanServiceImpl implements LoansService {
         //Calculating no of installments
         loan.setTotalInstallmentsInNumber(tenure*12);
         loan.setInstallmentsPaidInNumber(0);
-        int remaining=loan.getTotalInstallmentsInNumber()-loan.getInstallmentsPaidInNumber();
-        loan.setInstallmentsRemainingInNumber(remaining);
+        loan.setInstallmentsRemainingInNumber(tenure*12);
 
 
         Loans finalProcessedLoan=loansRepository.save(loan);
@@ -71,6 +77,19 @@ public class LoanServiceImpl implements LoansService {
     public LoansDto borrowLoan(LoansDto loansDto) throws TenureException {
         Loans loan= LoansMapper.mapToLoans(loansDto);
         Loans processedLoan=processLoanInformationAndCreateLoan(loan);
+        Loans savedLoan=loansRepository.save(processedLoan);
+        return LoansMapper.mapToLoansDto(savedLoan);
+    }
+
+    /**
+     * @param loansDto
+     * @ParamType LoansDto
+     * @returnType LoansDto
+     */
+    @Override
+    public LoansDto payInstallMents(LoansDto loansDto) throws TenureException {
+        Loans loan= LoansMapper.mapToLoans(loansDto);
+
         return null;
     }
 
