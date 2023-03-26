@@ -1,6 +1,7 @@
 package com.example.loansservices.mapper;
 
 import com.example.loansservices.dto.LoansDto;
+import com.example.loansservices.dto.PaymentDto;
 import com.example.loansservices.model.Loans;
 
 public class LoansMapper{
@@ -9,7 +10,6 @@ public class LoansMapper{
         loans.setCustomerId(loansDto.getCustomerId());
         loans.setLoanType(loansDto.getLoanType());
         loans.setTotalLoan(loansDto.getTotalLoan());
-        loans.setAmountPaid(loansDto.getAmountPaid());
         loans.setLoanTenureInYears(loansDto.getLoanTenureInYears());
         return loans;
     }
@@ -33,6 +33,22 @@ public class LoansMapper{
         loansDto.setInstallmentsPaidInNumber(loans.getInstallmentsPaidInNumber());
         loansDto.setInstallmentsRemainingInNumber(loans.getInstallmentsRemainingInNumber());
         return loansDto;
+    }
+
+    public static PaymentDto mapToPaymentDto(Loans loans,Double payment){
+        PaymentDto paymentDto=new PaymentDto();
+        paymentDto.setLoanNumber(loans.getLoanNumber());
+        paymentDto.setCustomerId(loans.getCustomerId());
+        paymentDto.setLoanType(loans.getLoanType());
+        paymentDto.setTotalLoan(loans.getTotalLoan());
+        paymentDto.setPaymentAmount(payment);
+        paymentDto.setLoanTenureInYears(loans.getLoanTenureInYears());
+        paymentDto.setAmountPaid(loans.getAmountPaid());
+        paymentDto.setTotalInstallmentsInNumber(loans.getTotalInstallmentsInNumber());
+        paymentDto.setInstallmentsPaidInNumber(loans.getInstallmentsPaidInNumber());
+        paymentDto.setInstallmentsRemainingInNumber(loans.getInstallmentsRemainingInNumber());
+        paymentDto.setOutstandingAmount(loans.getOutstandingAmount());
+        return paymentDto;
     }
 
 

@@ -1,7 +1,8 @@
 package com.example.loansservices.utils;
 
-import com.example.loansservices.excpetion.TenureException;
+import com.example.loansservices.exception.TenureException;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,8 @@ public class RateOfInterestHelper {
         return Cash_Karo_hash_karo;
     }
     public  static  Double getRateOfInterest(int tenure) throws TenureException {
+        String methodName="getRateOfInterest() in RateOfInterestHelper";
         if(getHash().containsKey(tenure)) return getHash().get(tenure);
-        throw new TenureException(String.format("Tenure %s is not available",tenure));
+        throw new TenureException(String.format("Tenure %s is not available",tenure),methodName, LocalDateTime.now());
     }
 }
