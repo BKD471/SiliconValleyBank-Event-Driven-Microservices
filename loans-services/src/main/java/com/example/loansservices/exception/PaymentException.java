@@ -10,11 +10,10 @@ import java.time.LocalDateTime;
 public class PaymentException extends  Exception{
     private String reason;
     private String methodName;
-    private LocalDateTime  t;
-    public PaymentException(String reason,String methodName,LocalDateTime t){
-        super(String.format("exception has occurred in %s for %s at %s",methodName,reason,t));
+
+    public PaymentException(String reason,String methodName){
+        super(String.format("exception has occurred in %s for %s at %s",methodName,reason));
         this.reason=reason;
-        this.t=t;
         this.methodName=methodName;
     }
 

@@ -21,6 +21,6 @@ public class RateOfInterestHelper {
     public  static  Double getRateOfInterest(int tenure) throws TenureException {
         String methodName="getRateOfInterest() in RateOfInterestHelper";
         if(getHash().containsKey(tenure)) return getHash().get(tenure);
-        throw new TenureException(String.format("Tenure %s is not available",tenure),methodName, LocalDateTime.now());
+        throw new TenureException(String.format("Tenure %s is not available",tenure),methodName);
     }
 }

@@ -10,12 +10,11 @@ import java.time.LocalDateTime;
 public class InstallmentsException extends  Exception{
     private String reason;
     private String methodName;
-    private LocalDateTime timeStamp;
-    public InstallmentsException(String reason, String methodName, LocalDateTime timeStamp)
+
+    public InstallmentsException(String reason, String methodName)
     {
-        super(String.format("exception has occurred in %s for %s at %s",methodName,reason,timeStamp));
+        super(String.format("exception has occurred in %s for %s at %s",methodName,reason));
         this.reason=reason;
         this.methodName=methodName;
-        this.timeStamp=timeStamp;
     }
 }

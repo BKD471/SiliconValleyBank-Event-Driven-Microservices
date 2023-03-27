@@ -13,8 +13,12 @@ import com.example.loansservices.utils.RateOfInterestHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -37,7 +41,6 @@ public class LoanServiceImpl implements LoansService {
         Double emi_coeff = 0.0d;
         String methodName = "calculateEmi() in LoanServiceImpl";
         try {
-            log.info("Emi Calculation ha started ----------------------------------->", LocalDateTime.now());
             Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
             Double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
             interest = loanAmount * magic_coeff;
@@ -46,7 +49,6 @@ public class LoanServiceImpl implements LoansService {
             Double denominator = numerator - 1;
 
             emi_coeff = (numerator / denominator);
-            log.info("Emi Calculation have finished ----------------------------------->", LocalDateTime.now());
         } catch (TenureException e) {
             log.info(String.format("%s exception has occurred in %s method", e, methodName));
             e.getMessage();
@@ -60,7 +62,6 @@ public class LoanServiceImpl implements LoansService {
      */
     private Loans processLoanInformationAndCreateLoan(Loans loans) {
         if (Objects.isNull(loans)) return null;
-        log.info("Loan is being processed--------------------------------------------------->", LocalDateTime.now());
         Loans loan = loansRepository.save(loans);
 
         //setting maturity date
@@ -80,7 +81,6 @@ public class LoanServiceImpl implements LoansService {
 
         //saving the processed loan
         Loans finalProcessedLoan = loansRepository.save(loan);
-        log.info("Loan has been processed------------------------------------------------------>", LocalDateTime.now());
         return finalProcessedLoan;
     }
 
@@ -91,11 +91,9 @@ public class LoanServiceImpl implements LoansService {
      */
     @Override
     public LoansDto borrowLoan(LoansDto loansDto) {
-        log.info("Request for loan has been received--------------------------------------->", LocalDateTime.now());
         Loans loan = LoansMapper.mapToLoans(loansDto);
         Loans processedLoan = processLoanInformationAndCreateLoan(loan);
         Loans savedLoan = loansRepository.save(processedLoan);
-        log.info("Request for Loan has been granted---------------------------------------->", LocalDateTime.now());
         return LoansMapper.mapToLoansDto(savedLoan);
     }
 
@@ -107,19 +105,18 @@ public class LoanServiceImpl implements LoansService {
     @Override
     public PaymentDto payInstallments(PaymentDto paymentDto) throws PaymentException, InstallmentsException {
         String methodName = "payInstallments() in LoanServiceImpl";
-        log.info("Emi Payment is being initiated.............................................>");
         Loans currentLoan = loansRepository.findByCustomerIdAndLoanNumber
                 (paymentDto.getCustomerId(), paymentDto.getLoanNumber());
         Double emi = currentLoan.getEmiAmount();
         int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
         int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
         if (remainingInstallments <= 0)
-            throw new InstallmentsException(String.format("Yr loan is already closed"), methodName, LocalDateTime.now());
+            throw new InstallmentsException(String.format("Yr loan is already closed"), methodName);
 
 
         Double payment = paymentDto.getPaymentAmount();
         if (payment < emi || payment % emi != 0)
-            throw new PaymentException(String.format("yr payment %s should be greater equal to or multiple of yr emi %s", payment, emi), methodName, LocalDateTime.now());
+            throw new PaymentException(String.format("yr payment %s should be greater equal to or multiple of yr emi %s", payment, emi), methodName);
 
 
         int NoOfInstallments = (int) (payment / emi);
@@ -127,8 +124,20 @@ public class LoanServiceImpl implements LoansService {
         currentLoan.setInstallmentsRemainingInNumber(remainingInstallments - NoOfInstallments);
 
         Loans paidEmi = loansRepository.save(currentLoan);
-        log.info("Payment for Emi is successfully received................................>");
         return LoansMapper.mapToPaymentDto(paidEmi, payment);
+    }
+
+    /**
+     * @param customerId
+     * @ParamType Long
+     * @returnType List<LoansDto></LoansDto>
+     */
+    public List<LoansDto> getAllLoansForCustomerById(Long customerId) {
+        List<Loans> allLoans = loansRepository.findAllByCustomerId(customerId);
+
+        List<LoansDto> loansDtoList = allLoans.stream().map(e -> LoansMapper.mapToLoansDto(e)).
+                collect(Collectors.toList());
+        return loansDtoList;
     }
 
     /**
@@ -137,7 +146,8 @@ public class LoanServiceImpl implements LoansService {
      * @returnType LoansDto
      */
     @Override
-    public LoansDto getInfoAboutLoans(Long customerId) {
-        return null;
+    public LoansDto getInfoAboutLoanByCustomerIdAndLoanNumber(Long customerId, Long loanNumber) {
+        Optional<Loans> loan= Optional.ofNullable(loansRepository.findByCustomerIdAndLoanNumber(customerId,loanNumber));
+        return LoansMapper.mapToLoansDto(loan.get());
     }
 }
