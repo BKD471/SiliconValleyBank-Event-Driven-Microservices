@@ -71,10 +71,10 @@ public class LoanServiceImpl implements LoansService {
 
         //Calculating emi
         Double loanAmount = loan.getTotalLoan();
-        Double emiAmnt = calculateEmi(loanAmount, tenure);
-        loan.setEmiAmount(emiAmnt);
+        Double emiAmount = calculateEmi(loanAmount, tenure);
+        loan.setEmiAmount(emiAmount);
 
-        //initializing the initial value for outstanding amnt,amount paid,rate of interest
+        //initializing the initial value for outstanding amount,amount paid,rate of interest
         Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
         loan.setRate_Of_Interest(rate_of_interest);
         loan.setOutstandingAmount(loan.getTotalLoan());

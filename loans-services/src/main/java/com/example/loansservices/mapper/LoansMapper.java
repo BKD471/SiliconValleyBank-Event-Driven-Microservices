@@ -50,6 +50,4 @@ public class LoansMapper{
         paymentDto.setOutstandingAmount(loans.getOutstandingAmount());
         return paymentDto;
     }
-
-
 }

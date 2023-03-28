@@ -1,5 +1,6 @@
 package com.example.loansservices.aspect;
 
+import com.example.loansservices.dto.Dto;
 import com.example.loansservices.dto.LoansDto;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -18,7 +19,7 @@ import java.util.logging.Level;
 @Slf4j
 public class LoggerAspect {
     @Around("execution(*  com.example.loansservices.service.*.*(..))")
-    public LoansDto log(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Dto log(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("<---------------------------------->"+joinPoint.
                 getSignature().
                 toString() + " method executions starts---------------------------------------------------------------->");
@@ -28,7 +29,7 @@ public class LoggerAspect {
         long timeElapsedInMs = Duration.between(start, end).toMillis();
         log.info(String.format("<-----------------Time elapsed to execute %s in Ms is %s------------------------------------->", joinPoint.getSignature().toString(), timeElapsedInMs));
         log.info("<--------------------------------->"+joinPoint.getSignature().toString() + "method execution stops------------------------------------>");
-        return (LoansDto) result;
+        return (Dto) result;
     }
 
     @AfterThrowing(value = "execution(* com.example.loansservices.service.*.*(..))", throwing = "e")
