@@ -1,5 +1,6 @@
-package com.example.loansservices.aop;
+package com.example.loansservices.aspect;
 
+import com.example.loansservices.dto.LoansDto;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -17,22 +18,22 @@ import java.util.logging.Level;
 @Slf4j
 public class LoggerAspect {
     @Around("execution(*  com.example.loansservices.service.*.*(..))")
-    public String log(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.info(joinPoint.
+    public LoansDto log(ProceedingJoinPoint joinPoint) throws Throwable {
+        log.info("<---------------------------------->"+joinPoint.
                 getSignature().
-                toString() + "method executions starts---------------------------------------------------->");
+                toString() + " method executions starts---------------------------------------------------------------->");
         Instant start = Instant.now();
         Object result = joinPoint.proceed();
         Instant end = Instant.now();
         long timeElapsedInMs = Duration.between(start, end).toMillis();
-        log.info(String.format("Time elapsed to execute %s in Ms is %s", joinPoint.getSignature().toString(), timeElapsedInMs));
-        log.info(joinPoint.getSignature().toString() + "method execution stops------------------------------------>");
-        return (String) result;
+        log.info(String.format("<-----------------Time elapsed to execute %s in Ms is %s------------------------------------->", joinPoint.getSignature().toString(), timeElapsedInMs));
+        log.info("<--------------------------------->"+joinPoint.getSignature().toString() + "method execution stops------------------------------------>");
+        return (LoansDto) result;
     }
 
     @AfterThrowing(value = "execution(* com.example.loansservices.service.*.*(..))", throwing = "e")
     public void logException(JoinPoint joinPoint, Exception e) {
-        log.debug(Level.SEVERE + "------Exception is thrown due to----" + e.getMessage() + " from ----------------->"
+        log.debug(Level.SEVERE + "<------------------------------Exception is thrown due to-------------" + e.getMessage() + " from ------------------------------->"
                 + joinPoint.getSignature().toString());
     }
 }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoansDto {
+public class LoansDto extends  Dto{
     private Long loanNumber;
     private Long customerId;
     private LocalDateTime endDt;

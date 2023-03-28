@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentDto {
+public class PaymentDto extends  Dto{
     private Long loanNumber;
     private Long customerId;
     private String loanType;

@@ -60,7 +60,7 @@ public class LoanServiceImpl implements LoansService {
      * Method to process critical information like  no of installments,
      * Maturity Date ,emi amount
      */
-    private Loans processLoanInformationAndCreateLoan(Loans loans) {
+    private Loans processLoanInformationAndCreateLoan(Loans loans) throws TenureException {
         if (Objects.isNull(loans)) return null;
         Loans loan = loansRepository.save(loans);
 
@@ -73,6 +73,12 @@ public class LoanServiceImpl implements LoansService {
         Double loanAmount = loan.getTotalLoan();
         Double emiAmnt = calculateEmi(loanAmount, tenure);
         loan.setEmiAmount(emiAmnt);
+
+        //initializing the initial value for outstanding amnt,amount paid,rate of interest
+        Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
+        loan.setRate_Of_Interest(rate_of_interest);
+        loan.setOutstandingAmount(loan.getTotalLoan());
+        loan.setAmountPaid(0.0d);
 
         //Calculating no of installments
         loan.setTotalInstallmentsInNumber(tenure * MONTHS_IN_YEAR);
@@ -90,7 +96,7 @@ public class LoanServiceImpl implements LoansService {
      * @returnType LoansDto
      */
     @Override
-    public LoansDto borrowLoan(LoansDto loansDto) {
+    public LoansDto borrowLoan(LoansDto loansDto) throws TenureException {
         Loans loan = LoansMapper.mapToLoans(loansDto);
         Loans processedLoan = processLoanInformationAndCreateLoan(loan);
         Loans savedLoan = loansRepository.save(processedLoan);
@@ -115,13 +121,20 @@ public class LoanServiceImpl implements LoansService {
 
 
         Double payment = paymentDto.getPaymentAmount();
-        if (payment < emi || payment % emi != 0)
+        if (payment < emi || ((payment % emi)!= 0))
             throw new PaymentException(String.format("yr payment %s should be greater equal to or multiple of yr emi %s", payment, emi), methodName);
 
-
+        //updating the installments data
         int NoOfInstallments = (int) (payment / emi);
         currentLoan.setInstallmentsPaidInNumber(NoOfInstallments + paidInstallments);
         currentLoan.setInstallmentsRemainingInNumber(remainingInstallments - NoOfInstallments);
+
+
+        //updating the outstanding amount,amount paid
+        Double outstandingAmount=currentLoan.getOutstandingAmount();
+        Double amountPaid=currentLoan.getAmountPaid();
+        currentLoan.setOutstandingAmount(outstandingAmount-payment);
+        currentLoan.setAmountPaid(amountPaid+payment);
 
         Loans paidEmi = loansRepository.save(currentLoan);
         return LoansMapper.mapToPaymentDto(paidEmi, payment);
