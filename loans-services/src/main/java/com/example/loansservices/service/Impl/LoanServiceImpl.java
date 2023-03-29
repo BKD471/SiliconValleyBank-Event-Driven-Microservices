@@ -36,23 +36,18 @@ public class LoanServiceImpl implements LoansService {
     /**
      * Method to calculate emi
      */
-    private Double calculateEmi(Double loanAmount, int tenure) {
-        Double interest = 0.0d;
-        Double emi_coeff = 0.0d;
+    private Double calculateEmi(Double loanAmount, int tenure) throws TenureException {
+
         String methodName = "calculateEmi() in LoanServiceImpl";
-        try {
-            Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
-            Double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
-            interest = loanAmount * magic_coeff;
 
-            Double numerator = Math.pow(1 + magic_coeff, tenure * MONTHS_IN_YEAR);
-            Double denominator = numerator - 1;
+        Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
+        Double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
+        Double interest = loanAmount * magic_coeff;
 
-            emi_coeff = (numerator / denominator);
-        } catch (TenureException e) {
-            log.info(String.format("%s exception has occurred in %s method", e, methodName));
-            e.getMessage();
-        }
+        Double numerator = Math.pow(1 + magic_coeff, tenure * MONTHS_IN_YEAR);
+        Double denominator = numerator - 1;
+        Double emi_coeff = (numerator / denominator);
+
         return interest * emi_coeff;
     }
 
@@ -64,8 +59,9 @@ public class LoanServiceImpl implements LoansService {
         if (Objects.isNull(loans)) return null;
         Loans loan = loansRepository.save(loans);
 
-        //setting maturity date
+        //setting maturity date & loan tenure
         int tenure = loan.getLoanTenureInYears();
+        loan.setLoanTenureInYears(tenure);
         LocalDateTime endDate = loan.getStartDate().plusYears(tenure);
         loan.setEndDt(endDate);
 
@@ -80,7 +76,7 @@ public class LoanServiceImpl implements LoansService {
         loan.setOutstandingAmount(loan.getTotalLoan());
         loan.setAmountPaid(0.0d);
 
-        //Calculating no of installments
+        //Calculating no of installments & loanTenure
         loan.setTotalInstallmentsInNumber(tenure * MONTHS_IN_YEAR);
         loan.setInstallmentsPaidInNumber(0);
         loan.setInstallmentsRemainingInNumber(tenure * MONTHS_IN_YEAR);
@@ -121,7 +117,7 @@ public class LoanServiceImpl implements LoansService {
 
 
         Double payment = paymentDto.getPaymentAmount();
-        if (payment < emi || ((payment % emi)!= 0))
+        if (payment < emi || ((payment % emi) != 0))
             throw new PaymentException(String.format("yr payment %s should be greater equal to or multiple of yr emi %s", payment, emi), methodName);
 
         //updating the installments data
@@ -131,10 +127,10 @@ public class LoanServiceImpl implements LoansService {
 
 
         //updating the outstanding amount,amount paid
-        Double outstandingAmount=currentLoan.getOutstandingAmount();
-        Double amountPaid=currentLoan.getAmountPaid();
-        currentLoan.setOutstandingAmount(outstandingAmount-payment);
-        currentLoan.setAmountPaid(amountPaid+payment);
+        Double outstandingAmount = currentLoan.getOutstandingAmount();
+        Double amountPaid = currentLoan.getAmountPaid();
+        currentLoan.setOutstandingAmount(outstandingAmount - payment);
+        currentLoan.setAmountPaid(amountPaid + payment);
 
         Loans paidEmi = loansRepository.save(currentLoan);
         return LoansMapper.mapToPaymentDto(paidEmi, payment);
@@ -160,7 +156,7 @@ public class LoanServiceImpl implements LoansService {
      */
     @Override
     public LoansDto getInfoAboutLoanByCustomerIdAndLoanNumber(Long customerId, Long loanNumber) {
-        Optional<Loans> loan= Optional.ofNullable(loansRepository.findByCustomerIdAndLoanNumber(customerId,loanNumber));
+        Optional<Loans> loan = Optional.ofNullable(loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber));
         return LoansMapper.mapToLoansDto(loan.get());
     }
 }

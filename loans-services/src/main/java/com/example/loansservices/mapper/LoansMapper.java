@@ -24,6 +24,7 @@ public class LoansMapper{
         loansDto.setAmountPaid(loans.getAmountPaid());
         loansDto.setOutstandingAmount(loans.getOutstandingAmount());
 
+        loansDto.setLoanTenureInYears(loans.getLoanTenureInYears());
         loansDto.setEndDt(loans.getEndDt());
         loansDto.setStartDt(loans.getStartDate());
 
