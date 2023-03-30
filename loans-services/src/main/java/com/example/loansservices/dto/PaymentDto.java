@@ -15,12 +15,13 @@ public class PaymentDto extends  Dto{
     private Long loanNumber;
     private Long customerId;
     private String loanType;
-    private Double totalLoan;
-    private Double paymentAmount;
+    private Long totalLoan;
+    private Long paymentAmount;
     private int loanTenureInYears;
-    private Double amountPaid;
+    private Long amountPaid;
+    private  Double Rate_Of_Interest;
     private int totalInstallmentsInNumber;
     private int installmentsPaidInNumber;
     private int installmentsRemainingInNumber;
-    private Double outstandingAmount;
+    private Long outstandingAmount;
 }

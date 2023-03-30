@@ -4,6 +4,8 @@ import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.model.Accounts;
 
 public interface AccountsService {
-    Accounts createAccounts(AccountsDto accountsDto);
-    Accounts getAccountByCustomerId(Long id);
+    AccountsDto createAccounts(AccountsDto accountsDto);
+    AccountsDto getAccountByCustomerId(Long id);
+    AccountsDto updateAccountByCustomerIdAndAccountNumber(Long customerId,Long accountNumber);
+    AccountsDto updateBeneficiaryDetails(Long customerId);
 }

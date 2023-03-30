@@ -1,4 +1,4 @@
-package com.example.loansservices.service.Impl;
+package com.example.loansservices.service.impl;
 
 import com.example.loansservices.dto.LoansDto;
 import com.example.loansservices.dto.PaymentDto;
@@ -21,34 +21,49 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
+
+
+/**
+ * @parent: LoansService
+ * @class: LoanServiceImpl
+ * @fields: loansRepository,MONTHS_IN_YEAR,PERCENTAGE
+ * @fieldTypes: LoansRepository,int,int
+ * @overridenMethods:  borrowLoan,getInfoAboutLoanByCustomerIdAndLoanNumber,
+ * payInstallments,getAllLoansForCustomerById
+ *@specializedMethods: None
+ * */
 @Service
 @Slf4j
 public class LoanServiceImpl implements LoansService {
-    private static final int MONTHS_IN_YEAR = 12;
-    private static final int PERCENTAGE = 100;
-
+    private final int MONTHS_IN_YEAR = 12;
+    private final int PERCENTAGE = 100;
     private LoansRepository loansRepository;
 
+    /**
+     * @param: loansRepository
+     * @paramType: LoansRepository
+     * @returnType: NA
+     * **/
     LoanServiceImpl(LoansRepository loansRepository) {
         this.loansRepository = loansRepository;
     }
 
     /**
-     * Method to calculate emi
+     * Method to calculate monthly emi
      */
-    private Double calculateEmi(Double loanAmount, int tenure) throws TenureException {
-
-        String methodName = "calculateEmi() in LoanServiceImpl";
-
+    private Long calculateEmi(Long loanAmount, int tenure) throws TenureException {
+        String methodName="calculateEmi() in LoanServiceImpl";
         Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
+        if(rate_of_interest==null) throw new TenureException(String.format("Tenure %s is not available",tenure),methodName);
+
         Double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
-        Double interest = loanAmount * magic_coeff;
+        Long interest = (long) (loanAmount * magic_coeff);
 
         Double numerator = Math.pow(1 + magic_coeff, tenure * MONTHS_IN_YEAR);
         Double denominator = numerator - 1;
         Double emi_coeff = (numerator / denominator);
 
-        return interest * emi_coeff;
+        return (long) (interest * emi_coeff);
     }
 
     /**
@@ -66,15 +81,15 @@ public class LoanServiceImpl implements LoansService {
         loan.setEndDt(endDate);
 
         //Calculating emi
-        Double loanAmount = loan.getTotalLoan();
-        Double emiAmount = calculateEmi(loanAmount, tenure);
+        Long loanAmount = loan.getTotalLoan();
+        Long emiAmount = calculateEmi(loanAmount, tenure);
         loan.setEmiAmount(emiAmount);
 
         //initializing the initial value for outstanding amount,amount paid,rate of interest
         Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
         loan.setRate_Of_Interest(rate_of_interest);
         loan.setOutstandingAmount(loan.getTotalLoan());
-        loan.setAmountPaid(0.0d);
+        loan.setAmountPaid(0l);
 
         //Calculating no of installments & loanTenure
         loan.setTotalInstallmentsInNumber(tenure * MONTHS_IN_YEAR);
@@ -88,7 +103,7 @@ public class LoanServiceImpl implements LoansService {
 
     /**
      * @param loansDto
-     * @ParamType LoansDto
+     * @paramType LoansDto
      * @returnType LoansDto
      */
     @Override
@@ -101,7 +116,7 @@ public class LoanServiceImpl implements LoansService {
 
     /**
      * @param paymentDto
-     * @ParamType PaymentDto
+     * @paramType PaymentDto
      * @returnType PaymentDto
      */
     @Override
@@ -109,15 +124,16 @@ public class LoanServiceImpl implements LoansService {
         String methodName = "payInstallments() in LoanServiceImpl";
         Loans currentLoan = loansRepository.findByCustomerIdAndLoanNumber
                 (paymentDto.getCustomerId(), paymentDto.getLoanNumber());
-        Double emi = currentLoan.getEmiAmount();
+        Long emi = currentLoan.getEmiAmount();
         int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
         int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
         if (remainingInstallments <= 0)
             throw new InstallmentsException(String.format("Yr loan is already closed"), methodName);
 
 
-        Double payment = paymentDto.getPaymentAmount();
-        if (payment < emi || ((payment % emi) != 0))
+        Long payment = paymentDto.getPaymentAmount();
+        int paymentCastedToInt=payment.intValue();
+        if (payment < emi || (( paymentCastedToInt % emi) != 0))
             throw new PaymentException(String.format("yr payment %s should be greater equal to or multiple of yr emi %s", payment, emi), methodName);
 
         //updating the installments data
@@ -127,8 +143,8 @@ public class LoanServiceImpl implements LoansService {
 
 
         //updating the outstanding amount,amount paid
-        Double outstandingAmount = currentLoan.getOutstandingAmount();
-        Double amountPaid = currentLoan.getAmountPaid();
+        Long outstandingAmount = currentLoan.getOutstandingAmount();
+        Long amountPaid = currentLoan.getAmountPaid();
         currentLoan.setOutstandingAmount(outstandingAmount - payment);
         currentLoan.setAmountPaid(amountPaid + payment);
 
@@ -138,8 +154,8 @@ public class LoanServiceImpl implements LoansService {
 
     /**
      * @param customerId
-     * @ParamType Long
-     * @returnType List<LoansDto></LoansDto>
+     * @paramType Long
+     * @returnType List<LoansDto>
      */
     public List<LoansDto> getAllLoansForCustomerById(Long customerId) {
         List<Loans> allLoans = loansRepository.findAllByCustomerId(customerId);
@@ -151,7 +167,7 @@ public class LoanServiceImpl implements LoansService {
 
     /**
      * @param customerId
-     * @ParamType Long
+     * @paramType Long
      * @returnType LoansDto
      */
     @Override

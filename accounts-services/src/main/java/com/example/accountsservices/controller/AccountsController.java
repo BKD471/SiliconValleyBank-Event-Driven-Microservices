@@ -1,10 +1,8 @@
 package com.example.accountsservices.controller;
 
 import com.example.accountsservices.dto.AccountsDto;
-import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.service.Impl.AccountsServiceImpl;
-import com.example.bankdata.dto.CustomerDto;
+import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +25,7 @@ public class AccountsController {
      */
     @PostMapping
     public ResponseEntity<AccountsDto> createAccounts(@RequestBody AccountsDto accountsDto) {
-        AccountsDto createdAccount = accountsService.createAccount(accountsDto);
+        AccountsDto createdAccount = accountsService.createAccounts(accountsDto);
         return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
@@ -41,7 +39,7 @@ public class AccountsController {
     public ResponseEntity<AccountsDto> getAccountsByCustomerId
             (@PathVariable(name = "id") Long customerId) {
 
-        AccountsDto fetchedAcountDto = accountsService.getAccount(customerId);
+        AccountsDto fetchedAcountDto = accountsService.getAccountByCustomerId(customerId);
         return new ResponseEntity<>(fetchedAcountDto, HttpStatus.OK);
     }
 }

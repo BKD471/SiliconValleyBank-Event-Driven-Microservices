@@ -19,13 +19,13 @@ public class LoansDto extends  Dto{
     private LocalDateTime endDt;
     private LocalDateTime startDt;
     private String loanType;
-    private Double totalLoan;
+    private Long totalLoan;
     private int loanTenureInYears;
-    private Double amountPaid;
-    private Double emiAmount;
+    private Long amountPaid;
+    private Long emiAmount;
     private Double Rate_of_Interest;
     private int totalInstallmentsInNumber;
     private int installmentsPaidInNumber;
     private int installmentsRemainingInNumber;
-    private Double outstandingAmount;
+    private Long outstandingAmount;
 }

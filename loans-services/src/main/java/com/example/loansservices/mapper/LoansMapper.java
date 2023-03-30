@@ -36,7 +36,7 @@ public class LoansMapper{
         return loansDto;
     }
 
-    public static PaymentDto mapToPaymentDto(Loans loans,Double payment){
+    public static PaymentDto mapToPaymentDto(Loans loans,Long payment){
         PaymentDto paymentDto=new PaymentDto();
         paymentDto.setLoanNumber(loans.getLoanNumber());
         paymentDto.setCustomerId(loans.getCustomerId());
@@ -44,6 +44,7 @@ public class LoansMapper{
         paymentDto.setTotalLoan(loans.getTotalLoan());
         paymentDto.setPaymentAmount(payment);
         paymentDto.setLoanTenureInYears(loans.getLoanTenureInYears());
+        paymentDto.setRate_Of_Interest(loans.getRate_Of_Interest());
         paymentDto.setAmountPaid(loans.getAmountPaid());
         paymentDto.setTotalInstallmentsInNumber(loans.getTotalInstallmentsInNumber());
         paymentDto.setInstallmentsPaidInNumber(loans.getInstallmentsPaidInNumber());

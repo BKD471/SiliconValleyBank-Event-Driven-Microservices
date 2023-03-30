@@ -5,7 +5,7 @@ import com.example.loansservices.dto.PaymentDto;
 import com.example.loansservices.exception.InstallmentsException;
 import com.example.loansservices.exception.PaymentException;
 import com.example.loansservices.exception.TenureException;
-import com.example.loansservices.service.Impl.LoanServiceImpl;
+import com.example.loansservices.service.impl.LoanServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

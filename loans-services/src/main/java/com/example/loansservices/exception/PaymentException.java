@@ -12,7 +12,7 @@ public class PaymentException extends  Exception{
     private String methodName;
 
     public PaymentException(String reason,String methodName){
-        super(String.format("exception has occurred in %s for %s at %s",methodName,reason));
+        super(String.format("exception has occurred in %s for %s",methodName,reason));
         this.reason=reason;
         this.methodName=methodName;
     }
