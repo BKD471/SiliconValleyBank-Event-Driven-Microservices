@@ -16,13 +16,11 @@ import java.util.Date;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class Audit{
-
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false,nullable = false)
     protected Date createdDate;
 
     @CreatedBy
-    protected String CreatedBy;
-
+    protected String createdBy;
 }

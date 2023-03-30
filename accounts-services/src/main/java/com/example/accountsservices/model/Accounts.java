@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 @Getter
@@ -21,12 +24,22 @@ public class Accounts extends Audit {
     @Column(nullable = false, unique = true, name = "account_num")
     private Long accountNumber;
 
-    @Column(name = "customer_id")
+    @Column(name = "cust_id",nullable = false)
     private Long customerId;
 
-    @Column(nullable = false, name = "accnt_type")
-    private String accountType;
-    @Column(nullable = false, name = "branch_addr")
+    @Column(name="dob",nullable = false)
+    private Date DateOfBirth;
+    @Column(name="cust_age")
+    private  int customerAge;
+
+    @Column(name = "acnt_type",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+
+    public  enum  AccountType{
+        SAVINGS,CURRENT
+    }
+    @Column( name = "branch_addr",nullable = false)
     private String branchAddress;
 
     @Column(name = "phone_num", nullable = false)
@@ -47,6 +60,6 @@ public class Accounts extends Audit {
     @Column(name = "passport")
     private String passportNumber;
 
-    @OneToOne
-    private  Beneficiary beneficiary;
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Beneficiary> beneficiary=new ArrayList<>();
 }

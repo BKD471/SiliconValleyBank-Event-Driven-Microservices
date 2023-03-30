@@ -8,4 +8,6 @@ public interface AccountsService {
     AccountsDto getAccountByCustomerId(Long id);
     AccountsDto updateAccountByCustomerIdAndAccountNumber(Long customerId,Long accountNumber);
     AccountsDto updateBeneficiaryDetails(Long customerId);
+    AccountsDto credit(Long customerId,Long accountNumber);
+
 }

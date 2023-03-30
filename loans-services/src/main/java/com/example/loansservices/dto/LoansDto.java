@@ -1,5 +1,6 @@
 package com.example.loansservices.dto;
 
+import com.example.loansservices.model.Loans;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class LoansDto extends  Dto{
     private Long customerId;
     private LocalDateTime endDt;
     private LocalDateTime startDt;
-    private String loanType;
+    private Loans.LoanType loanType;
     private Long totalLoan;
     private int loanTenureInYears;
     private Long amountPaid;

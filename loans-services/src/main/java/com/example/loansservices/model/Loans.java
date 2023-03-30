@@ -23,9 +23,13 @@ public class Loans extends Audit{
     @Column(name="end_dt")
     private LocalDateTime endDt;
 
-    @Column(name = "loan_type")
-    private String loanType;
+    @Column(name = "loan_type",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private LoanType loanType;
 
+    public enum LoanType{
+        HOUSE_LOAN,CAR_LOAN,EDUCATION_LOAN,BUSINESS_LOAN
+    }
     @Column(name = "total_loan")
     private Long totalLoan;
 

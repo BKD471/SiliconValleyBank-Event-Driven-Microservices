@@ -16,14 +16,20 @@ import java.sql.Date;
 public class Beneficiary {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="benficiary_id")
-    private Long beneficiary_id;
+    @Column(name="beneficiary_id")
+    private Long beneficiaryId;
 
     @Column(name = "name",nullable = false)
-    private String beneficiary_name;
+    private String beneficiaryName;
 
+    @Column(name = "beneficiary_acnt_num")
+    private Long beneficiaryAccountNumber;
     @Column(nullable = false)
-    private String relation;
+    private RELATION relation;
+
+    public enum RELATION{
+        FATHER,MOTHER,SPOUSE,SON,DAUGHTER
+    }
 
     @Column(name="dob",nullable = false)
     private Date Date_Of_Birth;
@@ -36,5 +42,9 @@ public class Beneficiary {
 
     private String voterId;
 
-    private String passPrt;
+    private String passPort;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="account_id",nullable = false)
+    private Accounts account;
 }

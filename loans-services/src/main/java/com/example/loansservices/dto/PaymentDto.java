@@ -1,5 +1,6 @@
 package com.example.loansservices.dto;
 
+import com.example.loansservices.model.Loans;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class PaymentDto extends  Dto{
     private Long loanNumber;
     private Long customerId;
-    private String loanType;
+    private Loans.LoanType loanType;
     private Long totalLoan;
     private Long paymentAmount;
     private int loanTenureInYears;

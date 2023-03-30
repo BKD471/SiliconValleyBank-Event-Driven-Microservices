@@ -11,11 +11,11 @@ public class AccountsMapper {
      * @ReturnType Accounts
      */
     public static Accounts mapToAccounts(AccountsDto accountsDto) {
-        Accounts acnt = new Accounts();
-        acnt.setAccountType(accountsDto.getAccountType());
-        acnt.setBranchAddress(accountsDto.getBranchAddress());
-        acnt.setCustomerId(accountsDto.getCustomerId());
-        return acnt;
+        Accounts acount = new Accounts();
+        acount.setAccountType(accountsDto.getAccountType());
+        acount.setBranchAddress(accountsDto.getBranchAddress());
+        acount.setCustomerId(accountsDto.getCustomerId());
+        return acount;
     }
 
     /**
