@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,7 +23,7 @@ public class Loans extends Audit{
     private Long customerId;
 
     @Column(name="end_dt")
-    private LocalDateTime endDt;
+    private LocalDate endDt;
 
     @Column(name = "loan_type",nullable = false)
     @Enumerated(EnumType.STRING)

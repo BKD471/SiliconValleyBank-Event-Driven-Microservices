@@ -28,9 +28,13 @@ public class Accounts extends Audit {
     private Long customerId;
 
     @Column(name="dob",nullable = false)
-    private Date DateOfBirth;
+    private LocalDate DateOfBirth;
+
     @Column(name="cust_age")
     private  int customerAge;
+
+    @Column(name = "cust_balance")
+    private Long balance;
 
     @Column(name = "acnt_type",nullable = false)
     @Enumerated(EnumType.STRING)
@@ -60,6 +64,9 @@ public class Accounts extends Audit {
     @Column(name = "passport")
     private String passportNumber;
 
-    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Beneficiary> beneficiary=new ArrayList<>();
+    @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Beneficiary> listOfBeneficiary=new ArrayList<>();
+
+    @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Transactions> listOfTransactions=new ArrayList<>();
 }

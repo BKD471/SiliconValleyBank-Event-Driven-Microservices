@@ -49,8 +49,10 @@ public class LoggerAspect {
         return (List<Dto>) result;
     }
     @AfterThrowing(value = "execution(* com.example.loansservices.service.*.*(..))", throwing = "e")
-    public void logException(JoinPoint joinPoint, Exception e) {
+    public void logException(JoinPoint joinPoint, Exception e) throws Exception {
         log.error("<-----------------------------------------" + e.getMessage() + " from ------------------------------->"
                 + joinPoint.getSignature().toString());
+        log.error("DANGER!!!!");
+        throw new Exception(e.getMessage());
     }
 }

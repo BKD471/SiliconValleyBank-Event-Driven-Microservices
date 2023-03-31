@@ -14,11 +14,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="accounts-services" target="19" />
-      <module name="bank-data" target="19" />
       <module name="base-domain" target="19" />
-      <module name="card-services" target="19" />
-      <module name="loans-services" target="19" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

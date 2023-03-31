@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -77,7 +78,7 @@ public class LoanServiceImpl implements LoansService {
         //setting maturity date & loan tenure
         int tenure = loan.getLoanTenureInYears();
         loan.setLoanTenureInYears(tenure);
-        LocalDateTime endDate = loan.getStartDate().plusYears(tenure);
+        LocalDate endDate = loan.getStartDate().plusYears(tenure);
         loan.setEndDt(endDate);
 
         //Calculating emi

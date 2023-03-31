@@ -7,9 +7,9 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Getter
 @Setter
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Audit {
 
     @CreatedDate
-    protected LocalDateTime startDate;
+    protected LocalDate startDate;
 
     @CreatedBy
     protected String Issuer;

@@ -46,5 +46,5 @@ public class Beneficiary {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="account_id",nullable = false)
-    private Accounts account;
+    private Accounts accounts;
 }

@@ -1,6 +1,7 @@
 package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.mapper.AccountsMapper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.repository.AccountsRepository;
@@ -66,12 +67,30 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     /**
-     * @param  customerId
-     * @paramType Long
-     * @ReturnType AccountsDto
-     * */
+     * @param customerId
+     * @param BeneficiaryId
+     * @param beneficiaryDto
+     * @return
+     */
     @Override
-    public  AccountsDto updateBeneficiaryDetails(Long customerId){
+    public BeneficiaryDto updateBeneficiaryDetailsByBeneficiaryId(Long customerId, Long BeneficiaryId, BeneficiaryDto beneficiaryDto) {
+        return null;
+    }
+
+    /**
+     * @param customerId
+     * @param accountNumberRecipient
+     * @param accountNumberSender
+     * @returnType AccountsDto
+     */
+    @Override
+    public AccountsDto creditMoney(Long customerId,Long accountNumberRecipient,Long accountNumberSender) {
+        return null;
+    }
+
+    @Override
+    public AccountsDto debitMoney(Long customerId,Long accountNumberSource,
+                                  Long accountNumberDestination){
         return null;
     }
 }

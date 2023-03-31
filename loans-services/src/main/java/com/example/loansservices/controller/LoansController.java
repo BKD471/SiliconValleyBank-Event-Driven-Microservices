@@ -1,4 +1,4 @@
-package com.example.loansservices.Controller;
+package com.example.loansservices.controller;
 
 import com.example.loansservices.dto.LoansDto;
 import com.example.loansservices.dto.PaymentDto;

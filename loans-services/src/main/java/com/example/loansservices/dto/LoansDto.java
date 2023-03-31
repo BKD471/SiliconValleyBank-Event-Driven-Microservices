@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -17,8 +18,8 @@ import java.time.LocalDateTime;
 public class LoansDto extends  Dto{
     private Long loanNumber;
     private Long customerId;
-    private LocalDateTime endDt;
-    private LocalDateTime startDt;
+    private LocalDate endDt;
+    private LocalDate startDt;
     private Loans.LoanType loanType;
     private Long totalLoan;
     private int loanTenureInYears;
