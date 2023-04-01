@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -19,7 +20,7 @@ public class Audit{
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false,nullable = false)
-    protected Date createdDate;
+    protected LocalDate createdDate;
 
     @CreatedBy
     protected String createdBy;

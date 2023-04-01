@@ -1,6 +1,7 @@
 package com.example.accountsservices.mapper;
 
 import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Transactions;
@@ -60,5 +61,35 @@ public class AccountsMapper {
         accountsDto.setListOfBeneficiary(accounts.getListOfBeneficiary());
         accountsDto.setListOfTransactions(accounts.getListOfTransactions());
         return accountsDto;
+    }
+
+    public static BeneficiaryDto mapToBeneficiaryDto(Beneficiary beneficiary){
+        BeneficiaryDto beneficiaryDto=new BeneficiaryDto();
+        beneficiaryDto.setBeneficiaryId(beneficiary.getBeneficiaryId());
+        beneficiaryDto.setBeneficiaryName(beneficiary.getBeneficiaryName());
+        beneficiaryDto.setAge(beneficiary.getAge());
+        beneficiaryDto.setBeneficiaryAccountNumber(beneficiary.getBeneficiaryAccountNumber());
+        beneficiaryDto.setAdharNumber(beneficiary.getAdharNumber());
+        beneficiaryDto.setRelation(beneficiary.getRelation());
+        beneficiaryDto.setVoterId(beneficiary.getVoterId());
+        beneficiaryDto.setPanNumber(beneficiary.getPanNumber());
+        beneficiaryDto.setPassPort(beneficiary.getPassPort());
+        beneficiaryDto.setDate_Of_Birth(beneficiary.getDate_Of_Birth());
+        beneficiaryDto.setAccounts(beneficiary.getAccounts());
+        return beneficiaryDto;
+    }
+
+    public static Beneficiary mapToBeneficiary(BeneficiaryDto beneficiaryDto){
+        Beneficiary beneficiary=new Beneficiary();
+        beneficiary.setBeneficiaryName(beneficiaryDto.getBeneficiaryName());
+        beneficiary.setBeneficiaryAccountNumber(beneficiaryDto.getBeneficiaryAccountNumber());
+        beneficiary.setAdharNumber(beneficiaryDto.getAdharNumber());
+        beneficiary.setRelation(beneficiaryDto.getRelation());
+        beneficiary.setVoterId(beneficiaryDto.getVoterId());
+        beneficiary.setPanNumber(beneficiaryDto.getPanNumber());
+        beneficiary.setPassPort(beneficiaryDto.getPassPort());
+        beneficiary.setDate_Of_Birth(beneficiaryDto.getDate_Of_Birth());
+        beneficiary.setAccounts(beneficiaryDto.getAccounts());
+        return beneficiary;
     }
 }
