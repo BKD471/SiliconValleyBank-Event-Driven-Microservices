@@ -13,22 +13,20 @@ import java.time.LocalTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Transactions {
+public class Transactions extends AuditTransactions{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="tran_id")
+    @Column(name="trans_id")
     private Long transactionId;
 
-    private LocalTime timeStamp;
-    private LocalDate date;
+    @Column(name="trans-amnt",nullable = false)
+    private Long transactionAmount;
 
-    private Long amount;
-
-    @Column(name = "transacted-acnt", nullable = false)
+    @Column(name = "trans-acnt", nullable = false)
     private String transactedAccount;
 
-    @Column(name = "transact-type", nullable = false)
+    @Column(name = "trans-type", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 

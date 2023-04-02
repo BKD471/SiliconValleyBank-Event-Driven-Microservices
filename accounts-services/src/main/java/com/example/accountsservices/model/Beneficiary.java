@@ -7,22 +7,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Beneficiary {
+public class Beneficiary extends Audit{
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="beneficiary_id")
+    @Column(name="ben_id")
     private Long beneficiaryId;
 
-    @Column(name = "name",nullable = false)
+    @Column(name = "ben_name",nullable = false)
     private String beneficiaryName;
 
-    @Column(name = "beneficiary_acnt_num")
+    @Column(name = "ben_acnt_num")
     private Long beneficiaryAccountNumber;
     @Column(nullable = false)
     private RELATION relation;
@@ -32,8 +33,10 @@ public class Beneficiary {
     }
 
     @Column(name="dob",nullable = false)
-    private Date Date_Of_Birth;
+    private LocalDate Date_Of_Birth;
+
     private int age;
+
     @Column(name = "adhar_num",nullable = false)
     private String adharNumber;
 

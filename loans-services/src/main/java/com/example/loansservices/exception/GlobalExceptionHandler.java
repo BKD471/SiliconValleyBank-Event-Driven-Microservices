@@ -36,6 +36,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(LoansException.class)
+    public ResponseEntity<ErrorDetails> handlePaymentException(LoansException exception,
+                                                               WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalTime.now(), exception.getMessage(), webRequest.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception,
                                                               WebRequest webRequest) {

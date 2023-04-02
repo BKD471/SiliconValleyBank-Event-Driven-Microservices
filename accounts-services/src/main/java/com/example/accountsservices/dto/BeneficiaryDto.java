@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 
 @Getter
@@ -18,7 +19,7 @@ public class BeneficiaryDto implements  Dto{
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;
     private Beneficiary.RELATION relation;
-    private Date Date_Of_Birth;
+    private LocalDate Date_Of_Birth;
     private int age;
     private String adharNumber;
     private String panNumber;
