@@ -18,7 +18,6 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 public class Audit{
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false,nullable = false)
     protected LocalDate createdDate;
 

@@ -16,12 +16,10 @@ import java.time.LocalTime;
 @EntityListeners(AuditingEntityListener.class)
 public class AuditTransactions {
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false,nullable = false)
     protected LocalTime transactionTimeStamp;
 
     @CreatedDate
-    @Temporal(TemporalType.DATE)
     @Column(updatable = false,nullable = false)
     protected LocalDate transactionDate;
 }
