@@ -12,6 +12,7 @@ import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
+import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.service.AccountsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class AccountsServiceImpl implements AccountsService {
+public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
     private final BeneficiaryRepository beneficiaryRepository;
     private final TransactionsRepository transactionsRepository;
@@ -113,21 +114,21 @@ public class AccountsServiceImpl implements AccountsService {
         String oldPassportNumber = accounts.getPassportNumber();
         String newPassportNumber = accountsDto.getPassportNumber();
 
-        if (!Objects.isNull(newDateOfBirth) && newDateOfBirth.equals(oldDateOfBirth))
+        if (null!=newDateOfBirth && !newDateOfBirth.equals(oldDateOfBirth))
             accounts.setDateOfBirth(newDateOfBirth);
-        if (!Objects.isNull(newBranchAddress) && newBranchAddress.equals(oldBranchAddress))
+        if (null!=newBranchAddress && !newBranchAddress.equalsIgnoreCase(oldBranchAddress))
             accounts.setBranchAddress(newBranchAddress);
-        if (!Objects.isNull(newPhoneNumber) && newPhoneNumber.equals(oldPhoneNumber))
+        if (null!=newPhoneNumber && !newPhoneNumber.equalsIgnoreCase(oldPhoneNumber))
             accounts.setPhoneNumber(newPhoneNumber);
-        if (!Objects.isNull(newAdharNumber) && newAdharNumber.equals(oldAdharNumber))
+        if (null!=newAdharNumber && !newAdharNumber.equalsIgnoreCase(oldAdharNumber))
             accounts.setPhoneNumber(newAdharNumber);
-        if (!Objects.isNull(newPanNumber) && newPanNumber.equals(oldPanNumber))
+        if (null!=newPanNumber && !newPanNumber.equalsIgnoreCase(oldPanNumber))
             accounts.setPanNumber(newPanNumber);
-        if (!Objects.isNull(newVoterId) && newVoterId.equals(oldVoterId))
+        if (null!=newVoterId && !newVoterId.equalsIgnoreCase(oldVoterId))
             accounts.setVoterId(newVoterId);
-        if (!Objects.isNull(newDrivingLicense) && newDrivingLicense.equals(oldDrivingLicense))
+        if (null!=newDrivingLicense && !newDrivingLicense.equalsIgnoreCase(oldDrivingLicense))
             accounts.setDrivingLicense(newDrivingLicense);
-        if (!Objects.isNull(newPassportNumber) && newPassportNumber.equals(oldPassportNumber))
+        if (null!=newPassportNumber && !newPassportNumber.equalsIgnoreCase(oldPassportNumber))
             accounts.setPassportNumber(newPassportNumber);
 
         return accounts;
@@ -148,71 +149,9 @@ public class AccountsServiceImpl implements AccountsService {
         return AccountsMapper.mapToAccountsDto(savedUpdatedAccount);
     }
 
-    private Beneficiary setBeneficiaryAgeFromDOB(Beneficiary beneficiary){
-        //initialize the age of beneficiaries
-        int dobYear= beneficiary.getDate_Of_Birth().getYear();
-        int now= LocalDate.now().getYear();
-        beneficiary.setAge(now-dobYear);
-        return beneficiary;
-    }
     @Override
-    public AccountsDto addBeneficiary(Long customerId, Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
-
-        //Updating the beneficiary info & saving it
-        Beneficiary beneficiaryAccount=AccountsMapper.mapToBeneficiary(beneficiaryDto);
-        Beneficiary savedBeneficiaryAccount=beneficiaryRepository.save(beneficiaryAccount);
-        Beneficiary processedBeneficiaryAccount=setBeneficiaryAgeFromDOB(savedBeneficiaryAccount);
-        Beneficiary  savedAndProcessedBeneficiaryAccount=beneficiaryRepository.save(processedBeneficiaryAccount);
-
-        //Get the account in which we add beneficiary
-        Optional<Accounts> fetchedAccounts=Optional.ofNullable(accountsRepository.findByCustomerIdAndAccountNumber(customerId,accountNumber));
-        if(fetchedAccounts.isEmpty()) throw  new AccountsException("No such accounts");
-
-        //add the beneficiary to account
-        List<Beneficiary> beneficiaries=new ArrayList<>();
-        beneficiaries.add(savedAndProcessedBeneficiaryAccount);
-        fetchedAccounts.get().setListOfBeneficiary(beneficiaries);
-        return AccountsMapper.mapToAccountsDto(fetchedAccounts.get());
+    public void deleteAccount(Long accountNumber){
+        //...........
     }
 
-
-    @Override
-    public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByCustomerIdAndLoanNumber(Long customerId, Long accountNumber) throws BeneficiaryException {
-        Optional<Accounts> fetchedAccount = Optional.ofNullable(accountsRepository.findByCustomerIdAndAccountNumber(customerId, accountNumber));
-        if (fetchedAccount.isEmpty()) throw new BeneficiaryException("No beneficiaries present for this account");
-        return fetchedAccount.get().getListOfBeneficiary().stream().map(AccountsMapper::mapToBeneficiaryDto).collect(Collectors.toList());
-    }
-
-    /**
-     * @param customerId
-     * @param BeneficiaryId
-     * @param beneficiaryDto
-     * @return
-     */
-    @Override
-    public BeneficiaryDto updateBeneficiaryDetailsOfaCustomerByBeneficiaryId(Long customerId, Long accountNumber, Long BeneficiaryId, BeneficiaryDto beneficiaryDto) {
-        return null;
-    }
-
-    /**
-     * @param customerId
-     * @param accountNumberRecipient
-     * @param accountNumberSender
-     * @returnType AccountsDto
-     */
-    @Override
-    public AccountsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender) {
-        return null;
-    }
-
-    @Override
-    public AccountsDto debitMoney(Long customerId, Long accountNumberSource,
-                                  Long accountNumberDestination) {
-        return null;
-    }
-
-    @Override
-    public List<TransactionsDto> getAllTransactionsForAnAccount(Long customerId, Long accountNumber) {
-        return null;
-    }
 }
