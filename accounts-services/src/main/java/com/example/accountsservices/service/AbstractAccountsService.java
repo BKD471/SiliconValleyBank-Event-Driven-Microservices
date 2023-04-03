@@ -8,7 +8,7 @@ import com.example.accountsservices.exception.BeneficiaryException;
 
 import java.util.List;
 
-
+//DESIGN NOTE
 //Obeying I of SOLID ,to not pollute a single interface with too much methods
 // by splitting it up.
 //we want to have a single parent of all service classes so need a class to provide
@@ -16,10 +16,13 @@ import java.util.List;
 // so that we can spilt up service logic into separate concerning classes
 // and thus obeying S of SOLID also
 
-
-//since there is no need of instatntiating the AbstractAccountsService ,
+//since there is no need of instantiating the AbstractAccountsService ,
 // it's just to provide dummy implementation ,so make it abstract
 // it can be used for loose coupling
+
+//samajhle phir ,baad main mat bolna, mera code quality ghatiya hay
+// or such comments like bro you dont follow good coding standards :)
+//ismein tera ghar chala jayenga
 public abstract class AbstractAccountsService implements AccountsService, TransactionsService, BeneficiaryService {
     public AccountsDto createAccounts(AccountsDto accountsDto) {
         return null;
