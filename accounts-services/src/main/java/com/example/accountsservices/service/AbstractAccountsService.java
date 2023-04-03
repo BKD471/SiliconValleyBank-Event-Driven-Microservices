@@ -12,17 +12,17 @@ import java.util.List;
 //Obeying I of SOLID ,to not pollute a single interface with too much methods
 // by splitting it up.
 //we want to have a single parent of all service classes so need a abs class to provide
-// dummy implementation of all abstract methods of all interface
+    // dummy implementation of all abstract methods of all interface
 // so that we can spilt up service logic into separate concerning classes
 // and thus obeying S of SOLID also
-public abstract class AbstractAccountsService implements AccountsService {
-    public AccountsDto createAccounts(AccountsDto accountsDto) {
-        return null;
-    }
+    public abstract class AbstractAccountsService implements AccountsService,TransactionsService,BeneficiaryService {
+        public AccountsDto createAccounts(AccountsDto accountsDto) {
+            return null;
+        }
 
-    public AccountsDto getAccountInfoByCustomerIdAndAccountNumber(Long customerId, Long accountNumber) throws AccountsException {
-        return null;
-    }
+        public AccountsDto getAccountInfoByCustomerIdAndAccountNumber(Long customerId, Long accountNumber) throws AccountsException {
+            return null;
+        }
 
     public List<AccountsDto> getAllAccountsByCustomerId(Long customerId) throws AccountsException {
         return null;
