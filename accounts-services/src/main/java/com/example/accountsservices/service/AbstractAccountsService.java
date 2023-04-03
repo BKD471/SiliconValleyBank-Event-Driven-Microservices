@@ -14,6 +14,7 @@ import java.util.List;
 //we want to have a single parent of all service classes so need a abs class to provide
 // dummy implementation of all abstract methods of all interface
 // so that we can spilt up service logic into separate concerning classes
+// and thus obeying S of SOLID also
 public abstract class AbstractAccountsService implements AccountsService {
     public AccountsDto createAccounts(AccountsDto accountsDto) {
         return null;
