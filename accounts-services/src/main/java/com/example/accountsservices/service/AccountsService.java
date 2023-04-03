@@ -14,11 +14,4 @@ public interface AccountsService {
     List<AccountsDto> getAllAccountsByCustomerId(Long customerId) throws AccountsException;
     AccountsDto updateAccountByCustomerIdAndAccountNumber(Long customerId,Long accountNumber,AccountsDto accountsDto) throws AccountsException;
     void deleteAccount(Long accountNumber);
-    AccountsDto addBeneficiary(Long customerId,Long accountNumber,BeneficiaryDto beneficiaryDto) throws AccountsException;
-    BeneficiaryDto updateBeneficiaryDetailsOfaCustomerByBeneficiaryId(Long customerId,Long accountNumber,BeneficiaryDto beneficiaryDto) throws  AccountsException,BeneficiaryException;
-    List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByCustomerIdAndLoanNumber(Long customerId,Long accountNumber) throws BeneficiaryException;
-    void  deleteBeneficiaries(Long beneficiaryId);
-    AccountsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender);
-    AccountsDto debitMoney(Long customerId,Long accountNumberSource,Long accountNumberDestination);
-    List<TransactionsDto> getAllTransactionsForAnAccount(Long customerId,Long accountNumber);
 }

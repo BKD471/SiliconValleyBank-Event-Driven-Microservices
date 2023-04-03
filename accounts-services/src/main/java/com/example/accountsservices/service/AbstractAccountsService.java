@@ -9,8 +9,11 @@ import com.example.accountsservices.exception.BeneficiaryException;
 import java.util.List;
 
 
-//Using Adapter design pattern to provide dummy implementation of all abstract methods
-//so that we can spilt up service logic into separate concerning classes
+//Obeying I of SOLID ,to not pollute a single interface with too much methods
+// by splitting it up.
+//we want to have a single parent of all service classes so need a abs class to provide
+// dummy implementation of all abstract methods of all interface
+// so that we can spilt up service logic into separate concerning classes
 public abstract class AbstractAccountsService implements AccountsService {
     public AccountsDto createAccounts(AccountsDto accountsDto) {
         return null;
@@ -48,11 +51,11 @@ public abstract class AbstractAccountsService implements AccountsService {
        //dummy implementation
     }
 
-    public AccountsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender) {
+    public TransactionsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender) {
         return null;
     }
 
-    public AccountsDto debitMoney(Long customerId, Long accountNumberSource, Long accountNumberDestination) {
+    public TransactionsDto debitMoney(Long customerId, Long accountNumberSource, Long accountNumberDestination) {
         return null;
     }
 

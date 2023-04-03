@@ -25,12 +25,12 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     @Override
-    public AccountsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender) {
+    public TransactionsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender) {
         return null;
     }
 
     @Override
-    public AccountsDto debitMoney(Long customerId, Long accountNumberSource,
+    public TransactionsDto debitMoney(Long customerId, Long accountNumberSource,
                                   Long accountNumberDestination) {
         return null;
     }
