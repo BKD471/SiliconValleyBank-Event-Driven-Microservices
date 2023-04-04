@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface BeneficiaryService {
     AccountsDto addBeneficiary(Long customerId, Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException;
-    BeneficiaryDto updateBeneficiaryDetailsOfaCustomerByBeneficiaryId(Long customerId,Long accountNumber,BeneficiaryDto beneficiaryDto) throws  AccountsException, BeneficiaryException;
-    List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByCustomerIdAndLoanNumber(Long customerId, Long accountNumber) throws BeneficiaryException;
-    void  deleteBeneficiaries(Long beneficiaryId);
+    BeneficiaryDto updateBeneficiaryDetailsOfanAccount(Long accountNumber,BeneficiaryDto beneficiaryDto) throws  AccountsException, BeneficiaryException;
+    List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException;
+    void  deleteBeneficiariesForAnAccount(Long accountNumber,Long beneficiaryId) throws AccountsException ,BeneficiaryException;
+
+    void deleteAllBeneficiaries(Long accountNumber) throws AccountsException;
 }

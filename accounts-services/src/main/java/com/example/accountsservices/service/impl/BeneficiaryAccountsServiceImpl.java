@@ -10,16 +10,16 @@ import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
-
     private final BeneficiaryRepository beneficiaryRepository;
     private final AccountsRepository accountsRepository;
 
@@ -37,6 +37,13 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
         return beneficiary;
     }
 
+    private Accounts fetchAccountByAccountNumber(Long accountNumber) throws AccountsException {
+        Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByAccountNumber(accountNumber));
+        if (fetchedAccounts.isEmpty())
+            throw new AccountsException(String.format("No such accounts exist with id %s", accountNumber));
+        return fetchedAccounts.get();
+    }
+
     @Override
     public AccountsDto addBeneficiary(Long customerId, Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
 
@@ -47,22 +54,22 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
         Beneficiary savedAndProcessedBeneficiaryAccount = beneficiaryRepository.save(processedBeneficiaryAccount);
 
         //Get the account in which we add beneficiary
-        Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByCustomerIdAndAccountNumber(customerId, accountNumber));
-        if (fetchedAccounts.isEmpty()) throw new AccountsException("No such accounts");
+        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         //add the beneficiary to account
         List<Beneficiary> beneficiaries = new ArrayList<>();
         beneficiaries.add(savedAndProcessedBeneficiaryAccount);
-        fetchedAccounts.get().setListOfBeneficiary(beneficiaries);
-        return AccountsMapper.mapToAccountsDto(fetchedAccounts.get());
+        fetchedAccount.setListOfBeneficiary(beneficiaries);
+        return AccountsMapper.mapToAccountsDto(fetchedAccount);
     }
 
 
     @Override
-    public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByCustomerIdAndLoanNumber(Long customerId, Long accountNumber) throws BeneficiaryException {
-        Optional<Accounts> fetchedAccount = Optional.ofNullable(accountsRepository.findByCustomerIdAndAccountNumber(customerId, accountNumber));
-        if (fetchedAccount.isEmpty()) throw new BeneficiaryException("No beneficiaries present for this account");
-        return fetchedAccount.get().getListOfBeneficiary().stream().map(AccountsMapper::mapToBeneficiaryDto).collect(Collectors.toList());
+    public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException {
+        //get the account
+        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
+        //get all beneficiaries
+        return fetchedAccount.getListOfBeneficiary().stream().map(AccountsMapper::mapToBeneficiaryDto).collect(Collectors.toList());
     }
 
     private Beneficiary processedBeneficiaryAccount(Beneficiary oldBeneficiaryData, Beneficiary newBeneficiaryData) {
@@ -112,22 +119,21 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
     }
 
     /**
-     * @param customerId
+     * @param accountNumber
      * @param beneficiaryDto
      * @return
      */
     @Override
-    public BeneficiaryDto updateBeneficiaryDetailsOfaCustomerByBeneficiaryId(Long customerId, Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
+    public BeneficiaryDto updateBeneficiaryDetailsOfanAccount(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
         //fetch the account
-        Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByCustomerIdAndAccountNumber(customerId, accountNumber));
-        if (fetchedAccounts.isEmpty())
-            throw new AccountsException(String.format("No such accounts present with customer id %s or accountNumber %s", customerId, accountNumber));
+        Accounts fetchedAccounts = fetchAccountByAccountNumber(accountNumber);
 
         //fetch the beneficiary from beneficiaryList
-        Long beneficiaryId = beneficiaryDto.getBeneficiaryId();
-        Optional<Beneficiary> beneficiaryAccount = fetchedAccounts.get().getListOfBeneficiary().stream().filter(beneficiary -> beneficiary.getBeneficiaryId().equals(beneficiaryId)).findFirst();
+        Long BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
+        if(null==BENEFICIARY_ID) throw  new BeneficiaryException("Please enter a valid beneficiary id");
+        Optional<Beneficiary> beneficiaryAccount = fetchedAccounts.getListOfBeneficiary().stream().filter(beneficiary -> BENEFICIARY_ID.equals(beneficiary.getBeneficiaryId())).findFirst();
         if (beneficiaryAccount.isEmpty())
-            throw new BeneficiaryException(String.format("No such beneficiary accounts exist with beneficiary id %s", beneficiaryId));
+            throw new BeneficiaryException(String.format("No such beneficiary accounts exist with beneficiary id %s", BENEFICIARY_ID));
 
         //update
         Beneficiary newBeneficiaryData = AccountsMapper.mapToBeneficiary(beneficiaryDto);
@@ -136,7 +142,31 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
         return AccountsMapper.mapToBeneficiaryDto(savedProcessedAccount);
     }
 
-    public void deleteBeneficiaries(Long beneficiaryId) {
+    @Override
+    public void deleteBeneficiariesForAnAccount(Long accountNumber, Long beneficiaryId) throws AccountsException, BeneficiaryException {
+        if (null == beneficiaryId) throw new BeneficiaryException("Please provide a valid beneficiary id");
+        //fetch the account
+        Accounts fetchedAccounts = fetchAccountByAccountNumber(accountNumber);
 
+        //filter out the beneficiary list of that account
+        List<Beneficiary> filteredListOfBeneficiaries = fetchedAccounts.getListOfBeneficiary().
+                stream().
+                filter(beneficiary -> !beneficiaryId.equals(beneficiary.getBeneficiaryId())).
+                toList();
+        //set the final filtered resultant list to that account
+        fetchedAccounts.setListOfBeneficiary(filteredListOfBeneficiaries);
+        //delete that beneficiary
+        beneficiaryRepository.deleteByBeneficiaryId(beneficiaryId);
+    }
+
+    @Override
+    public void deleteAllBeneficiaries(Long accountNumber) throws AccountsException {
+        //fetch the account
+        Accounts fetchedAccounts = fetchAccountByAccountNumber(accountNumber);
+        //delete everyone
+        fetchedAccounts.getListOfBeneficiary().forEach(beneficiary ->
+                beneficiaryRepository.deleteByBeneficiaryId(beneficiary.getBeneficiaryId()));
+        //set an empty list
+        fetchedAccounts.setListOfBeneficiary(new ArrayList<>());
     }
 }

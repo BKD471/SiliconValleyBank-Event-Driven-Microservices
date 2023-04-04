@@ -40,24 +40,31 @@ public abstract class AbstractAccountsService implements AccountsService, Transa
         return null;
     }
 
-    public void deleteAccount(Long accountNumber) {
-        //dummy implementation
+    public void deleteAccount(Long accountNumber) throws AccountsException {
+        //dummy implementations
+    }
+
+    public  void deleteAllAccountsByCustomer(Long customerId) throws  AccountsException{
+        //dummy implementations
     }
 
     public AccountsDto addBeneficiary(Long customerId, Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
         return null;
     }
 
-    public BeneficiaryDto updateBeneficiaryDetailsOfaCustomerByBeneficiaryId(Long customerId, Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
+    public BeneficiaryDto updateBeneficiaryDetailsOfanAccount(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
         return null;
     }
 
-    public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByCustomerIdAndLoanNumber(Long customerId, Long accountNumber) throws BeneficiaryException {
+    public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException{
         return null;
     }
 
-    public void deleteBeneficiaries(Long beneficiaryId) {
+    public void deleteBeneficiariesForAnAccount(Long accountNumber,Long beneficiaryId) throws  AccountsException , BeneficiaryException{
         //dummy implementation
+    }
+    public  void  deleteAllBeneficiaries(Long accountNumber) throws AccountsException {
+        //dummy
     }
 
     public TransactionsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender) {
@@ -68,7 +75,11 @@ public abstract class AbstractAccountsService implements AccountsService, Transa
         return null;
     }
 
-    public List<TransactionsDto> getAllTransactionsForAnAccount(Long customerId, Long accountNumber) {
+    public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount( Long accountNumber) {
         return null;
+    }
+
+    public void deleteTransactionDetails(Long transactionId){
+        //
     }
 }

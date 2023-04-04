@@ -13,5 +13,6 @@ public interface AccountsService {
     AccountsDto getAccountInfoByCustomerIdAndAccountNumber(Long customerId,Long accountNumber) throws AccountsException;
     List<AccountsDto> getAllAccountsByCustomerId(Long customerId) throws AccountsException;
     AccountsDto updateAccountByCustomerIdAndAccountNumber(Long customerId,Long accountNumber,AccountsDto accountsDto) throws AccountsException;
-    void deleteAccount(Long accountNumber);
+    void deleteAccount(Long accountNumber) throws AccountsException;
+    void deleteAllAccountsByCustomer(Long customerId) throws  AccountsException;
 }

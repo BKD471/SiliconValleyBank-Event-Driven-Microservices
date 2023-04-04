@@ -1,13 +1,14 @@
 package com.example.accountsservices.service.impl;
 
-import com.example.accountsservices.dto.AccountsDto;
+
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Service
 public class TransactionsAccountServiceImpl extends AbstractAccountsService {
 
     private final AccountsRepository accountsRepository;
@@ -36,7 +37,12 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public List<TransactionsDto> getAllTransactionsForAnAccount(Long customerId, Long accountNumber) {
+    public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount(Long accountNumber) {
         return null;
+    }
+
+    @Override
+    public void deleteTransactionDetails(Long transactionId){
+        //
     }
 }

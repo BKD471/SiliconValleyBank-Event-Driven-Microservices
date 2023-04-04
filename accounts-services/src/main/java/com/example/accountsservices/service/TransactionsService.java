@@ -8,5 +8,6 @@ import java.util.List;
 public interface TransactionsService {
     TransactionsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender);
     TransactionsDto debitMoney(Long customerId,Long accountNumberSource,Long accountNumberDestination);
-    List<TransactionsDto> getAllTransactionsForAnAccount(Long customerId, Long accountNumber);
+    List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount(Long accountNumber);
+    void deleteTransactionDetails(Long transactionsId);
 }
