@@ -40,12 +40,17 @@ public class Beneficiary extends Audit{
     @Column(name = "adhar_num",nullable = false)
     private String adharNumber;
 
+    @Column(name="phone_num",nullable = false)
+    private String phoneNumber;
+
     @Column(name = "pan_num",nullable = false)
     private String panNumber;
 
     private String voterId;
 
     private String passPort;
+
+    private String driving_license;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="account_id",nullable = false)

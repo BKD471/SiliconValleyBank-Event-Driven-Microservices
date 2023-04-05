@@ -1,4 +1,4 @@
-package com.example.accountsservices.controller;
+package com.example.accountsservices.controller.Impl;
 
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.exception.AccountsException;

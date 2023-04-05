@@ -11,6 +11,5 @@ public interface AccountsRepository extends JpaRepository<Accounts,Long> {
     Accounts findByAccountNumber(Long accountNumber);
     List<Accounts> findAllByCustomerId(Long customerId);
     void deleteAllByCustomerId(Long customerId);
-    Accounts findByCustomerId(Long customerId);
     void deleteByAccountNumber(Long accountNumber);
 }

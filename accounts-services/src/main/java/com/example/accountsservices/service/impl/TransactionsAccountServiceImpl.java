@@ -15,24 +15,24 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
     private final TransactionsRepository transactionsRepository;
 
     TransactionsAccountServiceImpl(TransactionsRepository transactionsRepository,AccountsRepository accountsRepository){
+        super(accountsRepository);
         this.transactionsRepository=transactionsRepository;
         this.accountsRepository=accountsRepository;
     }
 
     /**
-     * @param customerId
-     * @param accountNumberRecipient
+     * @param accountNumber
      * @param accountNumberSender
+     * @param amount
      * @returnType AccountsDto
      */
     @Override
-    public TransactionsDto creditMoney(Long customerId, Long accountNumberRecipient, Long accountNumberSender) {
+    public TransactionsDto depositMoney(Long accountNumber,  Long accountNumberSender,Long amount) {
         return null;
     }
 
     @Override
-    public TransactionsDto debitMoney(Long customerId, Long accountNumberSource,
-                                  Long accountNumberDestination) {
+    public TransactionsDto transferMoneyToOtherAccounts(Long accountNumber,Long accountNumberDestination,Long amount) {
         return null;
     }
 
@@ -42,7 +42,8 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public void deleteTransactionDetails(Long transactionId){
-        //
+    public  TransactionsDto payBills(Long accountNumber,TransactionsDto transactionsDto){
+        return null;
     }
+
 }

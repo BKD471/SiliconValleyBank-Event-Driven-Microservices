@@ -5,5 +5,5 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TransactionsDto implements  Dto{
+public class TransactionsDto extends BaseDto {
 }

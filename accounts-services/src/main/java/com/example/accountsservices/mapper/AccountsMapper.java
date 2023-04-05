@@ -56,6 +56,7 @@ public class AccountsMapper {
         accountsDto.setAdharNumber(accounts.getAdharNumber());
         accountsDto.setPanNumber(accounts.getPanNumber());
         accountsDto.setVoterId(accounts.getVoterId());
+        accountsDto.setAccountStatus(accounts.getAccountStatus());
         accountsDto.setDrivingLicense(accounts.getDrivingLicense());
         accountsDto.setPassportNumber(accounts.getPassportNumber());
         accountsDto.setListOfBeneficiary(accounts.getListOfBeneficiary());
@@ -73,7 +74,7 @@ public class AccountsMapper {
         beneficiaryDto.setRelation(beneficiary.getRelation());
         beneficiaryDto.setVoterId(beneficiary.getVoterId());
         beneficiaryDto.setPanNumber(beneficiary.getPanNumber());
-        beneficiaryDto.setPassPort(beneficiary.getPassPort());
+        beneficiaryDto.setPassportNumber(beneficiary.getPassPort());
         beneficiaryDto.setDate_Of_Birth(beneficiary.getDate_Of_Birth());
         beneficiaryDto.setAccounts(beneficiary.getAccounts());
         return beneficiaryDto;
@@ -87,7 +88,7 @@ public class AccountsMapper {
         beneficiary.setRelation(beneficiaryDto.getRelation());
         beneficiary.setVoterId(beneficiaryDto.getVoterId());
         beneficiary.setPanNumber(beneficiaryDto.getPanNumber());
-        beneficiary.setPassPort(beneficiaryDto.getPassPort());
+        beneficiary.setPassPort(beneficiaryDto.getPassportNumber());
         beneficiary.setDate_Of_Birth(beneficiaryDto.getDate_Of_Birth());
         beneficiary.setAccounts(beneficiaryDto.getAccounts());
         return beneficiary;

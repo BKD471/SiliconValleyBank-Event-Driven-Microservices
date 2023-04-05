@@ -28,12 +28,17 @@ import java.util.stream.Collectors;
 @Service
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
+    private  static final Accounts.AccountStatus STATUS_BLOCKED= Accounts.AccountStatus.BLOCKED;
+    private  static final Accounts.AccountStatus STATUS_OPEN= Accounts.AccountStatus.OPEN;
+    private  static final String REQUEST_TO_BLOCK="block";
+
 
     /**
      * @paramType AccountsRepository
      * @returnType NA
      */
     AccountsServiceImpl(AccountsRepository accountsRepository) {
+        super(accountsRepository);
         this.accountsRepository = accountsRepository;
     }
 
@@ -45,6 +50,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         accounts.setCustomerAge(age);
         //set customer account opening balance
         accounts.setBalance(0L);
+        //set account status OPEN
+        accounts.setAccountStatus(STATUS_OPEN);
         return accounts;
     }
 
@@ -61,12 +68,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return AccountsMapper.mapToAccountsDto(savedProcessedAccount);
     }
 
-    private Accounts fetchAccountByAccountNumber(Long accountNumber) throws AccountsException {
-        Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByAccountNumber(accountNumber));
-        if (fetchedAccounts.isEmpty())
-            throw new AccountsException(String.format("No such accounts exist with id %s", accountNumber));
-        return fetchedAccounts.get();
-    }
+
 
     /**
      * @param customerId accountNumber
@@ -83,7 +85,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     public List<AccountsDto> getAllAccountsByCustomerId(Long customerId) throws AccountsException {
         Optional<List<Accounts>> allAccounts = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
         if (allAccounts.isEmpty()) throw new AccountsException(String.format("No such accounts present with this customer %s",customerId));
-        return allAccounts.get().stream().map(AccountsMapper::mapToAccountsDto).collect(Collectors.toList());
+        return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(AccountsMapper::mapToAccountsDto).collect(Collectors.toList());
     }
 
     private Accounts processAccountUpdate(AccountsDto accountsDto, Accounts accounts) {
@@ -131,7 +133,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     @Override
     public AccountsDto updateAccountByCustomerIdAndAccountNumber(Long customerId,
                                                                  Long accountNumber, AccountsDto accountsDto) throws AccountsException {
+        //get the account
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
+        //update
         Accounts updatedAccount = processAccountUpdate(accountsDto, foundAccount);
         Accounts savedUpdatedAccount = accountsRepository.save(updatedAccount);
         return AccountsMapper.mapToAccountsDto(savedUpdatedAccount);
@@ -148,11 +152,19 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     @Override
     public void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
         //checking whether customer exist
-        Optional<Accounts> foundCustomer = Optional.ofNullable(accountsRepository.findByCustomerId(customerId));
+        Optional<List<Accounts>> foundCustomer = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
         if (foundCustomer.isEmpty())
             throw new AccountsException(String.format("No such customer with id %s", customerId));
         //deleting it
         accountsRepository.deleteAllByCustomerId(customerId);
+    }
+
+    @Override
+    public  void blockAccount(Long accountNumber) throws  AccountsException{
+        //Get account
+        Accounts foundAccount=fetchAccountByAccountNumber(accountNumber,REQUEST_TO_BLOCK);
+        //Block it
+        foundAccount.setAccountStatus(STATUS_BLOCKED);
     }
 
 }

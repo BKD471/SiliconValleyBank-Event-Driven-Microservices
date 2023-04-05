@@ -5,11 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -31,7 +30,7 @@ public class Accounts extends Audit {
     private LocalDate DateOfBirth;
 
     @Column(name="cust_age")
-    private  int customerAge;
+    private  int age;
 
     @Column(name = "cust_balance")
     private Long balance;
@@ -63,6 +62,14 @@ public class Accounts extends Audit {
 
     @Column(name = "passport")
     private String passportNumber;
+
+    @Column(name="acc_status")
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
+
+    public enum AccountStatus{
+        OPEN,BLOCKED
+    }
 
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Beneficiary> listOfBeneficiary=new ArrayList<>();
