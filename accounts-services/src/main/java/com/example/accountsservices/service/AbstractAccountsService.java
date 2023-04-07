@@ -5,6 +5,7 @@ import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
+import com.example.accountsservices.exception.TransactionException;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.repository.AccountsRepository;
 
@@ -49,10 +50,9 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException{return null;}
     public void deleteBeneficiariesForAnAccount(Long accountNumber,Long beneficiaryId) throws  AccountsException , BeneficiaryException{/*dummy implementation*/}
     public  void  deleteAllBeneficiaries(Long accountNumber) throws AccountsException {/*dummy*/}
-    public TransactionsDto depositMoney(Long accountNumber, Long accountNumberSender, Long amount) {return null;}
-    public TransactionsDto transferMoneyToOtherAccounts(Long accountNumber,Long accountNumberDestination,Long amount) {return null;}
+    public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
     public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount( Long accountNumber) {return null;}
-    public TransactionsDto payBills(Long accountNumber,TransactionsDto transactionsDto){return null;}
+    public TransactionsDto payBills(TransactionsDto transactionsDto){return null;}
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
         Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByAccountNumber(accountNumber));
         if (fetchedAccounts.isEmpty())

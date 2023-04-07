@@ -16,10 +16,11 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountsDto extends BaseDto {
+public class AccountsDto extends AbstractBaseDto {
     private Long accountNumber;
     private Long customerId;
     private Long balance;
+    private  Long transactionAmount;
     private Accounts.AccountType accountType;
     private Accounts.AccountStatus accountStatus;
     private String branchAddress;

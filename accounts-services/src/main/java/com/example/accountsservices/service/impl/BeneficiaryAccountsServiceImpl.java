@@ -1,16 +1,15 @@
 package com.example.accountsservices.service.impl;
 
-import com.example.accountsservices.dto.AccountsDto;
+
 import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
-import com.example.accountsservices.mapper.AccountsMapper;
+import com.example.accountsservices.mapper.Mapper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,13 +21,10 @@ import java.util.stream.Collectors;
 @Service
 public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
     private final BeneficiaryRepository beneficiaryRepository;
-    private  final AccountsRepository accountsRepository;
-    private  static final Accounts.AccountStatus STATUS_BLOCKED= Accounts.AccountStatus.BLOCKED;
 
     BeneficiaryAccountsServiceImpl(AccountsRepository accountsRepository,
                                    BeneficiaryRepository beneficiaryRepository) {
         super(accountsRepository);
-        this.accountsRepository = accountsRepository;
         this.beneficiaryRepository = beneficiaryRepository;
     }
 
@@ -44,7 +40,7 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
     public BeneficiaryDto addBeneficiary(Long customerId, Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
 
         //Updating the beneficiary info & saving it
-        Beneficiary beneficiaryAccount = AccountsMapper.mapToBeneficiary(beneficiaryDto);
+        Beneficiary beneficiaryAccount = Mapper.mapToBeneficiary(beneficiaryDto);
         Beneficiary savedBeneficiaryAccount = beneficiaryRepository.save(beneficiaryAccount);
         Beneficiary processedBeneficiaryAccount = setBeneficiaryAgeFromDOB(savedBeneficiaryAccount);
         Beneficiary savedAndProcessedBeneficiaryAccount = beneficiaryRepository.save(processedBeneficiaryAccount);
@@ -56,7 +52,7 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
         List<Beneficiary> beneficiaries = new ArrayList<>();
         beneficiaries.add(savedAndProcessedBeneficiaryAccount);
         fetchedAccount.setListOfBeneficiary(beneficiaries);
-        return AccountsMapper.mapToBeneficiaryDto(savedAndProcessedBeneficiaryAccount);
+        return Mapper.mapToBeneficiaryDto(savedAndProcessedBeneficiaryAccount);
     }
 
 
@@ -65,7 +61,7 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
         //get the account
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
         //get all beneficiaries
-        return fetchedAccount.getListOfBeneficiary().stream().map(AccountsMapper::mapToBeneficiaryDto).collect(Collectors.toList());
+        return fetchedAccount.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto).collect(Collectors.toList());
     }
 
     private Beneficiary processedBeneficiaryAccount(Beneficiary oldBeneficiaryData, Beneficiary newBeneficiaryData) {
@@ -132,10 +128,10 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
             throw new BeneficiaryException(String.format("No such beneficiary accounts exist with beneficiary id %s", BENEFICIARY_ID));
 
         //update
-        Beneficiary newBeneficiaryData = AccountsMapper.mapToBeneficiary(beneficiaryDto);
+        Beneficiary newBeneficiaryData = Mapper.mapToBeneficiary(beneficiaryDto);
         Beneficiary processedAccount = processedBeneficiaryAccount(beneficiaryAccount.get(), newBeneficiaryData);
         Beneficiary savedProcessedAccount = beneficiaryRepository.save(processedAccount);
-        return AccountsMapper.mapToBeneficiaryDto(savedProcessedAccount);
+        return Mapper.mapToBeneficiaryDto(savedProcessedAccount);
     }
 
     @Override

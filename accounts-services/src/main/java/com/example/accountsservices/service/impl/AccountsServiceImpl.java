@@ -2,7 +2,7 @@ package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.exception.AccountsException;
-import com.example.accountsservices.mapper.AccountsMapper;
+import com.example.accountsservices.mapper.Mapper;
 import com.example.accountsservices.model.Accounts;
 
 import com.example.accountsservices.repository.AccountsRepository;
@@ -47,7 +47,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //calculate & set customer age from Dob
         LocalDate Date_of_birth = accounts.getDateOfBirth();
         int age = LocalDate.now().getYear() - Date_of_birth.getYear();
-        accounts.setCustomerAge(age);
+        accounts.setAge(age);
         //set customer account opening balance
         accounts.setBalance(0L);
         //set account status OPEN
@@ -61,11 +61,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      */
     @Override
     public AccountsDto createAccounts(@RequestBody AccountsDto accountsDto) {
-        Accounts account = AccountsMapper.mapToAccounts(accountsDto);
+        Accounts account = Mapper.mapToAccounts(accountsDto);
         Accounts savedAccounts = accountsRepository.save(account);
         Accounts processedAccount = processAccountInformation(savedAccounts);
         Accounts savedProcessedAccount = accountsRepository.save(processedAccount);
-        return AccountsMapper.mapToAccountsDto(savedProcessedAccount);
+        return Mapper.mapToAccountsDto(savedProcessedAccount);
     }
 
 
@@ -78,14 +78,14 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     @Override
     public AccountsDto getAccountInfoByCustomerIdAndAccountNumber(Long customerId, Long accountNumber) throws AccountsException {
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
-        return AccountsMapper.mapToAccountsDto(foundAccount);
+        return Mapper.mapToAccountsDto(foundAccount);
     }
 
     @Override
     public List<AccountsDto> getAllAccountsByCustomerId(Long customerId) throws AccountsException {
         Optional<List<Accounts>> allAccounts = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
         if (allAccounts.isEmpty()) throw new AccountsException(String.format("No such accounts present with this customer %s",customerId));
-        return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(AccountsMapper::mapToAccountsDto).collect(Collectors.toList());
+        return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(Mapper::mapToAccountsDto).collect(Collectors.toList());
     }
 
     private Accounts processAccountUpdate(AccountsDto accountsDto, Accounts accounts) {
@@ -138,7 +138,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //update
         Accounts updatedAccount = processAccountUpdate(accountsDto, foundAccount);
         Accounts savedUpdatedAccount = accountsRepository.save(updatedAccount);
-        return AccountsMapper.mapToAccountsDto(savedUpdatedAccount);
+        return Mapper.mapToAccountsDto(savedUpdatedAccount);
     }
 
     @Override

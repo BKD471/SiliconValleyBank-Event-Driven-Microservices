@@ -23,8 +23,8 @@ public class Transactions extends AuditTransactions{
     @Column(name="trans-amnt",nullable = false)
     private Long transactionAmount;
 
-    @Column(name = "trans-acnt", nullable = false)
-    private String transactedAccount;
+    @Column(name = "trans-acnt-num", nullable = false)
+    private String transactedAccountNumber;
 
     @Column(name = "trans-type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -39,7 +39,7 @@ public class Transactions extends AuditTransactions{
     private DescriptionType description;
 
     public enum DescriptionType{
-           EMI,DONATION,RENT,EBILLPAYMENT,BUSINESS,INVESTMENT,FAMILY,OTHERS
+           EMI,CREDIT_CARD_BILL,DONATION,RENT,SALARY,E_SHOPPING,BUSINESS,INVESTMENT,FAMILY,ELECTRICITY,OTHERS
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
