@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountsDto extends AbstractBaseDto {
+public class AccountsDto extends BaseDto {
     private Long accountNumber;
     private Long customerId;
     private Long balance;

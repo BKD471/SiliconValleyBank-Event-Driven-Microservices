@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionsDto extends AbstractBaseDto {
+public class TransactionsDto extends AbstractParentDto {
     private LocalDateTime transactionTimeStamp;
     private Long transactionId;
     private Long transactionAmount;

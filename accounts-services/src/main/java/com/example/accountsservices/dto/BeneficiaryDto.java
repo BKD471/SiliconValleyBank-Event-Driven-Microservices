@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public  class BeneficiaryDto extends AbstractBaseDto {
+public  class BeneficiaryDto extends BaseDto {
     private Long beneficiaryId;
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;

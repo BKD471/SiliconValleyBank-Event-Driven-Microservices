@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public abstract class AbstractBaseDto {
+public class BaseDto extends  AbstractParentDto{
     protected LocalDate DateOfBirth;
     protected int age;
     protected String phoneNumber;
