@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class TransactionsDto extends AbstractParentDto {
     private LocalDateTime transactionTimeStamp;
     private Long transactionId;

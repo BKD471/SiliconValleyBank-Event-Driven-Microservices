@@ -14,8 +14,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class AccountsDto extends BaseDto {
     private Long accountNumber;
     private Long customerId;
