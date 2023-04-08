@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface ITransactionsService {
    TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException ,AccountsException;
-    List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount(Long accountNumber);
-    TransactionsDto payBills(TransactionsDto transactionsDto);
+    List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount(Long accountNumber) throws AccountsException;
 }

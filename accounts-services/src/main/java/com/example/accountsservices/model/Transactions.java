@@ -39,7 +39,7 @@ public class Transactions extends AuditTransactions{
     private DescriptionType description;
 
     public enum DescriptionType{
-           EMI,CREDIT_CARD_BILL,DONATION,RENT,SALARY,E_SHOPPING,BUSINESS,INVESTMENT,FAMILY,ELECTRICITY,OTHERS
+           EMI,CREDIT_CARD_BILL_PAYMENT,DONATION,RENT,SALARY,E_SHOPPING,BUSINESS,INVESTMENT,FAMILY,ELECTRICITY,OTHERS
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

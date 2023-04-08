@@ -3,12 +3,9 @@ package com.example.accountsservices.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,9 +14,5 @@ import java.time.LocalTime;
 public class AuditTransactions {
     @CreatedDate
     @Column(updatable = false,nullable = false)
-    protected LocalTime transactionTimeStamp;
-
-    @CreatedDate
-    @Column(updatable = false,nullable = false)
-    protected LocalDate transactionDate;
+    protected LocalDateTime transactionTimeStamp;
 }

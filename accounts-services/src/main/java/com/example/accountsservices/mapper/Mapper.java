@@ -107,6 +107,7 @@ public class Mapper {
     public  static  TransactionsDto mapToTransactionsDto(Transactions transactions){
         TransactionsDto transactionsDto=new TransactionsDto();
         transactionsDto.setTransactionAmount(transactions.getTransactionAmount());
+        transactionsDto.setTransactionTimeStamp(transactions.getTransactionTimeStamp());
         transactionsDto.setTransactionId(transactions.getTransactionId());
         transactionsDto.setTransactedAccountNumber(transactions.getTransactedAccountNumber());
         transactionsDto.setTransactionType(transactions.getTransactionType());

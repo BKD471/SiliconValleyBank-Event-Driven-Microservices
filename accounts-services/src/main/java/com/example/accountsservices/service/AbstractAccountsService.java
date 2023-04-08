@@ -51,8 +51,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public void deleteBeneficiariesForAnAccount(Long accountNumber,Long beneficiaryId) throws  AccountsException , BeneficiaryException{/*dummy implementation*/}
     public  void  deleteAllBeneficiaries(Long accountNumber) throws AccountsException {/*dummy*/}
     public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
-    public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount( Long accountNumber) {return null;}
-    public TransactionsDto payBills(TransactionsDto transactionsDto){return null;}
+    public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
         Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByAccountNumber(accountNumber));
         if (fetchedAccounts.isEmpty())
