@@ -12,13 +12,8 @@ import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.util.SortDateComparator;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionsAccountServiceImpl extends AbstractAccountsService {
@@ -109,7 +104,7 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
         return listOfTransactions.stream().map(Mapper::mapToTransactionsDto).toList();
     }
 
-    public TransactionsDto payBills(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+    private TransactionsDto payBills(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         switch (transactionsDto.getDescription()) {
             // this will be built along with loan microservices
             //we need to call Loan microservices apis

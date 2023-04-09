@@ -37,7 +37,7 @@ public class BeneficiaryAccountsServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public BeneficiaryDto addBeneficiary(Long customerId, Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
+    public BeneficiaryDto addBeneficiary( Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
 
         //Updating the beneficiary info & saving it
         Beneficiary beneficiaryAccount = Mapper.mapToBeneficiary(beneficiaryDto);

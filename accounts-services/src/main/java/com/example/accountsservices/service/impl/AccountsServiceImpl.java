@@ -71,12 +71,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
 
     /**
-     * @param customerId accountNumber
+     * @param accountNumber accountNumber
      * @paramType Long
      * @returnType AccountsDto
      */
     @Override
-    public AccountsDto getAccountInfoByCustomerIdAndAccountNumber(Long customerId, Long accountNumber) throws AccountsException {
+    public AccountsDto getAccountInfo(Long accountNumber) throws AccountsException {
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
         return Mapper.mapToAccountsDto(foundAccount);
     }
@@ -131,8 +131,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     @Override
-    public AccountsDto updateAccountByCustomerIdAndAccountNumber(Long customerId,
-                                                                 Long accountNumber, AccountsDto accountsDto) throws AccountsException {
+    public AccountsDto updateAccountDetails(Long accountNumber, AccountsDto accountsDto) throws AccountsException {
         //get the account
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
         //update
