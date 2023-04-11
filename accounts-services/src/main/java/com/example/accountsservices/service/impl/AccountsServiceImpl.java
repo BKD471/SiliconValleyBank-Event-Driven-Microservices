@@ -82,9 +82,10 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public List<AccountsDto> getAllAccountsByCustomerId(Long customerId) throws AccountsException {
+    public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {
+        String methodName="getAllAccountsByCustomerId(Long) in AccountsServiceImpl";
         Optional<List<Accounts>> allAccounts = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
-        if (allAccounts.isEmpty()) throw new AccountsException(String.format("No such accounts present with this customer %s",customerId));
+        if (allAccounts.isEmpty()) throw new AccountsException(String.format("No such accounts present with this customer %s",customerId),methodName);
         return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(Mapper::mapToAccountsDto).collect(Collectors.toList());
     }
 
@@ -131,8 +132,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     @Override
-    public AccountsDto updateAccountDetails(Long accountNumber, AccountsDto accountsDto) throws AccountsException {
+    public AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException {
         //get the account
+        Long accountNumber=accountsDto.getAccountNumber();
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
         //update
         Accounts updatedAccount = processAccountUpdate(accountsDto, foundAccount);
@@ -150,10 +152,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     @Override
     public void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
+        String methodName="deleteAllAccountsByCustomer(Long ) in AccountsServiceImpl";
         //checking whether customer exist
         Optional<List<Accounts>> foundCustomer = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
         if (foundCustomer.isEmpty())
-            throw new AccountsException(String.format("No such customer with id %s", customerId));
+            throw new AccountsException(String.format("No such customer with id %s", customerId),methodName);
         //deleting it
         accountsRepository.deleteAllByCustomerId(customerId);
     }

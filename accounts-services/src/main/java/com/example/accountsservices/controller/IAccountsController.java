@@ -4,16 +4,15 @@ import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.exception.AccountsException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-@RestController
+
 @RequestMapping("/api/v1/accounts")
 public interface IAccountsController {
-    @PostMapping
+    @PostMapping("/create")
     ResponseEntity<AccountsDto> createAccounts(@RequestBody AccountsDto accountsDto);
 
-    @PutMapping
+    @PutMapping("/update/{num}")
     ResponseEntity<AccountsDto> updateAccount(@RequestBody AccountsDto accountsDto) throws AccountsException;
 
     @GetMapping("/{id}")
@@ -26,7 +25,7 @@ public interface IAccountsController {
     @DeleteMapping("/{num}")
     ResponseEntity<String> deleteAccount(@PathVariable(name="num") Long accountNumber) throws  AccountsException;
 
-    @DeleteMapping("/all/{id}")
+    @DeleteMapping("/delete-all/{id}")
     ResponseEntity<String> deleteAllAccountsByCustomer(@PathVariable(name="id") Long customerId) throws AccountsException;
 
     @PutMapping("/block/{num}")

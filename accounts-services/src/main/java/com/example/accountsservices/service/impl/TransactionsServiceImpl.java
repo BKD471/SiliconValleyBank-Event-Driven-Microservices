@@ -16,19 +16,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class TransactionsAccountServiceImpl extends AbstractAccountsService {
+public class TransactionsServiceImpl extends AbstractAccountsService {
     private final Transactions.TransactionType CREDIT = Transactions.TransactionType.CREDIT;
     private final Transactions.TransactionType DEBIT = Transactions.TransactionType.DEBIT;
     private final TransactionsRepository transactionsRepository;
     private final AccountsRepository accountsRepository;
 
-    TransactionsAccountServiceImpl(TransactionsRepository transactionsRepository, AccountsRepository accountsRepository) {
+    TransactionsServiceImpl(TransactionsRepository transactionsRepository, AccountsRepository accountsRepository) {
         super(accountsRepository);
         this.transactionsRepository = transactionsRepository;
         this.accountsRepository = accountsRepository;
     }
 
     private Transactions updateBalance(Accounts accounts, Transactions transactions, Long amount, Transactions.TransactionType transactionType) throws TransactionException {
+        String methodName="updateBalance(Accounts , Transactions , Long , Transactions.TransactionType ) in TransactionsServiceImpl";
+
+
         Long previousBalance = accounts.getBalance();
 
         if (CREDIT.equals(transactionType)) {
@@ -37,7 +40,7 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
         }
         if (DEBIT.equals(transactionType)) {
             if (previousBalance >= amount) accounts.setBalance(previousBalance - amount);
-            else throw new TransactionException(".....");
+            else throw new TransactionException("Insufficient Balance",methodName);
             transactions.setTransactionType(DEBIT);
         }
 
@@ -76,6 +79,8 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
     //so just call payOrDeposit method to process the transaction
     @Override
     public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+        String methodName="transactionsExecutor(TransactionsDto) in TransactionsServiceImpl";
+
         switch (transactionsDto.getTransactionType()) {
             case CREDIT -> {
                 return payOrDepositMoney(transactionsDto, CREDIT);
@@ -83,7 +88,7 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
             case DEBIT -> {
                 return payBills(transactionsDto);
             }
-            default -> throw new TransactionException("");
+            default -> throw new TransactionException("Please Specify a valid transaction type",methodName);
         }
     }
 
@@ -105,6 +110,7 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
     }
 
     private TransactionsDto payBills(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+         String methodName="payBills(TransactionDto) in TransactionsServiceImpl";
         switch (transactionsDto.getDescription()) {
             // this will be built along with loan microservices
             //we need to call Loan microservices apis
@@ -147,7 +153,7 @@ public class TransactionsAccountServiceImpl extends AbstractAccountsService {
                 return payOrDepositMoney(transactionsDto, DEBIT);
             }
 
-            default -> throw  new TransactionException("");
+            default -> throw  new TransactionException("we do not support this types of transaction",methodName);
         }
         return transactionsDto;
     }

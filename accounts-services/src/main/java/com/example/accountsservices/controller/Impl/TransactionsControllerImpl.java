@@ -1,20 +1,20 @@
 package com.example.accountsservices.controller.Impl;
 
 import com.example.accountsservices.controller.AbstractParentController;
+import com.example.accountsservices.controller.ITransactionsController;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
-import com.example.accountsservices.service.impl.TransactionsAccountServiceImpl;
+import com.example.accountsservices.service.impl.TransactionsServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 @RestController
-public class TransactionsController extends AbstractParentController {
-    private final TransactionsAccountServiceImpl transactionsAccountService;
-    TransactionsController(TransactionsAccountServiceImpl transactionsAccountService){
-        this.transactionsAccountService=transactionsAccountService;
+public class TransactionsControllerImpl extends AbstractParentController implements ITransactionsController{
+    private final TransactionsServiceImpl transactionsService;
+    TransactionsControllerImpl(TransactionsServiceImpl transactionsService){
+        this.transactionsService=transactionsService;
     }
 
 

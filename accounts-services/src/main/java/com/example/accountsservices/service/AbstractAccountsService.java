@@ -40,8 +40,8 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
         return null;
     }
     public AccountsDto getAccountInfo(Long accountNumber) throws AccountsException {return null;}
-    public List<AccountsDto> getAllAccountsByCustomerId(Long customerId) throws AccountsException {return null;}
-    public AccountsDto updateAccountDetails(Long accountNumber, AccountsDto accountsDto) throws AccountsException {return null;}
+    public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {return null;}
+    public AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException {return null;}
     public void deleteAccount(Long accountNumber) throws AccountsException {/*dummy implementations*/}
     public  void blockAccount(Long accountNumber) throws  AccountsException{/*dummy implementation*/}
     public  void deleteAllAccountsByCustomer(Long customerId) throws  AccountsException{/*dummy implementations*/}
@@ -53,13 +53,14 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
     public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
+        String methodName="fetchAccountByAccountNumber() in AbstractAccountsService";
         Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByAccountNumber(accountNumber));
         if (fetchedAccounts.isEmpty())
-            throw new AccountsException(String.format("No such accounts exist with id %s", accountNumber));
+            throw new AccountsException(String.format("No such accounts exist with id %s", accountNumber),methodName);
 
         boolean checkAccountIsBlocked=STATUS_BLOCKED.equals(fetchedAccounts.get().getAccountStatus());
-        if(request.length>0 && request[0].equalsIgnoreCase(REQUEST_TO_BLOCK) && checkAccountIsBlocked) throw new AccountsException(String.format("Account of id %s is already blocked",accountNumber));
-        else if(checkAccountIsBlocked) throw new AccountsException(String.format("Account of id %s is in %s status",accountNumber,STATUS_BLOCKED));
+        if(request.length>0 && request[0].equalsIgnoreCase(REQUEST_TO_BLOCK) && checkAccountIsBlocked) throw new AccountsException(String.format("Account of id %s is already blocked",accountNumber),methodName);
+        else if(checkAccountIsBlocked) throw new AccountsException(String.format("Account of id %s is in %s status",accountNumber,STATUS_BLOCKED),methodName);
         return fetchedAccounts.get();
     }
 }
