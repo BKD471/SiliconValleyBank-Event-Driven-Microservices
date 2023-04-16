@@ -14,11 +14,9 @@ import java.util.List;
 @RestController
 public class AccountsControllerImpl extends AbstractParentController implements IAccountsController{
     private final AccountsServiceImpl accountsService;
-
     AccountsControllerImpl(AccountsServiceImpl accountsService) {
         this.accountsService = accountsService;
     }
-
 
     /**
      * @param accountsDto

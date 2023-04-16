@@ -10,6 +10,8 @@ public interface IAccountsService {
     AccountsDto getAccountInfo(Long accountNumber) throws AccountsException;
     List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException;
     AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException;
+    AccountsDto getCreditScore(Long accountNUmber);
+    AccountsDto updateCreditScore(AccountsDto accountsDto);
     void deleteAccount(Long accountNumber) throws AccountsException;
     void deleteAllAccountsByCustomer(Long customerId) throws  AccountsException;
     void blockAccount(Long accountNumber) throws  AccountsException;

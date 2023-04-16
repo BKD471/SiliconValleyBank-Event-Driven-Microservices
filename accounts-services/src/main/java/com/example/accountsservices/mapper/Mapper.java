@@ -24,16 +24,7 @@ public class Mapper {
         account.setCustomerId(accountsDto.getCustomerId());
         account.setBalance(accountsDto.getBalance());
         account.setAccountType(accountsDto.getAccountType());
-        account.setBranchAddress(accountsDto.getBranchAddress());
-
-        account.setDateOfBirth(accountsDto.getDateOfBirth());
-        account.setAge(accountsDto.getAge());
-        account.setPhoneNumber(accountsDto.getPhoneNumber());
-        account.setAdharNumber(accountsDto.getAdharNumber());
-        account.setPanNumber(accountsDto.getPanNumber());
-        account.setVoterId(accountsDto.getVoterId());
-        account.setDrivingLicense(accountsDto.getDrivingLicense());
-        account.setPassportNumber(accountsDto.getPassportNumber());
+        account.setHomeBranch(accountsDto.getHomeBranch());
         return account;
     }
 
@@ -49,18 +40,12 @@ public class Mapper {
         accountsDto.setBalance(accounts.getBalance());
         accountsDto.setAccountType(accounts.getAccountType());
         accountsDto.setAccountStatus(accounts.getAccountStatus());
-        accountsDto.setBranchAddress(accounts.getBranchAddress());
+        accountsDto.setBranchCode(accounts.getBranchCode());
+        accountsDto.setHomeBranch(accounts.getHomeBranch());
+        accountsDto.setCashLimitPerDay(accounts.getCashLimitPerDay());
+        accountsDto.setCreditScore(accounts.getCreditScore());
         accountsDto.setListOfBeneficiary(accounts.getListOfBeneficiary());
         accountsDto.setListOfTransactions(accounts.getListOfTransactions());
-
-        accountsDto.setDateOfBirth(accounts.getDateOfBirth());
-        accountsDto.setAge(accounts.getAge());
-        accountsDto.setPhoneNumber(accounts.getPhoneNumber());
-        accountsDto.setAdharNumber(accounts.getAdharNumber());
-        accountsDto.setPanNumber(accounts.getPanNumber());
-        accountsDto.setVoterId(accounts.getVoterId());
-        accountsDto.setDrivingLicense(accounts.getDrivingLicense());
-        accountsDto.setPassportNumber(accounts.getPassportNumber());
         return accountsDto;
     }
 

@@ -28,26 +28,24 @@ import java.util.stream.Collectors;
 @Service
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
-    private  static final Accounts.AccountStatus STATUS_BLOCKED= Accounts.AccountStatus.BLOCKED;
-    private  static final Accounts.AccountStatus STATUS_OPEN= Accounts.AccountStatus.OPEN;
-    private  static final String REQUEST_TO_BLOCK="block";
+    private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
+    private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
+    private final String REQUEST_TO_BLOCK = "block";
+    private final String UPDATE_CASH_LIMIT="update_cash_limit";
+    private final String GENERATE_CREDIT_SCORE="gen_credit_score";
 
 
     /**
      * @paramType AccountsRepository
      * @returnType NA
      */
-    AccountsServiceImpl(AccountsRepository accountsRepository) {
+    public AccountsServiceImpl(AccountsRepository accountsRepository) {
         super(accountsRepository);
         this.accountsRepository = accountsRepository;
     }
 
 
     private Accounts processAccountInformation(Accounts accounts) {
-        //calculate & set customer age from Dob
-        LocalDate Date_of_birth = accounts.getDateOfBirth();
-        int age = LocalDate.now().getYear() - Date_of_birth.getYear();
-        accounts.setAge(age);
         //set customer account opening balance
         accounts.setBalance(0L);
         //set account status OPEN
@@ -69,7 +67,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
 
-
     /**
      * @param accountNumber accountNumber
      * @paramType Long
@@ -83,47 +80,34 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     @Override
     public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {
-        String methodName="getAllAccountsByCustomerId(Long) in AccountsServiceImpl";
+        String methodName = "getAllAccountsByCustomerId(Long) in AccountsServiceImpl";
         Optional<List<Accounts>> allAccounts = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
-        if (allAccounts.isEmpty()) throw new AccountsException(String.format("No such accounts present with this customer %s",customerId),methodName);
+        if (allAccounts.isEmpty())
+            throw new AccountsException(String.format("No such accounts present with this customer %s", customerId), methodName);
         return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(Mapper::mapToAccountsDto).collect(Collectors.toList());
     }
 
-    private Accounts processAccountUpdate(AccountsDto accountsDto, Accounts accounts) {
-        LocalDate oldDateOfBirth = accounts.getDateOfBirth();
-        LocalDate newDateOfBirth = accountsDto.getDateOfBirth();
-        String oldBranchAddress = accounts.getBranchAddress();
-        String newBranchAddress = accountsDto.getBranchAddress();
-        String oldPhoneNumber = accounts.getPhoneNumber();
-        String newPhoneNumber = accountsDto.getPhoneNumber();
-        String oldAdharNumber = accounts.getAdharNumber();
-        String newAdharNumber = accountsDto.getAdharNumber();
-        String oldPanNumber = accounts.getPanNumber();
-        String newPanNumber = accountsDto.getPanNumber();
-        String oldVoterId = accounts.getVoterId();
-        String newVoterId = accountsDto.getVoterId();
-        String oldDrivingLicense = accounts.getDrivingLicense();
-        String newDrivingLicense = accountsDto.getDrivingLicense();
-        String oldPassportNumber = accounts.getPassportNumber();
-        String newPassportNumber = accountsDto.getPassportNumber();
+    private boolean updateValidator(Accounts accounts,String ...request) {
 
-        if (null != newDateOfBirth && !newDateOfBirth.equals(oldDateOfBirth))
-            accounts.setDateOfBirth(newDateOfBirth);
-        if (null != newBranchAddress && !newBranchAddress.equalsIgnoreCase(oldBranchAddress))
-            accounts.setBranchAddress(newBranchAddress);
-        if (null != newPhoneNumber && !newPhoneNumber.equalsIgnoreCase(oldPhoneNumber))
-            accounts.setPhoneNumber(newPhoneNumber);
-        if (null != newAdharNumber && !newAdharNumber.equalsIgnoreCase(oldAdharNumber))
-            accounts.setPhoneNumber(newAdharNumber);
-        if (null != newPanNumber && !newPanNumber.equalsIgnoreCase(oldPanNumber))
-            accounts.setPanNumber(newPanNumber);
-        if (null != newVoterId && !newVoterId.equalsIgnoreCase(oldVoterId))
-            accounts.setVoterId(newVoterId);
-        if (null != newDrivingLicense && !newDrivingLicense.equalsIgnoreCase(oldDrivingLicense))
-            accounts.setDrivingLicense(newDrivingLicense);
-        if (null != newPassportNumber && !newPassportNumber.equalsIgnoreCase(oldPassportNumber))
-            accounts.setPassportNumber(newPassportNumber);
+        return false;
+    }
 
+    private Accounts processAccountUpdate(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
+        String methodName = "processAccountUpdate(AccountsDto,Accounts) in AccountsServiceImpl";
+        String oldHomeBranch = accounts.getHomeBranch();
+        String newHomeBranch = accountsDto.getHomeBranch();
+
+        Long oldCashLimit = accounts.getCashLimitPerDay();
+        Long newCashLimit = accountsDto.getCashLimitPerDay();
+
+
+        if (null != newHomeBranch && !newHomeBranch.equalsIgnoreCase(oldHomeBranch))
+            accounts.setHomeBranch(newHomeBranch);
+        if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
+            if (updateValidator(accounts,UPDATE_CASH_LIMIT)) accounts.setCashLimitPerDay(newCashLimit);
+            else throw new AccountsException(String.format("Yr Account with id %s must be at least " +
+                    "six months old ", accounts.getAccountNumber()), methodName);
+        }
         return accounts;
     }
 
@@ -134,12 +118,22 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     @Override
     public AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException {
         //get the account
-        Long accountNumber=accountsDto.getAccountNumber();
+        Long accountNumber = accountsDto.getAccountNumber();
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
         //update
         Accounts updatedAccount = processAccountUpdate(accountsDto, foundAccount);
         Accounts savedUpdatedAccount = accountsRepository.save(updatedAccount);
         return Mapper.mapToAccountsDto(savedUpdatedAccount);
+    }
+
+    @Override
+    public AccountsDto getCreditScore(Long accountNUmber){
+        return null;
+    }
+
+    @Override
+    public AccountsDto updateCreditScore(AccountsDto accountsDto) {
+        return null;
     }
 
     @Override
@@ -152,19 +146,19 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     @Override
     public void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
-        String methodName="deleteAllAccountsByCustomer(Long ) in AccountsServiceImpl";
+        String methodName = "deleteAllAccountsByCustomer(Long ) in AccountsServiceImpl";
         //checking whether customer exist
         Optional<List<Accounts>> foundCustomer = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
         if (foundCustomer.isEmpty())
-            throw new AccountsException(String.format("No such customer with id %s", customerId),methodName);
+            throw new AccountsException(String.format("No such customer with id %s", customerId), methodName);
         //deleting it
         accountsRepository.deleteAllByCustomerId(customerId);
     }
 
     @Override
-    public  void blockAccount(Long accountNumber) throws  AccountsException{
+    public void blockAccount(Long accountNumber) throws AccountsException {
         //Get account
-        Accounts foundAccount=fetchAccountByAccountNumber(accountNumber,REQUEST_TO_BLOCK);
+        Accounts foundAccount = fetchAccountByAccountNumber(accountNumber, REQUEST_TO_BLOCK);
         //Block it
         foundAccount.setAccountStatus(STATUS_BLOCKED);
     }

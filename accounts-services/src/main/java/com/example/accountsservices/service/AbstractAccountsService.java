@@ -42,6 +42,8 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public AccountsDto getAccountInfo(Long accountNumber) throws AccountsException {return null;}
     public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {return null;}
     public AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException {return null;}
+    public AccountsDto getCreditScore(Long accountNUmber){return null;}
+    public AccountsDto updateCreditScore(AccountsDto accountsDto) {return null;}
     public void deleteAccount(Long accountNumber) throws AccountsException {/*dummy implementations*/}
     public  void blockAccount(Long accountNumber) throws  AccountsException{/*dummy implementation*/}
     public  void deleteAllAccountsByCustomer(Long customerId) throws  AccountsException{/*dummy implementations*/}

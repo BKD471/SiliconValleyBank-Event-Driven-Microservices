@@ -27,4 +27,19 @@ public class Customer{
 
     @Column(nullable = false,unique = true,name="mobile_num")
     private String mobileNumber;
+
+    @Column(name = "adhar_num", nullable = false)
+    private String adharNumber;
+
+    @Column(name = "pan_num", nullable = false)
+    private String panNumber;
+
+    @Column(name = "voter_id")
+    private String voterId;
+
+    @Column(name = "driving_license")
+    private String drivingLicense;
+
+    @Column(name = "passport")
+    private String passportNumber;
 }

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 public class BaseDto extends  AbstractParentDto{
     protected LocalDate DateOfBirth;
     protected int age;
+    protected String email;
     protected String phoneNumber;
     protected String adharNumber;
     protected String panNumber;

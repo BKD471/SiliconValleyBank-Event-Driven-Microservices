@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>bank-data</artifactId>
+	<artifactId>customerbase</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bank-data</name>
 	<description>Demo project for Bank Data</description>
@@ -17,6 +17,11 @@
 		<java.version>19</java.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>com.example</groupId>
+			<artifactId>accounts-services</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.persistence/persistence-api -->
 		<dependency>
 			<groupId>javax.persistence</groupId>

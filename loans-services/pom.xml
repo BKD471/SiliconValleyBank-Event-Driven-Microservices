@@ -20,7 +20,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.example</groupId>
-			<artifactId>bank-data</artifactId>
+			<artifactId>customerbase</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
