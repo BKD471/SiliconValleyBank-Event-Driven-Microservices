@@ -10,17 +10,15 @@
         <module name="accounts-services" />
         <module name="card-services" />
         <module name="loans-services" />
-        <module name="customerbase" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="base-domain" target="19" />
+      <module name="customerbase" target="19" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="accounts-services" options="-parameters" />
-      <module name="base-domain" options="" />
       <module name="card-services" options="-parameters" />
       <module name="customerbase" options="-parameters" />
       <module name="loans-services" options="-parameters" />

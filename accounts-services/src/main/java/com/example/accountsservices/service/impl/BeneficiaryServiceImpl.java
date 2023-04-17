@@ -71,7 +71,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         String newBeneficiaryAdharNumber = newBeneficiaryData.getAdharNumber();
         Beneficiary.RELATION newBeneficaryRelation = newBeneficiaryData.getRelation();
         String newBeneficiaryPanNumber = newBeneficiaryData.getPanNumber();
-        String newBeneficiaryPassport = newBeneficiaryData.getPassPort();
+        String newBeneficiaryPassport = newBeneficiaryData.getPassportNumber();
         String newBeneficiaryVoterId = newBeneficiaryData.getVoterId();
 
         String oldBeneficiaryName = oldBeneficiaryData.getBeneficiaryName();
@@ -80,7 +80,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         String oldBeneficiaryAdharNumber = oldBeneficiaryData.getAdharNumber();
         Beneficiary.RELATION oldBeneficiaryRelation = oldBeneficiaryData.getRelation();
         String oldBeneficiaryPanNumber = oldBeneficiaryData.getPanNumber();
-        String oldBeneficiaryPassport = oldBeneficiaryData.getPassPort();
+        String oldBeneficiaryPassport = oldBeneficiaryData.getPassportNumber();
         String oldBeneficiaryVoterId = oldBeneficiaryData.getVoterId();
 
         if (null != newBeneficiaryName && !newBeneficiaryName.equalsIgnoreCase(oldBeneficiaryName))
@@ -102,7 +102,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
             newBeneficiaryData.setPanNumber(newBeneficiaryPanNumber);
 
         if (null != newBeneficiaryPassport && !newBeneficiaryPassport.equalsIgnoreCase(oldBeneficiaryPassport))
-            newBeneficiaryData.setPassPort(newBeneficiaryPassport);
+            newBeneficiaryData.setPassportNumber(newBeneficiaryPassport);
 
         if (null != newBeneficiaryVoterId && !newBeneficiaryVoterId.equalsIgnoreCase(oldBeneficiaryVoterId))
             newBeneficiaryData.setVoterId(newBeneficiaryVoterId);

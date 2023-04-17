@@ -23,9 +23,6 @@ public class Accounts extends Audit {
     @Column(nullable = false, unique = true, name = "account_num")
     private Long accountNumber;
 
-    @Column(name = "cust_id",nullable = false)
-    private Long customerId;
-
 
     @Column(name = "cust_balance")
     private Long balance;
@@ -39,13 +36,17 @@ public class Accounts extends Audit {
     }
 
 
-    @Column(name="branch_code",nullable = false)
+    @Column(name="branch_code")
     private  Long branchCode;
 
     @Column( name = "branch_addr",nullable = false)
-    private String homeBranch;
+    private Branch homeBranch;
 
-    @Column(name = "cash_limit",nullable = false)
+    public enum Branch{
+        KOLKATA,CHENNAI,BANGALORE,HYDERABAD,DELHI,BHUBANESWAR,MUMBAI,BARODA,PATNA,KERALA
+    }
+
+    @Column(name = "cash_limit")
     private Long cashLimitPerDay;
 
     @Column(name = "credit_score")
@@ -59,9 +60,15 @@ public class Accounts extends Audit {
         OPEN,BLOCKED
     }
 
+
+
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Beneficiary> listOfBeneficiary=new ArrayList<>();
 
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Transactions> listOfTransactions=new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="customer_id",nullable = false)
+    private Customer customer;
 }

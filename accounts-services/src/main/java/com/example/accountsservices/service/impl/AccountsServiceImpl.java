@@ -6,6 +6,7 @@ import com.example.accountsservices.mapper.Mapper;
 import com.example.accountsservices.model.Accounts;
 
 import com.example.accountsservices.repository.AccountsRepository;
+import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
+    private final CustomerRepository customerRepository;
     private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
     private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
     private final String REQUEST_TO_BLOCK = "block";
@@ -39,17 +41,24 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @paramType AccountsRepository
      * @returnType NA
      */
-    public AccountsServiceImpl(AccountsRepository accountsRepository) {
+    public AccountsServiceImpl(AccountsRepository accountsRepository,CustomerRepository customerRepository) {
         super(accountsRepository);
         this.accountsRepository = accountsRepository;
+        this.customerRepository=customerRepository;
     }
 
 
     private Accounts processAccountInformation(Accounts accounts) {
+        //calculate & set customer age from Dob
+        LocalDate Date_of_birth = accounts.getCustomer().getDateOfBirth();
+        int age = LocalDate.now().getYear() - Date_of_birth.getYear();
+        accounts.getCustomer().setAge(age);
         //set customer account opening balance
         accounts.setBalance(0L);
         //set account status OPEN
         accounts.setAccountStatus(STATUS_OPEN);
+        //set cash limit
+        accounts.setCashLimitPerDay(25000L);
         return accounts;
     }
 
@@ -60,9 +69,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     @Override
     public AccountsDto createAccounts(@RequestBody AccountsDto accountsDto) {
         Accounts account = Mapper.mapToAccounts(accountsDto);
+        customerRepository.save(account.getCustomer());
         Accounts savedAccounts = accountsRepository.save(account);
         Accounts processedAccount = processAccountInformation(savedAccounts);
         Accounts savedProcessedAccount = accountsRepository.save(processedAccount);
+        customerRepository.save(savedProcessedAccount.getCustomer());
         return Mapper.mapToAccountsDto(savedProcessedAccount);
     }
 
@@ -81,10 +92,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     @Override
     public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {
         String methodName = "getAllAccountsByCustomerId(Long) in AccountsServiceImpl";
-        Optional<List<Accounts>> allAccounts = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
-        if (allAccounts.isEmpty())
-            throw new AccountsException(String.format("No such accounts present with this customer %s", customerId), methodName);
-        return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(Mapper::mapToAccountsDto).collect(Collectors.toList());
+        //Optional<List<Accounts>> allAccounts = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
+        //if (allAccounts.isEmpty())
+            //throw new AccountsException(String.format("No such accounts present with this customer %s", customerId), methodName);
+        //return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(Mapper::mapToAccountsDto).collect(Collectors.toList());
+       return null;
     }
 
     private boolean updateValidator(Accounts accounts,String ...request) {
@@ -94,14 +106,14 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     private Accounts processAccountUpdate(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
         String methodName = "processAccountUpdate(AccountsDto,Accounts) in AccountsServiceImpl";
-        String oldHomeBranch = accounts.getHomeBranch();
-        String newHomeBranch = accountsDto.getHomeBranch();
+        Accounts.Branch oldHomeBranch = accounts.getHomeBranch();
+        Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
 
         Long oldCashLimit = accounts.getCashLimitPerDay();
         Long newCashLimit = accountsDto.getCashLimitPerDay();
 
 
-        if (null != newHomeBranch && !newHomeBranch.equalsIgnoreCase(oldHomeBranch))
+        if (null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch))
             accounts.setHomeBranch(newHomeBranch);
         if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
             if (updateValidator(accounts,UPDATE_CASH_LIMIT)) accounts.setCashLimitPerDay(newCashLimit);
@@ -148,11 +160,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     public void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
         String methodName = "deleteAllAccountsByCustomer(Long ) in AccountsServiceImpl";
         //checking whether customer exist
-        Optional<List<Accounts>> foundCustomer = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
-        if (foundCustomer.isEmpty())
-            throw new AccountsException(String.format("No such customer with id %s", customerId), methodName);
-        //deleting it
-        accountsRepository.deleteAllByCustomerId(customerId);
+//        Optional<List<Accounts>> foundCustomer = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
+//        if (foundCustomer.isEmpty())
+//            throw new AccountsException(String.format("No such customer with id %s", customerId), methodName);
+//        //deleting it
+//        accountsRepository.deleteAllByCustomerId(customerId);
     }
 
     @Override

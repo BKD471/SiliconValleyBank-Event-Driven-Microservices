@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface AccountsRepository extends JpaRepository<Accounts,Long> {
     Accounts findByAccountNumber(Long accountNumber);
-    List<Accounts> findAllByCustomerId(Long customerId);
-    void deleteAllByCustomerId(Long customerId);
+//    List<Accounts> findAllByCustomerId(Long customerId);
+    //void deleteAllByCustomerId(Long customerId);
     void deleteByAccountNumber(Long accountNumber);
 }

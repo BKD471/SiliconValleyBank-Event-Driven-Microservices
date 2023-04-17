@@ -15,6 +15,5 @@ public  class BeneficiaryDto extends BaseDto {
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;
     private Beneficiary.RELATION relation;
-    private LocalDate Date_Of_Birth;
     private Accounts accounts;
 }

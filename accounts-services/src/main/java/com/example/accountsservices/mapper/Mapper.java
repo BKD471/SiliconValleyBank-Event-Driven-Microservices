@@ -21,7 +21,7 @@ public class Mapper {
     public static Accounts mapToAccounts(AccountsDto accountsDto) {
         Accounts account = new Accounts();
         account.setAccountNumber(accountsDto.getAccountNumber());
-        account.setCustomerId(accountsDto.getCustomerId());
+        account.setCustomer(accountsDto.getCustomer());
         account.setBalance(accountsDto.getBalance());
         account.setAccountType(accountsDto.getAccountType());
         account.setHomeBranch(accountsDto.getHomeBranch());
@@ -36,7 +36,6 @@ public class Mapper {
     public static AccountsDto mapToAccountsDto(Accounts accounts) {
         AccountsDto accountsDto = new AccountsDto();
         accountsDto.setAccountNumber(accounts.getAccountNumber());
-        accountsDto.setCustomerId(accounts.getCustomerId());
         accountsDto.setBalance(accounts.getBalance());
         accountsDto.setAccountType(accounts.getAccountType());
         accountsDto.setAccountStatus(accounts.getAccountStatus());
@@ -46,6 +45,7 @@ public class Mapper {
         accountsDto.setCreditScore(accounts.getCreditScore());
         accountsDto.setListOfBeneficiary(accounts.getListOfBeneficiary());
         accountsDto.setListOfTransactions(accounts.getListOfTransactions());
+        accountsDto.setCustomer(accounts.getCustomer());
         return accountsDto;
     }
 
@@ -59,8 +59,8 @@ public class Mapper {
         beneficiaryDto.setRelation(beneficiary.getRelation());
         beneficiaryDto.setVoterId(beneficiary.getVoterId());
         beneficiaryDto.setPanNumber(beneficiary.getPanNumber());
-        beneficiaryDto.setPassportNumber(beneficiary.getPassPort());
-        beneficiaryDto.setDate_Of_Birth(beneficiary.getDate_Of_Birth());
+        beneficiaryDto.setPassportNumber(beneficiary.getPassportNumber());
+        beneficiaryDto.setDateOfBirth(beneficiary.getDate_Of_Birth());
         beneficiaryDto.setAccounts(beneficiary.getAccounts());
         return beneficiaryDto;
     }
@@ -73,8 +73,8 @@ public class Mapper {
         beneficiary.setRelation(beneficiaryDto.getRelation());
         beneficiary.setVoterId(beneficiaryDto.getVoterId());
         beneficiary.setPanNumber(beneficiaryDto.getPanNumber());
-        beneficiary.setPassPort(beneficiaryDto.getPassportNumber());
-        beneficiary.setDate_Of_Birth(beneficiaryDto.getDate_Of_Birth());
+        beneficiary.setPassportNumber(beneficiaryDto.getPassportNumber());
+        beneficiary.setDate_Of_Birth(beneficiaryDto.getDateOfBirth());
         beneficiary.setAccounts(beneficiaryDto.getAccounts());
         return beneficiary;
     }
