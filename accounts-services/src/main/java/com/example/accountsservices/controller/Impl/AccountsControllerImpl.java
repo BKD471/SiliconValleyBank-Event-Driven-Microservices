@@ -3,6 +3,7 @@ package com.example.accountsservices.controller.Impl;
 import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.IAccountsController;
 import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -19,12 +20,12 @@ public class AccountsControllerImpl extends AbstractParentController implements 
     }
 
     /**
-     * @param accountsDto
+     * @param inputDto
      * @return
      */
     @Override
-    public ResponseEntity<AccountsDto> createAccounts(AccountsDto accountsDto) {
-        AccountsDto createdAccounts=accountsService.createAccounts(accountsDto);
+    public ResponseEntity<InputDto> createAccounts(InputDto inputDto) {
+        InputDto createdAccounts=accountsService.createAccounts(inputDto);
         return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
     }
 

@@ -7,15 +7,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerDto extends BaseDto{
-    private Long customerId;
-    protected LocalDate DateOfBirth;
-    private String customerName;
-    private List<Accounts> accounts;
- }
+public class InputDto extends BaseDto{
+    private String name;
+    private String dateOfBirthInYMD;
+    private Accounts.AccountType accountType;
+    private Accounts.Branch homeBranch;
+}

@@ -1,6 +1,7 @@
 package com.example.accountsservices.controller;
 
 import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.exception.AccountsException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,7 @@ import java.util.List;
 @RequestMapping("/api/v1/accounts")
 public interface IAccountsController {
     @PostMapping("/create")
-    ResponseEntity<AccountsDto> createAccounts(@RequestBody AccountsDto accountsDto);
+    ResponseEntity<InputDto> createAccounts(@RequestBody InputDto InputDto);
 
     @PutMapping("/update/{num}")
     ResponseEntity<AccountsDto> updateAccount(@RequestBody AccountsDto accountsDto) throws AccountsException;

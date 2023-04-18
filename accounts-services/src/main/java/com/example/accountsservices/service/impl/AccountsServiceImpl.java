@@ -1,6 +1,7 @@
 package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.mapper.Mapper;
 import com.example.accountsservices.model.Accounts;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,14 +69,20 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     @Override
-    public AccountsDto createAccounts(@RequestBody AccountsDto accountsDto) {
-        Accounts account = Mapper.mapToAccounts(accountsDto);
-        customerRepository.save(account.getCustomer());
-        Accounts savedAccounts = accountsRepository.save(account);
-        Accounts processedAccount = processAccountInformation(savedAccounts);
-        Accounts savedProcessedAccount = accountsRepository.save(processedAccount);
-        customerRepository.save(savedProcessedAccount.getCustomer());
-        return Mapper.mapToAccountsDto(savedProcessedAccount);
+    public InputDto createAccounts(@RequestBody InputDto inputDto) {
+        InputDto a=inputDto;
+        String[] date=inputDto.getDateOfBirthInYMD().split("-");
+        LocalDate b=LocalDate.of(Integer.parseInt(date[0]),Integer.parseInt(date[1]),Integer.parseInt(date[2]));
+        InputDto c=a;
+        // Accounts account = Mapper.mapToAccounts(accountsDto);
+//        customerRepository.save(account.getCustomer());
+//        Accounts savedAccounts = accountsRepository.save(account);
+//        Accounts processedAccount = processAccountInformation(savedAccounts);
+//        Accounts savedProcessedAccount = accountsRepository.save(processedAccount);
+//        customerRepository.save(savedProcessedAccount.getCustomer());
+//        return Mapper.mapToAccountsDto(savedProcessedAccount);
+
+        return null;
     }
 
 
