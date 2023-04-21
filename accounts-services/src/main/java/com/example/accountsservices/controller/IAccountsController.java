@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping("/api/v1/accounts")
 public interface IAccountsController {
     @PostMapping("/create")
-    ResponseEntity<InputDto> createAccounts(@RequestBody InputDto InputDto);
+    ResponseEntity<InputDto> createAccounts(@RequestBody InputDto InputDto) throws AccountsException;
 
     @PutMapping("/update/{num}")
     ResponseEntity<AccountsDto> updateAccount(@RequestBody AccountsDto accountsDto) throws AccountsException;

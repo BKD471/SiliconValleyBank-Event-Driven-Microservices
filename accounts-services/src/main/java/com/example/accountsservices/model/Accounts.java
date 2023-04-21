@@ -37,7 +37,7 @@ public class Accounts extends Audit {
 
 
     @Column(name="branch_code")
-    private  Long branchCode;
+    private String branchCode;
 
     @Column( name = "branch_addr",nullable = false)
     private Branch homeBranch;

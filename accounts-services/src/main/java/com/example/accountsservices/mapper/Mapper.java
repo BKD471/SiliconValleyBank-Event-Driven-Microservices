@@ -2,9 +2,11 @@ package com.example.accountsservices.mapper;
 
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.BeneficiaryDto;
+import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
+import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
 import jakarta.persistence.*;
 
@@ -99,5 +101,32 @@ public class Mapper {
         transactionsDto.setDescription(transactions.getDescription());
         transactionsDto.setAccounts(transactions.getAccounts());
         return transactionsDto;
+    }
+
+
+    public  static Accounts inputToAccounts(InputDto inputDto){
+        Accounts accounts=new Accounts();
+        accounts.setAccountType(inputDto.getAccountType());
+        accounts.setHomeBranch(inputDto.getHomeBranch());
+        return accounts;
+    }
+
+    public  static Customer inputToCustomer(InputDto inputDto){
+        Customer customer=new Customer();
+        customer.setName(inputDto.getName());
+
+        //converting date to its desired type
+        String date[]=inputDto.getDateOfBirthInYMD().split("-");
+        LocalDate dob=LocalDate.of(Integer.parseInt(date[0]),Integer.parseInt(date[1]),Integer.parseInt(date[2]));
+        customer.setDateOfBirth(dob);
+
+        customer.setEmail(inputDto.getEmail());
+        customer.setPhoneNumber(inputDto.getPhoneNumber());
+        customer.setAdharNumber(inputDto.getAdharNumber());
+        customer.setPanNumber(inputDto.getPanNumber());
+        customer.setVoterId(inputDto.getVoterId());
+        customer.setDrivingLicense(inputDto.getDrivingLicense());
+        customer.setPassportNumber(inputDto.getPassportNumber());
+        return customer;
     }
 }

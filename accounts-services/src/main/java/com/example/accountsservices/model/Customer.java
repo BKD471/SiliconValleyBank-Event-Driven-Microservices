@@ -34,7 +34,7 @@ public class Customer extends Audit{
     private String email;
 
     @Column(nullable = false,unique = true,name="mobile_num")
-    private String mobileNumber;
+    private String phoneNumber;
 
     @Column(name = "adhar_num",unique = true, nullable = false)
     private String adharNumber;
