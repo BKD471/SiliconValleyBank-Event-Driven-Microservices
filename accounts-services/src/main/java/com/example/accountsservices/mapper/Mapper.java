@@ -43,7 +43,7 @@ public class Mapper {
         accountsDto.setAccountStatus(accounts.getAccountStatus());
         accountsDto.setBranchCode(accounts.getBranchCode());
         accountsDto.setHomeBranch(accounts.getHomeBranch());
-        accountsDto.setCashLimitPerDay(accounts.getCashLimitPerDay());
+        accountsDto.setTransferLimitPerDay(accounts.getTransferLimitPerDay());
         accountsDto.setCreditScore(accounts.getCreditScore());
         accountsDto.setListOfBeneficiary(accounts.getListOfBeneficiary());
         accountsDto.setListOfTransactions(accounts.getListOfTransactions());
@@ -129,4 +129,34 @@ public class Mapper {
         customer.setPassportNumber(inputDto.getPassportNumber());
         return customer;
     }
+
+    public  static InputDto mapToinputDto(Customer customer,Accounts accounts){
+        InputDto inputDto=new InputDto();
+
+        //set customer info
+        inputDto.setName(customer.getName());
+        inputDto.setDateOfBirthInYMD(customer.getDateOfBirth().toString());
+        inputDto.setAge(customer.getAge());
+        inputDto.setEmail(customer.getEmail());
+        inputDto.setPhoneNumber(customer.getPhoneNumber());
+        inputDto.setAdharNumber(customer.getAdharNumber());
+        inputDto.setPanNumber(customer.getPanNumber());
+        inputDto.setVoterId(customer.getVoterId());
+        inputDto.setDrivingLicense(customer.getDrivingLicense());
+        inputDto.setPassportNumber(customer.getPassportNumber());
+
+        //set account
+        inputDto.setAccountNumber(accounts.getAccountNumber());
+        inputDto.setBalance(accounts.getBalance());
+        inputDto.setAccountType(accounts.getAccountType());
+        inputDto.setBranchCode(accounts.getBranchCode());
+        inputDto.setHomeBranch(accounts.getHomeBranch());
+        inputDto.setTransferLimitPerDay(accounts.getTransferLimitPerDay());
+        inputDto.setCreditScore(accounts.getCreditScore());
+        inputDto.setAccountStatus(accounts.getAccountStatus());
+        inputDto.setListOfTransactions(accounts.getListOfTransactions());
+        inputDto.setListOfBeneficiary(accounts.getListOfBeneficiary());
+        return inputDto;
+    }
+
 }

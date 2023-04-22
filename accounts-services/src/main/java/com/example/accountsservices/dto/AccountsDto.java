@@ -16,9 +16,9 @@ public class AccountsDto extends AbstractParentDto {
     private Long balance;
     private Accounts.AccountType accountType;
     private Accounts.AccountStatus accountStatus;
-    private  Long branchCode;
+    private  String branchCode;
     private Accounts.Branch homeBranch;
-    private Long cashLimitPerDay;
+    private Long transferLimitPerDay;
     private int creditScore;
 
     private List<Beneficiary> listOfBeneficiary;

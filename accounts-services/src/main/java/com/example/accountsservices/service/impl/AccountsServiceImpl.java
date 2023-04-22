@@ -58,7 +58,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //set account status OPEN
         accounts.setAccountStatus(STATUS_OPEN);
         //set cash limit
-        accounts.setCashLimitPerDay(25000L);
+        accounts.setTransferLimitPerDay(25000L);
         return accounts;
     }
 
@@ -66,7 +66,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private Customer processCustomerInformation(Customer customer) {
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
-        int age = Period.between(LocalDate.now(), dob).getYears();
+        int age = Period.between(dob,LocalDate.now()).getYears();
         customer.setAge(age);
         return customer;
     }
@@ -76,22 +76,26 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     @Override
-    public InputDto createAccounts(@RequestBody InputDto inputDto) throws AccountsException {
+    public InputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {
         Accounts account = Mapper.inputToAccounts(inputDto);
         Customer customer = Mapper.inputToCustomer(inputDto);
         Accounts processedAccount = processAccountInformation(account);
         Customer processedCustomer = processCustomerInformation(customer);
 
-        //save accoint & customer
-        Accounts savedAccount=accountsRepository.save(processedAccount);
-        List<Accounts> accountsList=new ArrayList<>();
-        accountsList.add(savedAccount);
-        customer.setAccounts(accountsList);
-        customerRepository.save(processedCustomer);
+        //save account & customer
+        Customer savedCustomer = customerRepository.save(processedCustomer);
+        processedAccount.setCustomer(savedCustomer);
+        Accounts savedAccount = accountsRepository.save(processedAccount);
+        return Mapper.mapToinputDto(savedCustomer, savedAccount);
+    }
+
+    public InputDto createAccountForAlreadyCreatedUser(Long customerId)  {
 
 
         return null;
     }
+
+
 
 
     /**
@@ -125,14 +129,14 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Accounts.Branch oldHomeBranch = accounts.getHomeBranch();
         Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
 
-        Long oldCashLimit = accounts.getCashLimitPerDay();
-        Long newCashLimit = accountsDto.getCashLimitPerDay();
+        Long oldCashLimit = accounts.getTransferLimitPerDay();
+        Long newCashLimit = accountsDto.getTransferLimitPerDay();
 
 
         if (null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch))
             accounts.setHomeBranch(newHomeBranch);
         if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
-            if (updateValidator(accounts, UPDATE_CASH_LIMIT)) accounts.setCashLimitPerDay(newCashLimit);
+            if (updateValidator(accounts, UPDATE_CASH_LIMIT)) accounts.setTransferLimitPerDay(newCashLimit);
             else throw new AccountsException(String.format("Yr Account with id %s must be at least " +
                     "six months old ", accounts.getAccountNumber()), methodName);
         }

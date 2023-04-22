@@ -40,14 +40,15 @@ public class Accounts extends Audit {
     private String branchCode;
 
     @Column( name = "branch_addr",nullable = false)
+    @Enumerated(EnumType.STRING)
     private Branch homeBranch;
 
     public enum Branch{
         KOLKATA,CHENNAI,BANGALORE,HYDERABAD,DELHI,BHUBANESWAR,MUMBAI,BARODA,PATNA,KERALA
     }
 
-    @Column(name = "cash_limit")
-    private Long cashLimitPerDay;
+    @Column(name = "transfer_limit_per_day")
+    private Long transferLimitPerDay;
 
     @Column(name = "credit_score")
     private int creditScore;
