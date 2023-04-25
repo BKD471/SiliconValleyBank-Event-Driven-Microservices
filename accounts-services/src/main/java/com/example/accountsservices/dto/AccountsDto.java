@@ -21,6 +21,12 @@ public class AccountsDto extends AbstractParentDto {
     private Long transferLimitPerDay;
     private int creditScore;
 
+    private UpdateRequest request;
+
+    private enum UpdateRequest{
+        CHANGE_HOME_BRANCH,ADD_BENEFICIARY,GET_CREDIT_SCORE,DELETE_ACC,BLOCK_ACC
+    }
+
     private List<Beneficiary> listOfBeneficiary;
     private List<Transactions> listOfTransactions;
     private Customer customer;

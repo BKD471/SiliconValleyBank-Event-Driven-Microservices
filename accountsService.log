@@ -24129,3 +24129,35 @@ java.io.EOFException: null
 2023-04-25T08:19:27.923+05:30 DEBUG 18040 --- [Catalina-utility-2] o.apache.catalina.session.ManagerBase    : End expire sessions StandardManager processingTime 0 expired sessions: 0
 2023-04-25T08:19:28.670+05:30 DEBUG 18040 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
 2023-04-25T08:19:28.671+05:30 DEBUG 18040 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-04-25T08:19:58.684+05:30 DEBUG 18040 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-04-25T08:19:58.684+05:30 DEBUG 18040 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-04-25T08:19:58.909+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.b.a.ApplicationAvailabilityBean      : Application availability state ReadinessState changed from ACCEPTING_TRAFFIC to REFUSING_TRAFFIC
+2023-04-25T08:19:58.910+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] ConfigServletWebServerApplicationContext : Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@2f193337, started on Tue Apr 25 08:16:25 IST 2023
+2023-04-25T08:19:58.912+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 2147482623
+2023-04-25T08:19:58.914+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Bean 'webServerGracefulShutdown' completed its stop procedure
+2023-04-25T08:19:58.914+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 2147481599
+2023-04-25T08:19:58.936+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Bean 'webServerStartStop' completed its stop procedure
+2023-04-25T08:19:58.937+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase -2147483647
+2023-04-25T08:19:58.937+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Bean 'springBootLoggingLifecycle' completed its stop procedure
+2023-04-25T08:19:58.941+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+2023-04-25T08:19:58.942+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans
+2023-04-25T08:19:58.943+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2023-04-25T08:19:58.945+05:30  INFO 18040 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-04-25T08:19:58.945+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.hibernate.internal.SessionFactoryImpl  : HHH000031: Closing
+2023-04-25T08:19:58.946+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.h.type.spi.TypeConfiguration$Scope     : Un-scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration$Scope@75c36b61] from SessionFactory [org.hibernate.internal.SessionFactoryImpl@64da87bd]
+2023-04-25T08:19:58.946+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.h.s.i.AbstractServiceRegistryImpl      : Implicitly destroying ServiceRegistry on de-registration of all child ServiceRegistries
+2023-04-25T08:19:58.947+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] o.h.b.r.i.BootstrapServiceRegistryImpl   : Implicitly destroying Boot-strap registry on de-registration of all child ServiceRegistries
+2023-04-25T08:19:58.951+05:30  INFO 18040 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-04-25T08:19:58.952+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Before shutdown stats (total=10, active=0, idle=10, waiting=0)
+2023-04-25T08:19:58.954+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@41093d9a: (connection evicted)
+2023-04-25T08:19:58.955+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@38596103: (connection evicted)
+2023-04-25T08:19:58.955+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@369e8878: (connection evicted)
+2023-04-25T08:19:58.955+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@32a10a73: (connection evicted)
+2023-04-25T08:19:58.956+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@77a38243: (connection evicted)
+2023-04-25T08:19:58.957+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@481a4cd: (connection evicted)
+2023-04-25T08:19:58.957+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@469e316d: (connection evicted)
+2023-04-25T08:19:58.958+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@7c56495f: (connection evicted)
+2023-04-25T08:19:58.962+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@178c7d0c: (connection evicted)
+2023-04-25T08:19:58.963+05:30 DEBUG 18040 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@1e2204fc: (connection evicted)
+2023-04-25T08:19:58.964+05:30 DEBUG 18040 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+2023-04-25T08:19:58.965+05:30  INFO 18040 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
