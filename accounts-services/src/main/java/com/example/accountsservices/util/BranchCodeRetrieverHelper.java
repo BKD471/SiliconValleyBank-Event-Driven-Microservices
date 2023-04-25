@@ -10,34 +10,20 @@ import java.util.UUID;
 import static com.example.accountsservices.model.Accounts.Branch.*;
 
 public class BranchCodeRetrieverHelper {
-    private static String KOLKATA_UID;
-    private static String BANGALORE_UID;
-    private static String MUMBAI_UID;
-    private static String CHENNAI_UID;
-    private static String BARODA_UID;
-    private static String HYDERABAD_UID;
-    private static String BHUBANESWAR_UID;
-    private static String PATNA_UID;
-    private static String KERALA_UID;
-    private static String DELHI_UID;
-
-    static {
-        KOLKATA_UID = UUID.randomUUID().toString().split("-")[3];
-        BANGALORE_UID = UUID.randomUUID().toString().split("-")[3];
-        MUMBAI_UID = UUID.randomUUID().toString().split("-")[3];
-        CHENNAI_UID = UUID.randomUUID().toString().split("-")[3];
-        BARODA_UID = UUID.randomUUID().toString().split("-")[3];
-        HYDERABAD_UID = UUID.randomUUID().toString().split("-")[3];
-        BHUBANESWAR_UID = UUID.randomUUID().toString().split("-")[3];
-        PATNA_UID = UUID.randomUUID().toString().split("-")[3];
-        KERALA_UID = UUID.randomUUID().toString().split("-")[3];
-        DELHI_UID = UUID.randomUUID().toString().split("-")[3];
-    }
+    private static final String KOLKATA_UID = "KOL01121997";
+    private static final String BANGALORE_UID = "BAN01121997";
+    private static final String MUMBAI_UID = "MUM01121997";
+    private static final String CHENNAI_UID = "CHE01121997";
+    private static final String BARODA_UID = "BAR01121997";
+    private static final String HYDERABAD_UID = "HYD01121997";
+    private static final String BHUBANESWAR_UID = "BHU01121997";
+    private static final String PATNA_UID = "PAT01121997";
+    private static final String KERALA_UID = "KER01121997";
+    private static final String DELHI_UID = "DEL01121997";
 
     private static Map<Accounts.Branch, String> getBranchHash() {
         Map<Accounts.Branch, String> hash = new HashMap<>();
-
-        hash.put(KOLKATA,KOLKATA_UID);
+        hash.put(KOLKATA, KOLKATA_UID);
         hash.put(BANGALORE, BANGALORE_UID);
         hash.put(MUMBAI, MUMBAI_UID);
         hash.put(CHENNAI, CHENNAI_UID);

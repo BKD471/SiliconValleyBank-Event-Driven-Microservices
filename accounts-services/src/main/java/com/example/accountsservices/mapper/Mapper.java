@@ -111,6 +111,22 @@ public class Mapper {
         return accounts;
     }
 
+//    public  static AccountsDto inputToAccountsDto(InputDto inputDto){
+//        AccountsDto accountsDto=new AccountsDto();
+//
+//        inputDto.setAccountNumber(accounts.getAccountNumber());
+//        inputDto.setBalance(accounts.getBalance());
+//        inputDto.setAccountType(accounts.getAccountType());
+//        inputDto.setBranchCode(accounts.getBranchCode());
+//        inputDto.setHomeBranch(accounts.getHomeBranch());
+//        inputDto.setTransferLimitPerDay(accounts.getTransferLimitPerDay());
+//        inputDto.setCreditScore(accounts.getCreditScore());
+//        inputDto.setAccountStatus(accounts.getAccountStatus());
+//        inputDto.setListOfTransactions(accounts.getListOfTransactions());
+//        inputDto.setListOfBeneficiary(accounts.getListOfBeneficiary());
+//        return accountsDto;
+//    }
+
     public  static Customer inputToCustomer(InputDto inputDto){
         Customer customer=new Customer();
         customer.setName(inputDto.getName());

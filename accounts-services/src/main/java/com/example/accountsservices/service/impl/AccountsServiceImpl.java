@@ -11,12 +11,13 @@ import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.util.BranchCodeRetrieverHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @parent AccountsService
@@ -63,10 +64,13 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
 
-    private Customer processCustomerInformation(Customer customer) {
+    private Customer processCustomerInformation(Customer customer) throws AccountsException{
+        String methodName="processCustomerInformation(Customer) in AccountsServiceIMpl";
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
-        int age = Period.between(dob,LocalDate.now()).getYears();
+        int age = Period.between(dob, LocalDate.now()).getYears();
+        if(age<18) throw  new AccountsException("Account holder must be at least 18 years",methodName);
+
         customer.setAge(age);
         return customer;
     }
@@ -89,13 +93,24 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return Mapper.mapToinputDto(savedCustomer, savedAccount);
     }
 
-    public InputDto createAccountForAlreadyCreatedUser(Long customerId)  {
+    @Override
+    public InputDto createAccountForAlreadyCreatedUser(Long customerId, InputDto inputDto) throws AccountsException {
+        String methodName = "createAccountForAlreadyCreatedUser(Long,InoutDto) in AccountsServiceImpl";
+        Optional<Customer> customer = customerRepository.findById(customerId);
+        if (customer.isEmpty())
+            throw new AccountsException(String.format("No such customers with id %s found", customerId), methodName);
 
+        //some critical processing
+        Accounts accounts = Mapper.inputToAccounts(inputDto);
+        Accounts processedAccount = processAccountInformation(accounts);
 
-        return null;
+        //register this customer as the on=wner of this account
+        processedAccount.setCustomer(customer.get());
+
+        //save it bebe
+        Accounts savedAccount=accountsRepository.save(processedAccount);
+        return Mapper.mapToinputDto(customer.get(),savedAccount);
     }
-
-
 
 
     /**

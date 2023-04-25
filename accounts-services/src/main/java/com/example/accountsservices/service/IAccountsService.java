@@ -9,7 +9,7 @@ import java.util.List;
 public interface IAccountsService {
     InputDto createAccountForNewUser(InputDto inputDto) throws AccountsException;
 
-    InputDto createAccountForAlreadyCreatedUser(Long customerId);
+    InputDto createAccountForAlreadyCreatedUser(Long customerId,InputDto inputDto) throws AccountsException;
     AccountsDto getAccountInfo(Long accountNumber) throws AccountsException;
     List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException;
     AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException;

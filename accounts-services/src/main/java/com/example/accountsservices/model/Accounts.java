@@ -61,8 +61,6 @@ public class Accounts extends Audit {
         OPEN,BLOCKED
     }
 
-
-
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Beneficiary> listOfBeneficiary=new ArrayList<>();
 

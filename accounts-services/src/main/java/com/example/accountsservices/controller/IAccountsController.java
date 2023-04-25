@@ -11,24 +11,20 @@ import java.util.List;
 @RequestMapping("/api/v1/accounts")
 public interface IAccountsController {
     @PostMapping("/create")
-    ResponseEntity<InputDto> createAccounts(@RequestBody InputDto InputDto) throws AccountsException;
-
+    ResponseEntity<InputDto> createAccountsForFirstTime(@RequestBody InputDto InputDto) throws AccountsException;
+    @PostMapping("/create/{id}")
+    ResponseEntity<InputDto> createAccountsForAlreadyCreatedUser(@PathVariable("id") Long customerId,@RequestBody InputDto inputDto) throws AccountsException;
     @PutMapping("/update/{num}")
     ResponseEntity<AccountsDto> updateAccount(@RequestBody AccountsDto accountsDto) throws AccountsException;
-
     @GetMapping("/{id}")
     ResponseEntity<List<AccountsDto>> getAllAccountsByCustomerId
             (@PathVariable(name = "id") Long customerId) throws AccountsException;
-
     @GetMapping("/info/{num}")
     ResponseEntity<AccountsDto> getAccountInformation(@PathVariable(name="num") Long accountNumber) throws AccountsException;
-
     @DeleteMapping("/{num}")
     ResponseEntity<String> deleteAccount(@PathVariable(name="num") Long accountNumber) throws  AccountsException;
-
     @DeleteMapping("/delete-all/{id}")
     ResponseEntity<String> deleteAllAccountsByCustomer(@PathVariable(name="id") Long customerId) throws AccountsException;
-
     @PutMapping("/block/{num}")
     ResponseEntity<String> blockAccount(@PathVariable(name="num") Long accountNumber) throws AccountsException;
 }

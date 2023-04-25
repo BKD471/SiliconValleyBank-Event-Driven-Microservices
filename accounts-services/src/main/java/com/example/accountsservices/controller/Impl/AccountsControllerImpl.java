@@ -24,9 +24,15 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @return
      */
     @Override
-    public ResponseEntity<InputDto> createAccounts(InputDto inputDto) throws AccountsException {
+    public ResponseEntity<InputDto> createAccountsForFirstTime(InputDto inputDto) throws AccountsException {
         InputDto createdAccounts=accountsService.createAccountForNewUser(inputDto);
         return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<InputDto> createAccountsForAlreadyCreatedUser(Long customerId,InputDto inputDto) throws AccountsException {
+        InputDto createdAccount=accountsService.createAccountForAlreadyCreatedUser(customerId,inputDto);
+        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
     /**
