@@ -1,6 +1,7 @@
 package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.mapper.Mapper;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +38,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
     private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
     private final String REQUEST_TO_BLOCK = "block";
-    private final String UPDATE_CASH_LIMIT = "update_cash_limit";
+    private final String UPDATE_CASH_LIMIT = "UPDATE_CASH_LIMIT";
     private final String GENERATE_CREDIT_SCORE = "gen_credit_score";
 
 
@@ -59,17 +61,17 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //set account status OPEN
         accounts.setAccountStatus(STATUS_OPEN);
         //set cash limit
-        accounts.setTransferLimitPerDay(25000L);
+        accounts.setTransferLimitPerDay(100000L);
         return accounts;
     }
 
 
-    private Customer processCustomerInformation(Customer customer) throws AccountsException{
-        String methodName="processCustomerInformation(Customer) in AccountsServiceIMpl";
+    private Customer processCustomerInformation(Customer customer) throws AccountsException {
+        String methodName = "processCustomerInformation(Customer) in AccountsServiceIMpl";
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
         int age = Period.between(dob, LocalDate.now()).getYears();
-        if(age<18) throw  new AccountsException("Account holder must be at least 18 years",methodName);
+        if (age < 18) throw new AccountsException("Account holder must be at least 18 years", methodName);
 
         customer.setAge(age);
         return customer;
@@ -108,8 +110,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         processedAccount.setCustomer(customer.get());
 
         //save it bebe
-        Accounts savedAccount=accountsRepository.save(processedAccount);
-        return Mapper.mapToinputDto(customer.get(),savedAccount);
+        Accounts savedAccount = accountsRepository.save(processedAccount);
+        return Mapper.mapToinputDto(customer.get(), savedAccount);
     }
 
 
@@ -134,8 +136,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return null;
     }
 
-    private boolean updateValidator(Accounts accounts, String... request) {
+    private boolean updateValidator(Accounts accounts, String request) {
 
+        switch (request){
+            case UPDATE_CASH_LIMIT: return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
+        }
         return false;
     }
 
@@ -158,20 +163,75 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return accounts;
     }
 
+    private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) {
+        Accounts.Branch oldHomeBranch = accounts.getHomeBranch();
+        Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
+
+        Accounts savedUpdatedAccount = accounts;
+        if (null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
+            accounts.setHomeBranch(newHomeBranch);
+            savedUpdatedAccount = accountsRepository.save(accounts);
+        }
+        return savedUpdatedAccount;
+    }
+
+    private Accounts increaseTransferLimit(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
+        String methodName="increaseTransferLimit(AccountsDto,Accounts) in AccountsServiceImpl";
+        Long oldCashLimit = accounts.getTransferLimitPerDay();
+        Long newCashLimit = accountsDto.getTransferLimitPerDay();
+
+        Accounts savedAccount=accounts;
+        if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
+            if (updateValidator(accounts, UPDATE_CASH_LIMIT)) accounts.setTransferLimitPerDay(newCashLimit);
+            else throw new AccountsException(String.format("Yr Account with id %s must be at least " +
+                    "six months old ", accounts.getAccountNumber()), methodName);
+           savedAccount=accountsRepository.save(accounts);
+        }
+        return savedAccount;
+    }
+
     /**
      * @paramType Long, Long
      * @returnType AccountsDto
      */
     @Override
     public AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException {
+        String methodName = "updateAccountDetails(AccountsDto) in AccountsServiceImpl";
         //get the account
         Long accountNumber = accountsDto.getAccountNumber();
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
-        //update
-        Accounts updatedAccount = processAccountUpdate(accountsDto, foundAccount);
-        Accounts savedUpdatedAccount = accountsRepository.save(updatedAccount);
-        return Mapper.mapToAccountsDto(savedUpdatedAccount);
+
+        //check the request type
+        if (null == accountsDto.getUpdateRequest())
+            throw new AccountsException("update request field must not be blank", methodName);
+        AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
+        switch (request) {
+            case CHANGE_HOME_BRANCH -> {
+                Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
+                return Mapper.mapToAccountsDto(updatedAccount);
+            }
+            case GET_CREDIT_SCORE -> {
+                //to be done after implementing credit card microservice
+            }
+            case INC_TRANSFER_LIMIT -> {
+                Accounts updatedAccount = increaseTransferLimit(accountsDto, foundAccount);
+                return Mapper.mapToAccountsDto(updatedAccount);
+            }
+            case INC_APPROVED_LOAN_LIMIT -> {
+                //to be done.....
+            }
+            case LEND_LOAN -> {
+                //to be done...
+            }
+            case BLOCK_ACC -> {
+            }
+            case DELETE_ACC -> {
+            }
+        }
+
+       return accountsDto;
     }
+
 
     @Override
     public AccountsDto getCreditScore(Long accountNUmber) {

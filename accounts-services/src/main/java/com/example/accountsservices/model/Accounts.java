@@ -20,14 +20,14 @@ import java.util.List;
 public class Accounts extends Audit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true, name = "account_num")
+    @Column(nullable = false, unique = true, name = "accnt_num")
     private Long accountNumber;
 
 
-    @Column(name = "cust_balance")
+    @Column(name = "cust_balnc")
     private Long balance;
 
-    @Column(name = "acnt_type",nullable = false)
+    @Column(name = "accnt_type",nullable = false)
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
@@ -47,13 +47,25 @@ public class Accounts extends Audit {
         KOLKATA,CHENNAI,BANGALORE,HYDERABAD,DELHI,BHUBANESWAR,MUMBAI,BARODA,PATNA,KERALA
     }
 
-    @Column(name = "transfer_limit_per_day")
+    @Column(name = "trnsfr_lmt_pr_d")
     private Long transferLimitPerDay;
 
-    @Column(name = "credit_score")
+    @Column(name = "crdt_scr")
     private int creditScore;
 
-    @Column(name="acc_status")
+    @Column(name="apprvd_loan_bso_crdt_scr")
+    private Long approvedLoanLimitBasedOnCreditScore;
+
+    @Column(name="is_ln_actv")
+    private Boolean anyActiveLoans;
+
+    @Column(name="loan_amnt")
+    private Long loanAmount;
+
+    @Column(name="tot_out_amnt")
+    private Long totalOutStandingAmountPayableToBank;
+
+    @Column(name="acc_stts")
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
 

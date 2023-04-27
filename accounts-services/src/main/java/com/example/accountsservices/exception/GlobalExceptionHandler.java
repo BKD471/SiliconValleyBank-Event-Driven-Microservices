@@ -13,20 +13,8 @@ import java.time.LocalTime;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(AccountsException.class)
-    public ResponseEntity<ErrorDetails> handleAccountsException(AccountsException e, WebRequest web){
-        ErrorDetails error=new ErrorDetails(LocalTime.now(),e.getMessage(), web.getDescription(false));
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(BeneficiaryException.class)
-    public ResponseEntity<ErrorDetails> handleBeneficiaryException(BeneficiaryException e, WebRequest web){
-        ErrorDetails error=new ErrorDetails(LocalTime.now(),e.getMessage(), web.getDescription(false));
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(TransactionException.class)
-    public ResponseEntity<ErrorDetails> handleTransactionException(TransactionException e, WebRequest web){
+    @ExceptionHandler({AccountsException.class,BeneficiaryException.class, TransactionException.class})
+    public ResponseEntity<ErrorDetails> handleAllCustomException(Exception e, WebRequest web){
         ErrorDetails error=new ErrorDetails(LocalTime.now(),e.getMessage(), web.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
