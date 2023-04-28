@@ -10,6 +10,7 @@ import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Primary
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
     private final BeneficiaryRepository beneficiaryRepository;
 

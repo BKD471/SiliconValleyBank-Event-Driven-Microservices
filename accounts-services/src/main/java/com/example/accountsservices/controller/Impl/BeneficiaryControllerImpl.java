@@ -5,6 +5,7 @@ import com.example.accountsservices.controller.IBeneficiaryController;
 import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
+import com.example.accountsservices.service.IBeneficiaryService;
 import com.example.accountsservices.service.impl.BeneficiaryServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +15,7 @@ import java.util.List;
 @RestController
 public class BeneficiaryControllerImpl extends AbstractParentController implements IBeneficiaryController{
 
-    private  final BeneficiaryServiceImpl beneficiaryService;
+    private  final IBeneficiaryService beneficiaryService;
 
     BeneficiaryControllerImpl(BeneficiaryServiceImpl beneficiaryService){
         this.beneficiaryService=beneficiaryService;

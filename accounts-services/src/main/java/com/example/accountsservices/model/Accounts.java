@@ -59,8 +59,8 @@ public class Accounts extends Audit {
     @Column(name="is_ln_actv")
     private Boolean anyActiveLoans;
 
-    @Column(name="loan_amnt")
-    private Long loanAmount;
+    @Column(name="tot_loan_issued_sf")
+    private Long totLoanIssuedSoFar;
 
     @Column(name="tot_out_amnt")
     private Long totalOutStandingAmountPayableToBank;

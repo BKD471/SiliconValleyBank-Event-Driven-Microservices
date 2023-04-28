@@ -5,6 +5,7 @@ import com.example.accountsservices.controller.IAccountsController;
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.exception.AccountsException;
+import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @RestController
 public class AccountsControllerImpl extends AbstractParentController implements IAccountsController{
-    private final AccountsServiceImpl accountsService;
+    private final IAccountsService accountsService;
     AccountsControllerImpl(AccountsServiceImpl accountsService) {
         this.accountsService = accountsService;
     }

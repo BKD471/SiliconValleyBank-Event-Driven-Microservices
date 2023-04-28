@@ -12,6 +12,7 @@ import com.example.accountsservices.repository.AccountsRepository;
 
 import java.util.List;
 import java.util.Optional;
+import static com.example.accountsservices.service.impl.AccountsServiceImpl.REQUEST_TO_BLOCK;
 
 //DESIGN NOTE
 //Obeying I of SOLID ,to not pollute a single interface with too much methods
@@ -29,7 +30,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
 
     private  final  AccountsRepository accountsRepository;
     private  static final Accounts.AccountStatus STATUS_BLOCKED= Accounts.AccountStatus.BLOCKED;
-    private  static final String REQUEST_TO_BLOCK="block";
+
 
 
     protected AbstractAccountsService(AccountsRepository accountsRepository){

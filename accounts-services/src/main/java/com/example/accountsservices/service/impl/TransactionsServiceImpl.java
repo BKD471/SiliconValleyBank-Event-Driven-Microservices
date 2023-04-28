@@ -11,11 +11,13 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.util.SortDateComparator;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Primary
 public class TransactionsServiceImpl extends AbstractAccountsService {
     private final Transactions.TransactionType CREDIT = Transactions.TransactionType.CREDIT;
     private final Transactions.TransactionType DEBIT = Transactions.TransactionType.DEBIT;

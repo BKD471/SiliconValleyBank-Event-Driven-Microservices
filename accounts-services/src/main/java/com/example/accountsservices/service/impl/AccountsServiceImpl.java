@@ -1,7 +1,6 @@
 package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.AccountsDto;
-import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.mapper.Mapper;
@@ -11,15 +10,15 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.util.BranchCodeRetrieverHelper;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @parent AccountsService
@@ -32,14 +31,17 @@ import java.util.Optional;
  */
 
 @Service
+@Primary
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomerRepository customerRepository;
     private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
     private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
-    private final String REQUEST_TO_BLOCK = "block";
+    public static final String REQUEST_TO_BLOCK = "BLOCK";
     private final String UPDATE_CASH_LIMIT = "UPDATE_CASH_LIMIT";
     private final String GENERATE_CREDIT_SCORE = "gen_credit_score";
+    private final String INIT = "INIT";
+    private final String UPDATE = "UPDATE";
 
 
     /**
@@ -53,15 +55,39 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
 
-    private Accounts processAccountInformation(Accounts accounts) throws AccountsException {
-        //set customer account opening balance
+    private Accounts processAccountInit(Accounts accounts, String req) throws AccountsException {
+        String methodName = "processAccountInit(Accounts,String) in AccountsServiceImpl";
+        //If request is adding another accounts for a customer already have an account
+        //there should not be two accounts with  same accountType in same homeBranch
+        if (req.equalsIgnoreCase(UPDATE)) {
+            //new homeBranch & type
+            Accounts.Branch newHomeBranch = accounts.getHomeBranch();
+            Accounts.AccountType newAccountType = accounts.getAccountType();
+
+            //get all accounts for that customer
+            List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
+            boolean isNotPermissible=listOfAccounts.stream().anyMatch(account -> (account.getHomeBranch().equals(newHomeBranch)
+                            && account.getAccountType().equals(newAccountType)));
+
+            if(isNotPermissible) throw  new AccountsException(String.format("You already have an %s" +
+                    " account in %s branch",newAccountType,newHomeBranch),methodName);
+        }
+
+        //initialize customer account opening balance
         accounts.setBalance(0L);
-        //set branchCode
+        //initialize branchCode
         accounts.setBranchCode(BranchCodeRetrieverHelper.getBranchCode(accounts.getHomeBranch()));
-        //set account status OPEN
+        //initialize account status OPEN
         accounts.setAccountStatus(STATUS_OPEN);
-        //set cash limit
+        //initialize cash limit
         accounts.setTransferLimitPerDay(100000L);
+
+        //initialize loan fields
+        accounts.setTotLoanIssuedSoFar(0L);
+        accounts.setTotalOutStandingAmountPayableToBank(0L);
+        accounts.setAnyActiveLoans(false);
+        //credit score is 0 so approved limit should also be zero
+        accounts.setApprovedLoanLimitBasedOnCreditScore(0L);
         return accounts;
     }
 
@@ -85,7 +111,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     public InputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {
         Accounts account = Mapper.inputToAccounts(inputDto);
         Customer customer = Mapper.inputToCustomer(inputDto);
-        Accounts processedAccount = processAccountInformation(account);
+        Accounts processedAccount = processAccountInit(account, INIT);
         Customer processedCustomer = processCustomerInformation(customer);
 
         //save account & customer
@@ -104,10 +130,10 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         //some critical processing
         Accounts accounts = Mapper.inputToAccounts(inputDto);
-        Accounts processedAccount = processAccountInformation(accounts);
-
         //register this customer as the on=wner of this account
-        processedAccount.setCustomer(customer.get());
+        accounts.setCustomer(customer.get());
+        Accounts processedAccount = processAccountInit(accounts, UPDATE);
+
 
         //save it bebe
         Accounts savedAccount = accountsRepository.save(processedAccount);
@@ -138,8 +164,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     private boolean updateValidator(Accounts accounts, String request) {
 
-        switch (request){
-            case UPDATE_CASH_LIMIT: return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
+        switch (request) {
+            case UPDATE_CASH_LIMIT:
+                return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
         }
         return false;
     }
@@ -176,16 +203,16 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     private Accounts increaseTransferLimit(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
-        String methodName="increaseTransferLimit(AccountsDto,Accounts) in AccountsServiceImpl";
+        String methodName = "increaseTransferLimit(AccountsDto,Accounts) in AccountsServiceImpl";
         Long oldCashLimit = accounts.getTransferLimitPerDay();
         Long newCashLimit = accountsDto.getTransferLimitPerDay();
 
-        Accounts savedAccount=accounts;
+        Accounts savedAccount = accounts;
         if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
             if (updateValidator(accounts, UPDATE_CASH_LIMIT)) accounts.setTransferLimitPerDay(newCashLimit);
             else throw new AccountsException(String.format("Yr Account with id %s must be at least " +
                     "six months old ", accounts.getAccountNumber()), methodName);
-           savedAccount=accountsRepository.save(accounts);
+            savedAccount = accountsRepository.save(accounts);
         }
         return savedAccount;
     }
@@ -229,7 +256,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
         }
 
-       return accountsDto;
+        return accountsDto;
     }
 
 
