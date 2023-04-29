@@ -1,9 +1,6 @@
 package com.example.accountsservices.service;
 
-import com.example.accountsservices.dto.AccountsDto;
-import com.example.accountsservices.dto.BeneficiaryDto;
-import com.example.accountsservices.dto.InputDto;
-import com.example.accountsservices.dto.TransactionsDto;
+import com.example.accountsservices.dto.*;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.exception.TransactionException;
@@ -39,10 +36,9 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
 
 
     public InputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {return null;}
-    public InputDto createAccountForAlreadyCreatedUser(Long customerId,InputDto inputDto) throws AccountsException {return null;}
     public AccountsDto getAccountInfo(Long accountNumber) throws AccountsException {return null;}
     public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {return null;}
-    public AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException {return null;}
+    public OutputDto updateAccountDetails(InputDto inputDto) throws AccountsException {return null;}
     public AccountsDto getCreditScore(Long accountNUmber){return null;}
     public AccountsDto updateCreditScore(AccountsDto accountsDto) {return null;}
     public void deleteAccount(Long accountNumber) throws AccountsException {/*dummy implementations*/}

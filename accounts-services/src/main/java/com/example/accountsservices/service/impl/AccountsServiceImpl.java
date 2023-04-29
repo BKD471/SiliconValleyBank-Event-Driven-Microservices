@@ -1,7 +1,9 @@
 package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.CustomerDto;
 import com.example.accountsservices.dto.InputDto;
+import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.mapper.Mapper;
 import com.example.accountsservices.model.Accounts;
@@ -121,23 +123,22 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return Mapper.mapToinputDto(savedCustomer, savedAccount);
     }
 
-    @Override
-    public InputDto createAccountForAlreadyCreatedUser(Long customerId, InputDto inputDto) throws AccountsException {
+
+    private OutputDto createAccountForAlreadyCreatedUser(Long customerId, AccountsDto accountsDto) throws AccountsException {
         String methodName = "createAccountForAlreadyCreatedUser(Long,InoutDto) in AccountsServiceImpl";
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isEmpty())
             throw new AccountsException(String.format("No such customers with id %s found", customerId), methodName);
 
         //some critical processing
-        Accounts accounts = Mapper.inputToAccounts(inputDto);
+        Accounts accounts = Mapper.mapToAccounts(accountsDto);
         //register this customer as the on=wner of this account
         accounts.setCustomer(customer.get());
         Accounts processedAccount = processAccountInit(accounts, UPDATE);
 
-
         //save it bebe
         Accounts savedAccount = accountsRepository.save(processedAccount);
-        return Mapper.mapToinputDto(customer.get(), savedAccount);
+        return Mapper.mapToOutPut(Mapper.mapToCustomerDto(customer.get()),Mapper.mapToAccountsDto(savedAccount));
     }
 
 
@@ -163,31 +164,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     private boolean updateValidator(Accounts accounts, String request) {
-
         switch (request) {
             case UPDATE_CASH_LIMIT:
                 return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
         }
         return false;
-    }
-
-    private Accounts processAccountUpdate(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
-        String methodName = "processAccountUpdate(AccountsDto,Accounts) in AccountsServiceImpl";
-        Accounts.Branch oldHomeBranch = accounts.getHomeBranch();
-        Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
-
-        Long oldCashLimit = accounts.getTransferLimitPerDay();
-        Long newCashLimit = accountsDto.getTransferLimitPerDay();
-
-
-        if (null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch))
-            accounts.setHomeBranch(newHomeBranch);
-        if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
-            if (updateValidator(accounts, UPDATE_CASH_LIMIT)) accounts.setTransferLimitPerDay(newCashLimit);
-            else throw new AccountsException(String.format("Yr Account with id %s must be at least " +
-                    "six months old ", accounts.getAccountNumber()), methodName);
-        }
-        return accounts;
     }
 
     private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) {
@@ -222,27 +203,35 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     @Override
-    public AccountsDto updateAccountDetails(AccountsDto accountsDto) throws AccountsException {
+    public OutputDto updateAccountDetails(InputDto inputDto) throws AccountsException {
         String methodName = "updateAccountDetails(AccountsDto) in AccountsServiceImpl";
-        //get the account
-        Long accountNumber = accountsDto.getAccountNumber();
-        Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
-
+        //map
+        AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
+        CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException("update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case CHANGE_HOME_BRANCH -> {
+                //get the account
+                Long accountNumber = accountsDto.getAccountNumber();
+                Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
                 Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
-                return Mapper.mapToAccountsDto(updatedAccount);
+                return Mapper.mapToOutPut(customerDto,Mapper.mapToAccountsDto(updatedAccount));
             }
             case GET_CREDIT_SCORE -> {
                 //to be done after implementing credit card microservice
             }
             case INC_TRANSFER_LIMIT -> {
+                //get the account
+                Long accountNumber = accountsDto.getAccountNumber();
+                Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
                 Accounts updatedAccount = increaseTransferLimit(accountsDto, foundAccount);
-                return Mapper.mapToAccountsDto(updatedAccount);
+                return Mapper.mapToOutPut(customerDto,Mapper.mapToAccountsDto(updatedAccount));
+            }
+            case ADD_ACCOUNT -> {
+                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(),accountsDto);
             }
             case INC_APPROVED_LOAN_LIMIT -> {
                 //to be done.....
@@ -256,7 +245,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
         }
 
-        return accountsDto;
+        return new OutputDto();
     }
 
 

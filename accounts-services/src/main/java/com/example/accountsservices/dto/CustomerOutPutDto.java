@@ -13,9 +13,17 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerDto extends BaseDto{
+public class CustomerOutPutDto {
+    protected int age;
+    protected String email;
+    protected String phoneNumber;
+    protected String adharNumber;
+    protected String panNumber;
+    protected String voterId;
+    protected String drivingLicense;
+    protected String passportNumber;
     private Long customerId;
     protected LocalDate DateOfBirth;
     private String customerName;
     private List<AccountsDto> accounts;
- }
+}

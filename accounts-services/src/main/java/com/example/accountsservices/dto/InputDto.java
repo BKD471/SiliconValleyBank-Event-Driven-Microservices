@@ -2,6 +2,7 @@ package com.example.accountsservices.dto;
 
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
+import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -19,25 +20,36 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InputDto extends BaseDto{
+public class InputDto extends BaseDto {
     private String name;
+    private Long customerId;
     private String dateOfBirthInYMD;
     private Accounts.AccountType accountType;
     private Accounts.Branch homeBranch;
-//    @JsonIgnore
+
+
+
+    //    @JsonIgnore
     private Long accountNumber;
- //   @JsonIgnore
+    //   @JsonIgnore
     private Long balance;
-   // @JsonIgnore
+    // @JsonIgnore
+    private AccountsDto.UpdateRequest updateRequest;
     private String branchCode;
-//    @JsonIgnore
+    //    @JsonIgnore
     private Long transferLimitPerDay;
- //   @JsonIgnore
+    //   @JsonIgnore
     private int creditScore;
-//    @JsonIgnore
+    //    @JsonIgnore
     private Accounts.AccountStatus accountStatus;
- //   @JsonIgnore
-    private List<Beneficiary> listOfBeneficiary=new ArrayList<>();
- //   @JsonIgnore
-    private List<Transactions> listOfTransactions=new ArrayList<>();
+    private Long approvedLoanLimitBasedOnCreditScore;
+    private Boolean anyActiveLoans;
+    private Long totLoanIssuedSoFar;
+    private Long totalOutStandingAmountPayableToBank;
+    //   @JsonIgnore
+    private List<Beneficiary> listOfBeneficiary = new ArrayList<>();
+    //   @JsonIgnore
+    private List<Transactions> listOfTransactions = new ArrayList<>();
+    private Customer customer;
+    private List<Accounts> accounts;
 }

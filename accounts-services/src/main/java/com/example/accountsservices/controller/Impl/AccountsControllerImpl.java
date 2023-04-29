@@ -4,6 +4,7 @@ import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.IAccountsController;
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.InputDto;
+import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
@@ -25,16 +26,12 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @return
      */
     @Override
-    public ResponseEntity<InputDto> createAccountsForFirstTime(InputDto inputDto) throws AccountsException {
+    public ResponseEntity<InputDto> createAccounts(InputDto inputDto) throws AccountsException {
         InputDto createdAccounts=accountsService.createAccountForNewUser(inputDto);
         return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
     }
 
-    @Override
-    public ResponseEntity<InputDto> createAccountsForAlreadyCreatedUser(Long customerId,InputDto inputDto) throws AccountsException {
-        InputDto createdAccount=accountsService.createAccountForAlreadyCreatedUser(customerId,inputDto);
-        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
-    }
+
 
     /**
      * @param accountsDto
@@ -42,8 +39,8 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<AccountsDto> updateAccount(AccountsDto accountsDto) throws AccountsException {
-        AccountsDto updateAccount=accountsService.updateAccountDetails(accountsDto);
+    public ResponseEntity<OutputDto> updateOrCreateAnotherAccount(InputDto inputDto) throws AccountsException {
+        OutputDto updateAccount=accountsService.updateAccountDetails(inputDto);
         return new ResponseEntity<>(updateAccount,HttpStatus.ACCEPTED);
     }
 

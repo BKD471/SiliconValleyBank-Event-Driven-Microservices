@@ -2,6 +2,7 @@ package com.example.accountsservices.controller;
 
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.InputDto;
+import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +12,9 @@ import java.util.List;
 @RequestMapping("/api/v1/accounts")
 public interface IAccountsController {
     @PostMapping("/create")
-    ResponseEntity<InputDto> createAccountsForFirstTime(@RequestBody InputDto InputDto) throws AccountsException;
-    @PostMapping("/create/{id}")
-    ResponseEntity<InputDto> createAccountsForAlreadyCreatedUser(@PathVariable("id") Long customerId,@RequestBody InputDto inputDto) throws AccountsException;
-    @PutMapping("/update/{num}")
-    ResponseEntity<AccountsDto> updateAccount(@RequestBody AccountsDto accountsDto) throws AccountsException;
+    ResponseEntity<InputDto> createAccounts(@RequestBody InputDto InputDto) throws AccountsException;
+    @PutMapping("/update")
+    ResponseEntity<OutputDto> updateOrCreateAnotherAccount(@RequestBody InputDto inputDto) throws AccountsException;
     @GetMapping("/{id}")
     ResponseEntity<List<AccountsDto>> getAllAccountsByCustomerId
             (@PathVariable(name = "id") Long customerId) throws AccountsException;
