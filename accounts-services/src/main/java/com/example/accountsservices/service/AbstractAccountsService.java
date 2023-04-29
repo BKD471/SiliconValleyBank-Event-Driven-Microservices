@@ -35,7 +35,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     }
 
 
-    public InputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {return null;}
+    public OutputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {return null;}
     public AccountsDto getAccountInfo(Long accountNumber) throws AccountsException {return null;}
     public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {return null;}
     public OutputDto updateAccountDetails(InputDto inputDto) throws AccountsException {return null;}

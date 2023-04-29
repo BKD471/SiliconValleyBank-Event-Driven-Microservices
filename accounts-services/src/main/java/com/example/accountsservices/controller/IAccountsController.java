@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/v1/accounts")
 public interface IAccountsController {
     @PostMapping("/create")
-    ResponseEntity<InputDto> createAccounts(@RequestBody InputDto InputDto) throws AccountsException;
+    ResponseEntity<OutputDto> createAccounts(@RequestBody InputDto InputDto) throws AccountsException;
     @PutMapping("/update")
     ResponseEntity<OutputDto> updateOrCreateAnotherAccount(@RequestBody InputDto inputDto) throws AccountsException;
     @GetMapping("/{id}")

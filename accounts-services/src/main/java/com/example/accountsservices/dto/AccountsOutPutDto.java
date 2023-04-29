@@ -28,11 +28,6 @@ public class AccountsOutPutDto {
     private Boolean anyActiveLoans;
     private Long totalOutstandingAmountPayableToBank;
     private Long totLoanIssuedSoFar;
-    private AccountsDto.UpdateRequest updateRequest;
-    public enum UpdateRequest {
-        CHANGE_HOME_BRANCH,ADD_ACCOUNT,GET_CREDIT_SCORE, DELETE_ACC, BLOCK_ACC, INC_TRANSFER_LIMIT,
-        INC_APPROVED_LOAN_LIMIT,LEND_LOAN
-    }
 
     private List<Beneficiary> listOfBeneficiary;
     private List<Transactions> listOfTransactions;

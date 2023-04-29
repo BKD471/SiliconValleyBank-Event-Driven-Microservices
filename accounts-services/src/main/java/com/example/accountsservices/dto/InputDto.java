@@ -20,13 +20,20 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InputDto extends BaseDto {
-    private String name;
+public class InputDto {
     private Long customerId;
+    private String name;
+    private int age;
     private String dateOfBirthInYMD;
     private Accounts.AccountType accountType;
     private Accounts.Branch homeBranch;
-
+    private String email;
+    private String phoneNumber;
+    private String adharNumber;
+    private String panNumber;
+    private String voterId;
+    private String drivingLicense;
+    private String passportNumber;
 
 
     //    @JsonIgnore

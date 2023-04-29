@@ -25,5 +25,4 @@ public class CustomerOutPutDto {
     private Long customerId;
     protected LocalDate DateOfBirth;
     private String customerName;
-    private List<AccountsDto> accounts;
 }

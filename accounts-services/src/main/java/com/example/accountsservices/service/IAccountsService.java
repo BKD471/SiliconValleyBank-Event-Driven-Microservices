@@ -9,7 +9,7 @@ import com.example.accountsservices.exception.AccountsException;
 import java.util.List;
 
 public interface IAccountsService {
-    InputDto createAccountForNewUser(InputDto inputDto) throws AccountsException;
+    OutputDto createAccountForNewUser(InputDto inputDto) throws AccountsException;
     AccountsDto getAccountInfo(Long accountNumber) throws AccountsException;
     List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException;
     OutputDto updateAccountDetails(InputDto inputDto) throws AccountsException;

@@ -110,7 +110,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     @Override
-    public InputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {
+    public OutputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {
         Accounts account = Mapper.inputToAccounts(inputDto);
         Customer customer = Mapper.inputToCustomer(inputDto);
         Accounts processedAccount = processAccountInit(account, INIT);
@@ -120,7 +120,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Customer savedCustomer = customerRepository.save(processedCustomer);
         processedAccount.setCustomer(savedCustomer);
         Accounts savedAccount = accountsRepository.save(processedAccount);
-        return Mapper.mapToinputDto(savedCustomer, savedAccount);
+        return Mapper.mapToOutPut(Mapper.mapToCustomerDto(savedCustomer),Mapper.mapToAccountsDto(savedAccount) );
     }
 
 

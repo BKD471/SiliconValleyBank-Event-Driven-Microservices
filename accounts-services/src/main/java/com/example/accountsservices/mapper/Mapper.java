@@ -272,7 +272,6 @@ public class Mapper {
         customerOutPutDto.setVoterId(customerDto.getVoterId());
         customerOutPutDto.setDrivingLicense(customerDto.getDrivingLicense());
         customerOutPutDto.setPassportNumber(customerDto.getPassportNumber());
-        customerOutPutDto.setAccounts(customerDto.getAccounts());
        return customerOutPutDto;
     }
 
