@@ -1,0 +1,9 @@
+
+// accounts
+
+1)OutputDto createAccount(InputDto inputDto)                                    ---checked
+2)AccountsDto getAccountInfo(Long accountNumber)                                --checked
+3)List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId)
+4)OutputDto requestExecutor(InputDto inputDto)
+5)AccountsDto getCreditScore(Long accountNUmber);
+6)AccountsDto updateCreditScore(AccountsDto accountsDto);

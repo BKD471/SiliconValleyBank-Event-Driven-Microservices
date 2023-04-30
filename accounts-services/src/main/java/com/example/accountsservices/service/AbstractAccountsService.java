@@ -35,15 +35,9 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     }
 
 
-    public OutputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {return null;}
     public AccountsDto getAccountInfo(Long accountNumber) throws AccountsException {return null;}
     public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {return null;}
-    public OutputDto updateAccountDetails(InputDto inputDto) throws AccountsException {return null;}
-    public AccountsDto getCreditScore(Long accountNUmber){return null;}
-    public AccountsDto updateCreditScore(AccountsDto accountsDto) {return null;}
-    public void deleteAccount(Long accountNumber) throws AccountsException {/*dummy implementations*/}
-    public  void blockAccount(Long accountNumber) throws  AccountsException{/*dummy implementation*/}
-    public  void deleteAllAccountsByCustomer(Long customerId) throws  AccountsException{/*dummy implementations*/}
+    public OutputDto requestExecutor(InputDto inputDto) throws AccountsException {return null;}
     public BeneficiaryDto addBeneficiary(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {return null;}
     public BeneficiaryDto updateBeneficiaryDetailsOfanAccount(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {return null;}
     public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException{return null;}

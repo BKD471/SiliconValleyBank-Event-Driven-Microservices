@@ -24,23 +24,11 @@ public class AccountsControllerImpl extends AbstractParentController implements 
     /**
      * @param inputDto
      * @return
-     */
-    @Override
-    public ResponseEntity<OutputDto> createAccounts(InputDto inputDto) throws AccountsException {
-        OutputDto createdAccounts=accountsService.createAccountForNewUser(inputDto);
-        return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
-    }
-
-
-
-    /**
-     * @param accountsDto
-     * @return
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> updateOrCreateAnotherAccount(InputDto inputDto) throws AccountsException {
-        OutputDto updateAccount=accountsService.updateAccountDetails(inputDto);
+    public ResponseEntity<OutputDto> requestForChange(InputDto inputDto) throws AccountsException {
+        OutputDto updateAccount=accountsService.requestExecutor(inputDto);
         return new ResponseEntity<>(updateAccount,HttpStatus.ACCEPTED);
     }
 
@@ -64,38 +52,5 @@ public class AccountsControllerImpl extends AbstractParentController implements 
     public ResponseEntity<AccountsDto> getAccountInformation(Long accountNumber) throws AccountsException {
         AccountsDto accountInfo=accountsService.getAccountInfo(accountNumber);
         return new ResponseEntity<>(accountInfo,HttpStatus.OK);
-    }
-
-    /**
-     * @param accountNumber
-     * @return
-     * @throws AccountsException
-     */
-    @Override
-    public ResponseEntity<String> deleteAccount(Long accountNumber) throws AccountsException {
-        accountsService.deleteAccount(accountNumber);
-        return new ResponseEntity<>(String.format("Account with id %s has been deleted",accountNumber),HttpStatus.ACCEPTED);
-    }
-
-    /**
-     * @param customerId
-     * @return
-     * @throws AccountsException
-     */
-    @Override
-    public ResponseEntity<String> deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
-        accountsService.deleteAllAccountsByCustomer(customerId);
-        return new ResponseEntity<>(String.format("All accounts of customer with id %s has been deleted",customerId),HttpStatus.ACCEPTED);
-    }
-
-    /**
-     * @param accountNumber
-     * @return
-     * @throws AccountsException
-     */
-    @Override
-    public ResponseEntity<String> blockAccount(Long accountNumber) throws AccountsException {
-        accountsService.blockAccount(accountNumber);
-        return new ResponseEntity<>(String.format("Account with id %s has been blocked",accountNumber),HttpStatus.ACCEPTED);
     }
 }

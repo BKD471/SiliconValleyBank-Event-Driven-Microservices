@@ -10,6 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutputDto {
+    private String defaultMessage;
+
+    public OutputDto(String defaultMessage) {
+        this.defaultMessage = defaultMessage;
+    }
     private CustomerOutPutDto customer;
     private AccountsOutPutDto accounts;
 }

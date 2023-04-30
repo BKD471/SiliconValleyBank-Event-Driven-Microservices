@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -41,6 +42,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
     public static final String REQUEST_TO_BLOCK = "BLOCK";
     private final String UPDATE_CASH_LIMIT = "UPDATE_CASH_LIMIT";
+    private final String UPDATE_HOME_BRANCH = "UPDATE_HOME_BRANCH";
     private final String GENERATE_CREDIT_SCORE = "gen_credit_score";
     private final String INIT = "INIT";
     private final String UPDATE = "UPDATE";
@@ -68,11 +70,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
             //get all accounts for that customer
             List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
-            boolean isNotPermissible=listOfAccounts.stream().anyMatch(account -> (account.getHomeBranch().equals(newHomeBranch)
-                            && account.getAccountType().equals(newAccountType)));
+            boolean isNotPermissible = listOfAccounts.stream().anyMatch(account -> (account.getHomeBranch().equals(newHomeBranch)
+                    && account.getAccountType().equals(newAccountType)));
 
-            if(isNotPermissible) throw  new AccountsException(String.format("You already have an %s" +
-                    " account in %s branch",newAccountType,newHomeBranch),methodName);
+            if (isNotPermissible) throw new AccountsException(String.format("You already have an %s" +
+                    " account in %s branch", newAccountType, newHomeBranch), methodName);
         }
 
         //initialize customer account opening balance
@@ -105,12 +107,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return customer;
     }
 
-    /**
-     * @paramType AccountsDto
-     * @returnType AccountsDto
-     */
-    @Override
-    public OutputDto createAccountForNewUser(InputDto inputDto) throws AccountsException {
+
+    private OutputDto createAccount(InputDto inputDto) throws AccountsException {
         Accounts account = Mapper.inputToAccounts(inputDto);
         Customer customer = Mapper.inputToCustomer(inputDto);
         Accounts processedAccount = processAccountInit(account, INIT);
@@ -120,7 +118,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Customer savedCustomer = customerRepository.save(processedCustomer);
         processedAccount.setCustomer(savedCustomer);
         Accounts savedAccount = accountsRepository.save(processedAccount);
-        return Mapper.mapToOutPut(Mapper.mapToCustomerDto(savedCustomer),Mapper.mapToAccountsDto(savedAccount) );
+        return Mapper.mapToOutPut(Mapper.mapToCustomerDto(savedCustomer), Mapper.mapToAccountsDto(savedAccount));
     }
 
 
@@ -138,7 +136,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         //save it bebe
         Accounts savedAccount = accountsRepository.save(processedAccount);
-        return Mapper.mapToOutPut(Mapper.mapToCustomerDto(customer.get()),Mapper.mapToAccountsDto(savedAccount));
+        return Mapper.mapToOutPut(Mapper.mapToCustomerDto(customer.get()), Mapper.mapToAccountsDto(savedAccount));
     }
 
 
@@ -165,17 +163,26 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     private boolean updateValidator(Accounts accounts, String request) {
         switch (request) {
-            case UPDATE_CASH_LIMIT:
+            case UPDATE_CASH_LIMIT -> {
                 return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
+            }
+            case UPDATE_HOME_BRANCH -> {
+                Accounts.Branch newhomeBranch = accounts.getHomeBranch();
+
+            }
+
         }
         return false;
     }
 
     private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) {
+        String methodName = "updateHomeBranch(AccountsDto,Accounts) in AccountsServiceImpl";
         Accounts.Branch oldHomeBranch = accounts.getHomeBranch();
         Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
-
         Accounts savedUpdatedAccount = accounts;
+
+        if (!updateValidator(Mapper.mapToAccounts(accountsDto), UPDATE_HOME_BRANCH)) {
+        }
         if (null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             savedUpdatedAccount = accountsRepository.save(accounts);
@@ -198,77 +205,21 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return savedAccount;
     }
 
-    /**
-     * @paramType Long, Long
-     * @returnType AccountsDto
-     */
-    @Override
-    public OutputDto updateAccountDetails(InputDto inputDto) throws AccountsException {
-        String methodName = "updateAccountDetails(AccountsDto) in AccountsServiceImpl";
-        //map
-        AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
-        CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
-        //check the request type
-        if (null == accountsDto.getUpdateRequest())
-            throw new AccountsException("update request field must not be blank", methodName);
-        AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
-        switch (request) {
-            case CHANGE_HOME_BRANCH -> {
-                //get the account
-                Long accountNumber = accountsDto.getAccountNumber();
-                Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
-                Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
-                return Mapper.mapToOutPut(customerDto,Mapper.mapToAccountsDto(updatedAccount));
-            }
-            case GET_CREDIT_SCORE -> {
-                //to be done after implementing credit card microservice
-            }
-            case INC_TRANSFER_LIMIT -> {
-                //get the account
-                Long accountNumber = accountsDto.getAccountNumber();
-                Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
-                Accounts updatedAccount = increaseTransferLimit(accountsDto, foundAccount);
-                return Mapper.mapToOutPut(customerDto,Mapper.mapToAccountsDto(updatedAccount));
-            }
-            case ADD_ACCOUNT -> {
-                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(),accountsDto);
-            }
-            case INC_APPROVED_LOAN_LIMIT -> {
-                //to be done.....
-            }
-            case LEND_LOAN -> {
-                //to be done...
-            }
-            case BLOCK_ACC -> {
-            }
-            case DELETE_ACC -> {
-            }
-        }
-
-        return new OutputDto();
+    private void blockAccount(Long accountNumber) throws AccountsException {
+        //Get account
+        Accounts foundAccount = fetchAccountByAccountNumber(accountNumber, REQUEST_TO_BLOCK);
+        //Block it
+        foundAccount.setAccountStatus(STATUS_BLOCKED);
     }
 
-
-    @Override
-    public AccountsDto getCreditScore(Long accountNUmber) {
-        return null;
-    }
-
-    @Override
-    public AccountsDto updateCreditScore(AccountsDto accountsDto) {
-        return null;
-    }
-
-    @Override
-    public void deleteAccount(Long accountNumber) throws AccountsException {
+    private void deleteAccount(Long accountNumber) throws AccountsException {
         //checking whether account exist or not
         fetchAccountByAccountNumber(accountNumber);
         //deleting it
         accountsRepository.deleteByAccountNumber(accountNumber);
     }
 
-    @Override
-    public void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
+    private void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
         String methodName = "deleteAllAccountsByCustomer(Long ) in AccountsServiceImpl";
         //checking whether customer exist
 //        Optional<List<Accounts>> foundCustomer = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
@@ -278,12 +229,86 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 //        accountsRepository.deleteAllByCustomerId(customerId);
     }
 
-    @Override
-    public void blockAccount(Long accountNumber) throws AccountsException {
-        //Get account
-        Accounts foundAccount = fetchAccountByAccountNumber(accountNumber, REQUEST_TO_BLOCK);
-        //Block it
-        foundAccount.setAccountStatus(STATUS_BLOCKED);
+    private int getCreditScore(Long accountNumber) {
+        ///to be done
+        return 0;
     }
 
+
+    private int updateCreditScore(AccountsDto accountsDto) {
+        return 0;
+    }
+
+    /**
+     * @paramType Long, Long
+     * @returnType AccountsDto
+     */
+    @Override
+    public OutputDto requestExecutor(InputDto inputDto) throws AccountsException {
+        String methodName = "requestExecutor(InputDto) in AccountsServiceImpl";
+        //map
+        AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
+        CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
+        //check the request type
+        if (null == accountsDto.getUpdateRequest())
+            throw new AccountsException("update request field must not be blank", methodName);
+        AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
+        switch (request) {
+            case CREATE_ACC -> {
+                return createAccount(inputDto);
+            }
+            case CHANGE_HOME_BRANCH -> {
+                //get the account
+                Long accountNumber = accountsDto.getAccountNumber();
+                Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
+                Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
+                return Mapper.mapToOutPut(customerDto, Mapper.mapToAccountsDto(updatedAccount));
+            }
+            case GET_CREDIT_SCORE -> {
+                Long accountNumber = accountsDto.getAccountNumber();
+                getCreditScore(accountNumber);
+                //to be done after implementing credit card microservice
+                return new OutputDto("Baad main karnge");
+            }
+            case UPDATE_CREDIT_SCORE -> {
+                updateCreditScore(accountsDto);
+                return new OutputDto("Baad main karenge");
+            }
+            case INC_TRANSFER_LIMIT -> {
+                //get the account
+                Long accountNumber = accountsDto.getAccountNumber();
+                Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
+                Accounts updatedAccount = increaseTransferLimit(accountsDto, foundAccount);
+                return Mapper.mapToOutPut(customerDto, Mapper.mapToAccountsDto(updatedAccount));
+            }
+            case ADD_ACCOUNT -> {
+                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), accountsDto);
+            }
+            case INC_APPROVED_LOAN_LIMIT -> {
+                //to be done.....
+
+                return new OutputDto("Baad main karenge");
+            }
+            case LEND_LOAN -> {
+                //to be done...
+                return new OutputDto("Baad main karenge");
+            }
+            case BLOCK_ACC -> {
+                Long accountNumber = accountsDto.getAccountNumber();
+                blockAccount(accountNumber);
+                return new OutputDto(String.format("Account with id %s is successfully blocked", accountNumber));
+            }
+            case DELETE_ACC -> {
+                Long accountNumber = accountsDto.getAccountNumber();
+                deleteAccount(accountNumber);
+                return new OutputDto(String.format("Account with id %s is successfully deleted", accountNumber));
+            }
+            case DELETE_ALL_ACC -> {
+                deleteAllAccountsByCustomer(customerDto.getCustomerId());
+                return new OutputDto(String.format("All accounts that belonged to customer with id %s has " +
+                        "been deleted", customerDto.getCustomerId()));
+            }
+            default -> throw new AccountsException(String.format("Invalid request type %s", request), methodName);
+        }
+    }
 }

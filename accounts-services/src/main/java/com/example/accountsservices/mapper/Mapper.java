@@ -47,7 +47,6 @@ public class Mapper {
         accountsDto.setAccountStatus(accounts.getAccountStatus());
         accountsDto.setListOfBeneficiary(accounts.getListOfBeneficiary());
         accountsDto.setListOfTransactions(accounts.getListOfTransactions());
-
         return accountsDto;
     }
 
