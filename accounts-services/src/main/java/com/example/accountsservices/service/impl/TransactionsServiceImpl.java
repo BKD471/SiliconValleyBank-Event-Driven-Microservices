@@ -42,7 +42,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
         }
         if (DEBIT.equals(transactionType)) {
             if (previousBalance >= amount) accounts.setBalance(previousBalance - amount);
-            else throw new TransactionException("Insufficient Balance",methodName);
+            else throw new TransactionException(TransactionException.class,"Insufficient Balance",methodName);
             transactions.setTransactionType(DEBIT);
         }
 
@@ -90,7 +90,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
             case DEBIT -> {
                 return payBills(transactionsDto);
             }
-            default -> throw new TransactionException("Please Specify a valid transaction type",methodName);
+            default -> throw new TransactionException(TransactionException.class,"Please Specify a valid transaction type",methodName);
         }
     }
 
@@ -155,7 +155,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
                 return payOrDepositMoney(transactionsDto, DEBIT);
             }
 
-            default -> throw  new TransactionException("we do not support this types of transaction",methodName);
+            default -> throw  new TransactionException(TransactionException.class,"we do not support this types of transaction",methodName);
         }
         return transactionsDto;
     }

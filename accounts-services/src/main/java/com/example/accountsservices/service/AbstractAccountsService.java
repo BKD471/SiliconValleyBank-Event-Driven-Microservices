@@ -3,6 +3,7 @@ package com.example.accountsservices.service;
 import com.example.accountsservices.dto.*;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
+import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.TransactionException;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.repository.AccountsRepository;
@@ -33,27 +34,30 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     protected AbstractAccountsService(AccountsRepository accountsRepository){
         this.accountsRepository=accountsRepository;
     }
+    public OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException{ return null;}
+    public OutputDto  putRequestExecutor(InputDto inputDto) throws AccountsException{ return null;}
+    public OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException { return null;}
+    public OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException{ return null;}
 
-
-    public AccountsDto getAccountInfo(Long accountNumber) throws AccountsException {return null;}
-    public List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {return null;}
-    public OutputDto requestExecutor(InputDto inputDto) throws AccountsException {return null;}
+    //ben
     public BeneficiaryDto addBeneficiary(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {return null;}
     public BeneficiaryDto updateBeneficiaryDetailsOfanAccount(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {return null;}
     public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException{return null;}
     public void deleteBeneficiariesForAnAccount(Long accountNumber,Long beneficiaryId) throws  AccountsException , BeneficiaryException{/*dummy implementation*/}
     public  void  deleteAllBeneficiaries(Long accountNumber) throws AccountsException {/*dummy*/}
+
+    //transactions
     public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
     public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
         String methodName="fetchAccountByAccountNumber() in AbstractAccountsService";
         Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByAccountNumber(accountNumber));
         if (fetchedAccounts.isEmpty())
-            throw new AccountsException(String.format("No such accounts exist with id %s", accountNumber),methodName);
+            throw new AccountsException(AccountsException.class,String.format("No such accounts exist with id %s", accountNumber),methodName);
 
         boolean checkAccountIsBlocked=STATUS_BLOCKED.equals(fetchedAccounts.get().getAccountStatus());
-        if(request.length>0 && request[0].equalsIgnoreCase(REQUEST_TO_BLOCK) && checkAccountIsBlocked) throw new AccountsException(String.format("Account of id %s is already blocked",accountNumber),methodName);
-        else if(checkAccountIsBlocked) throw new AccountsException(String.format("Account of id %s is in %s status",accountNumber,STATUS_BLOCKED),methodName);
+        if(request.length>0 && request[0].equalsIgnoreCase(REQUEST_TO_BLOCK) && checkAccountIsBlocked) throw new AccountsException(AccountsException.class,String.format("Account of id %s is already blocked",accountNumber),methodName);
+        else if(checkAccountIsBlocked) throw new AccountsException(AccountsException.class,String.format("Account of id %s is in %s status",accountNumber,STATUS_BLOCKED),methodName);
         return fetchedAccounts.get();
     }
 }

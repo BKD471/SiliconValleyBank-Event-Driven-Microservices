@@ -293,11 +293,25 @@ public class Mapper {
         return accountsOutPutDto;
     }
 
-    public static OutputDto mapToOutPut(CustomerDto customerDto,AccountsDto accountsDto) {
+    public static OutputDto mapToOutPutDto(CustomerDto customerDto,AccountsDto accountsDto,String message) {
         OutputDto outputDto = new OutputDto();
+        outputDto.setDefaultMessage(message);
         outputDto.setCustomer(Mapper.mapToCustomerOutputDto(customerDto));
         outputDto.setAccounts(Mapper.mapToAccountsOutputDto(accountsDto));
         return outputDto;
+    }
+
+    public  static OutputDto customerDtoToOutPut(CustomerDto customerDto){
+        OutputDto outputDto=new OutputDto();
+        outputDto.setCustomer(Mapper.mapToCustomerOutputDto(customerDto));
+        return  outputDto;
+    }
+
+    public  static OutputDto accountsDtoToOutPut(AccountsDto accountsDto){
+        OutputDto outputDto=new OutputDto();
+        //////outputDto.setCustomer();
+        outputDto.setAccounts(Mapper.mapToAccountsOutputDto(accountsDto));
+        return  outputDto;
     }
 
 }

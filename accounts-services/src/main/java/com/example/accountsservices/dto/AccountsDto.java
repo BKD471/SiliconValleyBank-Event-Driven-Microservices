@@ -32,15 +32,18 @@ public class AccountsDto extends AbstractParentDto {
     private UpdateRequest updateRequest;
     public enum UpdateRequest {
         CREATE_ACC,
-        CHANGE_HOME_BRANCH,
         ADD_ACCOUNT,
-        GET_CREDIT_SCORE,
+        LEND_LOAN,
+        CHANGE_HOME_BRANCH,
         UPDATE_CREDIT_SCORE,
-        DELETE_ACC,
-        DELETE_ALL_ACC,
         BLOCK_ACC,
         INC_TRANSFER_LIMIT,
-        INC_APPROVED_LOAN_LIMIT,LEND_LOAN
+        INC_APPROVED_LOAN_LIMIT,
+        GET_CREDIT_SCORE,
+        GET_ACC_INFO,
+        GET_ALL_ACC,
+        DELETE_ACC,
+        DELETE_ALL_ACC
     }
 
     private List<Beneficiary> listOfBeneficiary;

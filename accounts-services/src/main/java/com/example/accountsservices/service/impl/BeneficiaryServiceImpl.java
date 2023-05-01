@@ -125,10 +125,10 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
 
         //fetch the beneficiary from beneficiaryList
         Long BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
-        if(null==BENEFICIARY_ID) throw  new BeneficiaryException("Please enter a valid beneficiary id",methodName);
+        if(null==BENEFICIARY_ID) throw  new BeneficiaryException(BeneficiaryException.class,"Please enter a valid beneficiary id",methodName);
         Optional<Beneficiary> beneficiaryAccount = fetchedAccounts.getListOfBeneficiary().stream().filter(beneficiary -> BENEFICIARY_ID.equals(beneficiary.getBeneficiaryId())).findFirst();
         if (beneficiaryAccount.isEmpty())
-            throw new BeneficiaryException(String.format("No such beneficiary accounts exist with beneficiary id %s", BENEFICIARY_ID),methodName);
+            throw new BeneficiaryException(BeneficiaryException.class,String.format("No such beneficiary accounts exist with beneficiary id %s", BENEFICIARY_ID),methodName);
 
         //update
         Beneficiary newBeneficiaryData = Mapper.mapToBeneficiary(beneficiaryDto);
@@ -141,7 +141,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     public void deleteBeneficiariesForAnAccount(Long accountNumber, Long beneficiaryId) throws AccountsException, BeneficiaryException {
 
         String methodName=" deleteBeneficiariesForAnAccount(Long , Long )  in BeneficiaryServiceImpl";
-        if (null == beneficiaryId) throw new BeneficiaryException("Please provide a valid beneficiary id",methodName);
+        if (null == beneficiaryId) throw new BeneficiaryException(BeneficiaryException.class,"Please provide a valid beneficiary id",methodName);
         //fetch the account
         Accounts fetchedAccounts = fetchAccountByAccountNumber(accountNumber);
 

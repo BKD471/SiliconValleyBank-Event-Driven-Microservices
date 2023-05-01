@@ -4,6 +4,8 @@ import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
+import com.example.accountsservices.exception.CustomerException;
+import com.example.accountsservices.exception.ResponseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -11,12 +13,12 @@ import java.util.List;
 
 @RequestMapping("/api/v1/accounts")
 public interface IAccountsController {
-
-    @PutMapping("/update")
-    ResponseEntity<OutputDto> requestForChange(@RequestBody InputDto inputDto) throws AccountsException;
-    @GetMapping("/{id}")
-    ResponseEntity<List<AccountsDto>> getAllAccountsByCustomerId
-            (@PathVariable(name = "id") Long customerId) throws AccountsException;
-    @GetMapping("/info/{num}")
-    ResponseEntity<AccountsDto> getAccountInformation(@PathVariable(name="num") Long accountNumber) throws AccountsException;
+    @GetMapping("/get")
+    ResponseEntity<OutputDto> getRequestForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException;
+    @PostMapping("/post")
+    ResponseEntity<OutputDto> postRequestForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException;
+    @PutMapping("/put")
+    ResponseEntity<OutputDto>  putRequestForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException;
+    @DeleteMapping("/delete")
+    ResponseEntity<OutputDto>  deleteRequestForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException;
 }

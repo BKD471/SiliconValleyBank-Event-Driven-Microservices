@@ -39,7 +39,7 @@ public class BranchCodeRetrieverHelper {
     public static String getBranchCode(Accounts.Branch homeBranch) throws AccountsException {
         String methodName = "getBranchCode(Account.Branch) in BranchCodeHelper";
         if (getBranchHash().containsKey(homeBranch)) return getBranchHash().get(homeBranch);
-        throw new AccountsException(String.format("No such" +
+        throw new AccountsException(AccountsException.class,String.format("No such" +
                 " branches exist with name %s", homeBranch), methodName);
 
     }

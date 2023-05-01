@@ -1,12 +1,13 @@
 package com.example.accountsservices.exception;
 
 public class TransactionException extends Exception{
-
-    private String reason;
-    private String methodName;
-    public TransactionException(String reason,String methodName){
-        super(String.format("TransactionException has occurred in %s for %s",methodName,reason));
+    private final String reason;
+    private final String methodName;
+    private final Object obj;
+    public TransactionException(Object obj,String reason,String methodName){
+        super(String.format("%s has occurred  for %s in %s",obj,reason,methodName));
         this.reason=reason;
         this.methodName=methodName;
+        this.obj=obj;
     }
 }
