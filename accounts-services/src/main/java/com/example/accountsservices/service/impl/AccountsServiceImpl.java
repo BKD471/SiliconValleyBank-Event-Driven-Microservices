@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,12 +48,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final String INIT = "INIT";
     private final String UPDATE = "UPDATE";
 
-    private enum ValidateType{
-        UPDATE_CASH_LIMIT,UPDATE_HOME_BRANCH
+    private enum ValidateType {
+        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH
     }
-    private final ValidateType UPDATE_CASH_LIMIT=ValidateType.UPDATE_CASH_LIMIT;
-    private final ValidateType UPDATE_HOME_BRANCH = ValidateType.UPDATE_HOME_BRANCH;
 
+    private final ValidateType UPDATE_CASH_LIMIT = ValidateType.UPDATE_CASH_LIMIT;
+    private final ValidateType UPDATE_HOME_BRANCH = ValidateType.UPDATE_HOME_BRANCH;
 
 
     /**
@@ -80,8 +81,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             boolean isNotPermissible = listOfAccounts.stream().anyMatch(account -> (account.getHomeBranch().equals(newHomeBranch)
                     && account.getAccountType().equals(newAccountType)));
 
-            if (isNotPermissible) throw new AccountsException(AccountsException.class,String.format("You already have an %s" +
-                    " account in %s branch", newAccountType, newHomeBranch), methodName);
+            if (isNotPermissible)
+                throw new AccountsException(AccountsException.class, String.format("You already have an %s" +
+                        " account in %s branch", newAccountType, newHomeBranch), methodName);
         }
 
         //initialize customer account opening balance
@@ -108,7 +110,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
         int age = Period.between(dob, LocalDate.now()).getYears();
-        if (age < 18) throw new AccountsException(AccountsException.class,"Account holder must be at least 18 years", methodName);
+        if (age < 18)
+            throw new AccountsException(AccountsException.class, "Account holder must be at least 18 years", methodName);
 
         customer.setAge(age);
         return customer;
@@ -116,17 +119,29 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
 
     private OutputDto createAccount(InputDto inputDto) throws AccountsException {
+        String methodName = "createAccount(InputDto) in AccountsServiceImpl";
         Accounts account = Mapper.inputToAccounts(inputDto);
         Customer customer = Mapper.inputToCustomer(inputDto);
         Accounts processedAccount = processAccountInit(account, INIT);
         Customer processedCustomer = processCustomerInformation(customer);
 
-        //save account & customer
+        //add account to listOfAccounts of Customer & register customer as the owner of this accnt
+        List<Accounts> listOfAccounts = new ArrayList<>();
+        listOfAccounts.add(processedAccount);
+        processedCustomer.setAccounts(listOfAccounts);
+        processedAccount.setCustomer(processedCustomer);
+
+        //save customer(parent) only , no need to save accounts(child) its auto saved due to cascadeType.All
         Customer savedCustomer = customerRepository.save(processedCustomer);
-        processedAccount.setCustomer(savedCustomer);
-        Accounts savedAccount = accountsRepository.save(processedAccount);
-        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(savedCustomer), Mapper.mapToAccountsDto(savedAccount)
-                ,String.format("Account with id %s is created for customer %s",savedAccount.getAccountNumber(),
+
+        //fetch the corresponding account of saved customer
+        Long accountNumber=savedCustomer.getAccounts().get(0).getAccountNumber();
+        Optional<Accounts> savedAccount = accountsRepository.findByAccountNumber(accountNumber);
+        if (savedAccount.isEmpty())
+            throw new AccountsException(AccountsException.class, String.format("No such accounts exists with email id %s", savedCustomer.getEmail()), methodName);
+
+        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(savedCustomer), Mapper.mapToAccountsDto(savedAccount.get())
+                , String.format("Account with id %s is created for customer %s", accountNumber,
                         savedCustomer.getCustomerId()));
     }
 
@@ -135,7 +150,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         String methodName = "createAccountForAlreadyCreatedUser(Long,InoutDto) in AccountsServiceImpl";
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isEmpty())
-            throw new AccountsException(AccountsException.class,String.format("No such customers with id %s found", customerId), methodName);
+            throw new AccountsException(AccountsException.class, String.format("No such customers with id %s found", customerId), methodName);
 
         //some critical processing
         Accounts accounts = Mapper.mapToAccounts(accountsDto);
@@ -146,9 +161,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //save it bebe
         Accounts savedAccount = accountsRepository.save(processedAccount);
         return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(customer.get()),
-                Mapper.mapToAccountsDto(savedAccount),String.format("New account with id %s is created " +
+                Mapper.mapToAccountsDto(savedAccount), String.format("New account with id %s is created " +
                                 "for customer with id:%s",
-                        savedAccount.getAccountNumber(),customerId));
+                        savedAccount.getAccountNumber(), customerId));
     }
 
 
@@ -160,16 +175,17 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     private OutputDto getAccountInfo(Long accountNumber) throws AccountsException {
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
-        Customer foundCustomer=foundAccount.getCustomer();
+        Customer foundCustomer = foundAccount.getCustomer();
         return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(foundCustomer),
-                Mapper.mapToAccountsDto(foundAccount),String.format("Retrieved info about account with id: %s",foundAccount.getAccountNumber()));
+                Mapper.mapToAccountsDto(foundAccount), String.format("Retrieved info about account with id: %s", foundAccount.getAccountNumber()));
     }
 
 
     private List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {
         String methodName = "getAllAccountsByCustomerId(Long) in AccountsServiceImpl";
-        Optional<List<Accounts>> allAccounts = Optional.ofNullable(accountsRepository.findAllByCustomer_CustomerId(customerId));
-        if (allAccounts.isEmpty()) throw new AccountsException(AccountsException.class,String.format("No such accounts present with this customer %s", customerId), methodName);
+        Optional<List<Accounts>> allAccounts = accountsRepository.findAllByCustomer_CustomerId(customerId);
+        if (allAccounts.isEmpty())
+            throw new AccountsException(AccountsException.class, String.format("No such accounts present with this customer %s", customerId), methodName);
         return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(Mapper::mapToAccountsDto).collect(Collectors.toList());
     }
 
@@ -210,8 +226,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Accounts savedAccount = accounts;
         if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
             if (updateValidator(accounts, UPDATE_CASH_LIMIT)) accounts.setTransferLimitPerDay(newCashLimit);
-            else throw new AccountsException(AccountsException.class,String.format("Yr Account with id %s must be at least " +
-                    "six months old ", accounts.getAccountNumber()), methodName);
+            else
+                throw new AccountsException(AccountsException.class, String.format("Yr Account with id %s must be at least " +
+                        "six months old ", accounts.getAccountNumber()), methodName);
             savedAccount = accountsRepository.save(accounts);
         }
         return savedAccount;
@@ -260,7 +277,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
         //check the request type
         if (null == accountsDto.getUpdateRequest())
-            throw new AccountsException(AccountsException.class,"update request field must not be blank", methodName);
+            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case CREATE_ACC -> {
@@ -273,7 +290,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 //to be done...
                 return new OutputDto("Baad main karenge");
             }
-            default -> throw new AccountsException(AccountsException.class,String.format("Invalid request type %s", request), methodName);
+            default ->
+                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s", request), methodName);
         }
     }
 
@@ -285,7 +303,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
         //check the request type
         if (null == accountsDto.getUpdateRequest())
-            throw new AccountsException(AccountsException.class,"update request field must not be blank", methodName);
+            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
 
@@ -296,20 +314,21 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 return new OutputDto("Baad main karnge");
             }
             case GET_ACC_INFO -> {
-                Long accountNumber=accountsDto.getAccountNumber();
+                Long accountNumber = accountsDto.getAccountNumber();
                 return getAccountInfo(accountNumber);
             }
             case GET_ALL_ACC -> {
-                String locality=String.format("Inside switch ,for GET_ALL_ACC case under method %s",methodName);
-                Long customerId=customerDto.getCustomerId();
-                Optional<Customer> foundCustomer=customerRepository.findById(customerId);
-                if(foundCustomer.isEmpty()) throw  new CustomerException(CustomerException.class,locality,methodName);
+                String locality = String.format("Inside switch ,for GET_ALL_ACC case under method %s", methodName);
+                Long customerId = customerDto.getCustomerId();
+                Optional<Customer> foundCustomer = customerRepository.findById(customerId);
+                if (foundCustomer.isEmpty()) throw new CustomerException(CustomerException.class, locality, methodName);
 
-                List<AccountsDto> listOfAccounts=getAllActiveAccountsByCustomerId(customerId);
-                return new OutputDto(Mapper.mapToCustomerOutputDto(Mapper.mapToCustomerDto(foundCustomer.get())),listOfAccounts,
-                        String.format("Fetched all accounts for customer id:%s",customerId));
+                List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
+                return new OutputDto(Mapper.mapToCustomerOutputDto(Mapper.mapToCustomerDto(foundCustomer.get())), listOfAccounts,
+                        String.format("Fetched all accounts for customer id:%s", customerId));
             }
-            default -> throw new AccountsException(AccountsException.class,String.format("Invalid request type %s", request), methodName);
+            default ->
+                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s", request), methodName);
         }
     }
 
@@ -321,7 +340,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
         //check the request type
         if (null == accountsDto.getUpdateRequest())
-            throw new AccountsException(AccountsException.class,"update request field must not be blank", methodName);
+            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case CHANGE_HOME_BRANCH -> {
@@ -331,7 +350,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
                 return Mapper.mapToOutPutDto(customerDto, Mapper.mapToAccountsDto(updatedAccount),
                         String.format("Home branch for is changed from %s to %s for customer with id %s",
-                                foundAccount.getHomeBranch(),accountsDto.getHomeBranch(),
+                                foundAccount.getHomeBranch(), accountsDto.getHomeBranch(),
                                 foundAccount.getCustomer().getCustomerId()));
             }
             case UPDATE_CREDIT_SCORE -> {
@@ -344,7 +363,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
                 Accounts updatedAccount = increaseTransferLimit(accountsDto, foundAccount);
                 return Mapper.mapToOutPutDto(customerDto, Mapper.mapToAccountsDto(updatedAccount),
-                        String.format("Transfer Limit has been increased from %s to %s",foundAccount.getTransferLimitPerDay(),accountsDto.getTransferLimitPerDay()));
+                        String.format("Transfer Limit has been increased from %s to %s", foundAccount.getTransferLimitPerDay(), accountsDto.getTransferLimitPerDay()));
             }
             case BLOCK_ACC -> {
                 Long accountNumber = accountsDto.getAccountNumber();
@@ -356,7 +375,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
                 return new OutputDto("Baad main karenge");
             }
-            default -> throw new AccountsException(AccountsException.class,String.format("Invalid request type %s", request), methodName);
+            default ->
+                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s", request), methodName);
         }
     }
 
@@ -368,7 +388,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
         //check the request type
         if (null == accountsDto.getUpdateRequest())
-            throw new AccountsException(AccountsException.class,"update request field must not be blank", methodName);
+            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case DELETE_ACC -> {
@@ -381,7 +401,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 return new OutputDto(String.format("All accounts that belonged to customer with id %s has " +
                         "been deleted", customerDto.getCustomerId()));
             }
-            default -> throw new AccountsException(AccountsException.class,String.format("Invalid request type %s", request), methodName);
+            default ->
+                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s", request), methodName);
         }
     }
 }

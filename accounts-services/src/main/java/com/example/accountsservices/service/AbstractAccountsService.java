@@ -51,7 +51,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
         String methodName="fetchAccountByAccountNumber() in AbstractAccountsService";
-        Optional<Accounts> fetchedAccounts = Optional.ofNullable(accountsRepository.findByAccountNumber(accountNumber));
+        Optional<Accounts> fetchedAccounts = accountsRepository.findByAccountNumber(accountNumber);
         if (fetchedAccounts.isEmpty())
             throw new AccountsException(AccountsException.class,String.format("No such accounts exist with id %s", accountNumber),methodName);
 
