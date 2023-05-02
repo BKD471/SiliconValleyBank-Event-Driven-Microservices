@@ -132,15 +132,13 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         processedAccount.setCustomer(processedCustomer);
 
         //save customer(parent) only , no need to save accounts(child) its auto saved due to cascadeType.All
+        //thus reducing call to db
         Customer savedCustomer = customerRepository.save(processedCustomer);
 
         //fetch the corresponding account of saved customer
         Long accountNumber=savedCustomer.getAccounts().get(0).getAccountNumber();
-        Optional<Accounts> savedAccount = accountsRepository.findByAccountNumber(accountNumber);
-        if (savedAccount.isEmpty())
-            throw new AccountsException(AccountsException.class, String.format("No such accounts exists with email id %s", savedCustomer.getEmail()), methodName);
 
-        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(savedCustomer), Mapper.mapToAccountsDto(savedAccount.get())
+        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(savedCustomer), Mapper.mapToAccountsDto(savedCustomer.getAccounts().get(0))
                 , String.format("Account with id %s is created for customer %s", accountNumber,
                         savedCustomer.getCustomerId()));
     }
