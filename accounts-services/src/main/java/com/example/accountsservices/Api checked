@@ -1,9 +1,23 @@
 
 // accounts
 
-1)OutputDto createAccount(InputDto inputDto)                                    ---checked
-2)AccountsDto getAccountInfo(Long accountNumber)                                --checked
-3)List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId)
-4)OutputDto requestExecutor(InputDto inputDto)
-5)AccountsDto getCreditScore(Long accountNUmber);
-6)AccountsDto updateCreditScore(AccountsDto accountsDto);
+OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException;
+              1) CREATE_ACC  -------------------------------> CHECKED
+              2) ADD_ACCOUNT -------------------------------> CHECKED
+              3) LEND_LOAN   ------------------------------->
+
+OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException;
+             1) CHANGE_HOME_BRANCH      ------------------------> CHECKED
+             2) UPDATE_CREDIT_SCORE     ------------------------>
+             3) INC_TRANSFER_LIMIT      ------------------------>
+             4) BLOCK_ACC               ------------------------>
+             5) INC_APPROVED_LOAN_LIMIT ------------------------>
+
+OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
+             1) GET_CREDIT_SCORE --------------------------->
+             2) GET_ACC_INFO     ---------------------------> CHECKED
+             3) GET_ALL_ACC      ---------------------------> CHECKED
+
+OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException;
+             1) DELETE_ACC       --------------------------->
+             2) DELETE_ALL_ACC   --------------------------->

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -44,12 +43,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
     private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
     public static final String REQUEST_TO_BLOCK = "BLOCK";
-    private final String GENERATE_CREDIT_SCORE = "gen_credit_score";
     private final String INIT = "INIT";
     private final String UPDATE = "UPDATE";
 
     private enum ValidateType {
-        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH
+        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH, GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE
     }
 
     private final ValidateType UPDATE_CASH_LIMIT = ValidateType.UPDATE_CASH_LIMIT;
@@ -66,24 +64,34 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         this.customerRepository = customerRepository;
     }
 
+    private Boolean checkConflictingAccountUpdateConditionForBranch(Accounts accounts, AccountsDto accountsDto, String locality) throws AccountsException {
+        String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
+                "coming from %s", locality);
+        Accounts.Branch newhomeBranch = null;
+        newhomeBranch = (null == accountsDto) ? accounts.getHomeBranch() : accountsDto.getHomeBranch();
+        Accounts.AccountType accountType = accounts.getAccountType();
+
+        //get all accounts for customer
+        List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
+
+        Accounts.Branch finalNewhomeBranch = newhomeBranch;
+        boolean isNotPermissible = listOfAccounts.stream().
+                anyMatch(account -> finalNewhomeBranch.equals(account.getHomeBranch()) && accountType.equals(account.getAccountType()));
+
+        if (isNotPermissible) throw new AccountsException(AccountsException.class,
+                String.format("You already have an account with same accountType %s" +
+                                "and same HomeBranch %s",
+                        accounts.getAccountType(), accounts.getHomeBranch()), location);
+
+        return true;
+    }
 
     private Accounts processAccountInit(Accounts accounts, String req) throws AccountsException {
         String methodName = "processAccountInit(Accounts,String) in AccountsServiceImpl";
         //If request is adding another accounts for a customer already have an account
         //there should not be two accounts with  same accountType in same homeBranch
         if (req.equalsIgnoreCase(UPDATE)) {
-            //new homeBranch & type
-            Accounts.Branch newHomeBranch = accounts.getHomeBranch();
-            Accounts.AccountType newAccountType = accounts.getAccountType();
-
-            //get all accounts for that customer
-            List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
-            boolean isNotPermissible = listOfAccounts.stream().anyMatch(account -> (account.getHomeBranch().equals(newHomeBranch)
-                    && account.getAccountType().equals(newAccountType)));
-
-            if (isNotPermissible)
-                throw new AccountsException(AccountsException.class, String.format("You already have an %s" +
-                        " account in %s branch", newAccountType, newHomeBranch), methodName);
+            checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
         }
 
         //initialize customer account opening balance
@@ -119,7 +127,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
 
     private OutputDto createAccount(InputDto inputDto) throws AccountsException {
-        String methodName = "createAccount(InputDto) in AccountsServiceImpl";
         Accounts account = Mapper.inputToAccounts(inputDto);
         Customer customer = Mapper.inputToCustomer(inputDto);
         Accounts processedAccount = processAccountInit(account, INIT);
@@ -136,7 +143,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Customer savedCustomer = customerRepository.save(processedCustomer);
 
         //fetch the corresponding account of saved customer
-        Long accountNumber=savedCustomer.getAccounts().get(0).getAccountNumber();
+        Long accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
 
         return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(savedCustomer), Mapper.mapToAccountsDto(savedCustomer.getAccounts().get(0))
                 , String.format("Account with id %s is created for customer %s", accountNumber,
@@ -152,7 +159,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         //some critical processing
         Accounts accounts = Mapper.mapToAccounts(accountsDto);
-        //register this customer as the on=wner of this account
+        //register this customer as the owner of this account
         accounts.setCustomer(customer.get());
         Accounts processedAccount = processAccountInit(accounts, UPDATE);
 
@@ -187,30 +194,30 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(Mapper::mapToAccountsDto).collect(Collectors.toList());
     }
 
-    private boolean updateValidator(Accounts accounts, ValidateType request) {
+    private Boolean updateValidator(Accounts accounts, AccountsDto accountsDto, ValidateType request) throws AccountsException {
+        String location = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
+
         switch (request) {
             case UPDATE_CASH_LIMIT -> {
                 return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
             }
             case UPDATE_HOME_BRANCH -> {
-                Accounts.Branch newhomeBranch = accounts.getHomeBranch();
-
+                String locality = String.format("Inside UPDATE_HOME_BRANCH of %s", location);
+                return checkConflictingAccountUpdateConditionForBranch(accounts, accountsDto, locality);
             }
 
         }
         return false;
     }
 
-    private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) {
-        String methodName = "updateHomeBranch(AccountsDto,Accounts) in AccountsServiceImpl";
+    private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
         Accounts.Branch oldHomeBranch = accounts.getHomeBranch();
         Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
         Accounts savedUpdatedAccount = accounts;
 
-        if (!updateValidator(Mapper.mapToAccounts(accountsDto), UPDATE_HOME_BRANCH)) {
-        }
-        if (null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
+        if (updateValidator(accounts, accountsDto, UPDATE_HOME_BRANCH) && null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
+            accounts.setBranchCode(BranchCodeRetrieverHelper.getBranchCode(newHomeBranch));
             savedUpdatedAccount = accountsRepository.save(accounts);
         }
         return savedUpdatedAccount;
@@ -223,7 +230,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         Accounts savedAccount = accounts;
         if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
-            if (updateValidator(accounts, UPDATE_CASH_LIMIT)) accounts.setTransferLimitPerDay(newCashLimit);
+            if (updateValidator(accounts, accountsDto, UPDATE_CASH_LIMIT))
+                accounts.setTransferLimitPerDay(newCashLimit);
             else
                 throw new AccountsException(AccountsException.class, String.format("Yr Account with id %s must be at least " +
                         "six months old ", accounts.getAccountNumber()), methodName);
@@ -289,7 +297,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 return new OutputDto("Baad main karenge");
             }
             default ->
-                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s", request), methodName);
+                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for POST requests", request), methodName);
         }
     }
 
@@ -326,7 +334,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                         String.format("Fetched all accounts for customer id:%s", customerId));
             }
             default ->
-                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s", request), methodName);
+                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for GET request", request), methodName);
         }
     }
 
@@ -341,12 +349,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
-            case CHANGE_HOME_BRANCH -> {
+            case UPDATE_HOME_BRANCH -> {
                 //get the account
                 Long accountNumber = accountsDto.getAccountNumber();
                 Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
                 Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
-                return Mapper.mapToOutPutDto(customerDto, Mapper.mapToAccountsDto(updatedAccount),
+                return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(updatedAccount.getCustomer()), Mapper.mapToAccountsDto(updatedAccount),
                         String.format("Home branch for is changed from %s to %s for customer with id %s",
                                 foundAccount.getHomeBranch(), accountsDto.getHomeBranch(),
                                 foundAccount.getCustomer().getCustomerId()));
@@ -374,7 +382,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 return new OutputDto("Baad main karenge");
             }
             default ->
-                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s", request), methodName);
+                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for PUT request", request), methodName);
         }
     }
 
@@ -400,7 +408,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                         "been deleted", customerDto.getCustomerId()));
             }
             default ->
-                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s", request), methodName);
+                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for DELETE request", request), methodName);
         }
     }
 }
