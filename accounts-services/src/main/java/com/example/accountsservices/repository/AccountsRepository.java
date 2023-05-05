@@ -1,6 +1,7 @@
 package com.example.accountsservices.repository;
 
 import com.example.accountsservices.model.Accounts;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,11 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AccountsRepository extends JpaRepository<Accounts,Long> {
+@Transactional
+public interface AccountsRepository extends JpaRepository<Accounts, Long> {
     Optional<Accounts> findByAccountNumber(Long accountNumber);
+
     Optional<Accounts> findByCustomer_Email(String email);
-//    List<Accounts> findAllByCustomerId(Long customerId);
-    //void deleteAllByCustomerId(Long customerId);
+
+    void deleteAllByCustomer_CustomerId(Long customerId);
+
     void deleteByAccountNumber(Long accountNumber);
 
     Optional<List<Accounts>> findAllByCustomer_CustomerId(Long customerId);

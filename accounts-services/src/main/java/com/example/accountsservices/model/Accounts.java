@@ -70,7 +70,7 @@ public class Accounts extends Audit {
     private AccountStatus accountStatus;
 
     public enum AccountStatus{
-        OPEN,BLOCKED
+        OPEN,BLOCKED,CLOSED
     }
 
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)

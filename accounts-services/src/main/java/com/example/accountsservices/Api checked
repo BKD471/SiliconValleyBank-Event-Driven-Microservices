@@ -4,20 +4,22 @@
 OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException;
               1) CREATE_ACC  -------------------------------> CHECKED
               2) ADD_ACCOUNT -------------------------------> CHECKED
-              3) LEND_LOAN   ------------------------------->
+              3) LEND_LOAN   ------------------------------->  to be.....
 
 OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException;
              1) CHANGE_HOME_BRANCH      ------------------------> CHECKED
-             2) UPDATE_CREDIT_SCORE     ------------------------>
-             3) INC_TRANSFER_LIMIT      ------------------------>
-             4) BLOCK_ACC               ------------------------>
+             2) UPDATE_CREDIT_SCORE     ------------------------> to be.........
+             3) INC_TRANSFER_LIMIT      ------------------------> CHECKED
+             4) BLOCK_ACC               ------------------------> CHECKED
              5) INC_APPROVED_LOAN_LIMIT ------------------------>
+             6) CLOSE_ACC               ------------------------> CHECKED
+             7) Reopen Closed Acc       ------------------------> CHECKED
 
 OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
-             1) GET_CREDIT_SCORE --------------------------->
+             1) GET_CREDIT_SCORE ---------------------------> to be.......
              2) GET_ACC_INFO     ---------------------------> CHECKED
              3) GET_ALL_ACC      ---------------------------> CHECKED
 
 OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException;
-             1) DELETE_ACC       --------------------------->
-             2) DELETE_ALL_ACC   --------------------------->
+             1) DELETE_ACC       ---------------------------> CHECKED
+             2) DELETE_ALL_ACC   ---------------------------> CHECKED

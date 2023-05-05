@@ -13,6 +13,7 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.util.BranchCodeRetrieverHelper;
+import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -42,17 +43,21 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final CustomerRepository customerRepository;
     private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
     private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
+    private final Accounts.AccountStatus STATUS_CLOSED = Accounts.AccountStatus.CLOSED;
     public static final String REQUEST_TO_BLOCK = "BLOCK";
     private final String INIT = "INIT";
     private final String UPDATE = "UPDATE";
 
     private enum ValidateType {
-        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH, GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE
+        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH, GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE,
+        CLOSE_ACCOUNT, RE_OPEN_ACCOUNT, BLOCK_ACCOUNT
     }
 
     private final ValidateType UPDATE_CASH_LIMIT = ValidateType.UPDATE_CASH_LIMIT;
     private final ValidateType UPDATE_HOME_BRANCH = ValidateType.UPDATE_HOME_BRANCH;
-
+    private final ValidateType CLOSE_ACCOUNT = ValidateType.CLOSE_ACCOUNT;
+    private final ValidateType RE_OPEN_ACCOUNT = ValidateType.RE_OPEN_ACCOUNT;
+    private final ValidateType BLOCK_ACCOUNT = ValidateType.BLOCK_ACCOUNT;
 
     /**
      * @paramType AccountsRepository
@@ -191,7 +196,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Optional<List<Accounts>> allAccounts = accountsRepository.findAllByCustomer_CustomerId(customerId);
         if (allAccounts.isEmpty())
             throw new AccountsException(AccountsException.class, String.format("No such accounts present with this customer %s", customerId), methodName);
-        return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())).map(Mapper::mapToAccountsDto).collect(Collectors.toList());
+        return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())
+                        && !STATUS_CLOSED.equals(accounts.getAccountStatus())).
+                map(Mapper::mapToAccountsDto).collect(Collectors.toList());
     }
 
     private Boolean updateValidator(Accounts accounts, AccountsDto accountsDto, ValidateType request) throws AccountsException {
@@ -204,6 +211,35 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             case UPDATE_HOME_BRANCH -> {
                 String locality = String.format("Inside UPDATE_HOME_BRANCH of %s", location);
                 return checkConflictingAccountUpdateConditionForBranch(accounts, accountsDto, locality);
+            }
+            case CLOSE_ACCOUNT -> {
+                Accounts.AccountStatus status = accounts.getAccountStatus();
+                switch (status) {
+                    case CLOSED ->
+                            throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), location);
+                    case BLOCKED ->
+                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location);
+                    case OPEN -> {
+                        return accounts.getAnyActiveLoans();
+                    }
+                }
+            }
+            case RE_OPEN_ACCOUNT -> {
+                Accounts.AccountStatus status = accounts.getAccountStatus();
+                switch (status) {
+                    case CLOSED -> {
+                        return true;
+                    }
+                    case BLOCKED ->
+                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location);
+                    case OPEN ->
+                            throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), location);
+                }
+            }
+            case BLOCK_ACCOUNT -> {
+                if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
+                    throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Blocked", accounts.getAccountStatus()), location);
+                return true;
             }
 
         }
@@ -240,11 +276,34 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return savedAccount;
     }
 
-    private void blockAccount(Long accountNumber) throws AccountsException {
-        //Get account
-        Accounts foundAccount = fetchAccountByAccountNumber(accountNumber, REQUEST_TO_BLOCK);
+    private void blockAccount(Accounts foundAccount) throws AccountsException {
+        //Note: block is very urgent so no prior validation is required  for ongoing loan
+        //but authorty reserves right to scrutiny any ongoing loan emis
+
+        updateValidator(foundAccount, Mapper.mapToAccountsDto(foundAccount), BLOCK_ACCOUNT);
         //Block it
         foundAccount.setAccountStatus(STATUS_BLOCKED);
+        //save it
+        accountsRepository.save(foundAccount);
+    }
+
+    private void closeAccount(Accounts foundAccount) throws AccountsException {
+        String methodName = "closeAccount(accountNUmber) in AccountsServiceImpl";
+        //check if he has pending loan
+        if (updateValidator(foundAccount, Mapper.mapToAccountsDto(foundAccount), CLOSE_ACCOUNT))
+            throw new AccountsException(AccountsException.class, String.format("This account with id %s still has " +
+                    "running loan. Please consider paying it before closing", foundAccount.getAccountNumber()), methodName);
+        //close it
+        foundAccount.setAccountStatus(STATUS_CLOSED);
+        //save it
+        accountsRepository.save(foundAccount);
+    }
+
+    private void unCloseAccount(Accounts account) throws AccountsException {
+        if (updateValidator(account, Mapper.mapToAccountsDto(account), RE_OPEN_ACCOUNT))
+            accountsRepository.save(account);
+        account.setAccountStatus(STATUS_OPEN);
+        accountsRepository.save(account);
     }
 
     private void deleteAccount(Long accountNumber) throws AccountsException {
@@ -257,12 +316,14 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
         String methodName = "deleteAllAccountsByCustomer(Long ) in AccountsServiceImpl";
         //checking whether customer exist
-//        Optional<List<Accounts>> foundCustomer = Optional.ofNullable(accountsRepository.findAllByCustomerId(customerId));
-//        if (foundCustomer.isEmpty())
-//            throw new AccountsException(String.format("No such customer with id %s", customerId), methodName);
-//        //deleting it
-//        accountsRepository.deleteAllByCustomerId(customerId);
+        Optional<List<Accounts>> foundCustomer = accountsRepository.
+                findAllByCustomer_CustomerId(customerId);
+        if (foundCustomer.isEmpty())
+            throw new AccountsException(AccountsException.class, String.format("No such customer exists with id %s", customerId), methodName);
+        //deleting it
+        accountsRepository.deleteAllByCustomer_CustomerId(customerId);
     }
+
 
     private int getCreditScore(Long accountNumber) {
         ///to be done
@@ -312,7 +373,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
-
             case GET_CREDIT_SCORE -> {
                 Long accountNumber = accountsDto.getAccountNumber();
                 getCreditScore(accountNumber);
@@ -330,6 +390,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 if (foundCustomer.isEmpty()) throw new CustomerException(CustomerException.class, locality, methodName);
 
                 List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
+                if (listOfAccounts.size() == 0)
+                    return new OutputDto(String.format("Customer with id %s have no accounts present", customerId));
                 return new OutputDto(Mapper.mapToCustomerOutputDto(Mapper.mapToCustomerDto(foundCustomer.get())), listOfAccounts,
                         String.format("Fetched all accounts for customer id:%s", customerId));
             }
@@ -344,15 +406,17 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //map
         AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
         CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
+
+        //Get the accountNumber & account
+        Long accountNumber = accountsDto.getAccountNumber();
+        Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
+
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case UPDATE_HOME_BRANCH -> {
-                //get the account
-                Long accountNumber = accountsDto.getAccountNumber();
-                Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
                 Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
                 return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(updatedAccount.getCustomer()), Mapper.mapToAccountsDto(updatedAccount),
                         String.format("Home branch for is changed from %s to %s for customer with id %s",
@@ -360,20 +424,26 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                                 foundAccount.getCustomer().getCustomerId()));
             }
             case UPDATE_CREDIT_SCORE -> {
-                updateCreditScore(accountsDto);
+                //updateCreditScore(accountsDto);
                 return new OutputDto("Baad main karenge");
             }
             case INC_TRANSFER_LIMIT -> {
-                //get the account
-                Long accountNumber = accountsDto.getAccountNumber();
-                Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
-                Accounts updatedAccount = increaseTransferLimit(accountsDto, foundAccount);
-                return Mapper.mapToOutPutDto(customerDto, Mapper.mapToAccountsDto(updatedAccount),
-                        String.format("Transfer Limit has been increased from %s to %s", foundAccount.getTransferLimitPerDay(), accountsDto.getTransferLimitPerDay()));
+                Accounts accountWithUpdatedLimit = increaseTransferLimit(accountsDto, foundAccount);
+                return Mapper.mapToOutPutDto(customerDto, Mapper.mapToAccountsDto(accountWithUpdatedLimit),
+                        String.format("Transfer Limit has been increased from %s to %s", foundAccount.getTransferLimitPerDay(), accountWithUpdatedLimit.getTransferLimitPerDay()));
+            }
+            case CLOSE_ACC -> {
+                closeAccount(foundAccount);
+                return new OutputDto(String.format("Account with id %s is successfully closed", accountsDto.getAccountNumber()));
+            }
+            case RE_OPEN_ACC -> {
+                unCloseAccount(foundAccount);
+                return new OutputDto(String.format("Account with id %s has been reOpened", accountNumber));
             }
             case BLOCK_ACC -> {
-                Long accountNumber = accountsDto.getAccountNumber();
-                blockAccount(accountNumber);
+                //Note: acount once blocked , no operations can be performed on it not even get
+                //only authority reserves the right to unblock it
+                blockAccount(foundAccount);
                 return new OutputDto(String.format("Account with id %s is successfully blocked", accountNumber));
             }
             case INC_APPROVED_LOAN_LIMIT -> {
