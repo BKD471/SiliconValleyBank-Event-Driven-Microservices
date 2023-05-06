@@ -63,8 +63,10 @@ public class Mapper {
         customer.setVoterId(customerDto.getVoterId());
         customer.setDrivingLicense(customerDto.getDrivingLicense());
         customer.setPassportNumber(customerDto.getPassportNumber());
-        List<Accounts> listOfAccounts=customerDto.getAccounts().stream().map(Mapper::mapToAccounts).collect(Collectors.toList());
-        customer.setAccounts(listOfAccounts);
+        if(customerDto.getAccounts()!=null) {
+            List<Accounts> listOfAccounts = customerDto.getAccounts().stream().map(Mapper::mapToAccounts).collect(Collectors.toList());
+            customer.setAccounts(listOfAccounts);
+        }
         return customer;
     }
 

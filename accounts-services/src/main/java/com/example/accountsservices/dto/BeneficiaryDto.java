@@ -15,10 +15,13 @@ public  class BeneficiaryDto extends BaseDto {
     private Long beneficiaryId;
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;
-    private AccountsDto.UpdateRequest updateRequest;
     public enum BenUpdateRequest{
-        UPDATE_BEN_NAME,CHANGE_DOB,ADD_BEN,UPDATE_BEN,CHANGE_REL,CHANGE_MAIL,CHANGE_PHONE,CHANGE_ADHAR,
-        CHANGE_PAN,CHANGE_VOTER,CHANGE_DRV_LC,CHANGE_PASSPORT
+        ADD_BEN,
+        UPDATE_BEN,
+        GET_ALL_BEN,
+        GET_BEN,
+        DELETE_BEN,
+        DELETE_ALL_BEN
     }
     private Beneficiary.RELATION relation;
     private Accounts accounts;

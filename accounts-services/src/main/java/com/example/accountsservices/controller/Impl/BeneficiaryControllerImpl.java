@@ -3,8 +3,12 @@ package com.example.accountsservices.controller.Impl;
 import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.IBeneficiaryController;
 import com.example.accountsservices.dto.BeneficiaryDto;
+import com.example.accountsservices.dto.InputDto;
+import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
+import com.example.accountsservices.exception.CustomerException;
+import com.example.accountsservices.exception.ResponseException;
 import com.example.accountsservices.service.IBeneficiaryService;
 import com.example.accountsservices.service.impl.BeneficiaryServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -22,58 +26,52 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
     }
 
 
+
     /**
-     * @param accountNumber
-     * @param beneficiaryDto
+     * @param inputDto
      * @return
      * @throws AccountsException
+     * @throws ResponseException
+     * @throws CustomerException
      */
     @Override
-    public ResponseEntity<BeneficiaryDto> addBeneficiary(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
+    public ResponseEntity<OutputDto> getRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
         return null;
     }
 
     /**
-     * @param accountNumber
+     * @param inputDto
      * @return
      * @throws AccountsException
+     * @throws ResponseException
+     * @throws CustomerException
      */
     @Override
-    public ResponseEntity<List<BeneficiaryDto>> getAllBeneficiariesOfAnAccount(Long accountNumber) throws AccountsException {
+    public ResponseEntity<OutputDto> postRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
         return null;
     }
 
     /**
-     * @param accountNumber
-     * @param beneficiaryDto
+     * @param inputDto
      * @return
      * @throws AccountsException
-     * @throws BeneficiaryException
+     * @throws ResponseException
+     * @throws CustomerException
      */
     @Override
-    public ResponseEntity<BeneficiaryDto> updateBeneficiaryDetails(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
+    public ResponseEntity<OutputDto> putRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
         return null;
     }
 
     /**
-     * @param accountNumber
-     * @param beneficiaryDto
+     * @param inputDto
      * @return
      * @throws AccountsException
-     * @throws BeneficiaryException
+     * @throws ResponseException
+     * @throws CustomerException
      */
     @Override
-    public ResponseEntity<String> deleteBeneficiaryForAnAccount(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
-        return null;
-    }
-
-    /**
-     * @param accountNumber
-     * @return
-     * @throws AccountsException
-     */
-    @Override
-    public ResponseEntity<String> deleteAllBeneficiaries(Long accountNumber) throws AccountsException {
+    public ResponseEntity<OutputDto> deleteRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
         return null;
     }
 }

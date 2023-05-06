@@ -8,6 +8,7 @@ import com.example.accountsservices.mapper.Mapper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.repository.AccountsRepository;
+import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.util.SortDateComparator;
@@ -24,8 +25,10 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
     private final TransactionsRepository transactionsRepository;
     private final AccountsRepository accountsRepository;
 
-    TransactionsServiceImpl(TransactionsRepository transactionsRepository, AccountsRepository accountsRepository) {
-        super(accountsRepository);
+    TransactionsServiceImpl(TransactionsRepository transactionsRepository,
+                            AccountsRepository accountsRepository,
+                            CustomerRepository customerRepository) {
+        super(accountsRepository,customerRepository);
         this.transactionsRepository = transactionsRepository;
         this.accountsRepository = accountsRepository;
     }

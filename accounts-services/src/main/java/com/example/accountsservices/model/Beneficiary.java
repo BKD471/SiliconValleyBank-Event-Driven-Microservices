@@ -25,6 +25,7 @@ public class Beneficiary extends Audit{
 
     @Column(name = "ben_acnt_num")
     private Long beneficiaryAccountNumber;
+
     @Column(nullable = false)
     private RELATION relation;
 

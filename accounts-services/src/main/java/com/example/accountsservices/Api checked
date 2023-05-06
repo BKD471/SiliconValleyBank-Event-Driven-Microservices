@@ -14,6 +14,7 @@ OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException;
              5) INC_APPROVED_LOAN_LIMIT ------------------------>
              6) CLOSE_ACC               ------------------------> CHECKED
              7) Reopen Closed Acc       ------------------------> CHECKED
+             8) Update customer Details ------------------------>
 
 OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
              1) GET_CREDIT_SCORE ---------------------------> to be.......

@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface IAccountsService {
     OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException;
-    OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException;
+    OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
     OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
     OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException;
 }

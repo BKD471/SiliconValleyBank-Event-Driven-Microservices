@@ -9,6 +9,7 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
+import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -23,10 +24,10 @@ import java.util.stream.Collectors;
 @Primary
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
     private final BeneficiaryRepository beneficiaryRepository;
-
     BeneficiaryServiceImpl(AccountsRepository accountsRepository,
+                           CustomerRepository customerRepository,
                            BeneficiaryRepository beneficiaryRepository) {
-        super(accountsRepository);
+        super(accountsRepository,customerRepository);
         this.beneficiaryRepository = beneficiaryRepository;
     }
 

@@ -13,17 +13,13 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.util.BranchCodeRetrieverHelper;
-import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -64,7 +60,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType NA
      */
     public AccountsServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository) {
-        super(accountsRepository);
+        super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
     }
@@ -324,6 +320,64 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         accountsRepository.deleteAllByCustomer_CustomerId(customerId);
     }
 
+    private Customer updateCustomerDetails(Customer oldCustomerRecord, CustomerDto newCustomerRecord) {
+        String oldName = oldCustomerRecord.getName();
+        String newName = newCustomerRecord.getCustomerName();
+
+        LocalDate oldDateOfBirth = oldCustomerRecord.getDateOfBirth();
+        LocalDate newDateOfBirth = newCustomerRecord.getDateOfBirth();
+
+        int newAge = Period.between(newDateOfBirth, LocalDate.now()).getYears();
+
+        String oldEmail = oldCustomerRecord.getEmail();
+        String newEmail = newCustomerRecord.getEmail();
+
+        String oldPhoneNumber = oldCustomerRecord.getPhoneNumber();
+        String newPhoneNumber = newCustomerRecord.getPhoneNumber();
+
+        String oldAdharNumber = oldCustomerRecord.getAdharNumber();
+        String newAdharNumber = newCustomerRecord.getAdharNumber();
+
+        String oldPanNumber = oldCustomerRecord.getPanNumber();
+        String newPanNumber = newCustomerRecord.getPanNumber();
+
+        String voterId = oldCustomerRecord.getVoterId();
+        String newVoterId = newCustomerRecord.getVoterId();
+
+        String oldDrivingLicense = oldCustomerRecord.getDrivingLicense();
+        String newDrivingLicense = newCustomerRecord.getDrivingLicense();
+
+        String oldPassportNumber = oldCustomerRecord.getPassportNumber();
+        String newPassportNumber = newCustomerRecord.getPassportNumber();
+
+        if (Objects.nonNull(newName) && !oldName.equalsIgnoreCase(newName))
+            newCustomerRecord.setCustomerName(newName);
+        if (Objects.nonNull(newDateOfBirth) && !oldDateOfBirth.equals(newDateOfBirth)) {
+            newCustomerRecord.setDateOfBirth(newDateOfBirth);
+            newCustomerRecord.setAge(newAge);
+        }
+        if (Objects.nonNull(newEmail) && !oldEmail.equalsIgnoreCase(newEmail))
+            newCustomerRecord.setEmail(newEmail);
+        if (Objects.nonNull(newPhoneNumber) && !oldPhoneNumber.equalsIgnoreCase(newPhoneNumber))
+            newCustomerRecord.setCustomerName(newPhoneNumber);
+        if (Objects.nonNull(newAdharNumber) && !oldAdharNumber.equalsIgnoreCase(newAdharNumber))
+            newCustomerRecord.setCustomerName(newAdharNumber);
+        if (Objects.nonNull(newPassportNumber) && !oldPassportNumber.equalsIgnoreCase(newPassportNumber))
+            newCustomerRecord.setCustomerName(newPassportNumber);
+        if (Objects.nonNull(newPanNumber) && !oldPanNumber.equalsIgnoreCase(newPanNumber))
+            newCustomerRecord.setCustomerName(newPanNumber);
+        if (Objects.nonNull(newVoterId) && !voterId.equalsIgnoreCase(newVoterId))
+            newCustomerRecord.setCustomerName(newVoterId);
+        if (Objects.nonNull(newDrivingLicense) && !oldDrivingLicense.equalsIgnoreCase(newDrivingLicense))
+            newCustomerRecord.setDrivingLicense(newDrivingLicense);
+
+        Customer updatedCustomer=Mapper.mapToCustomer(newCustomerRecord);
+
+        //aduiting doesnot work during update so manually set it
+        updatedCustomer.setCreatedBy("Admin");
+        return customerRepository.save(updatedCustomer);
+    }
+
 
     private int getCreditScore(Long accountNumber) {
         ///to be done
@@ -338,7 +392,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     @Override
     public OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException {
-        String methodName = "requestExecutor(InputDto) in AccountsServiceImpl";
+        String methodName = "postRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
         AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
         CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
@@ -364,7 +418,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     @Override
     public OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException {
-        String methodName = "requestExecutor(InputDto) in AccountsServiceImpl";
+        String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
         AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
         CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
@@ -401,15 +455,20 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException {
-        String methodName = "requestExecutor(InputDto) in AccountsServiceImpl";
+    public OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException {
+        String methodName = "putRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
         AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
         CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
 
-        //Get the accountNumber & account
+        //Get the accountNumber & account & customer
         Long accountNumber = accountsDto.getAccountNumber();
-        Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
+        Accounts foundAccount = null;
+        if (Objects.nonNull(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
+
+        Long customerId = customerDto.getCustomerId();
+        Customer foundCustomer = null;
+        if (Objects.nonNull(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
         if (null == accountsDto.getUpdateRequest())
@@ -450,6 +509,16 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 //to be done.....
 
                 return new OutputDto("Baad main karenge");
+            }
+            case UPDATE_CUSTOMER_DETAILS -> {
+                String location = String.format("Inside UPDATE_CUSTOMER_DETAILS in %s", methodName);
+                if (Objects.isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
+                        "Please specify a customer id to update details", location);
+
+                CustomerDto updatedCustomerDto = Mapper.mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
+                List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
+                return new OutputDto(Mapper.mapToCustomerOutputDto(updatedCustomerDto), listOfAccounts,
+                        String.format("Customer With id %s has been updated", customerId));
             }
             default ->
                     throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for PUT request", request), methodName);

@@ -21,6 +21,7 @@ public class OutputDto {
         this.defaultMessage = defaultMessage;
     }
 
+
     public  OutputDto(CustomerOutPutDto customerDto,List<AccountsDto> listOfAccounts,String message){
         this.listOfAccounts=listOfAccounts;
         this.customer=customerDto;
