@@ -2,6 +2,9 @@ package com.example.accountsservices.dto;
 
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,11 +13,14 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public  class BeneficiaryDto extends BaseDto {
-    protected LocalDate DateOfBirth;
+public  class BeneficiaryDto  {
     private Long beneficiaryId;
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;
+
+    @JsonIgnore
+    @JsonProperty(value="benUpdateRequest")
+    private BenUpdateRequest benUpdateRequest;
     public enum BenUpdateRequest{
         ADD_BEN,
         UPDATE_BEN,
@@ -24,5 +30,14 @@ public  class BeneficiaryDto extends BaseDto {
         DELETE_ALL_BEN
     }
     private Beneficiary.RELATION relation;
+    private LocalDate BenDate_Of_Birth;
+    private int benAge;
+    private String benAdharNumber;
+    private String benPhoneNumber;
+    private String benPanNumber;
+    private String benVoterId;
+    private String benDrivingLicense;
+    private String benPassportNumber;
+
     private Accounts accounts;
 }

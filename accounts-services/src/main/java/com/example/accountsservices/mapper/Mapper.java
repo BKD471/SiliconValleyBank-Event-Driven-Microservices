@@ -91,14 +91,14 @@ public class Mapper {
         BeneficiaryDto beneficiaryDto = new BeneficiaryDto();
         beneficiaryDto.setBeneficiaryId(beneficiary.getBeneficiaryId());
         beneficiaryDto.setBeneficiaryName(beneficiary.getBeneficiaryName());
-        beneficiaryDto.setAge(beneficiary.getAge());
+        beneficiaryDto.setBenAge(beneficiary.getBenAge());
         beneficiaryDto.setBeneficiaryAccountNumber(beneficiary.getBeneficiaryAccountNumber());
-        beneficiaryDto.setAdharNumber(beneficiary.getAdharNumber());
+        beneficiaryDto.setBenAdharNumber(beneficiary.getBenAdharNumber());
         beneficiaryDto.setRelation(beneficiary.getRelation());
-        beneficiaryDto.setVoterId(beneficiary.getVoterId());
-        beneficiaryDto.setPanNumber(beneficiary.getPanNumber());
-        beneficiaryDto.setPassportNumber(beneficiary.getPassportNumber());
-        beneficiaryDto.setDateOfBirth(beneficiary.getDate_Of_Birth());
+        beneficiaryDto.setBenVoterId(beneficiary.getBenVoterId());
+        beneficiaryDto.setBenPanNumber(beneficiary.getBenPanNumber());
+        beneficiaryDto.setBenPassportNumber(beneficiary.getBenPassportNumber());
+        beneficiaryDto.setBenDate_Of_Birth(beneficiary.getBenDate_Of_Birth());
         beneficiaryDto.setAccounts(beneficiary.getAccounts());
         return beneficiaryDto;
     }
@@ -107,12 +107,12 @@ public class Mapper {
         Beneficiary beneficiary = new Beneficiary();
         beneficiary.setBeneficiaryName(beneficiaryDto.getBeneficiaryName());
         beneficiary.setBeneficiaryAccountNumber(beneficiaryDto.getBeneficiaryAccountNumber());
-        beneficiary.setAdharNumber(beneficiaryDto.getAdharNumber());
+        beneficiary.setBenAdharNumber(beneficiaryDto.getBenAdharNumber());
         beneficiary.setRelation(beneficiaryDto.getRelation());
-        beneficiary.setVoterId(beneficiaryDto.getVoterId());
-        beneficiary.setPanNumber(beneficiaryDto.getPanNumber());
-        beneficiary.setPassportNumber(beneficiaryDto.getPassportNumber());
-        beneficiary.setDate_Of_Birth(beneficiaryDto.getDateOfBirth());
+        beneficiary.setBenVoterId(beneficiaryDto.getBenVoterId());
+        beneficiary.setBenPanNumber(beneficiaryDto.getBenPanNumber());
+        beneficiary.setBenPassportNumber(beneficiaryDto.getBenPassportNumber());
+        beneficiary.setBenDate_Of_Birth(beneficiaryDto.getBenDate_Of_Birth());
         beneficiary.setAccounts(beneficiaryDto.getAccounts());
         return beneficiary;
     }
@@ -224,6 +224,25 @@ public class Mapper {
         customer.setDrivingLicense(inputDto.getDrivingLicense());
         customer.setPassportNumber(inputDto.getPassportNumber());
         return customer;
+    }
+
+    public static BeneficiaryDto mapInputDtoToBenDto(InputDto inputDto){
+        BeneficiaryDto beneficiaryDto=new BeneficiaryDto();
+
+        beneficiaryDto.setBeneficiaryAccountNumber(inputDto.getBeneficiaryAccountNumber());
+        beneficiaryDto.setBeneficiaryName(inputDto.getBeneficiaryName());
+        beneficiaryDto.setBenAge(inputDto.getBenAge());
+        beneficiaryDto.setBeneficiaryId(inputDto.getBeneficiaryId());
+        beneficiaryDto.setBenPhoneNumber(inputDto.getBenPhoneNumber());
+        beneficiaryDto.setBenAdharNumber(inputDto.getBenAdharNumber());
+        beneficiaryDto.setBenPassportNumber(inputDto.getBenPassportNumber());
+        beneficiaryDto.setBenVoterId(inputDto.getBenVoterId());
+        beneficiaryDto.setBenDate_Of_Birth(inputDto.getBen_date_of_birth());
+        beneficiaryDto.setBenDrivingLicense(inputDto.getBenDrivingLicense());
+        beneficiaryDto.setRelation(inputDto.getBloodRelation());
+        beneficiaryDto.setAccounts(inputDto.getAccount());
+        beneficiaryDto.setBenUpdateRequest(inputDto.getBenRequest());
+        return beneficiaryDto;
     }
 
     public static InputDto mapToinputDto(Customer customer, Accounts accounts) {

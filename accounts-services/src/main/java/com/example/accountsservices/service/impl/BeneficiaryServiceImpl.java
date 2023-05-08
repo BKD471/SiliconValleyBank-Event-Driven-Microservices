@@ -2,6 +2,8 @@ package com.example.accountsservices.service.impl;
 
 
 import com.example.accountsservices.dto.BeneficiaryDto;
+import com.example.accountsservices.dto.InputDto;
+import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.mapper.Mapper;
@@ -39,7 +41,6 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         return beneficiary;
     }
 
-    @Override
     public  BeneficiaryDto addBeneficiary( Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
 
         //Updating the beneficiary info & saving it
@@ -59,7 +60,6 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
 
 
-    @Override
     public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException {
         //get the account
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
@@ -118,7 +118,6 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
      * @param beneficiaryDto
      * @return
      */
-    @Override
     public BeneficiaryDto updateBeneficiaryDetailsOfanAccount(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
         String methodName="updateBeneficiaryDetailsOfanAccount(Long , BeneficiaryDto ) in BeneficiaryServiceImpl";
         //fetch the account
@@ -138,7 +137,6 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         return Mapper.mapToBeneficiaryDto(savedProcessedAccount);
     }
 
-    @Override
     public void deleteBeneficiariesForAnAccount(Long accountNumber, Long beneficiaryId) throws AccountsException, BeneficiaryException {
 
         String methodName=" deleteBeneficiariesForAnAccount(Long , Long )  in BeneficiaryServiceImpl";
@@ -157,7 +155,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         beneficiaryRepository.deleteByBeneficiaryId(beneficiaryId);
     }
 
-    @Override
+
     public void deleteAllBeneficiaries(Long accountNumber) throws AccountsException {
         //fetch the account
         Accounts fetchedAccounts = fetchAccountByAccountNumber(accountNumber);
@@ -167,4 +165,34 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         //set an empty list
         fetchedAccounts.setListOfBeneficiary(new ArrayList<>());
     }
+
+    @Override
+    public OutputDto postRequestBenExecutor(InputDto inputDto){
+
+        BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+
+        BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
+
+        switch(requestType){
+
+        }
+
+        return null;
+    }
+
+    @Override
+    public OutputDto putRequestBenExecutor(InputDto inputDto){
+        return null;
+    }
+
+    @Override
+    public OutputDto getRequestBenExecutor(InputDto inputDto){
+        return null;
+    }
+
+    @Override
+    public OutputDto  deleteRequestBenExecutor(InputDto inputDto){
+        return null;
+    }
+
 }

@@ -35,6 +35,19 @@ public class InputDto {
     private String drivingLicense;
     private String passportNumber;
 
+    private BeneficiaryDto.BenUpdateRequest benRequest;
+    private Long beneficiaryId;
+    private String beneficiaryName;
+    private Long beneficiaryAccountNumber;
+    private Beneficiary.RELATION bloodRelation;
+    private LocalDate ben_date_of_birth;
+    private int benAge;
+    private String benAdharNumber;
+    private String benPhoneNumber;
+    private String benPanNumber;
+    private String benPassportNumber;
+    private String benVoterId;
+    private String benDrivingLicense;
 
     //    @JsonIgnore
     private Long accountNumber;
@@ -59,4 +72,5 @@ public class InputDto {
     private List<Transactions> listOfTransactions = new ArrayList<>();
     private Customer customer;
     private List<Accounts> accounts;
+    private Accounts account;
 }

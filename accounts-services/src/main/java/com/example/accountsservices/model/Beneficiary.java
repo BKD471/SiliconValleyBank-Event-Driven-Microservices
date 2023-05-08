@@ -34,27 +34,27 @@ public class Beneficiary extends Audit{
     }
 
     @Column(name="dob",nullable = false)
-    private LocalDate Date_Of_Birth;
+    private LocalDate BenDate_Of_Birth;
 
-    private int age;
+    private int benAge;
 
     @Column(name = "adhar_num",unique = true,nullable = false)
-    private String adharNumber;
+    private String benAdharNumber;
 
     @Column(name="phone_num",unique = true,nullable = false)
-    private String phoneNumber;
+    private String benPhoneNumber;
 
     @Column(name = "pan_num",unique = true,nullable = false)
-    private String panNumber;
+    private String benPanNumber;
 
     @Column(name = "voter_id",unique = true)
-    private String voterId;
+    private String benVoterId;
 
     @Column(name = "driving_license",unique = true)
-    private String drivingLicense;
+    private String benDrivingLicense;
 
     @Column(name = "passport",unique = true)
-    private String passportNumber;
+    private String benPassportNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="account_id",nullable = false)
