@@ -20,12 +20,22 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
     private final BeneficiaryRepository beneficiaryRepository;
+    public enum validateBenType{
+        ADD_BEN,UPDATE_BEN,DELETE_BEN
+    }
+    private final validateBenType ADD_BEN=validateBenType.ADD_BEN;
+    private final validateBenType UPDATE_BEN=validateBenType.UPDATE_BEN;
+    private final validateBenType DELETE_BEN=validateBenType.DELETE_BEN;
+
+    private final Beneficiary.RELATION FATHER= Beneficiary.RELATION.FATHER;
+    private final Beneficiary.RELATION MOTHER= Beneficiary.RELATION.MOTHER;
+    private final Beneficiary.RELATION SPOUSE= Beneficiary.RELATION.SPOUSE;
+
     BeneficiaryServiceImpl(AccountsRepository accountsRepository,
                            CustomerRepository customerRepository,
                            BeneficiaryRepository beneficiaryRepository) {
@@ -33,15 +43,58 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         this.beneficiaryRepository = beneficiaryRepository;
     }
 
+
     private Beneficiary setBeneficiaryAgeFromDOB(Beneficiary beneficiary) {
         //initialize the age of beneficiaries
-        int dobYear = beneficiary.getDate_Of_Birth().getYear();
+        int dobYear = beneficiary.getBenDate_Of_Birth().getYear();
         int now = LocalDate.now().getYear();
-        beneficiary.setAge(now - dobYear);
+        beneficiary.setBenAge(now - dobYear);
         return beneficiary;
     }
 
-    public  BeneficiaryDto addBeneficiary( Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {
+    private void validate(Accounts accounts,BeneficiaryDto beneficiaryDto,validateBenType type) throws BeneficiaryException{
+        String methodName="validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
+        switch (type){
+            case ADD_BEN -> {
+                boolean notPossible=false;
+                List<Beneficiary> listOfBeneficiaries=accounts.getListOfBeneficiary();
+                if(listOfBeneficiaries.size()==5) throw new BeneficiaryException(BeneficiaryException.class,
+                        "You can;t add more than 5 beneficiaries",methodName);
+
+                //check if the same person already exist as a beneficiary
+                String adharNumber=beneficiaryDto.getBenAdharNumber();
+                notPossible=listOfBeneficiaries.stream().anyMatch(ben-> ben.getBenAdharNumber().equals(adharNumber));
+                if(notPossible) throw new BeneficiaryException(BeneficiaryException.class,
+                        "This person is already added as a beneficiary",methodName);
+
+                switch (beneficiaryDto.getRelation()){
+                    case FATHER ->{
+                        notPossible=listOfBeneficiaries.stream().anyMatch(ben-> ben.getRelation().equals(FATHER));
+                        if(notPossible) throw new BeneficiaryException(BeneficiaryException.class,
+                                "You already have added one person as a father",methodName);
+                    }
+                    case MOTHER -> {
+                        notPossible=listOfBeneficiaries.stream().anyMatch(ben->ben.getRelation().equals(MOTHER));
+                        if(notPossible) throw new BeneficiaryException(BeneficiaryException.class,
+                                "You already have added one person as a mother",methodName);
+                    }
+                    case SPOUSE -> {
+                        notPossible=listOfBeneficiaries.stream().anyMatch(ben->ben.getRelation().equals(SPOUSE));
+                        if(notPossible) throw new BeneficiaryException(BeneficiaryException.class,
+                                "You already have added one person as a spouse",methodName);
+                    }
+                }
+            }
+            case UPDATE_BEN -> {}
+            case DELETE_BEN -> {}
+            default -> throw new BeneficiaryException(BeneficiaryException.class,
+                    "Invalid type of request",methodName);
+        }
+    }
+
+    private  Beneficiary addBeneficiary(Accounts fetchedAccount, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
+        //validate
+        validate(fetchedAccount,beneficiaryDto,ADD_BEN);
 
         //Updating the beneficiary info & saving it
         Beneficiary beneficiaryAccount = Mapper.mapToBeneficiary(beneficiaryDto);
@@ -49,42 +102,48 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         Beneficiary processedBeneficiaryAccount = setBeneficiaryAgeFromDOB(savedBeneficiaryAccount);
         Beneficiary savedAndProcessedBeneficiaryAccount = beneficiaryRepository.save(processedBeneficiaryAccount);
 
-        //Get the account in which we add beneficiary
-        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         //add the beneficiary to account
         List<Beneficiary> beneficiaries = new ArrayList<>();
         beneficiaries.add(savedAndProcessedBeneficiaryAccount);
         fetchedAccount.setListOfBeneficiary(beneficiaries);
-        return Mapper.mapToBeneficiaryDto(savedAndProcessedBeneficiaryAccount);
+        return savedAndProcessedBeneficiaryAccount;
+    }
+
+    private Optional<Beneficiary> getBeneficiaryById(Accounts fetchedAccount, Long benId) throws BeneficiaryException{
+        String methodName="getBeneficiaryById(Accounts,Long";
+
+        if(fetchedAccount.getListOfBeneficiary().size()==0) throw  new BeneficiaryException(BeneficiaryException.class,
+                "No beneficiaries found for this account",methodName);
+
+        return  fetchedAccount.getListOfBeneficiary().stream().
+                filter(ben->ben.getBeneficiaryId().equals(benId)).findFirst();
     }
 
 
-    public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException {
-        //get the account
-        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
+    private List<Beneficiary> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount) throws AccountsException {
         //get all beneficiaries
-        return fetchedAccount.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto).collect(Collectors.toList());
+        return fetchedAccount.getListOfBeneficiary();
     }
 
     private Beneficiary processedBeneficiaryAccount(Beneficiary oldBeneficiaryData, Beneficiary newBeneficiaryData) {
         String newBeneficiaryName = newBeneficiaryData.getBeneficiaryName();
         Long newBeneficiaryNumber = newBeneficiaryData.getBeneficiaryAccountNumber();
-        LocalDate newBeneficiaryDOB = newBeneficiaryData.getDate_Of_Birth();
-        String newBeneficiaryAdharNumber = newBeneficiaryData.getAdharNumber();
+        LocalDate newBeneficiaryDOB = newBeneficiaryData.getBenDate_Of_Birth();
+        String newBeneficiaryAdharNumber = newBeneficiaryData.getBenAdharNumber();
         Beneficiary.RELATION newBeneficaryRelation = newBeneficiaryData.getRelation();
-        String newBeneficiaryPanNumber = newBeneficiaryData.getPanNumber();
-        String newBeneficiaryPassport = newBeneficiaryData.getPassportNumber();
-        String newBeneficiaryVoterId = newBeneficiaryData.getVoterId();
+        String newBeneficiaryPanNumber = newBeneficiaryData.getBenPanNumber();
+        String newBeneficiaryPassport = newBeneficiaryData.getBenPassportNumber();
+        String newBeneficiaryVoterId = newBeneficiaryData.getBenVoterId();
 
         String oldBeneficiaryName = oldBeneficiaryData.getBeneficiaryName();
         Long oldBeneficiaryNumber = oldBeneficiaryData.getBeneficiaryAccountNumber();
-        LocalDate oldBeneficiaryDOB = oldBeneficiaryData.getDate_Of_Birth();
-        String oldBeneficiaryAdharNumber = oldBeneficiaryData.getAdharNumber();
+        LocalDate oldBeneficiaryDOB = oldBeneficiaryData.getBenDate_Of_Birth();
+        String oldBeneficiaryAdharNumber = oldBeneficiaryData.getBenAdharNumber();
         Beneficiary.RELATION oldBeneficiaryRelation = oldBeneficiaryData.getRelation();
-        String oldBeneficiaryPanNumber = oldBeneficiaryData.getPanNumber();
-        String oldBeneficiaryPassport = oldBeneficiaryData.getPassportNumber();
-        String oldBeneficiaryVoterId = oldBeneficiaryData.getVoterId();
+        String oldBeneficiaryPanNumber = oldBeneficiaryData.getBenPanNumber();
+        String oldBeneficiaryPassport = oldBeneficiaryData.getBenPassportNumber();
+        String oldBeneficiaryVoterId = oldBeneficiaryData.getBenVoterId();
 
         if (null != newBeneficiaryName && !newBeneficiaryName.equalsIgnoreCase(oldBeneficiaryName))
             newBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
@@ -93,7 +152,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
             newBeneficiaryData.setBeneficiaryAccountNumber(newBeneficiaryNumber);
 
         if (null != newBeneficiaryDOB && !newBeneficiaryDOB.equals(oldBeneficiaryDOB))
-            newBeneficiaryData.setDate_Of_Birth(newBeneficiaryDOB);
+            newBeneficiaryData.setBenDate_Of_Birth(newBeneficiaryDOB);
 
         if (null != newBeneficiaryAdharNumber && !newBeneficiaryAdharNumber.equalsIgnoreCase(oldBeneficiaryAdharNumber))
             newBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
@@ -102,26 +161,24 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
             newBeneficiaryData.setRelation(newBeneficaryRelation);
 
         if (null != newBeneficiaryPanNumber && !newBeneficiaryPanNumber.equalsIgnoreCase(oldBeneficiaryPanNumber))
-            newBeneficiaryData.setPanNumber(newBeneficiaryPanNumber);
+            newBeneficiaryData.setBenPanNumber(newBeneficiaryPanNumber);
 
         if (null != newBeneficiaryPassport && !newBeneficiaryPassport.equalsIgnoreCase(oldBeneficiaryPassport))
-            newBeneficiaryData.setPassportNumber(newBeneficiaryPassport);
+            newBeneficiaryData.setBenPassportNumber(newBeneficiaryPassport);
 
         if (null != newBeneficiaryVoterId && !newBeneficiaryVoterId.equalsIgnoreCase(oldBeneficiaryVoterId))
-            newBeneficiaryData.setVoterId(newBeneficiaryVoterId);
+            newBeneficiaryData.setBenVoterId(newBeneficiaryVoterId);
 
         return newBeneficiaryData;
     }
 
     /**
-     * @param accountNumber
+     * @param fetchedAccounts
      * @param beneficiaryDto
      * @return
      */
-    public BeneficiaryDto updateBeneficiaryDetailsOfanAccount(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
+    private Beneficiary updateBeneficiaryDetailsOfanAccount(Accounts fetchedAccounts, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
         String methodName="updateBeneficiaryDetailsOfanAccount(Long , BeneficiaryDto ) in BeneficiaryServiceImpl";
-        //fetch the account
-        Accounts fetchedAccounts = fetchAccountByAccountNumber(accountNumber);
 
         //fetch the beneficiary from beneficiaryList
         Long BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
@@ -134,15 +191,12 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         Beneficiary newBeneficiaryData = Mapper.mapToBeneficiary(beneficiaryDto);
         Beneficiary processedAccount = processedBeneficiaryAccount(beneficiaryAccount.get(), newBeneficiaryData);
         Beneficiary savedProcessedAccount = beneficiaryRepository.save(processedAccount);
-        return Mapper.mapToBeneficiaryDto(savedProcessedAccount);
+        return savedProcessedAccount;
     }
 
-    public void deleteBeneficiariesForAnAccount(Long accountNumber, Long beneficiaryId) throws AccountsException, BeneficiaryException {
-
+    private void deleteBeneficiariesForAnAccount(Accounts fetchedAccounts, Long beneficiaryId) throws AccountsException, BeneficiaryException {
         String methodName=" deleteBeneficiariesForAnAccount(Long , Long )  in BeneficiaryServiceImpl";
         if (null == beneficiaryId) throw new BeneficiaryException(BeneficiaryException.class,"Please provide a valid beneficiary id",methodName);
-        //fetch the account
-        Accounts fetchedAccounts = fetchAccountByAccountNumber(accountNumber);
 
         //filter out the beneficiary list of that account
         List<Beneficiary> filteredListOfBeneficiaries = fetchedAccounts.getListOfBeneficiary().
@@ -156,9 +210,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
 
 
-    public void deleteAllBeneficiaries(Long accountNumber) throws AccountsException {
-        //fetch the account
-        Accounts fetchedAccounts = fetchAccountByAccountNumber(accountNumber);
+    private void deleteAllBeneficiaries(Accounts fetchedAccounts) throws AccountsException {
         //delete everyone
         fetchedAccounts.getListOfBeneficiary().forEach(beneficiary ->
                 beneficiaryRepository.deleteByBeneficiaryId(beneficiary.getBeneficiaryId()));
@@ -167,32 +219,99 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto postRequestBenExecutor(InputDto inputDto){
-
+    public OutputDto postRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException {
+        String methodName="postRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+
+        //get the accnt
+        Long accountNUmber= inputDto.getAccountNumber();
+        Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
 
         BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
 
+        if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
+                "Please provide a non null request-type",methodName);
         switch(requestType){
 
+            case ADD_BEN -> {
+               Beneficiary beneficiary=addBeneficiary(fetchedAccount,beneficiaryDto);
+               return new OutputDto("bbad main thik karnge");
+            }
+            default -> throw new BeneficiaryException(BeneficiaryException.class,"Wrong irequest type",methodName);
         }
-
-        return null;
     }
 
     @Override
-    public OutputDto putRequestBenExecutor(InputDto inputDto){
-        return null;
+    public OutputDto putRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException {
+        String methodName="putRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
+        BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+
+        //get the accnt
+        Long accountNUmber= inputDto.getAccountNumber();
+        Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
+
+        BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
+        if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
+                "Please provide a non null request-type",methodName);
+        switch (requestType){
+            case UPDATE_BEN -> {
+                Beneficiary beneficiary=updateBeneficiaryDetailsOfanAccount(fetchedAccount,beneficiaryDto);
+                return new OutputDto("baaad mein");
+            }
+            default -> throw new BeneficiaryException(BeneficiaryException.class,"Wrong request type",methodName);
+        }
     }
 
     @Override
-    public OutputDto getRequestBenExecutor(InputDto inputDto){
-        return null;
+    public OutputDto getRequestBenExecutor(InputDto inputDto) throws AccountsException, BeneficiaryException {
+        String methodName="getRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
+        BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+
+        //get the accnt
+        Long accountNUmber= inputDto.getAccountNumber();
+        Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
+
+        BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
+        if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
+                "Please provide a non null request-type",methodName);
+
+        switch (requestType){
+            case GET_BEN -> {
+                Optional<Beneficiary> beneficiary=getBeneficiaryById(fetchedAccount,beneficiaryDto.getBeneficiaryId());
+                return new OutputDto("baaaad mn");
+            }
+            case GET_ALL_BEN -> {
+                List<Beneficiary> beneficiaryList=getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount);
+                return new OutputDto("baaaad m");
+            }
+            default -> throw  new BeneficiaryException(BeneficiaryException.class,
+                    "Wrong request type",methodName);
+        }
     }
 
     @Override
-    public OutputDto  deleteRequestBenExecutor(InputDto inputDto){
-        return null;
+    public OutputDto deleteRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException {
+        String methodName="deleteRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
+        BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+
+        //get the accnt
+        Long accountNUmber= inputDto.getAccountNumber();
+        Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
+
+        BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
+        if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
+                "Please provide a non null request-type",methodName);
+        switch (requestType){
+            case DELETE_BEN -> {
+                deleteBeneficiariesForAnAccount(fetchedAccount,beneficiaryDto.getBeneficiaryId());
+                return new OutputDto("baaaad m");
+            }
+            case DELETE_ALL_BEN -> {
+                deleteAllBeneficiaries(fetchedAccount);
+                return new OutputDto("baaaad main");
+            }
+            default -> throw new BeneficiaryException(BeneficiaryException.class,"Wrong request type",methodName);
+        }
     }
 
 }

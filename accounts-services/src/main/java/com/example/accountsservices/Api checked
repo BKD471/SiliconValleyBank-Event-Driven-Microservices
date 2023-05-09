@@ -1,4 +1,3 @@
-
 // accounts
 
 OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException;
@@ -14,7 +13,7 @@ OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException;
              5) INC_APPROVED_LOAN_LIMIT ------------------------>
              6) CLOSE_ACC               ------------------------> CHECKED
              7) Reopen Closed Acc       ------------------------> CHECKED
-             8) Update customer Details ------------------------>
+             8) Update customer Details ------------------------> CHECKED
 
 OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
              1) GET_CREDIT_SCORE ---------------------------> to be.......
@@ -24,3 +23,26 @@ OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, Custom
 OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException;
              1) DELETE_ACC       ---------------------------> CHECKED
              2) DELETE_ALL_ACC   ---------------------------> CHECKED
+
+
+// beneficiary
+
+OutputDto postRequestExecutor
+
+         1) ADD_BEN
+
+OutputDto putRequestExecutor
+
+         1) UPDATE_BEN
+
+OutputDto getRequestExecutor
+
+         1) GET_BEN
+         2) GET_ALL_BEN
+
+OutputDto deleteRequestExecutor
+
+         1) DELETE_BEN
+         2) DELETE_ALL_BEN
+
+

@@ -45,11 +45,10 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException{ return null;}
 
     //ben
-    public BeneficiaryDto addBeneficiary(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException {return null;}
-    public BeneficiaryDto updateBeneficiaryDetailsOfanAccount(Long accountNumber, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {return null;}
-    public List<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Long accountNumber) throws AccountsException{return null;}
-    public void deleteBeneficiariesForAnAccount(Long accountNumber,Long beneficiaryId) throws  AccountsException , BeneficiaryException{/*dummy implementation*/}
-    public  void  deleteAllBeneficiaries(Long accountNumber) throws AccountsException {/*dummy*/}
+    public OutputDto postRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException {return null;};
+    public OutputDto putRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException { return null;};
+    public OutputDto getRequestBenExecutor(InputDto inputDto) throws AccountsException, BeneficiaryException { return null;};
+    public OutputDto deleteRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException {return null;};
 
     //transactions
     public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}

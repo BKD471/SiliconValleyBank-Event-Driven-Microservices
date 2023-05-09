@@ -6694,3 +6694,141 @@ java.io.EOFException: null
 2023-05-08T08:31:14.206+05:30 DEBUG 11728 --- [Catalina-utility-2] o.apache.catalina.session.ManagerBase    : End expire sessions StandardManager processingTime 3 expired sessions: 0
 2023-05-08T08:31:42.843+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
 2023-05-08T08:31:42.843+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-05-08T08:32:12.848+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-05-08T08:32:12.848+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-05-08T08:32:14.242+05:30 DEBUG 11728 --- [Catalina-utility-2] o.apache.catalina.session.ManagerBase    : Start expire sessions StandardManager at 1683514934242 sessioncount 0
+2023-05-08T08:32:14.242+05:30 DEBUG 11728 --- [Catalina-utility-2] o.apache.catalina.session.ManagerBase    : End expire sessions StandardManager processingTime 0 expired sessions: 0
+2023-05-08T08:32:28.245+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@18285bcc: (connection has passed maxLifetime)
+2023-05-08T08:32:28.246+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:32:28.246+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:32:28.247+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:32:28.247+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:32:28.247+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:32:28.249+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:32:28.249+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:32:28.306+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6267e19e
+2023-05-08T08:32:37.772+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@58576cd8: (connection has passed maxLifetime)
+2023-05-08T08:32:37.773+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:32:37.773+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:32:37.773+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:32:37.773+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:32:37.774+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:32:37.775+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:32:37.775+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:32:37.831+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@558b574f
+2023-05-08T08:32:42.864+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-05-08T08:32:42.864+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-05-08T08:32:54.750+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@789ca9f6: (connection has passed maxLifetime)
+2023-05-08T08:32:54.750+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:32:54.750+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:32:54.751+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:32:54.751+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:32:54.751+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:32:54.752+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:32:54.753+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:32:54.807+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@17826849
+2023-05-08T08:32:55.310+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@17ad9399: (connection has passed maxLifetime)
+2023-05-08T08:32:55.310+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:32:55.310+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:32:55.310+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:32:55.310+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:32:55.310+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:32:55.313+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:32:55.313+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:32:55.370+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@194594c9
+2023-05-08T08:33:09.960+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@569099a2: (connection has passed maxLifetime)
+2023-05-08T08:33:09.961+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:33:09.961+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:33:09.961+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:33:09.961+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:33:09.962+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:33:09.964+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:33:09.964+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:33:10.024+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6e7b6c4e
+2023-05-08T08:33:12.397+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@2670c6bc: (connection has passed maxLifetime)
+2023-05-08T08:33:12.397+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:33:12.398+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:33:12.398+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:33:12.400+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:33:12.400+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:33:12.401+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:33:12.402+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:33:12.462+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@60bc9ff1
+2023-05-08T08:33:12.865+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-05-08T08:33:12.865+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-05-08T08:33:13.758+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@740c3d94: (connection has passed maxLifetime)
+2023-05-08T08:33:13.758+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:33:13.758+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:33:13.758+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:33:13.759+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:33:13.759+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:33:13.761+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:33:13.761+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:33:13.816+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6483073e
+2023-05-08T08:33:14.008+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@52af07a8: (connection has passed maxLifetime)
+2023-05-08T08:33:14.008+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:33:14.008+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:33:14.008+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:33:14.008+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:33:14.008+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:33:14.010+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:33:14.010+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:33:14.064+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@218195ca
+2023-05-08T08:33:14.287+05:30 DEBUG 11728 --- [Catalina-utility-1] o.apache.catalina.session.ManagerBase    : Start expire sessions StandardManager at 1683514994287 sessioncount 0
+2023-05-08T08:33:14.287+05:30 DEBUG 11728 --- [Catalina-utility-1] o.apache.catalina.session.ManagerBase    : End expire sessions StandardManager processingTime 0 expired sessions: 0
+2023-05-08T08:33:21.555+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@765b494d: (connection has passed maxLifetime)
+2023-05-08T08:33:21.555+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:33:21.555+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:33:21.556+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:33:21.556+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:33:21.556+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:33:21.558+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:33:21.558+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:33:21.611+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3111f220
+2023-05-08T08:33:31.684+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@7ca3223d: (connection has passed maxLifetime)
+2023-05-08T08:33:31.684+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.Driver                    : Connecting with URL: jdbc:postgresql://localhost:5432/accounts_db
+2023-05-08T08:33:31.684+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         : PostgreSQL JDBC Driver 42.5.4
+2023-05-08T08:33:31.684+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setDefaultFetchSize = 0
+2023-05-08T08:33:31.684+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] org.postgresql.jdbc.PgConnection         :   setPrepareThreshold = 5
+2023-05-08T08:33:31.684+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Trying to establish a protocol version 3 connection to localhost:5432
+2023-05-08T08:33:31.686+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Receive Buffer Size is 65,536
+2023-05-08T08:33:31.686+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] o.p.core.v3.ConnectionFactoryImpl        : Send Buffer Size is 65,536
+2023-05-08T08:33:31.743+05:30 DEBUG 11728 --- [HikariPool-1 connection adder] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@d383711
+2023-05-08T08:33:42.873+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-05-08T08:33:42.873+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-05-08T08:34:12.875+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-05-08T08:34:12.875+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-05-08T08:34:14.332+05:30 DEBUG 11728 --- [Catalina-utility-1] o.apache.catalina.session.ManagerBase    : Start expire sessions StandardManager at 1683515054332 sessioncount 0
+2023-05-08T08:34:14.333+05:30 DEBUG 11728 --- [Catalina-utility-1] o.apache.catalina.session.ManagerBase    : End expire sessions StandardManager processingTime 0 expired sessions: 0
+2023-05-08T08:34:42.876+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-05-08T08:34:42.876+05:30 DEBUG 11728 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
+2023-05-08T08:34:54.359+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.b.a.ApplicationAvailabilityBean      : Application availability state ReadinessState changed from ACCEPTING_TRAFFIC to REFUSING_TRAFFIC
+2023-05-08T08:34:54.360+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] ConfigServletWebServerApplicationContext : Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@2f193337, started on Mon May 08 07:04:06 IST 2023
+2023-05-08T08:34:54.363+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 2147482623
+2023-05-08T08:34:54.367+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Bean 'webServerGracefulShutdown' completed its stop procedure
+2023-05-08T08:34:54.367+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 2147481599
+2023-05-08T08:34:54.391+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Bean 'webServerStartStop' completed its stop procedure
+2023-05-08T08:34:54.391+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase -2147483647
+2023-05-08T08:34:54.391+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Bean 'springBootLoggingLifecycle' completed its stop procedure
+2023-05-08T08:34:54.393+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+2023-05-08T08:34:54.394+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans
+2023-05-08T08:34:54.395+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2023-05-08T08:34:54.396+05:30  INFO 11728 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-05-08T08:34:54.397+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.hibernate.internal.SessionFactoryImpl  : HHH000031: Closing
+2023-05-08T08:34:54.398+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.h.type.spi.TypeConfiguration$Scope     : Un-scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration$Scope@21896b59] from SessionFactory [org.hibernate.internal.SessionFactoryImpl@2dc83ff8]
+2023-05-08T08:34:54.398+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.h.s.i.AbstractServiceRegistryImpl      : Implicitly destroying ServiceRegistry on de-registration of all child ServiceRegistries
+2023-05-08T08:34:54.399+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] o.h.b.r.i.BootstrapServiceRegistryImpl   : Implicitly destroying Boot-strap registry on de-registration of all child ServiceRegistries
+2023-05-08T08:34:54.402+05:30  INFO 11728 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-05-08T08:34:54.402+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Before shutdown stats (total=10, active=0, idle=10, waiting=0)
+2023-05-08T08:34:54.404+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@6267e19e: (connection evicted)
+2023-05-08T08:34:54.405+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@558b574f: (connection evicted)
+2023-05-08T08:34:54.405+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@17826849: (connection evicted)
+2023-05-08T08:34:54.405+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@194594c9: (connection evicted)
+2023-05-08T08:34:54.406+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@6e7b6c4e: (connection evicted)
+2023-05-08T08:34:54.406+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@60bc9ff1: (connection evicted)
+2023-05-08T08:34:54.406+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@6483073e: (connection evicted)
+2023-05-08T08:34:54.408+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@218195ca: (connection evicted)
+2023-05-08T08:34:54.408+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@3111f220: (connection evicted)
+2023-05-08T08:34:54.410+05:30 DEBUG 11728 --- [HikariPool-1 connection closer] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@d383711: (connection evicted)
+2023-05-08T08:34:54.414+05:30 DEBUG 11728 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+2023-05-08T08:34:54.414+05:30  INFO 11728 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

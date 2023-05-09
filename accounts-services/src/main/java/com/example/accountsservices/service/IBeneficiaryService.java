@@ -17,9 +17,9 @@ public interface IBeneficiaryService {
 //    void deleteAllBeneficiaries(Long accountNumber) throws AccountsException;
 
 
-    OutputDto postRequestBenExecutor(InputDto inputDto);
-    OutputDto putRequestBenExecutor(InputDto inputDto);
-    OutputDto getRequestBenExecutor(InputDto inputDto);
-    OutputDto deleteRequestBenExecutor(InputDto inputDto);
+    OutputDto postRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException;
+    OutputDto putRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException;
+    OutputDto getRequestBenExecutor(InputDto inputDto) throws AccountsException, BeneficiaryException;
+    OutputDto deleteRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException;
 
 }
