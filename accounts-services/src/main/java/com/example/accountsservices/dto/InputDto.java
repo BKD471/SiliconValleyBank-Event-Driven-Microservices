@@ -6,10 +6,7 @@ import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,6 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class InputDto {
     private Long customerId;
     private String name;
@@ -40,8 +38,9 @@ public class InputDto {
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
-    private LocalDate ben_date_of_birth;
+    private String ben_date_of_birthINYMD;
     private int benAge;
+    private Beneficiary.BanksSupported benBank;
     private String benAdharNumber;
     private String benPhoneNumber;
     private String benPanNumber;

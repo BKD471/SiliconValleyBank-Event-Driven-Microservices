@@ -2,12 +2,15 @@ package com.example.accountsservices.dto;
 
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Transactions;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TransactionsDto extends AbstractParentDto {
     private LocalDateTime transactionTimeStamp;
     private Long transactionId;

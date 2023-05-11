@@ -6,13 +6,13 @@ import com.example.accountsservices.dto.InputDto;
 import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.CustomerException;
-import com.example.accountsservices.mapper.Mapper;
+import com.example.accountsservices.helpers.Mapper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
-import com.example.accountsservices.util.BranchCodeRetrieverHelper;
+import com.example.accountsservices.helpers.BranchCodeRetrieverHelper;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
  */
 
 @Service
-@Primary
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomerRepository customerRepository;

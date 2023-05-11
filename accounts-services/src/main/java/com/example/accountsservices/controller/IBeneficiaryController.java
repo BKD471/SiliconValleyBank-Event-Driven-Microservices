@@ -16,14 +16,14 @@ import java.util.List;
 @RequestMapping("/api/v1/beneficiary")
 public interface IBeneficiaryController {
     @GetMapping("/get")
-    ResponseEntity<OutputDto> getRequestForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException;
+    ResponseEntity<OutputDto> getRequestBenForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;
 
     @PostMapping("/post")
-    ResponseEntity<OutputDto> postRequestForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException;
+    ResponseEntity<OutputDto> postRequestBenForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;
 
     @PutMapping("/put")
-    ResponseEntity<OutputDto> putRequestForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException;
+    ResponseEntity<OutputDto> putRequestBenForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;
 
     @DeleteMapping("/delete")
-    ResponseEntity<OutputDto> deleteRequestForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException;
+    ResponseEntity<OutputDto> deleteRequestBenForChange(@RequestBody InputDto inputDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;
 }

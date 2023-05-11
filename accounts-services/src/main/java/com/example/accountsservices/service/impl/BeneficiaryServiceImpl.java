@@ -1,14 +1,14 @@
 package com.example.accountsservices.service.impl;
 
 
-import com.example.accountsservices.dto.BeneficiaryDto;
-import com.example.accountsservices.dto.InputDto;
-import com.example.accountsservices.dto.OutputDto;
+import com.example.accountsservices.dto.*;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
-import com.example.accountsservices.mapper.Mapper;
+import com.example.accountsservices.helpers.BankCodeRetrieverHelper;
+import com.example.accountsservices.helpers.Mapper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
+import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.repository.CustomerRepository;
@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Primary
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
     private final BeneficiaryRepository beneficiaryRepository;
+    private final AccountsRepository accountsRepository;
     public enum validateBenType{
         ADD_BEN,UPDATE_BEN,DELETE_BEN
     }
@@ -40,6 +40,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                            CustomerRepository customerRepository,
                            BeneficiaryRepository beneficiaryRepository) {
         super(accountsRepository,customerRepository);
+        this.accountsRepository=accountsRepository;
         this.beneficiaryRepository = beneficiaryRepository;
     }
 
@@ -60,6 +61,11 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                 List<Beneficiary> listOfBeneficiaries=accounts.getListOfBeneficiary();
                 if(listOfBeneficiaries.size()==5) throw new BeneficiaryException(BeneficiaryException.class,
                         "You can;t add more than 5 beneficiaries",methodName);
+
+                //you can't add yrself as your beneficiary  ,check by adharNo
+                if(accounts.getCustomer().getAdharNumber().equalsIgnoreCase(beneficiaryDto.getBenAdharNumber()))
+                    throw new BeneficiaryException(BeneficiaryException.class,"You can't add yourself as beneficiary",
+                            methodName);
 
                 //check if the same person already exist as a beneficiary
                 String adharNumber=beneficiaryDto.getBenAdharNumber();
@@ -98,16 +104,17 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
 
         //Updating the beneficiary info & saving it
         Beneficiary beneficiaryAccount = Mapper.mapToBeneficiary(beneficiaryDto);
-        Beneficiary savedBeneficiaryAccount = beneficiaryRepository.save(beneficiaryAccount);
-        Beneficiary processedBeneficiaryAccount = setBeneficiaryAgeFromDOB(savedBeneficiaryAccount);
-        Beneficiary savedAndProcessedBeneficiaryAccount = beneficiaryRepository.save(processedBeneficiaryAccount);
+        beneficiaryAccount.setBankCode(BankCodeRetrieverHelper.getBankCode(beneficiaryAccount.getBenBank()));
+        Beneficiary processedBeneficiaryAccount = setBeneficiaryAgeFromDOB(beneficiaryAccount);
 
+        //establishing the beneficiary as child of Account and vice versa
+        List<Beneficiary> beneficiaryList=new ArrayList<>();
+        beneficiaryList.add(processedBeneficiaryAccount);
+        fetchedAccount.setListOfBeneficiary(beneficiaryList);
+        processedBeneficiaryAccount.setAccounts(fetchedAccount);
 
-        //add the beneficiary to account
-        List<Beneficiary> beneficiaries = new ArrayList<>();
-        beneficiaries.add(savedAndProcessedBeneficiaryAccount);
-        fetchedAccount.setListOfBeneficiary(beneficiaries);
-        return savedAndProcessedBeneficiaryAccount;
+        accountsRepository.save(fetchedAccount);
+        return beneficiaryRepository.save(processedBeneficiaryAccount);
     }
 
     private Optional<Beneficiary> getBeneficiaryById(Accounts fetchedAccount, Long benId) throws BeneficiaryException{
@@ -226,16 +233,22 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         //get the accnt
         Long accountNUmber= inputDto.getAccountNumber();
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
+        AccountsDto accountsDto=Mapper.mapToAccountsDto(fetchedAccount);
+
+        //get the customer
+        Customer customer=fetchedAccount.getCustomer();
+        CustomerDto customerDto=Mapper.mapToCustomerDto(customer);
 
         BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
-
         if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type",methodName);
         switch(requestType){
-
             case ADD_BEN -> {
                Beneficiary beneficiary=addBeneficiary(fetchedAccount,beneficiaryDto);
-               return new OutputDto("bbad main thik karnge");
+               return new OutputDto(Mapper.mapToCustomerOutputDto(customerDto),
+                       Mapper.mapToAccountsOutputDto(accountsDto),
+                       Mapper.mapToBeneficiaryDto(beneficiary),String.format("Beneficiary with id:%s has been added for account with id:%s",
+                       beneficiary.getBeneficiaryId(),fetchedAccount.getAccountNumber()));
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class,"Wrong irequest type",methodName);
         }

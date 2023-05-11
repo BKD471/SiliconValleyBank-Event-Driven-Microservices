@@ -1,10 +1,7 @@
 package com.example.accountsservices.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Beneficiary extends Audit{
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -23,7 +21,18 @@ public class Beneficiary extends Audit{
     @Column(name = "ben_name",nullable = false)
     private String beneficiaryName;
 
-    @Column(name = "ben_acnt_num")
+
+    public enum BanksSupported{
+        SBI,AXIS,HDFC,ICICI,CANARA,PNB,ORIENTAL,BOI,YES,BANDHAN,BOB
+    }
+
+    @Column(name="ben_bank",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BanksSupported benBank;
+
+    private String bankCode;
+
+    @Column(name = "ben_acnt_num",nullable = false)
     private Long beneficiaryAccountNumber;
 
     @Column(nullable = false)
@@ -38,22 +47,22 @@ public class Beneficiary extends Audit{
 
     private int benAge;
 
-    @Column(name = "adhar_num",unique = true,nullable = false)
+    @Column(name = "adhar_num",nullable = false)
     private String benAdharNumber;
 
-    @Column(name="phone_num",unique = true,nullable = false)
+    @Column(name="phone_num",nullable = false)
     private String benPhoneNumber;
 
-    @Column(name = "pan_num",unique = true,nullable = false)
+    @Column(name = "pan_num",nullable = false)
     private String benPanNumber;
 
-    @Column(name = "voter_id",unique = true)
+    @Column(name = "voter_id")
     private String benVoterId;
 
-    @Column(name = "driving_license",unique = true)
+    @Column(name = "driving_license")
     private String benDrivingLicense;
 
-    @Column(name = "passport",unique = true)
+    @Column(name = "passport")
     private String benPassportNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -5,14 +5,16 @@ import com.example.accountsservices.model.Beneficiary;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public  class BeneficiaryDto  {
     private Long beneficiaryId;
     private String beneficiaryName;
@@ -32,6 +34,8 @@ public  class BeneficiaryDto  {
     private Beneficiary.RELATION relation;
     private LocalDate BenDate_Of_Birth;
     private int benAge;
+    private Beneficiary.BanksSupported benBank;
+    private String bankCode;
     private String benAdharNumber;
     private String benPhoneNumber;
     private String benPanNumber;
@@ -39,5 +43,4 @@ public  class BeneficiaryDto  {
     private String benDrivingLicense;
     private String benPassportNumber;
 
-    private Accounts accounts;
 }

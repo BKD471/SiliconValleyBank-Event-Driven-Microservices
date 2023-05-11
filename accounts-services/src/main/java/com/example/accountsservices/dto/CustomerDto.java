@@ -1,10 +1,7 @@
 package com.example.accountsservices.dto;
 
 import com.example.accountsservices.model.Accounts;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,9 +10,20 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CustomerDto extends BaseDto{
     private Long customerId;
-    protected LocalDate DateOfBirth;
+    private LocalDate DateOfBirth;
     private String customerName;
+
+    private int age;
+    private String email;
+    private String phoneNumber;
+    private String adharNumber;
+    private String panNumber;
+    private String voterId;
+    private String drivingLicense;
+    private String passportNumber;
+
     private List<AccountsDto> accounts;
  }

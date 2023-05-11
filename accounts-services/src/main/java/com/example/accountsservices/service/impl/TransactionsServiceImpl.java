@@ -4,21 +4,20 @@ package com.example.accountsservices.service.impl;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
-import com.example.accountsservices.mapper.Mapper;
+import com.example.accountsservices.helpers.Mapper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
-import com.example.accountsservices.util.SortDateComparator;
+import com.example.accountsservices.helpers.SortDateComparator;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@Primary
 public class TransactionsServiceImpl extends AbstractAccountsService {
     private final Transactions.TransactionType CREDIT = Transactions.TransactionType.CREDIT;
     private final Transactions.TransactionType DEBIT = Transactions.TransactionType.DEBIT;

@@ -1,10 +1,7 @@
 package com.example.accountsservices.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 import java.time.LocalDate;
@@ -16,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class Accounts extends Audit {
     @Id
@@ -73,10 +71,10 @@ public class Accounts extends Audit {
         OPEN,BLOCKED,CLOSED
     }
 
-    @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL)
     private List<Beneficiary> listOfBeneficiary=new ArrayList<>();
 
-    @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL)
     private List<Transactions> listOfTransactions=new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

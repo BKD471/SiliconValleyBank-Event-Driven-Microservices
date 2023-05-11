@@ -8,6 +8,7 @@ import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.ResponseException;
+import com.example.accountsservices.helpers.ResponseTypes;
 import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -20,21 +21,14 @@ import java.util.List;
 public class AccountsControllerImpl extends AbstractParentController implements IAccountsController{
     private final IAccountsService accountsService;
 
-    private enum ResponsesType{
-        GET,POST,PUT,DELETE
-    }
 
-    private final ResponsesType GET=ResponsesType.GET;
-    private final ResponsesType POST=ResponsesType.POST;
-    private final ResponsesType PUT=ResponsesType.PUT;
-    private final ResponsesType DELETE=ResponsesType.DELETE;
 
     AccountsControllerImpl(AccountsServiceImpl accountsService) {
         this.accountsService = accountsService;
     }
 
 
-    private ResponseEntity<OutputDto> commonResponseBuilder(InputDto inputDto,ResponsesType responsesType) throws AccountsException, ResponseException, CustomerException {
+    private ResponseEntity<OutputDto> commonResponseBuilder(InputDto inputDto, ResponseTypes.ResponsesType responsesType) throws AccountsException, ResponseException, CustomerException {
         String methodName="commonResponseBuilder(InputDto) in AccountsServiceImpl";
 
         OutputDto responseBody=null;
@@ -67,7 +61,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      */
     @Override
     public ResponseEntity<OutputDto> getRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
-        return commonResponseBuilder(inputDto,ResponsesType.GET);
+        return commonResponseBuilder(inputDto, ResponseTypes.GET);
     }
 
     /**
@@ -77,7 +71,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      */
     @Override
     public ResponseEntity<OutputDto> postRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
-        return  commonResponseBuilder(inputDto,ResponsesType.POST);
+        return  commonResponseBuilder(inputDto, ResponseTypes.POST);
     }
 
     /**
@@ -87,7 +81,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      */
     @Override
     public ResponseEntity<OutputDto> putRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
-        return commonResponseBuilder(inputDto,ResponsesType.PUT);
+        return commonResponseBuilder(inputDto,ResponseTypes.PUT);
     }
 
     /**
@@ -97,6 +91,6 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      */
     @Override
     public ResponseEntity<OutputDto> deleteRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
-        return commonResponseBuilder(inputDto,ResponsesType.DELETE);
+        return commonResponseBuilder(inputDto,ResponseTypes.DELETE);
     }
 }
