@@ -114,7 +114,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         processedBeneficiaryAccount.setAccounts(fetchedAccount);
 
         accountsRepository.save(fetchedAccount);
-        return beneficiaryRepository.save(processedBeneficiaryAccount);
+        return processedBeneficiaryAccount;
     }
 
     private Optional<Beneficiary> getBeneficiaryById(Accounts fetchedAccount, Long benId) throws BeneficiaryException{

@@ -118,6 +118,7 @@ public class Mapper {
                 .benPhoneNumber(beneficiaryDto.getBenPhoneNumber())
                 .benVoterId(beneficiaryDto.getBenVoterId())
                 .benPanNumber(beneficiaryDto.getBenPanNumber())
+                .benDrivingLicense(beneficiaryDto.getBenDrivingLicense())
                 .benPassportNumber(beneficiaryDto.getBenPassportNumber())
                 .BenDate_Of_Birth(beneficiaryDto.getBenDate_Of_Birth())
                 .build();
@@ -310,6 +311,7 @@ public class Mapper {
                 .balance(accountsDto.getBalance())
                 .accountType(accountsDto.getAccountType())
                 .branchCode(accountsDto.getBranchCode())
+                .homeBranch(accountsDto.getHomeBranch())
                 .transferLimitPerDay(accountsDto.getTransferLimitPerDay())
                 .creditScore(accountsDto.getCreditScore())
                 .approvedLoanLimitBasedOnCreditScore(accountsDto.getApprovedLoanLimitBasedOnCreditScore())
