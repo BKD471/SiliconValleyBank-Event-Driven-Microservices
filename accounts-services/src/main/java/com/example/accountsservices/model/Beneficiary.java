@@ -1,6 +1,7 @@
 package com.example.accountsservices.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.sql.Date;
@@ -41,6 +42,10 @@ public class Beneficiary extends Audit{
     public enum RELATION{
         FATHER,MOTHER,SPOUSE,SON,DAUGHTER
     }
+
+    @Email
+    @Column(name="ben_email",nullable = false)
+    private String beneficiaryEmail;
 
     @Column(name="dob",nullable = false)
     private LocalDate BenDate_Of_Birth;

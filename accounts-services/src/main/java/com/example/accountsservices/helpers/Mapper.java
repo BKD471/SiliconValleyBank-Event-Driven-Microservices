@@ -99,6 +99,7 @@ public class Mapper {
                 .beneficiaryAccountNumber(beneficiary.getBeneficiaryAccountNumber())
                 .bankCode(beneficiary.getBankCode())
                 .benBank(beneficiary.getBenBank())
+                .beneficiaryEmail(beneficiary.getBeneficiaryEmail())
                 .benAdharNumber(beneficiary.getBenAdharNumber())
                 .relation(beneficiary.getRelation())
                 .benVoterId(beneficiary.getBenVoterId())
@@ -116,6 +117,7 @@ public class Mapper {
                 .benAdharNumber(beneficiaryDto.getBenAdharNumber())
                 .relation(beneficiaryDto.getRelation())
                 .benPhoneNumber(beneficiaryDto.getBenPhoneNumber())
+                .beneficiaryEmail(beneficiaryDto.getBeneficiaryEmail())
                 .benVoterId(beneficiaryDto.getBenVoterId())
                 .benPanNumber(beneficiaryDto.getBenPanNumber())
                 .benDrivingLicense(beneficiaryDto.getBenDrivingLicense())
@@ -190,8 +192,8 @@ public class Mapper {
     public static CustomerDto inputToCustomerDto(InputDto inputDto) {
         LocalDate dob = null;
         //converting date to its desired type
-        if (null != inputDto.getDateOfBirthInYMD()) {
-            String[] date = inputDto.getDateOfBirthInYMD().split("-");
+        if (null != inputDto.getDateOfBirthInYYYYMMDD()) {
+            String[] date = inputDto.getDateOfBirthInYYYYMMDD().split("-");
             dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
         }
 
@@ -213,8 +215,8 @@ public class Mapper {
     public static Customer inputToCustomer(InputDto inputDto) {
         //converting date to its desired type
         LocalDate dob = null;
-        if (null != inputDto.getDateOfBirthInYMD()) {
-            String[] date = inputDto.getDateOfBirthInYMD().split("-");
+        if (null != inputDto.getDateOfBirthInYYYYMMDD()) {
+            String[] date = inputDto.getDateOfBirthInYYYYMMDD().split("-");
             dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
         }
 
@@ -234,8 +236,8 @@ public class Mapper {
     public static BeneficiaryDto mapInputDtoToBenDto(InputDto inputDto) {
         //converting date to its desired type
         LocalDate dob = null;
-        if (null != inputDto.getBen_date_of_birthINYMD()) {
-            String[] date = inputDto.getBen_date_of_birthINYMD().split("-");
+        if (null != inputDto.getBen_date_of_birthINYYYYMMDD()) {
+            String[] date = inputDto.getBen_date_of_birthINYYYYMMDD().split("-");
             dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
         }
         return BeneficiaryDto.builder()
@@ -246,6 +248,7 @@ public class Mapper {
                 .benPanNumber(inputDto.getBenPanNumber())
                 .benPhoneNumber(inputDto.getBenPhoneNumber())
                 .benAdharNumber(inputDto.getBenAdharNumber())
+                .beneficiaryEmail(inputDto.getEmail())
                 .benPassportNumber(inputDto.getBenPassportNumber())
                 .benBank(inputDto.getBenBank())
                 .benVoterId(inputDto.getBenVoterId())
@@ -260,7 +263,7 @@ public class Mapper {
         return InputDto.builder()
                 //setting customer info
                 .name(customer.getName())
-                .dateOfBirthInYMD(customer.getDateOfBirth().toString())
+                .dateOfBirthInYYYYMMDD(customer.getDateOfBirth().toString())
                 .age(customer.getAge())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())

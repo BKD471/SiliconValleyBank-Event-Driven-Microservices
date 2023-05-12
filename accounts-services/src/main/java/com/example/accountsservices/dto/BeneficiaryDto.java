@@ -15,15 +15,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public  class BeneficiaryDto  {
+public class BeneficiaryDto {
     private Long beneficiaryId;
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;
 
     @JsonIgnore
-    @JsonProperty(value="benUpdateRequest")
+    @JsonProperty(value = "benUpdateRequest")
     private BenUpdateRequest benUpdateRequest;
-    public enum BenUpdateRequest{
+
+    public enum BenUpdateRequest {
         ADD_BEN,
         UPDATE_BEN,
         GET_ALL_BEN,
@@ -31,6 +32,7 @@ public  class BeneficiaryDto  {
         DELETE_BEN,
         DELETE_ALL_BEN
     }
+
     private Beneficiary.RELATION relation;
     private LocalDate BenDate_Of_Birth;
     private int benAge;
@@ -39,6 +41,7 @@ public  class BeneficiaryDto  {
     private String benAdharNumber;
     private String benPhoneNumber;
     private String benPanNumber;
+    private String beneficiaryEmail;
     private String benVoterId;
     private String benDrivingLicense;
     private String benPassportNumber;
