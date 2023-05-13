@@ -56,7 +56,7 @@ public class InputDto {
     @Pattern(regexp = "^[A-Z]{3}[0-9]{7}$",message = "Invalid voterId")
     private String voterId;
 
-    @Pattern(regexp = "^([A-Z]{2})(\\d{2}|\\d{3})[a-zA-Z]{0,1}(\\d{4})(\\d{7})$",
+    @Pattern(regexp = "(([A-Z]{2}[0-9]{2})( )|([A-Z]{2}-[0-9]{2}))((19|20)[0-9][0-9])[0-9]{7}$",
      message = "Invalid Driving License")
     private String drivingLicense;
 
