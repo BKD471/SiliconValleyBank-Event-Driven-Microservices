@@ -12,15 +12,15 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CustomerOutPutDto {
-    protected int age;
+    private Long customerId;
+    private String customerName;
     protected String email;
+    protected LocalDate DateOfBirth;
+    protected int age;
     protected String phoneNumber;
     protected String adharNumber;
     protected String panNumber;
     protected String voterId;
     protected String drivingLicense;
     protected String passportNumber;
-    private Long customerId;
-    protected LocalDate DateOfBirth;
-    private String customerName;
 }

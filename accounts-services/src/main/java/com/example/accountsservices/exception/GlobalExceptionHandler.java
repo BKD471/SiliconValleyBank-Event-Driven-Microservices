@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class GlobalExceptionHandler  {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler({AccountsException.class, BeneficiaryException.class,
             TransactionException.class, ResponseException.class,
@@ -28,9 +28,9 @@ public class GlobalExceptionHandler  {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    protected ResponseEntity<Map<String, String>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().stream().forEachOrdered((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
@@ -38,6 +38,7 @@ public class GlobalExceptionHandler  {
         });
         return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
     }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGenericException(Exception e, WebRequest web) {

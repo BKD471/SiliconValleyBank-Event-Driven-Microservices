@@ -39,7 +39,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
         this.accountsRepository=accountsRepository;
         this.customerRepository=customerRepository;
     }
-    public OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException{ return null;}
+    public OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException { return null;}
     public OutputDto  putRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException { return null;}
     public OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException { return null;}
     public OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException{ return null;}

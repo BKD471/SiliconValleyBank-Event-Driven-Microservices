@@ -16,10 +16,10 @@ import java.util.List;
 public class AccountsOutPutDto {
     private Long accountNumber;
     private Long balance;
+    private Accounts.Branch homeBranch;
     private Accounts.AccountType accountType;
     private Accounts.AccountStatus accountStatus;
     private String branchCode;
-    private Accounts.Branch homeBranch;
     private Long transferLimitPerDay;
     private int creditScore;
     private Long approvedLoanLimitBasedOnCreditScore;

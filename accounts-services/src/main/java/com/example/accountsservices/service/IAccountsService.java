@@ -10,7 +10,7 @@ import com.example.accountsservices.exception.CustomerException;
 import java.util.List;
 
 public interface IAccountsService {
-    OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException;
+    OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
     OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
     OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
     OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException;
