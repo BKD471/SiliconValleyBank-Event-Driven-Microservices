@@ -61,6 +61,8 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      */
     @Override
     public ResponseEntity<OutputDto> getRequestForChange(InputDto inputDto) throws AccountsException, ResponseException, CustomerException {
+
+
         return commonResponseBuilder(inputDto, ResponseTypes.GET);
     }
 

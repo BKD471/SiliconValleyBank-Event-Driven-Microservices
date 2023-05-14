@@ -4,6 +4,7 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
+import com.example.accountsservices.validator.ValidAge;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -32,6 +33,7 @@ public class InputDto {
 
     @Pattern(regexp = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$",
             message = "Please provide DOB in YYYY-MM-DD format")
+    @ValidAge
     private String dateOfBirthInYYYYMMDD;
 
     private Accounts.AccountType accountType;

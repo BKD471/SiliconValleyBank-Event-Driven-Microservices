@@ -1,10 +1,9 @@
 package com.example.accountsservices.service.impl;
 
-import com.example.accountsservices.dto.AccountsDto;
-import com.example.accountsservices.dto.CustomerDto;
+import com.example.accountsservices.dto.*;
 import com.example.accountsservices.dto.InputDto;
-import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
+import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.helpers.Mapper;
 import com.example.accountsservices.model.Accounts;
@@ -89,6 +88,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         return true;
     }
 
+
     private Accounts processAccountInit(Accounts accounts, String req) throws AccountsException {
         String methodName = "processAccountInit(Accounts,String) in AccountsServiceImpl";
         //If request is adding another accounts for a customer already have an account
@@ -116,13 +116,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
 
-    private Customer processCustomerInformation(Customer customer) throws AccountsException {
+    private Customer processCustomerInformation(Customer customer){
         String methodName = "processCustomerInformation(Customer) in AccountsServiceIMpl";
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
         int age = Period.between(dob, LocalDate.now()).getYears();
-        if (age < 18)
-            throw new AccountsException(AccountsException.class, "Account holder must be at least 18 years", methodName);
 
         customer.setAge(age);
         return customer;
@@ -132,6 +130,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private OutputDto createAccount(InputDto inputDto) throws AccountsException {
         Accounts account = Mapper.inputToAccounts(inputDto);
         Customer customer = Mapper.inputToCustomer(inputDto);
+        account.setCustomer(customer);
+
         updateValidator(account,Mapper.mapToAccountsDto(account),CREATE_ACCOUNT);
 
         Accounts processedAccount = processAccountInit(account, INIT);
@@ -165,6 +165,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         if (customer.isEmpty()) {
             throw new AccountsException(AccountsException.class, String.format("No such customers with id %s found", customerId), methodName);
         }
+
+
 
         //some critical processing
         Accounts accounts = mapToAccounts(accountsDto);
@@ -444,7 +446,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 return createAccount(inputDto);
             }
             case ADD_ACCOUNT -> {
-                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(),foundAccount, accountsDto);
+                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(),mapToAccounts(accountsDto), accountsDto);
             }
             case LEND_LOAN -> {
                 //to be done...
