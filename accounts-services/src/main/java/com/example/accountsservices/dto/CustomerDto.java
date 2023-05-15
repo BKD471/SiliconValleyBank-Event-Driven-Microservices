@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerDto extends BaseDto{
+public class CustomerDto {
     private Long customerId;
     private LocalDate DateOfBirth;
     private String customerName;

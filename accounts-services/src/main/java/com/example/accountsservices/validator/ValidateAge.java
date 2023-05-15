@@ -2,10 +2,8 @@ package com.example.accountsservices.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Objects;
 
 public class ValidateAge implements ConstraintValidator<ValidAge,String> {
     /**

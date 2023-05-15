@@ -1,9 +1,11 @@
 package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.*;
-import com.example.accountsservices.dto.InputDto;
+import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.exception.AccountsException;
-import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.helpers.Mapper;
 import com.example.accountsservices.model.Accounts;
@@ -12,7 +14,6 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.BranchCodeRetrieverHelper;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 
@@ -21,7 +22,7 @@ import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.accountsservices.helpers.Mapper.mapToAccounts;
+import static com.example.accountsservices.helpers.Mapper.*;
 
 /**
  * @parent AccountsService
@@ -127,12 +128,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
 
-    private OutputDto createAccount(InputDto inputDto) throws AccountsException {
-        Accounts account = Mapper.inputToAccounts(inputDto);
-        Customer customer = Mapper.inputToCustomer(inputDto);
+    private OutputDto createAccount(PostInputRequestDto postInputRequestDto) throws AccountsException {
+        Accounts account = inputToAccounts(postInputRequestDto);
+        Customer customer = inputToCustomer(postInputRequestDto);
         account.setCustomer(customer);
 
-        updateValidator(account,Mapper.mapToAccountsDto(account),CREATE_ACCOUNT);
+        updateValidator(account,mapToAccountsDto(account),CREATE_ACCOUNT);
 
         Accounts processedAccount = processAccountInit(account, INIT);
         Customer processedCustomer = processCustomerInformation(customer);
@@ -150,9 +151,10 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //fetch the corresponding account of saved customer
         Long accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
 
-        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(savedCustomer), Mapper.mapToAccountsDto(savedCustomer.getAccounts().get(0))
-                , String.format("Account with id %s is created for customer %s", accountNumber,
-                        savedCustomer.getCustomerId()));
+        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(savedCustomer),
+                mapToAccountsDto(savedCustomer.getAccounts().get(0))
+                , String.format("Account with id %s is created for customer %s",
+                        accountNumber, savedCustomer.getCustomerId()));
     }
 
 
@@ -163,7 +165,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isEmpty()) {
-            throw new AccountsException(AccountsException.class, String.format("No such customers with id %s found", customerId), methodName);
+            throw new AccountsException(AccountsException.class,
+                    String.format("No such customers with id %s found", customerId),
+                    methodName);
         }
 
 
@@ -176,8 +180,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         //save it bebe
         Accounts savedAccount = accountsRepository.save(processedAccount);
-        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(customer.get()),
-                Mapper.mapToAccountsDto(savedAccount), String.format("New account with id %s is created " +
+        return mapToOutPutDto(mapToCustomerDto(customer.get()),
+                mapToAccountsDto(savedAccount), String.format("New account with id %s is created " +
                                 "for customer with id:%s",
                         savedAccount.getAccountNumber(), customerId));
     }
@@ -192,8 +196,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private OutputDto getAccountInfo(Long accountNumber) throws AccountsException {
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
         Customer foundCustomer = foundAccount.getCustomer();
-        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(foundCustomer),
-                Mapper.mapToAccountsDto(foundAccount), String.format("Retrieved info about account with id: %s", foundAccount.getAccountNumber()));
+        return mapToOutPutDto(mapToCustomerDto(foundCustomer),
+                mapToAccountsDto(foundAccount), String.format("Retrieved info about account with id: %s",
+                        foundAccount.getAccountNumber()));
     }
 
 
@@ -308,7 +313,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //Note: block is very urgent so no prior validation is required  for ongoing loan
         //but authorty reserves right to scrutiny any ongoing loan emis
 
-        updateValidator(foundAccount, Mapper.mapToAccountsDto(foundAccount), BLOCK_ACCOUNT);
+        updateValidator(foundAccount,mapToAccountsDto(foundAccount), BLOCK_ACCOUNT);
         //Block it
         foundAccount.setAccountStatus(STATUS_BLOCKED);
         //save it
@@ -318,7 +323,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private void closeAccount(Accounts foundAccount) throws AccountsException {
         String methodName = "closeAccount(accountNUmber) in AccountsServiceImpl";
         //check if he has pending loan
-        if (updateValidator(foundAccount, Mapper.mapToAccountsDto(foundAccount), CLOSE_ACCOUNT))
+        if (updateValidator(foundAccount, mapToAccountsDto(foundAccount), CLOSE_ACCOUNT))
             throw new AccountsException(AccountsException.class, String.format("This account with id %s still has " +
                     "running loan. Please consider paying it before closing", foundAccount.getAccountNumber()), methodName);
         //close it
@@ -328,7 +333,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     private void unCloseAccount(Accounts account) throws AccountsException {
-        if (updateValidator(account, Mapper.mapToAccountsDto(account), RE_OPEN_ACCOUNT))
+        if (updateValidator(account,mapToAccountsDto(account), RE_OPEN_ACCOUNT))
             accountsRepository.save(account);
         account.setAccountStatus(STATUS_OPEN);
         accountsRepository.save(account);
@@ -403,7 +408,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         if (Objects.nonNull(newDrivingLicense) && !oldDrivingLicense.equalsIgnoreCase(newDrivingLicense))
             newCustomerRecord.setDrivingLicense(newDrivingLicense);
 
-        Customer updatedCustomer=Mapper.mapToCustomer(newCustomerRecord);
+        Customer updatedCustomer=mapToCustomer(newCustomerRecord);
 
         //aduiting doesnot work during update so manually set it
         updatedCustomer.setCreatedBy("Admin");
@@ -423,11 +428,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
 
     @Override
-    public OutputDto postRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException {
+    public OutputDto postRequestExecutor(PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException {
         String methodName = "postRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
-        AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
-        CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
+        AccountsDto accountsDto = inputToAccountsDto(postInputRequestDto);
+        CustomerDto customerDto = inputToCustomerDto(postInputRequestDto);
 
         //Get the accountNumber & account & customer
         Long accountNumber = accountsDto.getAccountNumber();
@@ -443,7 +448,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case CREATE_ACC -> {
-                return createAccount(inputDto);
+                return createAccount(postInputRequestDto);
             }
             case ADD_ACCOUNT -> {
                 return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(),mapToAccounts(accountsDto), accountsDto);
@@ -458,11 +463,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException {
+    public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException {
         String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
-        AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
-        CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
+        AccountsDto accountsDto = getInputToAccountsDto(getInputRequestDto);
+        CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
@@ -482,12 +487,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 String locality = String.format("Inside switch ,for GET_ALL_ACC case under method %s", methodName);
                 Long customerId = customerDto.getCustomerId();
                 Optional<Customer> foundCustomer = customerRepository.findById(customerId);
-                if (foundCustomer.isEmpty()) throw new CustomerException(CustomerException.class, locality, methodName);
+                if(foundCustomer.isEmpty()) throw new CustomerException(CustomerException.class, locality, methodName);
 
                 List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
                 if (listOfAccounts.size() == 0)
                     return new OutputDto(String.format("Customer with id %s have no accounts present", customerId));
-                return new OutputDto(Mapper.mapToCustomerOutputDto(Mapper.mapToCustomerDto(foundCustomer.get())), listOfAccounts,
+                return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer.get())), listOfAccounts,
                         String.format("Fetched all accounts for customer id:%s", customerId));
             }
             default ->
@@ -496,11 +501,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException {
+    public OutputDto putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException {
         String methodName = "putRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
-        AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
-        CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
+        AccountsDto accountsDto = putInputRequestToAccountsDto(putInputRequestDto);
+        CustomerDto customerDto = putInputRequestToCustomerDto(putInputRequestDto);
 
         //Get the accountNumber & account & customer
         Long accountNumber = accountsDto.getAccountNumber();
@@ -518,7 +523,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         switch (request) {
             case UPDATE_HOME_BRANCH -> {
                 Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
-                return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(updatedAccount.getCustomer()), Mapper.mapToAccountsDto(updatedAccount),
+                return Mapper.mapToOutPutDto(mapToCustomerDto(updatedAccount.getCustomer()),mapToAccountsDto(updatedAccount),
                         String.format("Home branch for is changed from %s to %s for customer with id %s",
                                 foundAccount.getHomeBranch(), accountsDto.getHomeBranch(),
                                 foundAccount.getCustomer().getCustomerId()));
@@ -556,9 +561,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 if (Objects.isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
                         "Please specify a customer id to update details", location);
 
-                CustomerDto updatedCustomerDto = Mapper.mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
+                CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
                 List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
-                return new OutputDto(Mapper.mapToCustomerOutputDto(updatedCustomerDto), listOfAccounts,
+                return new OutputDto(mapToCustomerOutputDto(updatedCustomerDto), listOfAccounts,
                         String.format("Customer With id %s has been updated", customerId));
             }
             default ->
@@ -567,11 +572,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException {
+    public OutputDto deleteRequestExecutor(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException {
         String methodName = "requestExecutor(InputDto) in AccountsServiceImpl";
         //map
-        AccountsDto accountsDto = Mapper.inputToAccountsDto(inputDto);
-        CustomerDto customerDto = Mapper.inputToCustomerDto(inputDto);
+        AccountsDto accountsDto = deleteRequestInputToAccountsDto(deleteInputRequestDto);
+        CustomerDto customerDto = deleteInputRequestToCustomerDto(deleteInputRequestDto);
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);

@@ -1,5 +1,7 @@
-package com.example.accountsservices.dto;
+package com.example.accountsservices.dto.inputDtos;
 
+import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -20,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class InputDto {
+public class PostInputRequestDto {
     private Long customerId;
 
     @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long")

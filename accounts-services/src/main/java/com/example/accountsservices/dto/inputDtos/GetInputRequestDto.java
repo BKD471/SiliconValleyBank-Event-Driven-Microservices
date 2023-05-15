@@ -1,5 +1,7 @@
-package com.example.accountsservices.dto;
+package com.example.accountsservices.dto.inputDtos;
 
+import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -14,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetInputDto {
+public class GetInputRequestDto {
   private Long customerId;
   private String name;
   private int age;

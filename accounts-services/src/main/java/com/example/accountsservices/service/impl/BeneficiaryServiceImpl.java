@@ -2,6 +2,10 @@ package com.example.accountsservices.service.impl;
 
 
 import com.example.accountsservices.dto.*;
+import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.helpers.BankCodeRetrieverHelper;
@@ -13,13 +17,14 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.accountsservices.helpers.Mapper.*;
 
 @Service
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
@@ -226,28 +231,28 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto postRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException {
+    public OutputDto postRequestBenExecutor(PostInputRequestDto postInputDto) throws BeneficiaryException, AccountsException {
         String methodName="postRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
-        BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+        BeneficiaryDto beneficiaryDto=mapInputDtoToBenDto(postInputDto);
 
         //get the accnt
-        Long accountNUmber= inputDto.getAccountNumber();
+        Long accountNUmber= postInputDto.getAccountNumber();
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
-        AccountsDto accountsDto=Mapper.mapToAccountsDto(fetchedAccount);
+        AccountsDto accountsDto=mapToAccountsDto(fetchedAccount);
 
         //get the customer
         Customer customer=fetchedAccount.getCustomer();
-        CustomerDto customerDto=Mapper.mapToCustomerDto(customer);
+        CustomerDto customerDto=mapToCustomerDto(customer);
 
-        BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
+        BeneficiaryDto.BenUpdateRequest requestType=postInputDto.getBenRequest();
         if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type",methodName);
         switch(requestType){
             case ADD_BEN -> {
                Beneficiary beneficiary=addBeneficiary(fetchedAccount,beneficiaryDto);
-               return new OutputDto(Mapper.mapToCustomerOutputDto(customerDto),
-                       Mapper.mapToAccountsOutputDto(accountsDto),
-                       Mapper.mapToBeneficiaryDto(beneficiary),String.format("Beneficiary with id:%s has been added for account with id:%s",
+               return new OutputDto(mapToCustomerOutputDto(customerDto),
+                       mapToAccountsOutputDto(accountsDto),
+                       mapToBeneficiaryDto(beneficiary),String.format("Beneficiary with id:%s has been added for account with id:%s",
                        beneficiary.getBeneficiaryId(),fetchedAccount.getAccountNumber()));
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class,"Wrong irequest type",methodName);
@@ -255,15 +260,15 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto putRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException {
+    public OutputDto putRequestBenExecutor(PutInputRequestDto putInputRequestDto) throws BeneficiaryException, AccountsException {
         String methodName="putRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
-        BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+        BeneficiaryDto beneficiaryDto= mapPutInputRequestDtoToBenDto(putInputRequestDto);
 
-        //get the accnt
-        Long accountNUmber= inputDto.getAccountNumber();
+        //get the account
+        Long accountNUmber= putInputRequestDto.getAccountNumber();
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
 
-        BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
+        BeneficiaryDto.BenUpdateRequest requestType=putInputRequestDto.getBenRequest();
         if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type",methodName);
         switch (requestType){
@@ -276,15 +281,15 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto getRequestBenExecutor(InputDto inputDto) throws AccountsException, BeneficiaryException {
+    public OutputDto getRequestBenExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, BeneficiaryException {
         String methodName="getRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
-        BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+        BeneficiaryDto beneficiaryDto= mapGetRequestInputDtoToBenDto(getInputRequestDto);
 
         //get the accnt
-        Long accountNUmber= inputDto.getAccountNumber();
+        Long accountNUmber= getInputRequestDto.getAccountNumber();
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
 
-        BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
+        BeneficiaryDto.BenUpdateRequest requestType=getInputRequestDto.getBenRequest();
         if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type",methodName);
 
@@ -303,15 +308,15 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto deleteRequestBenExecutor(InputDto inputDto) throws BeneficiaryException, AccountsException {
+    public OutputDto deleteRequestBenExecutor(DeleteInputRequestDto deleteInputRequestDto) throws BeneficiaryException, AccountsException {
         String methodName="deleteRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
-        BeneficiaryDto beneficiaryDto=Mapper.mapInputDtoToBenDto(inputDto);
+        BeneficiaryDto beneficiaryDto= mapDeleteInputRequestDtoToBenDto(deleteInputRequestDto);
 
         //get the accnt
-        Long accountNUmber= inputDto.getAccountNumber();
+        Long accountNUmber= deleteInputRequestDto.getAccountNumber();
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
 
-        BeneficiaryDto.BenUpdateRequest requestType=inputDto.getBenRequest();
+        BeneficiaryDto.BenUpdateRequest requestType=deleteInputRequestDto.getBenRequest();
         if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type",methodName);
         switch (requestType){

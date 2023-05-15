@@ -1,6 +1,10 @@
 package com.example.accountsservices.service;
 
 import com.example.accountsservices.dto.*;
+import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.exception.CustomerException;
@@ -39,16 +43,16 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
         this.accountsRepository=accountsRepository;
         this.customerRepository=customerRepository;
     }
-    public OutputDto postRequestExecutor(InputDto postInputDto) throws AccountsException, CustomerException { return null;}
-    public OutputDto  putRequestExecutor(InputDto putInputDto) throws AccountsException, CustomerException { return null;}
-    public OutputDto getRequestExecutor(InputDto getInputDto) throws AccountsException, CustomerException { return null;}
-    public OutputDto deleteRequestExecutor(InputDto deleteInputDto) throws AccountsException{ return null;}
+    public OutputDto postRequestExecutor(PostInputRequestDto postInputDto) throws AccountsException, CustomerException { return null;}
+    public OutputDto  putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException { return null;}
+    public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException { return null;}
+    public OutputDto deleteRequestExecutor(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException{ return null;}
 
     //ben
-    public OutputDto postRequestBenExecutor(InputDto postInputDto) throws BeneficiaryException, AccountsException {return null;};
-    public OutputDto putRequestBenExecutor(InputDto putInputDto) throws BeneficiaryException, AccountsException { return null;};
-    public OutputDto getRequestBenExecutor(InputDto getInputDto) throws AccountsException, BeneficiaryException { return null;};
-    public OutputDto deleteRequestBenExecutor(InputDto deleteInputDto) throws BeneficiaryException, AccountsException {return null;};
+    public OutputDto postRequestBenExecutor(PostInputRequestDto postInputDto) throws BeneficiaryException, AccountsException {return null;};
+    public OutputDto putRequestBenExecutor(PutInputRequestDto putInputRequestDto) throws BeneficiaryException, AccountsException { return null;};
+    public OutputDto getRequestBenExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, BeneficiaryException { return null;};
+    public OutputDto deleteRequestBenExecutor(DeleteInputRequestDto deleteInputRequestDto) throws BeneficiaryException, AccountsException {return null;};
 
     //transactions
     public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
