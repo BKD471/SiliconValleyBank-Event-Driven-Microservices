@@ -51,6 +51,6 @@ public class AccountsDto extends AbstractParentDto {
         DELETE_ALL_ACC
     }
 
-    private List<Beneficiary> listOfBeneficiary;
-    private List<Transactions> listOfTransactions;
+    private List<BeneficiaryDto> listOfBeneficiary;
+    private List<TransactionsDto> listOfTransactions;
 }

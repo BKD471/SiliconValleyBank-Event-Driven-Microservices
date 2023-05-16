@@ -23,8 +23,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static com.example.accountsservices.helpers.Mapper.*;
+import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
 @Service
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
@@ -40,6 +42,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     private final Beneficiary.RELATION FATHER= Beneficiary.RELATION.FATHER;
     private final Beneficiary.RELATION MOTHER= Beneficiary.RELATION.MOTHER;
     private final Beneficiary.RELATION SPOUSE= Beneficiary.RELATION.SPOUSE;
+
 
     BeneficiaryServiceImpl(AccountsRepository accountsRepository,
                            CustomerRepository customerRepository,
@@ -64,8 +67,8 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
             case ADD_BEN -> {
                 boolean notPossible=false;
                 List<Beneficiary> listOfBeneficiaries=accounts.getListOfBeneficiary();
-                if(listOfBeneficiaries.size()==5) throw new BeneficiaryException(BeneficiaryException.class,
-                        "You can;t add more than 5 beneficiaries",methodName);
+                if(listOfBeneficiaries.size()>=5) throw new BeneficiaryException(BeneficiaryException.class,
+                        "You can't add more than 5 beneficiaries",methodName);
 
                 //you can't add yrself as your beneficiary  ,check by adharNo
                 if(accounts.getCustomer().getAdharNumber().equalsIgnoreCase(beneficiaryDto.getBenAdharNumber()))
@@ -96,7 +99,43 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                     }
                 }
             }
-            case UPDATE_BEN -> {}
+            case UPDATE_BEN -> {
+                boolean isTrue=true;
+                if(null!=beneficiaryDto.getBenDate_Of_Birth()){
+                    isTrue= Pattern.matches(PATTERN_FOR_DOB,beneficiaryDto.getBenDate_Of_Birth().toString());
+                    if(!isTrue) throw new BeneficiaryException(BeneficiaryException.class,"Please give DOB in YYYY-mm-dd format",methodName);
+                }
+
+                if(null!=beneficiaryDto.getBeneficiaryEmail()){
+                    isTrue= Pattern.matches(PATTERN_FOR_EMAIL, beneficiaryDto.getBeneficiaryEmail());
+                    if(!isTrue) throw new BeneficiaryException(BeneficiaryException.class,"Please give email in valid format",methodName);
+                }
+
+                if(null!=beneficiaryDto.getBenPhoneNumber()){
+                    isTrue= Pattern.matches(PATTERN_FOR_PHONE_NUMBER,beneficiaryDto.getBenPhoneNumber());
+                    if(!isTrue) throw new BeneficiaryException(BeneficiaryException.class,"Please give phone Number in valid format e.g +xx-xxxxxxxxxx",methodName);
+                }
+                if(null!=beneficiaryDto.getBenAdharNumber()){
+                    isTrue= Pattern.matches(PATTERN_FOR_ADHAR,beneficiaryDto.getBenAdharNumber());
+                    if(!isTrue) throw new BeneficiaryException(BeneficiaryException.class,"Please give adhar number in valid xxxx-xxxx-xxxx format",methodName);
+                }
+                if(null!=beneficiaryDto.getBenPanNumber()){
+                    isTrue= Pattern.matches(PATTERN_FOR_PAN_NUMBER,beneficiaryDto.getBenPanNumber());
+                    if(!isTrue) throw new BeneficiaryException(BeneficiaryException.class,"Please give pan number in valid format",methodName);
+                }
+                if(null!=beneficiaryDto.getBenPassportNumber()){
+                    isTrue= Pattern.matches(PATTERN_FOR_PASSPORT,beneficiaryDto.getBenPassportNumber());
+                    if(!isTrue) throw new BeneficiaryException(BeneficiaryException.class,"Please give passport number in valid format",methodName);
+                }
+                if(null!=beneficiaryDto.getBenVoterId()){
+                    isTrue= Pattern.matches(PATTERN_FOR_VOTER,beneficiaryDto.getBenVoterId());
+                    if(!isTrue) throw new BeneficiaryException(BeneficiaryException.class,"Please give voter in valid format",methodName);
+                }
+                if(null!=beneficiaryDto.getBenDrivingLicense()){
+                    isTrue= Pattern.matches(PATTERN_FOR_DRIVING_LICENSE,beneficiaryDto.getBenDrivingLicense());
+                    if(!isTrue) throw new BeneficiaryException(BeneficiaryException.class,"Please give driving license in valid format",methodName);
+                }
+            }
             case DELETE_BEN -> {}
             default -> throw new BeneficiaryException(BeneficiaryException.class,
                     "Invalid type of request",methodName);
@@ -189,21 +228,27 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
      * @param beneficiaryDto
      * @return
      */
-    private Beneficiary updateBeneficiaryDetailsOfanAccount(Accounts fetchedAccounts, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
-        String methodName="updateBeneficiaryDetailsOfanAccount(Long , BeneficiaryDto ) in BeneficiaryServiceImpl";
+    private Beneficiary updateBeneficiaryDetailsOfAnAccount(Accounts fetchedAccounts, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
+        String methodName="updateBeneficiaryDetailsOfAnAccount(Long , BeneficiaryDto ) in BeneficiaryServiceImpl";
+
+        //validate
+        validate(fetchedAccounts,beneficiaryDto,UPDATE_BEN);
 
         //fetch the beneficiary from beneficiaryList
         Long BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
-        if(null==BENEFICIARY_ID) throw  new BeneficiaryException(BeneficiaryException.class,"Please enter a valid beneficiary id",methodName);
-        Optional<Beneficiary> beneficiaryAccount = fetchedAccounts.getListOfBeneficiary().stream().filter(beneficiary -> BENEFICIARY_ID.equals(beneficiary.getBeneficiaryId())).findFirst();
+        if(null==BENEFICIARY_ID) throw  new BeneficiaryException(BeneficiaryException.class,
+                "Please enter a valid beneficiary id",methodName);
+        Optional<Beneficiary> beneficiaryAccount = fetchedAccounts.getListOfBeneficiary().stream().
+                filter(beneficiary -> BENEFICIARY_ID.equals(beneficiary.getBeneficiaryId())).
+                findFirst();
         if (beneficiaryAccount.isEmpty())
             throw new BeneficiaryException(BeneficiaryException.class,String.format("No such beneficiary accounts exist with beneficiary id %s", BENEFICIARY_ID),methodName);
 
+
         //update
-        Beneficiary newBeneficiaryData = Mapper.mapToBeneficiary(beneficiaryDto);
+        Beneficiary newBeneficiaryData = mapToBeneficiary(beneficiaryDto);
         Beneficiary processedAccount = processedBeneficiaryAccount(beneficiaryAccount.get(), newBeneficiaryData);
-        Beneficiary savedProcessedAccount = beneficiaryRepository.save(processedAccount);
-        return savedProcessedAccount;
+        return beneficiaryRepository.save(processedAccount);
     }
 
     private void deleteBeneficiariesForAnAccount(Accounts fetchedAccounts, Long beneficiaryId) throws AccountsException, BeneficiaryException {
@@ -255,7 +300,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                        mapToBeneficiaryDto(beneficiary),String.format("Beneficiary with id:%s has been added for account with id:%s",
                        beneficiary.getBeneficiaryId(),fetchedAccount.getAccountNumber()));
             }
-            default -> throw new BeneficiaryException(BeneficiaryException.class,"Wrong irequest type",methodName);
+            default -> throw new BeneficiaryException(BeneficiaryException.class,"Wrong request type",methodName);
         }
     }
 
@@ -268,13 +313,21 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         Long accountNUmber= putInputRequestDto.getAccountNumber();
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
 
+        //get customer
+        Customer loadCustomer=fetchedAccount.getCustomer();
+
+
         BeneficiaryDto.BenUpdateRequest requestType=putInputRequestDto.getBenRequest();
         if(null==requestType) throw  new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type",methodName);
         switch (requestType){
             case UPDATE_BEN -> {
-                Beneficiary beneficiary=updateBeneficiaryDetailsOfanAccount(fetchedAccount,beneficiaryDto);
-                return new OutputDto("baaad mein");
+                Beneficiary loadedBeneficiary=updateBeneficiaryDetailsOfAnAccount(fetchedAccount,beneficiaryDto);
+
+                return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(loadCustomer)),
+                        mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)),
+                        mapToBeneficiaryDto(loadedBeneficiary),
+                        String.format("%s beneficiary account has been updated",loadedBeneficiary.getBeneficiaryId()));
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class,"Wrong request type",methodName);
         }

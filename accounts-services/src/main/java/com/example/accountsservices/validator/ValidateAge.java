@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Objects;
 
 public class ValidateAge implements ConstraintValidator<ValidAge,String> {
     /**
@@ -13,6 +14,7 @@ public class ValidateAge implements ConstraintValidator<ValidAge,String> {
      */
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if(value.trim().length()==0) return false;
         LocalDate today=LocalDate.now();
         int years= Period.between(LocalDate.parse(value),today).getYears();
         return years >= 18;

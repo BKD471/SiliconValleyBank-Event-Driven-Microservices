@@ -33,6 +33,17 @@ public class Mapper {
      * @ReturnType AccountsDto
      */
     public static AccountsDto mapToAccountsDto(Accounts accounts) {
+        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
+        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        if(accounts.getListOfBeneficiary().size()!=0){
+            beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+                            .collect(Collectors.toList());
+        }
+        if(accounts.getListOfTransactions().size()!=0){
+            transactionsDtoList=accounts.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+                    .collect(Collectors.toList());
+        }
+
         return AccountsDto.builder()
                 .accountNumber(accounts.getAccountNumber())
                 .balance(accounts.getBalance())
@@ -46,8 +57,8 @@ public class Mapper {
                 .totLoanIssuedSoFar(accounts.getTotLoanIssuedSoFar())
                 .totalOutstandingAmountPayableToBank(accounts.getTotalOutStandingAmountPayableToBank())
                 .accountStatus(accounts.getAccountStatus())
-                .listOfBeneficiary(accounts.getListOfBeneficiary())
-                .listOfTransactions(accounts.getListOfTransactions())
+                .listOfBeneficiary(beneficiaryDtoList)
+                .listOfTransactions(transactionsDtoList)
                 .build();
     }
 
@@ -75,7 +86,7 @@ public class Mapper {
 
     public static CustomerDto mapToCustomerDto(Customer customer) {
         List<AccountsDto> listOfAccounts = new ArrayList<>();
-        if (customer.getAccounts() != null) {
+        if (customer.getAccounts().size() != 0) {
             listOfAccounts = customer.getAccounts().stream().
                     map(Mapper::mapToAccountsDto).collect(Collectors.toList());
         }
@@ -103,6 +114,8 @@ public class Mapper {
                 .beneficiaryAccountNumber(beneficiary.getBeneficiaryAccountNumber())
                 .bankCode(beneficiary.getBankCode())
                 .benBank(beneficiary.getBenBank())
+                .benPhoneNumber(beneficiary.getBenPhoneNumber())
+                .benDrivingLicense(beneficiary.getBenDrivingLicense())
                 .beneficiaryEmail(beneficiary.getBeneficiaryEmail())
                 .benAdharNumber(beneficiary.getBenAdharNumber())
                 .relation(beneficiary.getRelation())
@@ -154,6 +167,16 @@ public class Mapper {
 
 
     public static Accounts inputToAccounts(PostInputRequestDto postInputRequestDto) {
+        List<Beneficiary> beneficiaryList=new ArrayList<>();
+        List<Transactions> transactionList=new ArrayList<>();
+        if(postInputRequestDto.getListOfBeneficiary()!=null){
+            beneficiaryList=postInputRequestDto.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiary)
+                    .collect(Collectors.toList());
+        }
+        if(postInputRequestDto.getListOfTransactions()!=null){
+            transactionList=postInputRequestDto.getListOfTransactions().stream().map(Mapper::mapToTransactions)
+                    .collect(Collectors.toList());
+        }
         return Accounts.builder()
                 .accountNumber(postInputRequestDto.getAccountNumber())
                 .balance(postInputRequestDto.getBalance())
@@ -167,13 +190,14 @@ public class Mapper {
                 .totLoanIssuedSoFar(postInputRequestDto.getTotLoanIssuedSoFar())
                 .totalOutStandingAmountPayableToBank(postInputRequestDto.getTotalOutStandingAmountPayableToBank())
                 .accountStatus(postInputRequestDto.getAccountStatus())
-                .listOfBeneficiary(postInputRequestDto.getListOfBeneficiary())
-                .listOfTransactions(postInputRequestDto.getListOfTransactions())
+                .listOfBeneficiary(beneficiaryList)
+                .listOfTransactions(transactionList)
                 .customer(postInputRequestDto.getCustomer())
                 .build();
     }
 
     public static AccountsDto inputToAccountsDto(PostInputRequestDto postInputRequestDto) {
+
         return AccountsDto.builder()
                 .accountNumber(postInputRequestDto.getAccountNumber())
                 .balance(postInputRequestDto.getBalance())
@@ -194,6 +218,17 @@ public class Mapper {
     }
 
     public static AccountsDto deleteRequestInputToAccountsDto(DeleteInputRequestDto deleteInputRequestDto) {
+        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
+        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        if(deleteInputRequestDto.getListOfBeneficiary()!=null){
+            beneficiaryDtoList=deleteInputRequestDto.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+                    .collect(Collectors.toList());
+        }
+        if(deleteInputRequestDto.getListOfTransactions()!=null){
+            transactionsDtoList=deleteInputRequestDto.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+                    .collect(Collectors.toList());
+        }
+
         return AccountsDto.builder()
                 .accountNumber(deleteInputRequestDto.getAccountNumber())
                 .balance(deleteInputRequestDto.getBalance())
@@ -208,12 +243,24 @@ public class Mapper {
                 .totLoanIssuedSoFar(deleteInputRequestDto.getTotLoanIssuedSoFar())
                 .totalOutstandingAmountPayableToBank(deleteInputRequestDto.getTotalOutStandingAmountPayableToBank())
                 .accountStatus(deleteInputRequestDto.getAccountStatus())
-                .listOfBeneficiary(deleteInputRequestDto.getListOfBeneficiary())
-                .listOfTransactions(deleteInputRequestDto.getListOfTransactions())
+                .listOfBeneficiary(beneficiaryDtoList)
+                .listOfTransactions(transactionsDtoList)
                 .build();
     }
 
     public static AccountsDto putInputRequestToAccountsDto(PutInputRequestDto putInputRequestDto) {
+        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
+        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        if(putInputRequestDto.getListOfBeneficiary()!=null){
+            beneficiaryDtoList=putInputRequestDto.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+                    .collect(Collectors.toList());
+        }
+        if(putInputRequestDto.getListOfTransactions()!=null){
+            transactionsDtoList=putInputRequestDto.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+                    .collect(Collectors.toList());
+        }
+
+
         return AccountsDto.builder()
                 .accountNumber(putInputRequestDto.getAccountNumber())
                 .balance(putInputRequestDto.getBalance())
@@ -228,12 +275,23 @@ public class Mapper {
                 .totLoanIssuedSoFar(putInputRequestDto.getTotLoanIssuedSoFar())
                 .totalOutstandingAmountPayableToBank(putInputRequestDto.getTotalOutStandingAmountPayableToBank())
                 .accountStatus(putInputRequestDto.getAccountStatus())
-                .listOfBeneficiary(putInputRequestDto.getListOfBeneficiary())
-                .listOfTransactions(putInputRequestDto.getListOfTransactions())
+                .listOfBeneficiary(beneficiaryDtoList)
+                .listOfTransactions(transactionsDtoList)
                 .build();
     }
 
     public static AccountsDto getInputToAccountsDto(GetInputRequestDto getInputRequestDto) {
+        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
+        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        if(getInputRequestDto.getListOfBeneficiary()!=null){
+            beneficiaryDtoList=getInputRequestDto.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+                    .collect(Collectors.toList());
+        }
+        if(getInputRequestDto.getListOfTransactions()!=null){
+            transactionsDtoList=getInputRequestDto.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+                    .collect(Collectors.toList());
+        }
+
         return AccountsDto.builder()
                 .accountNumber(getInputRequestDto.getAccountNumber())
                 .balance(getInputRequestDto.getBalance())
@@ -248,8 +306,8 @@ public class Mapper {
                 .totLoanIssuedSoFar(getInputRequestDto.getTotLoanIssuedSoFar())
                 .totalOutstandingAmountPayableToBank(getInputRequestDto.getTotalOutStandingAmountPayableToBank())
                 .accountStatus(getInputRequestDto.getAccountStatus())
-                .listOfBeneficiary(getInputRequestDto.getListOfBeneficiary())
-                .listOfTransactions(getInputRequestDto.getListOfTransactions())
+                .listOfBeneficiary(beneficiaryDtoList)
+                .listOfTransactions(transactionsDtoList)
                 .build();
     }
 
@@ -369,8 +427,8 @@ public class Mapper {
     public static BeneficiaryDto mapInputDtoToBenDto(PostInputRequestDto postInputRequestDto) {
         //converting date to its desired type
         LocalDate dob = null;
-        if (null != postInputRequestDto.getBen_date_of_birthINYYYYMMDD()) {
-            String[] date = postInputRequestDto.getBen_date_of_birthINYYYYMMDD().split("-");
+        if (null != postInputRequestDto.getDateOfBirthInYYYYMMDD()) {
+            String[] date = postInputRequestDto.getDateOfBirthInYYYYMMDD().split("-");
             dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
         }
         return BeneficiaryDto.builder()
@@ -378,15 +436,15 @@ public class Mapper {
                 .beneficiaryName(postInputRequestDto.getBeneficiaryName())
                 .benAge(postInputRequestDto.getBenAge())
                 .beneficiaryId(postInputRequestDto.getBeneficiaryId())
-                .benPanNumber(postInputRequestDto.getBenPanNumber())
-                .benPhoneNumber(postInputRequestDto.getBenPhoneNumber())
-                .benAdharNumber(postInputRequestDto.getBenAdharNumber())
+                .benPanNumber(postInputRequestDto.getPanNumber())
+                .benPhoneNumber(postInputRequestDto.getPhoneNumber())
+                .benAdharNumber(postInputRequestDto.getAdharNumber())
                 .beneficiaryEmail(postInputRequestDto.getEmail())
-                .benPassportNumber(postInputRequestDto.getBenPassportNumber())
+                .benPassportNumber(postInputRequestDto.getPassportNumber())
                 .benBank(postInputRequestDto.getBenBank())
-                .benVoterId(postInputRequestDto.getBenVoterId())
+                .benVoterId(postInputRequestDto.getVoterId())
                 .BenDate_Of_Birth(dob)
-                .benDrivingLicense(postInputRequestDto.getBenDrivingLicense())
+                .benDrivingLicense(postInputRequestDto.getDrivingLicense())
                 .benUpdateRequest(postInputRequestDto.getBenRequest())
                 .relation(postInputRequestDto.getBloodRelation())
                 .build();
@@ -472,6 +530,17 @@ public class Mapper {
     }
 
     public static PostInputRequestDto mapToinputDto(Customer customer, Accounts accounts) {
+        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
+        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        if(accounts.getListOfBeneficiary()!=null){
+            beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+                    .collect(Collectors.toList());
+        }
+        if(accounts.getListOfTransactions()!=null){
+            transactionsDtoList=accounts.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+                    .collect(Collectors.toList());
+        }
+
         return PostInputRequestDto.builder()
                 //setting customer info
                 .name(customer.getName())
@@ -498,8 +567,8 @@ public class Mapper {
                 .totLoanIssuedSoFar(accounts.getTotLoanIssuedSoFar())
                 .totalOutStandingAmountPayableToBank(accounts.getTotalOutStandingAmountPayableToBank())
                 .accountStatus(accounts.getAccountStatus())
-                .listOfBeneficiary(accounts.getListOfBeneficiary())
-                .listOfTransactions(accounts.getListOfTransactions())
+                .listOfBeneficiary(beneficiaryDtoList)
+                .listOfTransactions(transactionsDtoList)
                 .customer(accounts.getCustomer())
                 .build();
     }
@@ -542,20 +611,20 @@ public class Mapper {
     public static OutputDto mapToOutPutDto(CustomerDto customerDto, AccountsDto accountsDto, String message) {
         return OutputDto.builder()
                 .defaultMessage(message)
-                .customer(Mapper.mapToCustomerOutputDto(customerDto))
-                .accounts(Mapper.mapToAccountsOutputDto(accountsDto))
+                .customer(mapToCustomerOutputDto(customerDto))
+                .accounts(mapToAccountsOutputDto(accountsDto))
                 .build();
     }
 
     public static OutputDto customerDtoToOutPut(CustomerDto customerDto) {
         return OutputDto.builder()
-                .customer(Mapper.mapToCustomerOutputDto(customerDto))
+                .customer(mapToCustomerOutputDto(customerDto))
                 .build();
     }
 
     public static OutputDto accountsDtoToOutPut(AccountsDto accountsDto) {
         return OutputDto.builder()
-                .accounts(Mapper.mapToAccountsOutputDto(accountsDto))
+                .accounts(mapToAccountsOutputDto(accountsDto))
                 .build();
     }
 

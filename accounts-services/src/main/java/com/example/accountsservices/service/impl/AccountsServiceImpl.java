@@ -151,7 +151,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //fetch the corresponding account of saved customer
         Long accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
 
-        return Mapper.mapToOutPutDto(Mapper.mapToCustomerDto(savedCustomer),
+        return Mapper.mapToOutPutDto(mapToCustomerDto(savedCustomer),
                 mapToAccountsDto(savedCustomer.getAccounts().get(0))
                 , String.format("Account with id %s is created for customer %s",
                         accountNumber, savedCustomer.getCustomerId()));
@@ -160,8 +160,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     private OutputDto createAccountForAlreadyCreatedUser(Long customerId, Accounts loadAccount,AccountsDto accountsDto) throws AccountsException {
         String methodName = "createAccountForAlreadyCreatedUser(Long,InoutDto) in AccountsServiceImpl";
-        //validate
-        updateValidator(loadAccount,accountsDto,ADD_ACCOUNT);
+
 
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isEmpty()) {
@@ -169,8 +168,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                     String.format("No such customers with id %s found", customerId),
                     methodName);
         }
-
-
+        loadAccount.setCustomer(customer.get());
+        //validate
+        updateValidator(loadAccount,accountsDto,ADD_ACCOUNT);
 
         //some critical processing
         Accounts accounts = mapToAccounts(accountsDto);
@@ -271,7 +271,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case BLOCK_ACCOUNT -> {
                 if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
-                    throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Blocked", accounts.getAccountStatus()), location);
+                    throw new AccountsException(AccountsException.class,
+                            String.format("Status of Account: %s is already Blocked",
+                                    accounts.getAccountStatus()), location);
                 return true;
             }
 
@@ -284,7 +286,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
         Accounts savedUpdatedAccount = accounts;
 
-        if (updateValidator(accounts, accountsDto, UPDATE_HOME_BRANCH) && null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
+        if (updateValidator(accounts, accountsDto, UPDATE_HOME_BRANCH)
+                && null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             accounts.setBranchCode(BranchCodeRetrieverHelper.getBranchCode(newHomeBranch));
             savedUpdatedAccount = accountsRepository.save(accounts);
@@ -302,7 +305,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             if (updateValidator(accounts, accountsDto, UPDATE_CASH_LIMIT))
                 accounts.setTransferLimitPerDay(newCashLimit);
             else
-                throw new AccountsException(AccountsException.class, String.format("Yr Account with id %s must be at least " +
+                throw new AccountsException(AccountsException.class,
+                        String.format("Yr Account with id %s must be at least " +
                         "six months old ", accounts.getAccountNumber()), methodName);
             savedAccount = accountsRepository.save(accounts);
         }
@@ -450,15 +454,14 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             case CREATE_ACC -> {
                 return createAccount(postInputRequestDto);
             }
-            case ADD_ACCOUNT -> {
-                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(),mapToAccounts(accountsDto), accountsDto);
-            }
             case LEND_LOAN -> {
                 //to be done...
                 return new OutputDto("Baad main karenge");
             }
             default ->
-                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for POST requests", request), methodName);
+                    throw new AccountsException(AccountsException.class,
+                            String.format("Invalid request type %s for POST requests", request),
+                            methodName);
         }
     }
 
@@ -521,6 +524,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
+            case ADD_ACCOUNT -> {
+                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(),mapToAccounts(accountsDto), accountsDto);
+            }
             case UPDATE_HOME_BRANCH -> {
                 Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
                 return Mapper.mapToOutPutDto(mapToCustomerDto(updatedAccount.getCustomer()),mapToAccountsDto(updatedAccount),
@@ -534,7 +540,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case INC_TRANSFER_LIMIT -> {
                 Accounts accountWithUpdatedLimit = increaseTransferLimit(accountsDto, foundAccount);
-                return Mapper.mapToOutPutDto(customerDto, Mapper.mapToAccountsDto(accountWithUpdatedLimit),
+                return mapToOutPutDto(customerDto, mapToAccountsDto(accountWithUpdatedLimit),
                         String.format("Transfer Limit has been increased from %s to %s", foundAccount.getTransferLimitPerDay(), accountWithUpdatedLimit.getTransferLimitPerDay()));
             }
             case CLOSE_ACC -> {
@@ -593,7 +599,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                         "been deleted", customerDto.getCustomerId()));
             }
             default ->
-                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for DELETE request", request), methodName);
+                    throw new AccountsException(AccountsException.class,
+                            String.format("Invalid request type %s for DELETE request", request), methodName);
         }
     }
 }

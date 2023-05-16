@@ -37,6 +37,7 @@ public class Beneficiary extends Audit{
     private Long beneficiaryAccountNumber;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private RELATION relation;
 
     public enum RELATION{
