@@ -1,6 +1,6 @@
 package com.example.accountsservices.dto;
 
-import com.example.accountsservices.model.Accounts;
+
 import lombok.*;
 
 import java.time.LocalDate;

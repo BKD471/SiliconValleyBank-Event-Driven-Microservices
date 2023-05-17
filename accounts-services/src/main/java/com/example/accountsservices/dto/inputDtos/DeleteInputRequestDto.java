@@ -6,9 +6,6 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
-import com.example.accountsservices.validator.ValidAge;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;

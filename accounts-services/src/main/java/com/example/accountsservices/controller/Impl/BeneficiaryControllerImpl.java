@@ -19,40 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class BeneficiaryControllerImpl extends AbstractParentController implements IBeneficiaryController{
-
     private  final IBeneficiaryService beneficiaryService;
 
     BeneficiaryControllerImpl(BeneficiaryServiceImpl beneficiaryService){
         this.beneficiaryService=beneficiaryService;
     }
 
-
-
-//    private ResponseEntity<OutputDto> commonResponseBuilder(InputDto inputDto, ResponseTypes.ResponsesType responsesType) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-//        String methodName="commonResponseBuilder(InputDto) in AccountsServiceImpl";
-//
-//        OutputDto responseBody=null;
-//        switch (responsesType){
-//            case GET ->{
-//                responseBody=beneficiaryService.getRequestBenExecutor(inputDto);
-//                return new ResponseEntity<>(responseBody, HttpStatus.OK);
-//            }
-//            case POST -> {
-//                responseBody=beneficiaryService.postRequestBenExecutor(inputDto);
-//                return new ResponseEntity<>(responseBody,HttpStatus.CREATED);
-//            }
-//            case PUT -> {
-//                responseBody=beneficiaryService.putRequestBenExecutor(inputDto);
-//                return new ResponseEntity<>(responseBody,HttpStatus.ACCEPTED);
-//            }
-//            case DELETE -> {
-//                responseBody=beneficiaryService.deleteRequestBenExecutor(inputDto);
-//                return new ResponseEntity<>(responseBody,HttpStatus.ACCEPTED);
-//            }
-//            default -> throw new ResponseException(ResponseException.class,String.format("No such response pf" +
-//                    " this type %s is valid",responsesType),methodName);
-//        }
-//    }
     /**
      * @param getInputRequestDto
      * @return
@@ -64,7 +36,6 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
     public ResponseEntity<OutputDto> getRequestBenForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
         OutputDto responseBody=beneficiaryService.getRequestBenExecutor(getInputRequestDto);
         return new ResponseEntity<>(responseBody,HttpStatus.OK);
-        //return commonResponseBuilder(inputDto, ResponseTypes.GET);
     }
 
     /**
@@ -78,7 +49,6 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
     public ResponseEntity<OutputDto> postRequestBenForChange(PostInputRequestDto postInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
         OutputDto responseBody=beneficiaryService.postRequestBenExecutor(postInputRequestDto);
         return new ResponseEntity<>(responseBody,HttpStatus.CREATED);
-        //return commonResponseBuilder(inputDto,ResponseTypes.POST);
     }
 
     /**
@@ -92,11 +62,10 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
     public ResponseEntity<OutputDto> putRequestBenForChange(PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
         OutputDto responseBody=beneficiaryService.putRequestBenExecutor(putInputRequestDto);
         return  new ResponseEntity<>(responseBody,HttpStatus.ACCEPTED);
-        //return commonResponseBuilder(inputDto,ResponseTypes.PUT);
     }
 
     /**
-     * @param postInputDto
+     * @param deleteInputRequestDto
      * @return
      * @throws AccountsException
      * @throws ResponseException
@@ -106,6 +75,5 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
     public ResponseEntity<OutputDto> deleteRequestBenForChange(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
          OutputDto responseBody=beneficiaryService.deleteRequestBenExecutor(deleteInputRequestDto);
          return new ResponseEntity<>(responseBody,HttpStatus.ACCEPTED);
-        //return commonResponseBuilder(inputDto,ResponseTypes.DELETE);
     }
 }

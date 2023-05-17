@@ -12,7 +12,6 @@ import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.SortDateComparator;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;

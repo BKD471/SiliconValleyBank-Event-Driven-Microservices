@@ -3,8 +3,6 @@ package com.example.accountsservices.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
-
-import java.sql.Date;
 import java.time.LocalDate;
 
 @Getter

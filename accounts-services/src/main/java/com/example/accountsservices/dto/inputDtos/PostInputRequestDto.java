@@ -6,14 +6,9 @@ import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.validator.ValidAge;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +28,7 @@ public class PostInputRequestDto {
     private int age;
     private Long accountNumber;
 
-    @Pattern(regexp = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$",
+    @Pattern(regexp = PATTERN_FOR_DOB,
             message = "Please provide DOB in YYYY-MM-DD format")
     @ValidAge
     private String dateOfBirthInYYYYMMDD;
@@ -74,12 +69,9 @@ public class PostInputRequestDto {
     private String beneficiaryName;
 
     private Long beneficiaryAccountNumber;
-
     private Beneficiary.RELATION bloodRelation;
-
     private int benAge;
     private Beneficiary.BanksSupported benBank;
-
     private Long balance;
     private AccountsDto.UpdateRequest updateRequest;
     private String branchCode;

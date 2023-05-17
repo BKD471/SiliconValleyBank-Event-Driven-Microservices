@@ -85,10 +85,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 String.format("You already have an account with same accountType %s" +
                                 "and same HomeBranch %s",
                         accounts.getAccountType(), accounts.getHomeBranch()), location);
-
         return true;
     }
-
 
     private Accounts processAccountInit(Accounts accounts, String req) throws AccountsException {
         String methodName = "processAccountInit(Accounts,String) in AccountsServiceImpl";
@@ -115,19 +113,14 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         accounts.setApprovedLoanLimitBasedOnCreditScore(0L);
         return accounts;
     }
-
-
     private Customer processCustomerInformation(Customer customer){
         String methodName = "processCustomerInformation(Customer) in AccountsServiceIMpl";
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
         int age = Period.between(dob, LocalDate.now()).getYears();
-
         customer.setAge(age);
         return customer;
     }
-
-
     private OutputDto createAccount(PostInputRequestDto postInputRequestDto) throws AccountsException {
         Accounts account = inputToAccounts(postInputRequestDto);
         Customer customer = inputToCustomer(postInputRequestDto);
@@ -161,7 +154,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private OutputDto createAccountForAlreadyCreatedUser(Long customerId, Accounts loadAccount,AccountsDto accountsDto) throws AccountsException {
         String methodName = "createAccountForAlreadyCreatedUser(Long,InoutDto) in AccountsServiceImpl";
 
-
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isEmpty()) {
             throw new AccountsException(AccountsException.class,
@@ -171,13 +163,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         loadAccount.setCustomer(customer.get());
         //validate
         updateValidator(loadAccount,accountsDto,ADD_ACCOUNT);
-
         //some critical processing
         Accounts accounts = mapToAccounts(accountsDto);
         //register this customer as the owner of this account
         accounts.setCustomer(customer.get());
         Accounts processedAccount = processAccountInit(accounts, UPDATE);
-
         //save it bebe
         Accounts savedAccount = accountsRepository.save(processedAccount);
         return mapToOutPutDto(mapToCustomerDto(customer.get()),
@@ -186,13 +176,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                         savedAccount.getAccountNumber(), customerId));
     }
 
-
     /**
      * @param accountNumber accountNumber
      * @paramType Long
      * @returnType AccountsDto
      */
-
     private OutputDto getAccountInfo(Long accountNumber) throws AccountsException {
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
         Customer foundCustomer = foundAccount.getCustomer();
@@ -200,7 +188,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 mapToAccountsDto(foundAccount), String.format("Retrieved info about account with id: %s",
                         foundAccount.getAccountNumber()));
     }
-
 
     private List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {
         String methodName = "getAllAccountsByCustomerId(Long) in AccountsServiceImpl";
@@ -217,7 +204,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         String location="";
         switch (request) {
             case CREATE_ACC -> {
-                location="Inside CREATE_ACC case";
+                location="Inside CREATE_ACC";
                 //check whether such account owner is already present
                 Optional<List<Accounts>> accountsList= Optional.of(accountsRepository.findAll());
                 //if no accounts by far then certainly we can add
@@ -241,7 +228,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case UPDATE_HOME_BRANCH -> {
                 location="Inside UPDATE_HOME_BRANCH";
-
                 return checkConflictingAccountUpdateConditionForBranch(accounts,
                         accountsDto, String.format("%s of %s",location,methodName));
             }

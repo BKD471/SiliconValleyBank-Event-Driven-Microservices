@@ -1,14 +1,10 @@
 package com.example.accountsservices.helpers;
 
 import com.example.accountsservices.exception.AccountsException;
-import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.accountsservices.model.Accounts.Branch.*;
-import static com.example.accountsservices.model.Accounts.Branch.DELHI;
 import static com.example.accountsservices.model.Beneficiary.BanksSupported.*;
 
 public class BankCodeRetrieverHelper {
