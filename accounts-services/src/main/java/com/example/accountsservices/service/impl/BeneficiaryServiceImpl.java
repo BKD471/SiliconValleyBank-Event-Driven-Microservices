@@ -210,30 +210,30 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         String oldBeneficiaryVoterId = oldBeneficiaryData.getBenVoterId();
 
         if (null != newBeneficiaryName && !newBeneficiaryName.equalsIgnoreCase(oldBeneficiaryName))
-            newBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
+            oldBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
 
         if (null != newBeneficiaryNumber && !newBeneficiaryNumber.equals(oldBeneficiaryNumber))
-            newBeneficiaryData.setBeneficiaryAccountNumber(newBeneficiaryNumber);
+            oldBeneficiaryData.setBeneficiaryAccountNumber(newBeneficiaryNumber);
 
         if (null != newBeneficiaryDOB && !newBeneficiaryDOB.equals(oldBeneficiaryDOB))
-            newBeneficiaryData.setBenDate_Of_Birth(newBeneficiaryDOB);
+            oldBeneficiaryData.setBenDate_Of_Birth(newBeneficiaryDOB);
 
         if (null != newBeneficiaryAdharNumber && !newBeneficiaryAdharNumber.equalsIgnoreCase(oldBeneficiaryAdharNumber))
-            newBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
+            oldBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
 
         if (null != newBeneficaryRelation && !newBeneficaryRelation.equals(oldBeneficiaryRelation))
-            newBeneficiaryData.setRelation(newBeneficaryRelation);
+            oldBeneficiaryData.setRelation(newBeneficaryRelation);
 
         if (null != newBeneficiaryPanNumber && !newBeneficiaryPanNumber.equalsIgnoreCase(oldBeneficiaryPanNumber))
-            newBeneficiaryData.setBenPanNumber(newBeneficiaryPanNumber);
+            oldBeneficiaryData.setBenPanNumber(newBeneficiaryPanNumber);
 
         if (null != newBeneficiaryPassport && !newBeneficiaryPassport.equalsIgnoreCase(oldBeneficiaryPassport))
-            newBeneficiaryData.setBenPassportNumber(newBeneficiaryPassport);
+            oldBeneficiaryData.setBenPassportNumber(newBeneficiaryPassport);
 
         if (null != newBeneficiaryVoterId && !newBeneficiaryVoterId.equalsIgnoreCase(oldBeneficiaryVoterId))
-            newBeneficiaryData.setBenVoterId(newBeneficiaryVoterId);
+            oldBeneficiaryData.setBenVoterId(newBeneficiaryVoterId);
 
-        return newBeneficiaryData;
+        return oldBeneficiaryData;
     }
 
     /**
@@ -255,8 +255,9 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                 filter(beneficiary -> BENEFICIARY_ID.equals(beneficiary.getBeneficiaryId())).
                 findFirst();
         if (beneficiaryAccount.isEmpty())
-            throw new BeneficiaryException(BeneficiaryException.class, String.format("No such beneficiary accounts exist with beneficiary id %s", BENEFICIARY_ID), methodName);
-
+            throw new BeneficiaryException(BeneficiaryException.class,
+                    String.format("No such beneficiary accounts exist with beneficiary id %s",
+                            BENEFICIARY_ID), methodName);
 
         //update
         Beneficiary newBeneficiaryData = mapToBeneficiary(beneficiaryDto);
@@ -294,7 +295,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         String methodName = "postRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         BeneficiaryDto beneficiaryDto = mapInputDtoToBenDto(postInputDto);
 
-        //get the accnt
+        //get the account
         Long accountNUmber = postInputDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
         AccountsDto accountsDto = mapToAccountsDto(fetchedAccount);
@@ -324,8 +325,8 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         BeneficiaryDto beneficiaryDto = mapPutInputRequestDtoToBenDto(putInputRequestDto);
 
         //get the account
-        Long accountNUmber = putInputRequestDto.getAccountNumber();
-        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
+        Long accountNumber = putInputRequestDto.getAccountNumber();
+        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         //get customer
         Customer loadCustomer = fetchedAccount.getCustomer();
@@ -340,7 +341,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                 return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(loadCustomer)),
                         mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)),
                         mapToBeneficiaryDto(loadedBeneficiary),
-                        String.format("%s beneficiary account has been updated", loadedBeneficiary.getBeneficiaryId()));
+                        String.format("beneficiaryId:%s beneficiary account has been updated", loadedBeneficiary.getBeneficiaryId()));
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class, "Wrong request type", methodName);
         }
