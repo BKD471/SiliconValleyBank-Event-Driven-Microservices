@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.accountsservices.helpers.Mapper.mapToTransactions;
+import static com.example.accountsservices.helpers.Mapper.mapToTransactionsDto;
+
 @Service
 public class TransactionsServiceImpl extends AbstractAccountsService {
     private final Transactions.TransactionType CREDIT = Transactions.TransactionType.CREDIT;
@@ -62,7 +65,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         //converting to entity object
-        Transactions requestTransaction = Mapper.mapToTransactions(transactionsDto);
+        Transactions requestTransaction = mapToTransactions(transactionsDto);
 
         //get the money & update the balance
         Long amountTobeDeposited = requestTransaction.getTransactionAmount();
@@ -70,7 +73,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
 
         //save in DB & return
         Transactions savedTransactions = transactionsRepository.save(recentTransaction);
-        return Mapper.mapToTransactionsDto(savedTransactions);
+        return mapToTransactionsDto(savedTransactions);
     }
 
     //using switch expression to decide debit or credit type transactions

@@ -356,10 +356,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
 
     private void deleteAllBeneficiaries(Accounts fetchedAccounts) throws AccountsException {
         //delete everyone
-        fetchedAccounts.getListOfBeneficiary().forEach(beneficiary ->
-                beneficiaryRepository.deleteByBeneficiaryId(beneficiary.getBeneficiaryId()));
-        //set an empty list
-        fetchedAccounts.setListOfBeneficiary(new ArrayList<>());
+        beneficiaryRepository.deleteAllByAccounts_AccountNumber(fetchedAccounts.getAccountNumber());
     }
 
     @Override

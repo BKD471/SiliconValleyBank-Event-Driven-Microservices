@@ -53,7 +53,7 @@ OutputDto getRequestExecutor
 
 OutputDto deleteRequestExecutor
 
-         1) DELETE_BEN
-         2) DELETE_ALL_BEN
+         1) DELETE_BEN            -----------------------------> CHECKED
+         2) DELETE_ALL_BEN        -----------------------------> CHECKED
 
 
