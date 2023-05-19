@@ -480,8 +480,8 @@ public class Mapper {
     public static BeneficiaryDto mapPutInputRequestDtoToBenDto(PutInputRequestDto putInputRequestDto) {
         //converting date to its desired type
         LocalDate dob = null;
-        if (null != putInputRequestDto.getBen_date_of_birthINYYYYMMDD()) {
-            String[] date = putInputRequestDto.getBen_date_of_birthINYYYYMMDD().split("-");
+        if (null != putInputRequestDto.getBen_date_of_birthInYYYYMMDD()) {
+            String[] date = putInputRequestDto.getBen_date_of_birthInYYYYMMDD().split("-");
             dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
         }
         return BeneficiaryDto.builder()
@@ -492,7 +492,7 @@ public class Mapper {
                 .benPanNumber(putInputRequestDto.getBenPanNumber())
                 .benPhoneNumber(putInputRequestDto.getBenPhoneNumber())
                 .benAdharNumber(putInputRequestDto.getBenAdharNumber())
-                .beneficiaryEmail(putInputRequestDto.getEmail())
+                .beneficiaryEmail(putInputRequestDto.getBeneficiaryEmail())
                 .benPassportNumber(putInputRequestDto.getBenPassportNumber())
                 .benBank(putInputRequestDto.getBenBank())
                 .benVoterId(putInputRequestDto.getBenVoterId())

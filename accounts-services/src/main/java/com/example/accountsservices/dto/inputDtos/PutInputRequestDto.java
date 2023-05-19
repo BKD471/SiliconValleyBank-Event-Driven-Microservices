@@ -37,7 +37,7 @@ public class PutInputRequestDto {
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
-    private String ben_date_of_birthINYYYYMMDD;
+    private String ben_date_of_birthInYYYYMMDD;
     private int benAge;
     private Beneficiary.BanksSupported benBank;
     private String benAdharNumber;

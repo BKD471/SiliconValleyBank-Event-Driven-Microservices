@@ -40,16 +40,16 @@ OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException;
 
 OutputDto postRequestExecutor
 
-         1) ADD_BEN               ---------------------------->CHECKED
+         1) ADD_BEN               -----------------------------> CHECKED
 
 OutputDto putRequestExecutor
 
-         1) UPDATE_BEN             ---------------------------->
+         1) UPDATE_BEN             ----------------------------> CHECKED
 
 OutputDto getRequestExecutor
 
-         1) GET_BEN
-         2) GET_ALL_BEN
+         1) GET_BEN               -----------------------------> CHECKED
+         2) GET_ALL_BEN           -----------------------------> CHECKED
 
 OutputDto deleteRequestExecutor
 

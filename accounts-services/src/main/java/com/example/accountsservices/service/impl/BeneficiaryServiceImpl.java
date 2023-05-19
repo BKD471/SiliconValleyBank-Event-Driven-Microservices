@@ -20,6 +20,7 @@ import com.example.accountsservices.AbstractAccountsService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -237,7 +238,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         return fetchedAccount.getListOfBeneficiary();
     }
 
-    private Beneficiary processedBeneficiaryAccount(Beneficiary oldBeneficiaryData, Beneficiary newBeneficiaryData) {
+    private Beneficiary processedBeneficiaryAccount(Beneficiary oldBeneficiaryData, Beneficiary newBeneficiaryData) throws AccountsException {
         String newBeneficiaryName = newBeneficiaryData.getBeneficiaryName();
         Long newBeneficiaryNumber = newBeneficiaryData.getBeneficiaryAccountNumber();
         LocalDate newBeneficiaryDOB = newBeneficiaryData.getBenDate_Of_Birth();
@@ -246,6 +247,9 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         String newBeneficiaryPanNumber = newBeneficiaryData.getBenPanNumber();
         String newBeneficiaryPassport = newBeneficiaryData.getBenPassportNumber();
         String newBeneficiaryVoterId = newBeneficiaryData.getBenVoterId();
+        Beneficiary.BanksSupported newBenBank=newBeneficiaryData.getBenBank();
+        String newBeneficiaryPhoneNumber=newBeneficiaryData.getBenPhoneNumber();
+        String newBeneficiaryEmail=newBeneficiaryData.getBeneficiaryEmail();
 
         String oldBeneficiaryName = oldBeneficiaryData.getBeneficiaryName();
         Long oldBeneficiaryNumber = oldBeneficiaryData.getBeneficiaryAccountNumber();
@@ -255,6 +259,9 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         String oldBeneficiaryPanNumber = oldBeneficiaryData.getBenPanNumber();
         String oldBeneficiaryPassport = oldBeneficiaryData.getBenPassportNumber();
         String oldBeneficiaryVoterId = oldBeneficiaryData.getBenVoterId();
+        Beneficiary.BanksSupported oldBenBank=oldBeneficiaryData.getBenBank();
+        String oldBeneficiaryPhoneNumber=oldBeneficiaryData.getBenPhoneNumber();
+        String oldBeneficiaryEmail=oldBeneficiaryData.getBeneficiaryEmail();
 
         if (null != newBeneficiaryName && !newBeneficiaryName.equalsIgnoreCase(oldBeneficiaryName))
             oldBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
@@ -262,11 +269,17 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         if (null != newBeneficiaryNumber && !newBeneficiaryNumber.equals(oldBeneficiaryNumber))
             oldBeneficiaryData.setBeneficiaryAccountNumber(newBeneficiaryNumber);
 
-        if (null != newBeneficiaryDOB && !newBeneficiaryDOB.equals(oldBeneficiaryDOB))
+        if (null != newBeneficiaryDOB && !newBeneficiaryDOB.equals(oldBeneficiaryDOB)) {
             oldBeneficiaryData.setBenDate_Of_Birth(newBeneficiaryDOB);
 
+            //calculating & setting the new age
+            LocalDate now=LocalDate.now();
+            int age= Period.between(newBeneficiaryDOB,now).getYears();
+            oldBeneficiaryData.setBenAge(age);
+        }
+
         if (null != newBeneficiaryAdharNumber && !newBeneficiaryAdharNumber.equalsIgnoreCase(oldBeneficiaryAdharNumber))
-            oldBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
+            oldBeneficiaryData.setBenAdharNumber(newBeneficiaryAdharNumber);
 
         if (null != newBeneficaryRelation && !newBeneficaryRelation.equals(oldBeneficiaryRelation))
             oldBeneficiaryData.setRelation(newBeneficaryRelation);
@@ -279,6 +292,18 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
 
         if (null != newBeneficiaryVoterId && !newBeneficiaryVoterId.equalsIgnoreCase(oldBeneficiaryVoterId))
             oldBeneficiaryData.setBenVoterId(newBeneficiaryVoterId);
+
+        if(null!=newBeneficiaryPhoneNumber && !newBeneficiaryPhoneNumber.equalsIgnoreCase(oldBeneficiaryPhoneNumber))
+            oldBeneficiaryData.setBenPhoneNumber(newBeneficiaryPhoneNumber);
+
+        if(null!=newBeneficiaryEmail && !newBeneficiaryEmail.equalsIgnoreCase(oldBeneficiaryEmail))
+            oldBeneficiaryData.setBeneficiaryEmail(newBeneficiaryEmail);
+
+        if(null!=newBenBank && !newBenBank.equals(oldBenBank))
+        {
+            oldBeneficiaryData.setBenBank(newBenBank);
+            oldBeneficiaryData.setBankCode(BankCodeRetrieverHelper.getBankCode(newBenBank));
+        }
 
         return oldBeneficiaryData;
     }
