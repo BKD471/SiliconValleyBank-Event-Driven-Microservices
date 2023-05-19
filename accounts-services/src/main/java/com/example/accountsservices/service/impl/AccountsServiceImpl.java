@@ -12,7 +12,7 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
-import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.AbstractAccountsService;
 import com.example.accountsservices.helpers.BranchCodeRetrieverHelper;
 import org.springframework.stereotype.Service;
 

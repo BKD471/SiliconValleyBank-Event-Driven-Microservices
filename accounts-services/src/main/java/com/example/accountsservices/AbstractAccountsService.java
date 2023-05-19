@@ -1,4 +1,4 @@
-package com.example.accountsservices.service;
+package com.example.accountsservices;
 
 import com.example.accountsservices.dto.*;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
@@ -9,14 +9,17 @@ import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.TransactionException;
+import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
+import com.example.accountsservices.service.IAccountsService;
+import com.example.accountsservices.service.IBeneficiaryService;
+import com.example.accountsservices.service.ITransactionsService;
 
 import java.util.List;
 import java.util.Optional;
-import static com.example.accountsservices.service.impl.AccountsServiceImpl.REQUEST_TO_BLOCK;
 
 //DESIGN NOTE
 //Obeying I of SOLID ,to not pollute a single interface with too much methods
@@ -31,12 +34,9 @@ import static com.example.accountsservices.service.impl.AccountsServiceImpl.REQU
 // it can be used for loose coupling or having some logic that will be used by all three service classes
 
 public abstract class AbstractAccountsService implements IAccountsService, ITransactionsService, IBeneficiaryService {
-
     private  final  AccountsRepository accountsRepository;
     private  final CustomerRepository customerRepository;
     private  static final Accounts.AccountStatus STATUS_BLOCKED= Accounts.AccountStatus.BLOCKED;
-
-
 
     protected AbstractAccountsService(AccountsRepository accountsRepository,
                                       CustomerRepository customerRepository){
@@ -64,7 +64,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
             throw new AccountsException(AccountsException.class,String.format("No such accounts exist with id %s", accountNumber),methodName);
 
         boolean checkAccountIsBlocked=STATUS_BLOCKED.equals(fetchedAccounts.get().getAccountStatus());
-        if(request.length>0 && request[0].equalsIgnoreCase(REQUEST_TO_BLOCK) && checkAccountIsBlocked) throw new AccountsException(AccountsException.class,String.format("Account of id %s is already blocked",accountNumber),methodName);
+        if(request.length>0 && request[0].equalsIgnoreCase(AccountsServiceImpl.REQUEST_TO_BLOCK) && checkAccountIsBlocked) throw new AccountsException(AccountsException.class,String.format("Account of id %s is already blocked",accountNumber),methodName);
         else if(checkAccountIsBlocked) throw new AccountsException(AccountsException.class,String.format("Account of id %s is in %s status",accountNumber,STATUS_BLOCKED),methodName);
         return fetchedAccounts.get();
     }

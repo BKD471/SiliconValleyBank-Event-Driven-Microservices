@@ -10,7 +10,7 @@ import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
-import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.AbstractAccountsService;
 import com.example.accountsservices.helpers.SortDateComparator;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
