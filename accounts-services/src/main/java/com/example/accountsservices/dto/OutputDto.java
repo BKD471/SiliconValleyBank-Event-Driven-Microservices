@@ -2,7 +2,9 @@ package com.example.accountsservices.dto;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -14,22 +16,34 @@ public class OutputDto {
     private CustomerOutPutDto customer;
     private AccountsOutPutDto accounts;
     private BeneficiaryDto beneficiary;
+    private TransactionsDto transactions;
     private List<AccountsDto> listOfAccounts;
     private List<BeneficiaryDto> beneficiaryList;
+    private List<TransactionsDto> transactionsList;
 
     public OutputDto(String defaultMessage) {
         this.defaultMessage = defaultMessage;
     }
 
-    public OutputDto(CustomerOutPutDto customerDto, List<AccountsDto> listOfAccounts, String message) {
+    public OutputDto(CustomerOutPutDto customerDto, List<AccountsDto> listOfAccounts,
+                     String message) {
         this.listOfAccounts = listOfAccounts;
         this.customer = customerDto;
         this.defaultMessage = message;
     }
 
-    public OutputDto(CustomerOutPutDto customerDto, AccountsOutPutDto accounts, String message) {
+    public OutputDto(CustomerOutPutDto customerDto, AccountsOutPutDto accounts,
+                     String message) {
         this.customer = customerDto;
         this.accounts = accounts;
+        this.defaultMessage = message;
+    }
+
+    public OutputDto(CustomerOutPutDto customer, AccountsOutPutDto accounts,
+                     List<BeneficiaryDto> beneficiaryList, String message) {
+        this.customer = customer;
+        this.accounts = accounts;
+        this.beneficiaryList = beneficiaryList;
         this.defaultMessage = message;
     }
 
@@ -43,10 +57,21 @@ public class OutputDto {
     }
 
     public OutputDto(CustomerOutPutDto customer, AccountsOutPutDto accounts,
-                     List<BeneficiaryDto> beneficiaryDto, String message) {
+                     TransactionsDto transactions, String defaultMessage) {
         this.customer = customer;
         this.accounts = accounts;
-        this.beneficiaryList = beneficiaryDto;
-        this.defaultMessage = message;
+        this.transactions = transactions;
+        this.defaultMessage = defaultMessage;
     }
+
+     //Note because of type erasure, List<BeneficiaryDto> & List<TransactionsDto> will clash
+    //so use ArrayList instead
+    public OutputDto(CustomerOutPutDto customer, AccountsOutPutDto accounts,
+                     ArrayList<TransactionsDto> transactionsList, String defaultMessage){
+        this.customer=customer;
+        this.accounts=accounts;
+        this.transactionsList=transactionsList;
+        this.defaultMessage=defaultMessage;
+    }
+
 }

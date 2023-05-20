@@ -1,23 +1,26 @@
 package com.example.accountsservices.service.impl;
 
 
+import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
 import com.example.accountsservices.helpers.Mapper;
 import com.example.accountsservices.model.Accounts;
+import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
-import com.example.accountsservices.AbstractAccountsService;
+import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.SortDateComparator;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static com.example.accountsservices.helpers.Mapper.mapToTransactions;
-import static com.example.accountsservices.helpers.Mapper.mapToTransactionsDto;
+import static com.example.accountsservices.helpers.Mapper.*;
 
 @Service
 public class TransactionsServiceImpl extends AbstractAccountsService {
@@ -35,8 +38,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
     }
 
     private Transactions updateBalance(Accounts accounts, Transactions transactions, Long amount, Transactions.TransactionType transactionType) throws TransactionException {
-        String methodName="updateBalance(Accounts , Transactions , Long , Transactions.TransactionType ) in TransactionsServiceImpl";
-
+        String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
 
         Long previousBalance = accounts.getBalance();
 
@@ -61,15 +63,15 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
      */
     private TransactionsDto payOrDepositMoney(TransactionsDto transactionsDto, Transactions.TransactionType transactionType) throws AccountsException, TransactionException {
         //fetch account
-        Long accountNumber = transactionsDto.getAccounts().getAccountNumber();
+        Long accountNumber = transactionsDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         //converting to entity object
         Transactions requestTransaction = mapToTransactions(transactionsDto);
 
         //get the money & update the balance
-        Long amountTobeDeposited = requestTransaction.getTransactionAmount();
-        Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction, amountTobeDeposited, transactionType);
+        Long amountToBeCreditedOrDebited = requestTransaction.getTransactionAmount();
+        Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction, amountToBeCreditedOrDebited, transactionType);
 
         //save in DB & return
         Transactions savedTransactions = transactionsRepository.save(recentTransaction);
@@ -84,39 +86,47 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
     //only SALARY is credit type, we only add money ,so it's simple need not to add too much complexity
     //so just call payOrDeposit method to process the transaction
     @Override
-    public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+    public OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         String methodName="transactionsExecutor(TransactionsDto) in TransactionsServiceImpl";
 
+        if(null==transactionsDto.getTransactionType()) throw new TransactionException(TransactionException.class,
+                "Please provide transaction Type",methodName);
         switch (transactionsDto.getTransactionType()) {
             case CREDIT -> {
-                return payOrDepositMoney(transactionsDto, CREDIT);
+                TransactionsDto transactionsDto1=payOrDepositMoney(transactionsDto, CREDIT);
+                return new OutputDto("baaad m kernge");
             }
             case DEBIT -> {
-                return payBills(transactionsDto);
+                TransactionsDto transactionsDto1=payBills(transactionsDto);
+                return new OutputDto("baaad m karunga");
             }
             default -> throw new TransactionException(TransactionException.class,"Please Specify a valid transaction type",methodName);
         }
     }
 
     @Override
-    public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount(Long accountNumber) throws  AccountsException{
+    public OutputDto getPastSixMonthsTransactionsForAnAccount(Long accountNumber) throws  AccountsException{
         //fetch account
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
+        Customer loadedCustomer=fetchedAccount.getCustomer();
 
         //Calculate the  date six months before today's date
         LocalDateTime today=LocalDateTime.now();
         LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
-        List<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
+        List<Transactions> listOfTransactions= new ArrayList<>(fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
-                        .isAfter(pastSixMonthsDate)).toList();
+                        .isAfter(pastSixMonthsDate)).toList());
 
         listOfTransactions.sort(new SortDateComparator());
-        return listOfTransactions.stream().map(Mapper::mapToTransactionsDto).toList();
+        ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream().map(Mapper::mapToTransactionsDto).collect(Collectors.toCollection(ArrayList::new));
+        return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(loadedCustomer)),mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)),transactionsArrayList,"");
+
     }
 
     private TransactionsDto payBills(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
-         String methodName="payBills(TransactionDto) in TransactionsServiceImpl";
+        String methodName="payBills(TransactionDto) in TransactionsServiceImpl";
+
         switch (transactionsDto.getDescription()) {
             // this will be built along with loan microservices
             //we need to call Loan microservices apis

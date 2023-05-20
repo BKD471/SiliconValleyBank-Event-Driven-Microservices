@@ -16,7 +16,7 @@ import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.repository.CustomerRepository;
-import com.example.accountsservices.AbstractAccountsService;
+import com.example.accountsservices.service.AbstractAccountsService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

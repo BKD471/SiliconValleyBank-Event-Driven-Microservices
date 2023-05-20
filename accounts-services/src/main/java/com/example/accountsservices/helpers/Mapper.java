@@ -149,7 +149,6 @@ public class Mapper {
                 .transactedAccountNumber(transactionsDto.getTransactedAccountNumber())
                 .transactionType(transactionsDto.getTransactionType())
                 .description(transactionsDto.getDescription())
-                .accounts(transactionsDto.getAccounts())
                 .build();
     }
 
@@ -161,7 +160,7 @@ public class Mapper {
                 .transactedAccountNumber(transactions.getTransactedAccountNumber())
                 .transactionType(transactions.getTransactionType())
                 .description(transactions.getDescription())
-                .accounts(transactions.getAccounts())
+                .accountNumber(transactions.getAccounts().getAccountNumber())
                 .build();
     }
 

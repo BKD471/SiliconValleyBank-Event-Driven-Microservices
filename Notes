@@ -32,8 +32,8 @@ OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, Custom
              3) GET_ALL_ACC      ---------------------------> CHECKED
 
 OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException;
-             1) DELETE_ACC       ---------------------------> CHECKED
-             2) DELETE_ALL_ACC   ---------------------------> CHECKED
+             1) DELETE_ACC       -----------------------------> CHECKED
+             2) DELETE_ALL_ACC   -----------------------------> CHECKED
 
 
 // beneficiary

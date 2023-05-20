@@ -1,4 +1,4 @@
-package com.example.accountsservices;
+package com.example.accountsservices.service;
 
 import com.example.accountsservices.dto.*;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
@@ -55,8 +55,8 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public OutputDto deleteRequestBenExecutor(DeleteInputRequestDto deleteInputRequestDto) throws BeneficiaryException, AccountsException {return null;};
 
     //transactions
-    public TransactionsDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
-    public List<TransactionsDto> getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
+    public OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
+    public OutputDto getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
         String methodName="fetchAccountByAccountNumber(Long,String vararg) in AbstractAccountsService";
         Optional<Accounts> fetchedAccounts = accountsRepository.findByAccountNumber(accountNumber);

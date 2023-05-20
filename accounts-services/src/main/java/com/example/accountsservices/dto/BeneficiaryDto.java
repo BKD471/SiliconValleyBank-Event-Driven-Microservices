@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BeneficiaryDto {
+public class BeneficiaryDto extends AbstractParentDto{
     private Long beneficiaryId;
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;
