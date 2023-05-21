@@ -70,8 +70,15 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
         Transactions requestTransaction = mapToTransactions(transactionsDto);
 
         //get the money & update the balance
-        Long amountToBeCreditedOrDebited = requestTransaction.getTransactionAmount();
-        Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction, amountToBeCreditedOrDebited, transactionType);
+        Long amountToBeCredited = requestTransaction.getTransactionAmount();
+        Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction,
+                amountToBeCredited, transactionType);
+
+        //some critical linkup before saving it to db
+        List<Transactions> listOfTransactions=new ArrayList<>();
+        listOfTransactions.add(recentTransaction);
+        fetchedAccount.setListOfTransactions(listOfTransactions);
+        recentTransaction.setAccounts(fetchedAccount);
 
         //save in DB & return
         Transactions savedTransactions = transactionsRepository.save(recentTransaction);
@@ -89,16 +96,24 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
     public OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         String methodName="transactionsExecutor(TransactionsDto) in TransactionsServiceImpl";
 
+        Long accountNUmber=transactionsDto.getAccountNumber();
+        Accounts fetchedAccount=fetchAccountByAccountNumber(accountNUmber);
+        Customer fetchedCustomer=fetchedAccount.getCustomer();
+
         if(null==transactionsDto.getTransactionType()) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
         switch (transactionsDto.getTransactionType()) {
             case CREDIT -> {
-                TransactionsDto transactionsDto1=payOrDepositMoney(transactionsDto, CREDIT);
-                return new OutputDto("baaad m kernge");
+                TransactionsDto transactionDetails=payOrDepositMoney(transactionsDto, CREDIT);
+                return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(fetchedCustomer)),
+                        mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)),transactionDetails,
+                        String.format("Recent Transaction Details for account:%s",accountNUmber));
             }
             case DEBIT -> {
-                TransactionsDto transactionsDto1=payBills(transactionsDto);
-                return new OutputDto("baaad m karunga");
+                TransactionsDto transactionDetails=payBills(transactionsDto);
+                return new OutputDto( mapToCustomerOutputDto(mapToCustomerDto(fetchedCustomer)),
+                        mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)),transactionDetails,
+                        String.format("Recent Transaction details for account:%s",accountNUmber));
             }
             default -> throw new TransactionException(TransactionException.class,"Please Specify a valid transaction type",methodName);
         }
@@ -119,9 +134,13 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
                         .isAfter(pastSixMonthsDate)).toList());
 
         listOfTransactions.sort(new SortDateComparator());
-        ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream().map(Mapper::mapToTransactionsDto).collect(Collectors.toCollection(ArrayList::new));
-        return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(loadedCustomer)),mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)),transactionsArrayList,"");
+        ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream()
+                .map(Mapper::mapToTransactionsDto)
+                .collect(Collectors.toCollection(ArrayList::new));
 
+        return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(loadedCustomer)),
+                mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)),transactionsArrayList,
+                String.format("Last 6 months transaction details for account:%s",accountNumber));
     }
 
     private TransactionsDto payBills(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
@@ -169,7 +188,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
                 return payOrDepositMoney(transactionsDto, DEBIT);
             }
 
-            default -> throw  new TransactionException(TransactionException.class,"we do not support this types of transaction",methodName);
+            default -> throw  new TransactionException(TransactionException.class,"we do not support this types of transaction yet",methodName);
         }
         return transactionsDto;
     }

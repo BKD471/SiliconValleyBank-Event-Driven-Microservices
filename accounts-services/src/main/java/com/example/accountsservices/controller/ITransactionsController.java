@@ -1,5 +1,6 @@
 package com.example.accountsservices.controller;
 
+import com.example.accountsservices.dto.OutputDto;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
@@ -13,8 +14,8 @@ import java.util.List;
 public interface ITransactionsController {
 
     @PostMapping("/exe")
-    ResponseEntity<TransactionsDto> executeTransactions(@Valid @RequestBody TransactionsDto transactionsDto) throws TransactionException, AccountsException;
+    ResponseEntity<OutputDto> executeTransactions(@Valid @RequestBody TransactionsDto transactionsDto) throws TransactionException, AccountsException;
 
     @GetMapping("/{num}")
-    ResponseEntity<List<TransactionsDto>> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") Long accountNumber) throws AccountsException;
+    ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") Long accountNumber) throws AccountsException;
 }
