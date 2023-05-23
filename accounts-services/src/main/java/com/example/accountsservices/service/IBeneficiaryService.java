@@ -1,6 +1,6 @@
 package com.example.accountsservices.service;
 
-import com.example.accountsservices.dto.OutputDto;
+import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;

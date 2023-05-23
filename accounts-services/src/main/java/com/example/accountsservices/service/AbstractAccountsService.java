@@ -5,6 +5,7 @@ import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
+import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.exception.CustomerException;
@@ -14,11 +15,7 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
-import com.example.accountsservices.service.IAccountsService;
-import com.example.accountsservices.service.IBeneficiaryService;
-import com.example.accountsservices.service.ITransactionsService;
 
-import java.util.List;
 import java.util.Optional;
 
 //DESIGN NOTE

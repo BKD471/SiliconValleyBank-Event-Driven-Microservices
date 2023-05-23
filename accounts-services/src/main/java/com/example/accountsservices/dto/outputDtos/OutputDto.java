@@ -1,10 +1,10 @@
-package com.example.accountsservices.dto;
+package com.example.accountsservices.dto.outputDtos;
 
+import com.example.accountsservices.dto.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter

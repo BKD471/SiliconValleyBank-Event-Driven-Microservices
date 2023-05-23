@@ -2,7 +2,7 @@ package com.example.accountsservices.controller.Impl;
 
 import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.IBeneficiaryController;
-import com.example.accountsservices.dto.OutputDto;
+import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;

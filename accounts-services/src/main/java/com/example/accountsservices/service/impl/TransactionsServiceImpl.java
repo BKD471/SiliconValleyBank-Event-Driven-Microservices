@@ -1,7 +1,7 @@
 package com.example.accountsservices.service.impl;
 
 
-import com.example.accountsservices.dto.OutputDto;
+import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
