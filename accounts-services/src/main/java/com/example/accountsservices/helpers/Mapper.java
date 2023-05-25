@@ -81,6 +81,8 @@ public class Mapper {
                 .adharNumber(customerDto.getAdharNumber())
                 .panNumber(customerDto.getPanNumber())
                 .voterId(customerDto.getVoterId())
+                .address(customerDto.getAddress())
+                .imageName(customerDto.getImageName())
                 .drivingLicense(customerDto.getDrivingLicense())
                 .passportNumber(customerDto.getPassportNumber())
                 .accounts(listOfAccounts)
@@ -103,6 +105,8 @@ public class Mapper {
                 .adharNumber(customer.getAdharNumber())
                 .panNumber(customer.getPanNumber())
                 .voterId(customer.getVoterId())
+                .address(customer.getAddress())
+                .imageName(customer.getImageName())
                 .drivingLicense(customer.getDrivingLicense())
                 .passportNumber(customer.getPassportNumber())
                 .accounts(listOfAccounts)
@@ -126,6 +130,8 @@ public class Mapper {
                 .benPanNumber(beneficiary.getBenPanNumber())
                 .benPassportNumber(beneficiary.getBenPassportNumber())
                 .BenDate_Of_Birth(beneficiary.getBenDate_Of_Birth())
+                .imageName(beneficiary.getImageName())
+                .address(beneficiary.getAddress())
                 .build();
     }
 
@@ -142,6 +148,8 @@ public class Mapper {
                 .benPanNumber(beneficiaryDto.getBenPanNumber())
                 .benDrivingLicense(beneficiaryDto.getBenDrivingLicense())
                 .benPassportNumber(beneficiaryDto.getBenPassportNumber())
+                .imageName(beneficiaryDto.getImageName())
+                .address(beneficiaryDto.getAddress())
                 .BenDate_Of_Birth(beneficiaryDto.getBenDate_Of_Birth())
                 .build();
     }
@@ -333,6 +341,8 @@ public class Mapper {
                 .voterId(postInputRequestDto.getVoterId())
                 .drivingLicense(postInputRequestDto.getDrivingLicense())
                 .passportNumber(postInputRequestDto.getPassportNumber())
+                .address(postInputRequestDto.getAddress())
+                .imageName(postInputRequestDto.getImageName())
                 .build();
     }
 
@@ -356,6 +366,8 @@ public class Mapper {
                 .voterId(deleteInputRequestDto.getVoterId())
                 .drivingLicense(deleteInputRequestDto.getDrivingLicense())
                 .passportNumber(deleteInputRequestDto.getPassportNumber())
+                .address(deleteInputRequestDto.getAddress())
+                .imageName(deleteInputRequestDto.getImageName())
                 .build();
     }
 
@@ -379,6 +391,8 @@ public class Mapper {
                 .voterId(putInputRequestDto.getVoterId())
                 .drivingLicense(putInputRequestDto.getDrivingLicense())
                 .passportNumber(putInputRequestDto.getPassportNumber())
+                .imageName(putInputRequestDto.getImageName())
+                .address(putInputRequestDto.getAddress())
                 .build();
     }
 
@@ -402,6 +416,8 @@ public class Mapper {
                 .voterId(getInputRequestDto.getVoterId())
                 .drivingLicense(getInputRequestDto.getDrivingLicense())
                 .passportNumber(getInputRequestDto.getPassportNumber())
+                .imageName(getInputRequestDto.getImageName())
+                .address(getInputRequestDto.getAddress())
                 .build();
     }
 
@@ -423,6 +439,8 @@ public class Mapper {
                 .voterId(postInputRequestDto.getVoterId())
                 .drivingLicense(postInputRequestDto.getDrivingLicense())
                 .passportNumber(postInputRequestDto.getPassportNumber())
+                .imageName(postInputRequestDto.getImageName())
+                .address(postInputRequestDto.getAddress())
                 .build();
     }
 
@@ -449,6 +467,8 @@ public class Mapper {
                 .benDrivingLicense(postInputRequestDto.getDrivingLicense())
                 .benUpdateRequest(postInputRequestDto.getBenRequest())
                 .relation(postInputRequestDto.getBloodRelation())
+                .address(postInputRequestDto.getAddress())
+                .imageName(postInputRequestDto.getImageName())
                 .build();
     }
 
@@ -476,6 +496,8 @@ public class Mapper {
                 .benDrivingLicense(deleteInputRequestDto.getBenDrivingLicense())
                 .benUpdateRequest(deleteInputRequestDto.getBenRequest())
                 .relation(deleteInputRequestDto.getBloodRelation())
+                .address(deleteInputRequestDto.getAddress())
+                .imageName(deleteInputRequestDto.getImageName())
                 .build();
     }
 
@@ -501,6 +523,8 @@ public class Mapper {
                 .BenDate_Of_Birth(dob)
                 .benDrivingLicense(putInputRequestDto.getBenDrivingLicense())
                 .benUpdateRequest(putInputRequestDto.getBenRequest())
+                .address(putInputRequestDto.getAddress())
+                .imageName(putInputRequestDto.getImageName())
                 .relation(putInputRequestDto.getBloodRelation())
                 .build();
     }
@@ -525,6 +549,8 @@ public class Mapper {
                 .benBank(getInputRequestDto.getBenBank())
                 .benVoterId(getInputRequestDto.getBenVoterId())
                 .BenDate_Of_Birth(dob)
+                .address(getInputRequestDto.getAddress())
+                .imageName(getInputRequestDto.getImageName())
                 .benDrivingLicense(getInputRequestDto.getBenDrivingLicense())
                 .benUpdateRequest(getInputRequestDto.getBenRequest())
                 .relation(getInputRequestDto.getBloodRelation())
@@ -555,6 +581,8 @@ public class Mapper {
                 .voterId(customer.getVoterId())
                 .drivingLicense(customer.getDrivingLicense())
                 .passportNumber(customer.getPassportNumber())
+                .address(customer.getAddress())
+                .imageName(customer.getImageName())
 
                 //setting account info
                 .accountNumber(accounts.getAccountNumber())
@@ -588,6 +616,8 @@ public class Mapper {
                 .voterId(customerDto.getVoterId())
                 .drivingLicense(customerDto.getDrivingLicense())
                 .passportNumber(customerDto.getPassportNumber())
+                .address(customerDto.getAddress())
+                .imageName(customerDto.getImageName())
                 .build();
     }
 

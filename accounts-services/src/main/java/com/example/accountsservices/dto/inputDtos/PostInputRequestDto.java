@@ -68,6 +68,9 @@ public class PostInputRequestDto {
     @Size(min=3,max = 60,message = "Beneficiary Name must be at least 3 and at most 60 chars long")
     private String beneficiaryName;
 
+    @NotBlank(message = "Please provide address")
+    private String address;
+    private String imageName;
     private Long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
     private int benAge;

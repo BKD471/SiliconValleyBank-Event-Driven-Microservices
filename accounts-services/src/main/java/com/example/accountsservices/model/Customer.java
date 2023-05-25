@@ -49,6 +49,12 @@ public class Customer extends Audit{
     @Column(name = "passport",unique = true)
     private String passportNumber;
 
+    @Column(name = "img_name",length = 256)
+    private String imageName;
+
+    @Column(name = "address",length = 1000)
+    private String address;
+
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Accounts> accounts=new ArrayList<>();
 }

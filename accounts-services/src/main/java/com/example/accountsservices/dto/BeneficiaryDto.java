@@ -43,5 +43,6 @@ public class BeneficiaryDto extends AbstractParentDto{
     private String benVoterId;
     private String benDrivingLicense;
     private String benPassportNumber;
-
+    private String address;
+    private String imageName;
 }

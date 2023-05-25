@@ -22,4 +22,6 @@ public class CustomerOutPutDto {
     protected String voterId;
     protected String drivingLicense;
     protected String passportNumber;
+    private String address;
+    private String imageName;
 }

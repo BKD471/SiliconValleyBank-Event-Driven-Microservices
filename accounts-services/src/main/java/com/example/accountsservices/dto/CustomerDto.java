@@ -24,6 +24,8 @@ public class CustomerDto {
     private String voterId;
     private String drivingLicense;
     private String passportNumber;
+    private String address;
+    private String imageName;
 
     private List<AccountsDto> accounts;
  }

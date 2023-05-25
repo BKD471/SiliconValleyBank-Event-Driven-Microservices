@@ -52,6 +52,8 @@ public class PutInputRequestDto {
     private String branchCode;
     private Long transferLimitPerDay;
     private int creditScore;
+    private String address;
+    private String imageName;
     private Accounts.AccountStatus accountStatus;
     private Long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;

@@ -6,16 +6,17 @@ import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
-import com.example.accountsservices.exception.AccountsException;
-import com.example.accountsservices.exception.BeneficiaryException;
-import com.example.accountsservices.exception.CustomerException;
-import com.example.accountsservices.exception.TransactionException;
+import com.example.accountsservices.exception.*;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 
 //DESIGN NOTE
@@ -54,6 +55,11 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     //transactions
     public OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
     public OutputDto getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
+
+    //file service
+    public String uploadFile(MultipartFile image, String path) throws IOException, ResponseException {return null;}
+    public InputStream getResource(String path, String name) throws FileNotFoundException {return null;}
+
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
         String methodName="fetchAccountByAccountNumber(Long,String vararg) in AbstractAccountsService";
         Optional<Accounts> fetchedAccounts = accountsRepository.findByAccountNumber(accountNumber);

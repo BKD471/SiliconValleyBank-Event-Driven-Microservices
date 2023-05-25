@@ -56,6 +56,8 @@ public class DeleteInputRequestDto {
     private Boolean anyActiveLoans;
     private Long totLoanIssuedSoFar;
     private Long totalOutStandingAmountPayableToBank;
+    private String address;
+    private String imageName;
     private List<Beneficiary> listOfBeneficiary = new ArrayList<>();
     private List<Transactions> listOfTransactions = new ArrayList<>();
     private Customer customer;

@@ -69,6 +69,12 @@ public class Beneficiary extends Audit{
     @Column(name = "passport")
     private String benPassportNumber;
 
+    @Column(name = "address",length = 1000)
+    private String address;
+
+    @Column(name = "img_name",length = 256)
+    private String imageName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="account_id",nullable = false)
     private Accounts accounts;
