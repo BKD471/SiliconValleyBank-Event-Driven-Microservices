@@ -25,6 +25,7 @@ public class GetInputRequestDto {
   private Accounts.AccountType accountType;
   private Accounts.Branch homeBranch;
   private String email;
+  private String password;
   private String phoneNumber;
   private String adharNumber;
   private String panNumber;

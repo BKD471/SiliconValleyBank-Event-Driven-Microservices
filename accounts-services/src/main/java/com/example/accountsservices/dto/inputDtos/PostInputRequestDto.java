@@ -40,6 +40,8 @@ public class PostInputRequestDto {
             message = "Invalid Email format")
     private String email;
 
+    private String password;
+
     @Pattern(regexp = PATTERN_FOR_PHONE_NUMBER
     ,message = "Invalid phone Number format")
     private String phoneNumber;

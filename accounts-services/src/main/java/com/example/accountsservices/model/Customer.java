@@ -31,6 +31,9 @@ public class Customer extends Audit{
     @Column(nullable = false,unique = true)
     private String email;
 
+    @Column(nullable = false,length = 512)
+    private String password;
+
     @Column(nullable = false,unique = true,name="mobile_num")
     private String phoneNumber;
 

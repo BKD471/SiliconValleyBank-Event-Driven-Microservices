@@ -15,9 +15,9 @@ public class CustomerDto {
     private Long customerId;
     private LocalDate DateOfBirth;
     private String customerName;
-
     private int age;
     private String email;
+    private String password;
     private String phoneNumber;
     private String adharNumber;
     private String panNumber;
