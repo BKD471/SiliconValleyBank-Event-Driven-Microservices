@@ -1,5 +1,5 @@
 package com.example.accountsservices.exception;
-public class CustomerException extends Exception {
+public class CustomerException extends RuntimeException {
     private final String reason;
     private final String methodName;
     private final Object e;

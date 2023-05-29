@@ -1,6 +1,6 @@
 package com.example.accountsservices.exception;
 
-public class BeneficiaryException extends Exception{
+public class BeneficiaryException extends RuntimeException{
    private final String reason;
    private final String methodName;
    private final Object obj;
