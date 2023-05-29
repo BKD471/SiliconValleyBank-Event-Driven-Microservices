@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({AccountsException.class, BeneficiaryException.class,
             TransactionException.class, ResponseException.class,
             CustomerException.class})
-    public ResponseEntity<ErrorDetails> handleAllCustomException(Exception e, WebRequest web) {
+    public ResponseEntity<ErrorDetails> handleAllUncheckedCustomException(Exception e, WebRequest web) {
         ErrorDetails error = new ErrorDetails(LocalTime.now(), e.getMessage(), web.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
