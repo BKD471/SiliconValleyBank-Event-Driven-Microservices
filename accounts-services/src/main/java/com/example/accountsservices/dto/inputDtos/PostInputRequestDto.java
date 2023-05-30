@@ -9,6 +9,8 @@ import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.validator.ValidAge;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +75,7 @@ public class PostInputRequestDto {
     @NotBlank(message = "Please provide address")
     private String address;
     private String imageName;
+    private MultipartFile image;
     private Long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
     private int benAge;

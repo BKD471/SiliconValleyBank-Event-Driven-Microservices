@@ -7,6 +7,7 @@ import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
+import com.example.accountsservices.exception.BadRequestException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.helpers.Mapper;
 import com.example.accountsservices.model.Accounts;
@@ -15,12 +16,21 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.BranchCodeRetrieverHelper;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
 
+import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.accountsservices.helpers.Mapper.*;
@@ -39,6 +49,7 @@ import static com.example.accountsservices.helpers.Mapper.*;
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomerRepository customerRepository;
+    private final FIleServiceImpl fIleService;
     private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
     private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
     private final Accounts.AccountStatus STATUS_CLOSED = Accounts.AccountStatus.CLOSED;
@@ -46,9 +57,13 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final String INIT = "INIT";
     private final String UPDATE = "UPDATE";
 
+    @Value("${customer.profile.images.path}")
+    private String IMAGE_PATH;
+
     private enum ValidateType {
         UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH, GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE,
-        CLOSE_ACCOUNT, RE_OPEN_ACCOUNT, BLOCK_ACCOUNT,CREATE_ACC,ADD_ACC
+        UPLOAD_PROFILE_IMAGE, CLOSE_ACCOUNT, RE_OPEN_ACCOUNT,
+        DISPLAY_PROFILE_IMAGE, BLOCK_ACCOUNT, CREATE_ACC, ADD_ACC
     }
 
     private final ValidateType UPDATE_CASH_LIMIT = ValidateType.UPDATE_CASH_LIMIT;
@@ -56,16 +71,22 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final ValidateType CLOSE_ACCOUNT = ValidateType.CLOSE_ACCOUNT;
     private final ValidateType RE_OPEN_ACCOUNT = ValidateType.RE_OPEN_ACCOUNT;
     private final ValidateType BLOCK_ACCOUNT = ValidateType.BLOCK_ACCOUNT;
-    private final ValidateType CREATE_ACCOUNT=ValidateType.CREATE_ACC;
-    private final ValidateType ADD_ACCOUNT=ValidateType.ADD_ACC;
+    private final ValidateType CREATE_ACCOUNT = ValidateType.CREATE_ACC;
+    private final ValidateType ADD_ACCOUNT = ValidateType.ADD_ACC;
+    private final ValidateType UPLOAD_PROFILE_IMAGE = ValidateType.UPLOAD_PROFILE_IMAGE;
+    private final ValidateType DISPLAY_PROFILE_IMAGE=ValidateType.DISPLAY_PROFILE_IMAGE;
+    private final Double FIlE_SIZE_TO_MB_CONVERTER_FACTOR=0.00000095367432;
+
     /**
      * @paramType AccountsRepository
      * @returnType NA
      */
-    public AccountsServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository) {
+    public AccountsServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository,
+                               FIleServiceImpl fIleService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
+        this.fIleService = fIleService;
     }
 
     private Boolean checkConflictingAccountUpdateConditionForBranch(Accounts accounts, AccountsDto accountsDto, String locality) throws AccountsException {
@@ -114,7 +135,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         accounts.setApprovedLoanLimitBasedOnCreditScore(0L);
         return accounts;
     }
-    private Customer processCustomerInformation(Customer customer){
+
+    private Customer processCustomerInformation(Customer customer) {
         String methodName = "processCustomerInformation(Customer) in AccountsServiceIMpl";
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
@@ -122,12 +144,13 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         customer.setAge(age);
         return customer;
     }
+
     private OutputDto createAccount(PostInputRequestDto postInputRequestDto) throws AccountsException {
         Accounts account = inputToAccounts(postInputRequestDto);
         Customer customer = inputToCustomer(postInputRequestDto);
         account.setCustomer(customer);
 
-        updateValidator(account,mapToAccountsDto(account),CREATE_ACCOUNT);
+        updateValidator(account, mapToAccountsDto(account), null, CREATE_ACCOUNT);
 
         Accounts processedAccount = processAccountInit(account, INIT);
         Customer processedCustomer = processCustomerInformation(customer);
@@ -152,7 +175,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
 
-    private OutputDto createAccountForAlreadyCreatedUser(Long customerId, Accounts loadAccount,AccountsDto accountsDto) throws AccountsException {
+    private OutputDto createAccountForAlreadyCreatedUser(Long customerId, Accounts loadAccount, AccountsDto accountsDto) throws AccountsException {
         String methodName = "createAccountForAlreadyCreatedUser(Long,InoutDto) in AccountsServiceImpl";
 
         Optional<Customer> customer = customerRepository.findById(customerId);
@@ -163,7 +186,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         }
         loadAccount.setCustomer(customer.get());
         //validate
-        updateValidator(loadAccount,accountsDto,ADD_ACCOUNT);
+        updateValidator(loadAccount, accountsDto, null, ADD_ACCOUNT);
         //some critical processing
         Accounts accounts = mapToAccounts(accountsDto);
         //register this customer as the owner of this account
@@ -200,37 +223,53 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 map(Mapper::mapToAccountsDto).collect(Collectors.toList());
     }
 
-    private Boolean updateValidator(Accounts accounts, AccountsDto accountsDto, ValidateType request) throws AccountsException {
+    private Boolean updateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, ValidateType request) throws AccountsException {
         String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
-        String location="";
+        String location = "";
         switch (request) {
             case CREATE_ACC -> {
-                location="Inside CREATE_ACC";
+                location = "Inside CREATE_ACC";
                 //check whether such account owner is already present
-                Optional<List<Accounts>> accountsList= Optional.of(accountsRepository.findAll());
+                Optional<List<Accounts>> accountsList = Optional.of(accountsRepository.findAll());
                 //if no accounts by far then certainly we can add
-                if(accountsList.isEmpty()) return true;
+                if (accountsList.isEmpty()) return true;
 
-                String adharNumber=accounts.getCustomer().getAdharNumber();
-                boolean isNotPossible=accountsList.get().stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
-                if(isNotPossible) throw  new AccountsException(AccountsException.class,String.format("You already have an account with adhar:%s",adharNumber),
-                        String.format("%s of %s",location,methodName));
+                String adharNumber = accounts.getCustomer().getAdharNumber();
+                boolean isNotPossible = accountsList.get().stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
+                if (isNotPossible)
+                    throw new AccountsException(AccountsException.class, String.format("You already have an account with adhar:%s", adharNumber),
+                            String.format("%s of %s", location, methodName));
             }
             case ADD_ACC -> {
-                location="Inside ADD_ACC";
+                location = "Inside ADD_ACC";
                 //prevent a customer to create more than 10 accounts
-                Customer customer=accounts.getCustomer();
-                if(customer.getAccounts().size()>=7) throw new AccountsException(AccountsException.class,
+                Customer customer = accounts.getCustomer();
+                if (customer.getAccounts().size() >= 7) throw new AccountsException(AccountsException.class,
                         "You can;t have more than 10 accounts",
-                        String.format("%s of %s",location,methodName));
+                        String.format("%s of %s", location, methodName));
             }
             case UPDATE_CASH_LIMIT -> {
                 return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
             }
+            case UPLOAD_PROFILE_IMAGE -> {
+                location = "Inside UPLOAD_PROFILE_IMAGE";
+                if (null == customerDto.getImage()) throw new BadRequestException(BadRequestException.class,
+                        "Please provide image", String.format("%s of %s", methodName, location));
+                if (customerDto.getImage().getSize()*FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getImage().getSize()*FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
+                    throw new BadRequestException(BadRequestException.class,
+                            "Your file is either corrupted or you are exceeding the max size of 100mb",
+                            String.format("%s of %s", methodName, location));
+            }
+            case DISPLAY_PROFILE_IMAGE -> {
+                location="Inside Display Profile Image";
+                if(null==customerDto.getImageName()) throw new BadRequestException(BadRequestException.class,
+                        "No profile pics available for this customer",String.format("Inside %s of %s"));
+
+            }
             case UPDATE_HOME_BRANCH -> {
-                location="Inside UPDATE_HOME_BRANCH";
+                location = "Inside UPDATE_HOME_BRANCH";
                 return checkConflictingAccountUpdateConditionForBranch(accounts,
-                        accountsDto, String.format("%s of %s",location,methodName));
+                        accountsDto, String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
                 Accounts.AccountStatus status = accounts.getAccountStatus();
@@ -273,7 +312,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
         Accounts savedUpdatedAccount = accounts;
 
-        if (updateValidator(accounts, accountsDto, UPDATE_HOME_BRANCH)
+        if (updateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
                 && null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             accounts.setBranchCode(BranchCodeRetrieverHelper.getBranchCode(newHomeBranch));
@@ -289,12 +328,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         Accounts savedAccount = accounts;
         if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
-            if (updateValidator(accounts, accountsDto, UPDATE_CASH_LIMIT))
+            if (updateValidator(accounts, accountsDto, null, UPDATE_CASH_LIMIT))
                 accounts.setTransferLimitPerDay(newCashLimit);
             else
                 throw new AccountsException(AccountsException.class,
                         String.format("Yr Account with id %s must be at least " +
-                        "six months old ", accounts.getAccountNumber()), methodName);
+                                "six months old ", accounts.getAccountNumber()), methodName);
             savedAccount = accountsRepository.save(accounts);
         }
         return savedAccount;
@@ -304,7 +343,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //Note: block is very urgent so no prior validation is required  for ongoing loan
         //but authorty reserves right to scrutiny any ongoing loan emis
 
-        updateValidator(foundAccount,mapToAccountsDto(foundAccount), BLOCK_ACCOUNT);
+        updateValidator(foundAccount, mapToAccountsDto(foundAccount), null, BLOCK_ACCOUNT);
         //Block it
         foundAccount.setAccountStatus(STATUS_BLOCKED);
         //save it
@@ -314,7 +353,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private void closeAccount(Accounts foundAccount) throws AccountsException {
         String methodName = "closeAccount(accountNUmber) in AccountsServiceImpl";
         //check if he has pending loan
-        if (updateValidator(foundAccount, mapToAccountsDto(foundAccount), CLOSE_ACCOUNT))
+        if (updateValidator(foundAccount, mapToAccountsDto(foundAccount), null, CLOSE_ACCOUNT))
             throw new AccountsException(AccountsException.class, String.format("This account with id %s still has " +
                     "running loan. Please consider paying it before closing", foundAccount.getAccountNumber()), methodName);
         //close it
@@ -324,7 +363,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     private void unCloseAccount(Accounts account) throws AccountsException {
-        if (updateValidator(account,mapToAccountsDto(account), RE_OPEN_ACCOUNT))
+        if (updateValidator(account, mapToAccountsDto(account), null, RE_OPEN_ACCOUNT))
             accountsRepository.save(account);
         account.setAccountStatus(STATUS_OPEN);
         accountsRepository.save(account);
@@ -399,7 +438,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         if (Objects.nonNull(newDrivingLicense) && !oldDrivingLicense.equalsIgnoreCase(newDrivingLicense))
             newCustomerRecord.setDrivingLicense(newDrivingLicense);
 
-        Customer updatedCustomer=mapToCustomer(newCustomerRecord);
+        Customer updatedCustomer = mapToCustomer(newCustomerRecord);
 
         //aduiting doesnot work during update so manually set it
         updatedCustomer.setCreatedBy("Admin");
@@ -418,8 +457,23 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
 
+    private void uploadProfileImage(CustomerDto customerDto) throws IOException {
+        updateValidator(null, null, customerDto, UPLOAD_PROFILE_IMAGE);
+        String imageName = fIleService.uploadFile(customerDto.getImage(), IMAGE_PATH);
+        Customer customer = fetchCustomerByCustomerNumber(customerDto.getCustomerId());
+        customer.setImageName(imageName);
+        customerRepository.save(customer);
+    }
+
+    private void loadProfileImage(Customer foundCustomer, HttpServletResponse response) throws IOException {
+        updateValidator(null,null,mapToCustomerDto(foundCustomer),DISPLAY_PROFILE_IMAGE);
+        InputStream resource=fIleService.getResource(IMAGE_PATH,foundCustomer.getImageName());
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(resource,response.getOutputStream());
+    }
+
     @Override
-    public OutputDto postRequestExecutor(PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException {
+    public OutputDto postRequestExecutor(PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException, IOException {
         String methodName = "postRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
         AccountsDto accountsDto = inputToAccountsDto(postInputRequestDto);
@@ -445,45 +499,54 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 //to be done...
                 return new OutputDto("Baad main karenge");
             }
-            default ->
-                    throw new AccountsException(AccountsException.class,
-                            String.format("Invalid request type %s for POST requests", request),
-                            methodName);
+
+            default -> throw new AccountsException(AccountsException.class,
+                    String.format("Invalid request type %s for POST requests", request),
+                    methodName);
         }
     }
 
     @Override
-    public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException {
+    public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException {
         String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
         AccountsDto accountsDto = getInputToAccountsDto(getInputRequestDto);
         CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);
+        //load accounts & customer
+        Long accountNumber = accountsDto.getAccountNumber();
+        Accounts foundAccount = null;
+        if (Objects.nonNull(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
+
+        Long customerId = customerDto.getCustomerId();
+        Customer foundCustomer = null;
+        if (Objects.nonNull(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case GET_CREDIT_SCORE -> {
-                Long accountNumber = accountsDto.getAccountNumber();
                 getCreditScore(accountNumber);
                 //to be done after implementing credit card microservice
                 return new OutputDto("Baad main karnge");
             }
             case GET_ACC_INFO -> {
-                Long accountNumber = accountsDto.getAccountNumber();
                 return getAccountInfo(accountNumber);
             }
             case GET_ALL_ACC -> {
                 String locality = String.format("Inside switch ,for GET_ALL_ACC case under method %s", methodName);
-                Long customerId = customerDto.getCustomerId();
-                Optional<Customer> foundCustomer = customerRepository.findById(customerId);
-                if(foundCustomer.isEmpty()) throw new CustomerException(CustomerException.class, locality, methodName);
+                if (null==foundCustomer) throw new CustomerException(CustomerException.class, locality, methodName);
 
                 List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
                 if (listOfAccounts.size() == 0)
                     return new OutputDto(String.format("Customer with id %s have no accounts present", customerId));
-                return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer.get())), listOfAccounts,
+                return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)), listOfAccounts,
                         String.format("Fetched all accounts for customer id:%s", customerId));
+            }
+            case GET_CUSTOMER_IMAGE -> {
+                loadProfileImage(foundCustomer,getInputRequestDto.getResponse());
+                return new OutputDto(String.format("Serving you the image of customer:%s",customerId));
             }
             default ->
                     throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for GET request", request), methodName);
@@ -491,7 +554,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException {
+    public OutputDto putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException {
         String methodName = "putRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
         AccountsDto accountsDto = putInputRequestToAccountsDto(putInputRequestDto);
@@ -512,11 +575,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case ADD_ACCOUNT -> {
-                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(),mapToAccounts(accountsDto), accountsDto);
+                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);
             }
             case UPDATE_HOME_BRANCH -> {
                 Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
-                return Mapper.mapToOutPutDto(mapToCustomerDto(updatedAccount.getCustomer()),mapToAccountsDto(updatedAccount),
+                return Mapper.mapToOutPutDto(mapToCustomerDto(updatedAccount.getCustomer()), mapToAccountsDto(updatedAccount),
                         String.format("Home branch for is changed from %s to %s for customer with id %s",
                                 foundAccount.getHomeBranch(), accountsDto.getHomeBranch(),
                                 foundAccount.getCustomer().getCustomerId()));
@@ -524,6 +587,10 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             case UPDATE_CREDIT_SCORE -> {
                 //updateCreditScore(accountsDto);
                 return new OutputDto("Baad main karenge");
+            }
+            case UPLOAD_CUSTOMER_IMAGE -> {
+                uploadProfileImage(customerDto);
+                return new OutputDto(String.format("Profile Image for customer with id:%s has been uploaded successfully", customerDto.getCustomerId()));
             }
             case INC_TRANSFER_LIMIT -> {
                 Accounts accountWithUpdatedLimit = increaseTransferLimit(accountsDto, foundAccount);
@@ -585,9 +652,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 return new OutputDto(String.format("All accounts that belonged to customer with id %s has " +
                         "been deleted", customerDto.getCustomerId()));
             }
-            default ->
-                    throw new AccountsException(AccountsException.class,
-                            String.format("Invalid request type %s for DELETE request", request), methodName);
+            default -> throw new AccountsException(AccountsException.class,
+                    String.format("Invalid request type %s for DELETE request", request), methodName);
         }
     }
 }

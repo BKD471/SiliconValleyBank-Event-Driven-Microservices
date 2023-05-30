@@ -35,6 +35,8 @@ public class AccountsDto extends AbstractParentDto {
         UPDATE_HOME_BRANCH,
         UPDATE_CREDIT_SCORE,
         UPDATE_CUSTOMER_DETAILS,
+        UPLOAD_CUSTOMER_IMAGE,
+        GET_CUSTOMER_IMAGE,
         BLOCK_ACC,
         CLOSE_ACC,
         RE_OPEN_ACC,

@@ -8,9 +8,11 @@ import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.CustomerException;
 
+import java.io.IOException;
+
 public interface IAccountsService {
-    OutputDto postRequestExecutor(PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException;
-    OutputDto putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException;
-    OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException;
+    OutputDto postRequestExecutor(PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException, IOException;
+    OutputDto putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException;
+    OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException;
     OutputDto deleteRequestExecutor(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException;
 }

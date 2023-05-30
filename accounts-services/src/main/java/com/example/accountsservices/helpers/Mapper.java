@@ -346,6 +346,7 @@ public class Mapper {
                 .passportNumber(postInputRequestDto.getPassportNumber())
                 .address(postInputRequestDto.getAddress())
                 .imageName(postInputRequestDto.getImageName())
+                .image(postInputRequestDto.getImage())
                 .build();
     }
 

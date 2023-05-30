@@ -4,7 +4,6 @@ import com.example.accountsservices.exception.ResponseException;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
-import com.example.accountsservices.service.IFileService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +21,7 @@ public class FIleServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file, String path) throws IOException, ResponseException {
+    public String uploadFile(MultipartFile file, String path) throws ResponseException, IOException {
         String methodName="uploadFile(MultipartFile,String) in FileServiceImpl";
 
 

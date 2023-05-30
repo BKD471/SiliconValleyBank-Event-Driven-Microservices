@@ -2,6 +2,7 @@ package com.example.accountsservices.dto;
 
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +27,6 @@ public class CustomerDto {
     private String passportNumber;
     private String address;
     private String imageName;
-
+    private MultipartFile image;
     private List<AccountsDto> accounts;
  }

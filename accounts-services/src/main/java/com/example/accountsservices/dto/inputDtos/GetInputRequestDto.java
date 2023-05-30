@@ -6,6 +6,7 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class GetInputRequestDto {
   private List<Beneficiary> listOfBeneficiary = new ArrayList<>();
   private List<Transactions> listOfTransactions = new ArrayList<>();
   private Customer customer;
+  private HttpServletResponse response;
   private List<Accounts> accounts;
   private Accounts account;
 }

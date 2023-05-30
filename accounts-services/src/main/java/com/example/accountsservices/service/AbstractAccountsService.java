@@ -19,19 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-//DESIGN NOTE
-//Obeying I of SOLID ,to not pollute a single interface with too much methods
-// by splitting it up.
-//we want to have a single parent of all service classes so need a class to provide
-// dummy implementation of all abstract methods of all interface
-// so that we can spilt up service logic into separate concerning classes
-// and thus obeying S of SOLID also
 
-//since there is no need of instantiating the AbstractAccountsService ,
-// it's just to provide dummy implementation ,so make it abstract
-// it can be used for loose coupling or having some logic that will be used by all three service classes
 
-public abstract class AbstractAccountsService implements IAccountsService, ITransactionsService, IBeneficiaryService {
+public abstract class AbstractAccountsService implements IAccountsService, ITransactionsService, IBeneficiaryService,IFileService {
     private  final  AccountsRepository accountsRepository;
     private  final CustomerRepository customerRepository;
     private  static final Accounts.AccountStatus STATUS_BLOCKED= Accounts.AccountStatus.BLOCKED;
@@ -41,9 +31,9 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
         this.accountsRepository=accountsRepository;
         this.customerRepository=customerRepository;
     }
-    public OutputDto postRequestExecutor(PostInputRequestDto postInputDto) throws AccountsException, CustomerException { return null;}
-    public OutputDto  putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException { return null;}
-    public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException { return null;}
+    public OutputDto postRequestExecutor(PostInputRequestDto postInputDto) throws AccountsException, CustomerException, IOException { return null;}
+    public OutputDto  putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException { return null;}
+    public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException { return null;}
     public OutputDto deleteRequestExecutor(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException{ return null;}
 
     //ben
@@ -57,7 +47,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public OutputDto getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
 
     //file service
-    public String uploadFile(MultipartFile image, String path) throws IOException, ResponseException {return null;}
+    public String uploadFile(MultipartFile image, String path) throws IOException {return null;}
     public InputStream getResource(String path, String name) throws FileNotFoundException {return null;}
 
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
