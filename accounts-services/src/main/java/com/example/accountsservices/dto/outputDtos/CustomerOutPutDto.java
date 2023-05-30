@@ -14,7 +14,6 @@ public class CustomerOutPutDto {
     private Long customerId;
     private String customerName;
     private String email;
-    private String password;
     private LocalDate DateOfBirth;
     private int age;
     private String phoneNumber;

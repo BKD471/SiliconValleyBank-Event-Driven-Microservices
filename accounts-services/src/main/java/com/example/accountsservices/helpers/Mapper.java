@@ -618,7 +618,6 @@ public class Mapper {
                 .DateOfBirth(customerDto.getDateOfBirth())
                 .age(customerDto.getAge())
                 .email(customerDto.getEmail())
-                .password(customerDto.getPassword())
                 .phoneNumber(customerDto.getPhoneNumber())
                 .adharNumber(customerDto.getAdharNumber())
                 .panNumber(customerDto.getPanNumber())
