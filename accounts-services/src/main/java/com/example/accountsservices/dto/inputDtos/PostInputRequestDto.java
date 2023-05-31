@@ -75,7 +75,7 @@ public class PostInputRequestDto {
     @NotBlank(message = "Please provide address")
     private String address;
     private String imageName;
-    private MultipartFile image;
+    private MultipartFile customerImage;
     private Long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
     private int benAge;

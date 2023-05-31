@@ -27,6 +27,6 @@ public class CustomerDto {
     private String passportNumber;
     private String address;
     private String imageName;
-    private MultipartFile image;
+    private MultipartFile customerImage;
     private List<AccountsDto> accounts;
  }

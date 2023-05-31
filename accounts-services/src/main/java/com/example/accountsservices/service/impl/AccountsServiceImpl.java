@@ -9,7 +9,7 @@ import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadRequestException;
 import com.example.accountsservices.exception.CustomerException;
-import com.example.accountsservices.helpers.Mapper;
+import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
@@ -23,8 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 
-import java.awt.*;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -33,7 +31,8 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.accountsservices.helpers.Mapper.*;
+import static com.example.accountsservices.helpers.MapperHelper.*;
+
 
 /**
  * @parent AccountsService
@@ -168,7 +167,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //fetch the corresponding account of saved customer
         Long accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
 
-        return Mapper.mapToOutPutDto(mapToCustomerDto(savedCustomer),
+        return MapperHelper.mapToOutPutDto(mapToCustomerDto(savedCustomer),
                 mapToAccountsDto(savedCustomer.getAccounts().get(0))
                 , String.format("Account with id %s is created for customer %s",
                         accountNumber, savedCustomer.getCustomerId()));
@@ -220,7 +219,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             throw new AccountsException(AccountsException.class, String.format("No such accounts present with this customer %s", customerId), methodName);
         return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())
                         && !STATUS_CLOSED.equals(accounts.getAccountStatus())).
-                map(Mapper::mapToAccountsDto).collect(Collectors.toList());
+                map(MapperHelper::mapToAccountsDto).collect(Collectors.toList());
     }
 
     private Boolean updateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, ValidateType request) throws AccountsException {
@@ -253,9 +252,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case UPLOAD_PROFILE_IMAGE -> {
                 location = "Inside UPLOAD_PROFILE_IMAGE";
-                if (null == customerDto.getImage()) throw new BadRequestException(BadRequestException.class,
+                if (null == customerDto.getCustomerImage()) throw new BadRequestException(BadRequestException.class,
                         "Please provide image", String.format("%s of %s", methodName, location));
-                if (customerDto.getImage().getSize()*FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getImage().getSize()*FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
+                if (customerDto.getCustomerImage().getSize()*FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getCustomerImage().getSize()*FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
                     throw new BadRequestException(BadRequestException.class,
                             "Your file is either corrupted or you are exceeding the max size of 100mb",
                             String.format("%s of %s", methodName, location));
@@ -459,7 +458,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
     private void uploadProfileImage(CustomerDto customerDto) throws IOException {
         updateValidator(null, null, customerDto, UPLOAD_PROFILE_IMAGE);
-        String imageName = fIleService.uploadFile(customerDto.getImage(), IMAGE_PATH);
+        String imageName = fIleService.uploadFile(customerDto.getCustomerImage(), IMAGE_PATH);
         Customer customer = fetchCustomerByCustomerNumber(customerDto.getCustomerId());
         customer.setImageName(imageName);
         customerRepository.save(customer);
@@ -579,7 +578,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case UPDATE_HOME_BRANCH -> {
                 Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
-                return Mapper.mapToOutPutDto(mapToCustomerDto(updatedAccount.getCustomer()), mapToAccountsDto(updatedAccount),
+                return MapperHelper.mapToOutPutDto(mapToCustomerDto(updatedAccount.getCustomer()), mapToAccountsDto(updatedAccount),
                         String.format("Home branch for is changed from %s to %s for customer with id %s",
                                 foundAccount.getHomeBranch(), accountsDto.getHomeBranch(),
                                 foundAccount.getCustomer().getCustomerId()));

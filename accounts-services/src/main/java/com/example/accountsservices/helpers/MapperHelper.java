@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Mapper {
+public class MapperHelper {
     /**
      * @param accountsDto
      * @paramType AccountsDto
@@ -39,11 +39,11 @@ public class Mapper {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
         if(accounts.getListOfBeneficiary()!=null && accounts.getListOfBeneficiary().size()>0){
-            beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+            beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                             .collect(Collectors.toList());
         }
         if(accounts.getListOfTransactions()!=null && accounts.getListOfTransactions().size()>0){
-            transactionsDtoList=accounts.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+            transactionsDtoList=accounts.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
 
@@ -69,7 +69,7 @@ public class Mapper {
         List<Accounts> listOfAccounts = new ArrayList<>();
         if (customerDto.getAccounts() != null && customerDto.getAccounts().size()>0) {
             listOfAccounts = customerDto.getAccounts().stream().
-                    map(Mapper::mapToAccounts).collect(Collectors.toList());
+                    map(MapperHelper::mapToAccounts).collect(Collectors.toList());
         }
         return Customer.builder()
                 .customerId(customerDto.getCustomerId())
@@ -94,7 +94,7 @@ public class Mapper {
         List<AccountsDto> listOfAccounts = new ArrayList<>();
         if (customer.getAccounts().size() > 0) {
             listOfAccounts = customer.getAccounts().stream().
-                    map(Mapper::mapToAccountsDto).collect(Collectors.toList());
+                    map(MapperHelper::mapToAccountsDto).collect(Collectors.toList());
         }
         return CustomerDto.builder()
                 .customerId(customer.getCustomerId())
@@ -182,11 +182,11 @@ public class Mapper {
         List<Beneficiary> beneficiaryList=new ArrayList<>();
         List<Transactions> transactionList=new ArrayList<>();
         if(postInputRequestDto.getListOfBeneficiary()!=null && postInputRequestDto.getListOfBeneficiary().size()>0){
-            beneficiaryList=postInputRequestDto.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiary)
+            beneficiaryList=postInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiary)
                     .collect(Collectors.toList());
         }
         if(postInputRequestDto.getListOfTransactions()!=null && postInputRequestDto.getListOfTransactions().size()>0){
-            transactionList=postInputRequestDto.getListOfTransactions().stream().map(Mapper::mapToTransactions)
+            transactionList=postInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactions)
                     .collect(Collectors.toList());
         }
         return Accounts.builder()
@@ -233,11 +233,11 @@ public class Mapper {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
         if(deleteInputRequestDto.getListOfBeneficiary()!=null && deleteInputRequestDto.getListOfBeneficiary().size()>0){
-            beneficiaryDtoList=deleteInputRequestDto.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+            beneficiaryDtoList=deleteInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
         if(deleteInputRequestDto.getListOfTransactions()!=null && deleteInputRequestDto.getListOfTransactions().size()>0){
-            transactionsDtoList=deleteInputRequestDto.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+            transactionsDtoList=deleteInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
 
@@ -264,14 +264,13 @@ public class Mapper {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
         if(putInputRequestDto.getListOfBeneficiary()!=null && putInputRequestDto.getListOfBeneficiary().size()>0){
-            beneficiaryDtoList=putInputRequestDto.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+            beneficiaryDtoList=putInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
         if(putInputRequestDto.getListOfTransactions()!=null && putInputRequestDto.getListOfTransactions().size()>0){
-            transactionsDtoList=putInputRequestDto.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+            transactionsDtoList=putInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
-
 
         return AccountsDto.builder()
                 .accountNumber(putInputRequestDto.getAccountNumber())
@@ -296,11 +295,11 @@ public class Mapper {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
         if(getInputRequestDto.getListOfBeneficiary()!=null && getInputRequestDto.getListOfBeneficiary().size()>0){
-            beneficiaryDtoList=getInputRequestDto.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+            beneficiaryDtoList=getInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
         if(getInputRequestDto.getListOfTransactions()!=null && getInputRequestDto.getListOfTransactions().size()>0){
-            transactionsDtoList=getInputRequestDto.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+            transactionsDtoList=getInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
 
@@ -346,7 +345,7 @@ public class Mapper {
                 .passportNumber(postInputRequestDto.getPassportNumber())
                 .address(postInputRequestDto.getAddress())
                 .imageName(postInputRequestDto.getImageName())
-                .image(postInputRequestDto.getImage())
+                .customerImage(postInputRequestDto.getCustomerImage())
                 .build();
     }
 
@@ -569,11 +568,11 @@ public class Mapper {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
         if(accounts.getListOfBeneficiary()!=null && accounts.getListOfBeneficiary().size()>0){
-            beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(Mapper::mapToBeneficiaryDto)
+            beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
         if(accounts.getListOfTransactions()!=null && accounts.getListOfTransactions().size()>0){
-            transactionsDtoList=accounts.getListOfTransactions().stream().map(Mapper::mapToTransactionsDto)
+            transactionsDtoList=accounts.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
 

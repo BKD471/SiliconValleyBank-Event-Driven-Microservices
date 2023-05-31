@@ -10,7 +10,7 @@ import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.helpers.BankCodeRetrieverHelper;
-import com.example.accountsservices.helpers.Mapper;
+import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.example.accountsservices.helpers.Mapper.*;
+import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
 @Service
@@ -447,7 +447,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
             case GET_ALL_BEN -> {
                 location = "Inside GET_ALL_BEN";
                 List<BeneficiaryDto> beneficiaryList = getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount)
-                        .stream().map(Mapper::mapToBeneficiaryDto).collect(Collectors.toList());
+                        .stream().map(MapperHelper::mapToBeneficiaryDto).collect(Collectors.toList());
 
                 return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())),
                         mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)), beneficiaryList,

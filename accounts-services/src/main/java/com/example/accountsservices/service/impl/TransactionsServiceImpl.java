@@ -5,7 +5,7 @@ import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
-import com.example.accountsservices.helpers.Mapper;
+import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
@@ -19,8 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.accountsservices.helpers.Mapper.*;
+import static com.example.accountsservices.helpers.MapperHelper.*;
 
 @Service
 public class TransactionsServiceImpl extends AbstractAccountsService {
@@ -135,7 +134,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
 
         listOfTransactions.sort(new SortDateComparator());
         ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream()
-                .map(Mapper::mapToTransactionsDto)
+                .map(MapperHelper::mapToTransactionsDto)
                 .collect(Collectors.toCollection(ArrayList::new));
 
         return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(loadedCustomer)),
