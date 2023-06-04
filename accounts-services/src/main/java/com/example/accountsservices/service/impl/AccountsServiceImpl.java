@@ -74,7 +74,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final ValidateType ADD_ACCOUNT = ValidateType.ADD_ACC;
     private final ValidateType UPLOAD_PROFILE_IMAGE = ValidateType.UPLOAD_PROFILE_IMAGE;
     private final ValidateType DISPLAY_PROFILE_IMAGE=ValidateType.DISPLAY_PROFILE_IMAGE;
-    private final Double FIlE_SIZE_TO_MB_CONVERTER_FACTOR=0.00000095367432;
 
     /**
      * @paramType AccountsRepository
@@ -254,7 +253,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 location = "Inside UPLOAD_PROFILE_IMAGE";
                 if (null == customerDto.getCustomerImage()) throw new BadRequestException(BadRequestException.class,
                         "Please provide image", String.format("%s of %s", methodName, location));
-                if (customerDto.getCustomerImage().getSize()*FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getCustomerImage().getSize()*FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
+                double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
+                if (customerDto.getCustomerImage().getSize()* FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getCustomerImage().getSize()* FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
                     throw new BadRequestException(BadRequestException.class,
                             "Your file is either corrupted or you are exceeding the max size of 100mb",
                             String.format("%s of %s", methodName, location));
@@ -262,7 +262,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             case DISPLAY_PROFILE_IMAGE -> {
                 location="Inside Display Profile Image";
                 if(null==customerDto.getImageName()) throw new BadRequestException(BadRequestException.class,
-                        "No profile pics available for this customer",String.format("Inside %s of %s"));
+                        "No profile pics available for this customer",String.format("Inside %s of %s",methodName,location));
 
             }
             case UPDATE_HOME_BRANCH -> {
@@ -508,6 +508,14 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     @Override
     public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException {
         String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
+        //get paging details
+        int pageNumber=getInputRequestDto.getPageNumber();
+        int pageSize=getInputRequestDto.getPageSize();
+
+        String sortBy=getInputRequestDto.getSortBy();
+        GetInputRequestDto.DIRECTION sortDir=getInputRequestDto.getSortDir();
+
+
         //map
         AccountsDto accountsDto = getInputToAccountsDto(getInputRequestDto);
         CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);
@@ -536,6 +544,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             case GET_ALL_ACC -> {
                 String locality = String.format("Inside switch ,for GET_ALL_ACC case under method %s", methodName);
                 if (null==foundCustomer) throw new CustomerException(CustomerException.class, locality, methodName);
+
+
 
                 List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
                 if (listOfAccounts.size() == 0)

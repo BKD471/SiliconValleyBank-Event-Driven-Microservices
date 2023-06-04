@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 public class AccountsControllerImpl extends AbstractParentController implements IAccountsController {
     private final IAccountsService accountsService;
@@ -30,7 +32,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> getRequestForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException {
+    public ResponseEntity<OutputDto> getRequestForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
         OutputDto responseBody = accountsService.getRequestExecutor(getInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
@@ -41,7 +43,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> postRequestForChange(PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException {
+    public ResponseEntity<OutputDto> postRequestForChange(PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
         OutputDto responseBody = accountsService.postRequestExecutor(postInputDto);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
@@ -52,7 +54,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> putRequestForChange(PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException {
+    public ResponseEntity<OutputDto> putRequestForChange(PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
         OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
     }
