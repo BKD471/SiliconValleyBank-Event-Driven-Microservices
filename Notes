@@ -26,13 +26,13 @@ OutputDto putRequestExecutor(InputDto inputDto) throws AccountsException;
              6) CLOSE_ACC               ------------------------> CHECKED
              7) Reopen Closed Acc       ------------------------> CHECKED
              8) Update customer Details ------------------------> CHECKED
-             9) Upload Profile Image ---------------------------> to be tested
+             9) Upload Profile Image ---------------------------> CHECKED
 
 OutputDto getRequestExecutor(InputDto inputDto) throws AccountsException, CustomerException;
              1) GET_CREDIT_SCORE ---------------------------> to be.......
              2) GET_ACC_INFO     ---------------------------> CHECKED
              3) GET_ALL_ACC      ---------------------------> CHECKED
-             4) Get profile image --------------------------> to be tested
+             4) Get profile image --------------------------> CHECKED
 
 OutputDto deleteRequestExecutor(InputDto inputDto) throws AccountsException;
              1) DELETE_ACC       -----------------------------> CHECKED

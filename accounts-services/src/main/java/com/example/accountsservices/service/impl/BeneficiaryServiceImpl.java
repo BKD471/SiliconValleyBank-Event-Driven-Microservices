@@ -380,10 +380,14 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         switch (requestType) {
             case ADD_BEN -> {
                 Beneficiary beneficiary = addBeneficiary(fetchedAccount, beneficiaryDto);
-                return new OutputDto(mapToCustomerOutputDto(customerDto),
-                        mapToAccountsOutputDto(accountsDto),
-                        mapToBeneficiaryDto(beneficiary), String.format("Beneficiary with id:%s has been added for account with id:%s",
-                        beneficiary.getBeneficiaryId(), fetchedAccount.getAccountNumber()));
+
+
+                return OutputDto.builder()
+                        .customer(mapToCustomerOutputDto(customerDto))
+                        .accounts(mapToAccountsOutputDto(accountsDto))
+                        .beneficiary(mapToBeneficiaryDto(beneficiary))
+                        .defaultMessage(String.format("Beneficiary with id:%s has been added for account with id:%s",
+                                beneficiary.getBeneficiaryId(),fetchedAccount.getAccountNumber())).build();
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class, "Wrong request type", methodName);
         }
@@ -408,10 +412,12 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
             case UPDATE_BEN -> {
                 Beneficiary loadedBeneficiary = updateBeneficiaryDetailsOfAnAccount(fetchedAccount, beneficiaryDto);
 
-                return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(loadCustomer)),
-                        mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)),
-                        mapToBeneficiaryDto(loadedBeneficiary),
-                        String.format("beneficiaryId:%s beneficiary account has been updated", loadedBeneficiary.getBeneficiaryId()));
+                return OutputDto.builder()
+                        .customer(mapToCustomerOutputDto(mapToCustomerDto(loadCustomer)))
+                        .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
+                        .beneficiary(mapToBeneficiaryDto(loadedBeneficiary))
+                        .defaultMessage(String.format("beneficiaryId:%s beneficiary account has been updated",loadedBeneficiary.getBeneficiaryId()))
+                        .build();
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class,
                     "Wrong request type", methodName);
@@ -440,18 +446,24 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                     throw new BeneficiaryException(BeneficiaryException.class, String.format("No such beneficiaries present with id:%s",
                             beneficiaryDto.getBeneficiaryId()), String.format("%s of %s", location, methodName));
 
-                return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())),
-                        mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)), mapToBeneficiaryDto(beneficiary.get()),
-                        String.format("Fetched beneficiary with id:%s", beneficiaryDto.getBeneficiaryId()));
+                return OutputDto.builder()
+                        .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())))
+                        .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
+                        .beneficiary(mapToBeneficiaryDto(beneficiary.get()))
+                        .defaultMessage(String.format("Fetched beneficiary with id:%s",beneficiaryDto.getBeneficiaryId()))
+                        .build();
             }
             case GET_ALL_BEN -> {
                 location = "Inside GET_ALL_BEN";
                 List<BeneficiaryDto> beneficiaryList = getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount)
                         .stream().map(MapperHelper::mapToBeneficiaryDto).collect(Collectors.toList());
 
-                return new OutputDto(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())),
-                        mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)), beneficiaryList,
-                        String.format("Fetched all beneficiaries of account:%s", fetchedAccount.getAccountNumber()));
+                return OutputDto.builder()
+                        .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())))
+                        .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
+                        .beneficiaryList(beneficiaryList)
+                        .defaultMessage(String.format("Fetched all beneficiaries of account:%s",fetchedAccount.getAccountNumber()))
+                        .build();
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class,
                     "Wrong request type", methodName);
@@ -473,12 +485,15 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         switch (requestType) {
             case DELETE_BEN -> {
                 deleteBeneficiariesForAnAccount(fetchedAccount, beneficiaryDto.getBeneficiaryId());
-                return new OutputDto(String.format("Beneficiary with id:%s has been deleted",beneficiaryDto.getBeneficiaryId()));
+                return OutputDto.builder()
+                        .defaultMessage(String.format("Beneficiary with id:%s has been deleted",beneficiaryDto.getBeneficiaryId()))
+                        .build();
             }
             case DELETE_ALL_BEN -> {
                 deleteAllBeneficiaries(fetchedAccount);
-                return new OutputDto(String.format("All beneficiaries with id:%s have been deleted",
-                        fetchedAccount.getAccountNumber()));
+                return OutputDto.builder()
+                        .defaultMessage(String.format("All beneficiaries with id:%s have been deleted",fetchedAccount.getAccountNumber()))
+                        .build();
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class, "Wrong request type", methodName);
         }

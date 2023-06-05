@@ -63,13 +63,13 @@ public class GetInputRequestDto {
   private String address;
   private String imageName;
 
-  @Min(value = 0,message = "pageNo should not be less than 0")
+  //@Min(value = 0,message = "pageNo should not be less than 0")
   private int pageNumber;
 
-  @Min(value = 1,message = "Page Size should not be less than 1")
+  //@Min(value = 1,message = "Page Size should not be less than 1")
   private int pageSize;
 
-  @ValidField
+  //@ValidField
   private String sortBy;
   private DIRECTION sortDir;
 

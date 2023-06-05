@@ -397,6 +397,7 @@ public class MapperHelper {
                 .drivingLicense(putInputRequestDto.getDrivingLicense())
                 .passportNumber(putInputRequestDto.getPassportNumber())
                 .imageName(putInputRequestDto.getImageName())
+                .customerImage(putInputRequestDto.getCustomerImage())
                 .address(putInputRequestDto.getAddress())
                 .build();
     }

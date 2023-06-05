@@ -7,6 +7,7 @@ import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class PutInputRequestDto {
     private int creditScore;
     private String address;
     private String imageName;
+    private MultipartFile customerImage;
     private Accounts.AccountStatus accountStatus;
     private Long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
