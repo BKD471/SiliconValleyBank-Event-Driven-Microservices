@@ -16,15 +16,11 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.BranchCodeRetrieverHelper;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -488,7 +484,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case LEND_LOAN -> {
                 //to be done...
-                return new OutputDto("Baad main karenge");
+                return  OutputDto.builder().defaultMessage("Baad main karenge").build();
             }
 
             default -> throw new AccountsException(AccountsException.class,
@@ -500,12 +496,16 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     @Override
     public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException {
         String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
+
         //get paging details
         int pageNumber = getInputRequestDto.getPageNumber();
-        int pageSize = getInputRequestDto.getPageSize();
+        if(pageNumber<0) throw new BadRequestException(BadRequestException.class,
+                "pageNumber cant be in negative",methodName);
+        int pageSize = (getInputRequestDto.getPageSize()==0)? 5:getInputRequestDto.getPageSize();
+        if(pageSize<0) throw new BadRequestException(BadRequestException.class,"Page Size can't be in negative",methodName);
 
-        String sortBy = getInputRequestDto.getSortBy();
-        GetInputRequestDto.DIRECTION sortDir = getInputRequestDto.getSortDir();
+        String sortBy = (null==getInputRequestDto.getSortBy()) ? "balance":getInputRequestDto.getSortBy();
+        GetInputRequestDto.DIRECTION sortDir = (null==getInputRequestDto.getSortDir())? GetInputRequestDto.DIRECTION.asc:getInputRequestDto.getSortDir();
 
 
         //map
@@ -528,7 +528,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             case GET_CREDIT_SCORE -> {
                 getCreditScore(accountNumber);
                 //to be done after implementing credit card microservice
-                return new OutputDto("Baad main karnge");
+                return OutputDto.builder().defaultMessage("Baad main karenge").build();
             }
             case GET_ACC_INFO -> {
                 return getAccountInfo(accountNumber);
@@ -539,7 +539,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
                 List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
                 if (listOfAccounts.size() == 0)
-                    return new OutputDto(String.format("Customer with id %s have no accounts present", customerId));
+                    return  OutputDto.builder().defaultMessage(String.format("Customer with id %s have no accounts present", customerId)).build();
 
                return OutputDto.builder()
                        .customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
@@ -588,7 +588,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case UPDATE_CREDIT_SCORE -> {
                 //updateCreditScore(accountsDto);
-                return new OutputDto("Baad main karenge");
+                return  OutputDto.builder().defaultMessage("Baad main karenge").build();
             }
             case UPLOAD_CUSTOMER_IMAGE -> {
                 uploadProfileImage(customerDto);

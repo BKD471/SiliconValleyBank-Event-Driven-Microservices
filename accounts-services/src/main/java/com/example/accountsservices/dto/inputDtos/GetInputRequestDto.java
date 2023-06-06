@@ -6,9 +6,7 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
-import com.example.accountsservices.validator.ValidField;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -63,18 +61,13 @@ public class GetInputRequestDto {
   private String address;
   private String imageName;
 
-  //@Min(value = 0,message = "pageNo should not be less than 0")
   private int pageNumber;
-
-  //@Min(value = 1,message = "Page Size should not be less than 1")
   private int pageSize;
-
-  //@ValidField
   private String sortBy;
   private DIRECTION sortDir;
 
   public enum DIRECTION{
-    ASC,DESC
+    asc,desc
   }
 
   private List<Beneficiary> listOfBeneficiary = new ArrayList<>();

@@ -25,7 +25,6 @@ public class AccountsOutPutDto {
     private Boolean anyActiveLoans;
     private Long totalOutstandingAmountPayableToBank;
     private Long totLoanIssuedSoFar;
-
     private List<BeneficiaryDto> listOfBeneficiary;
     private List<TransactionsDto> listOfTransactions;
 }
