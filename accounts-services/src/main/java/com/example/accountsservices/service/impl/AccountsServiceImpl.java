@@ -10,12 +10,12 @@ import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadRequestException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.helpers.MapperHelper;
+import com.example.accountsservices.helpers.PagingHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
-import com.example.accountsservices.helpers.BranchCodeRetrieverHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,9 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
+import static com.example.accountsservices.helpers.PagingHelper.getAllPageableFieldsOfAccounts;
 
 
 /**
@@ -56,8 +58,10 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private String IMAGE_PATH;
 
     private enum ValidateType {
-        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH, GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE,
-        UPLOAD_PROFILE_IMAGE, CLOSE_ACCOUNT, RE_OPEN_ACCOUNT, BLOCK_ACCOUNT, CREATE_ACC, ADD_ACC
+        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH,
+        GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE,
+        UPLOAD_PROFILE_IMAGE, CLOSE_ACCOUNT, RE_OPEN_ACCOUNT,
+        BLOCK_ACCOUNT, CREATE_ACC, ADD_ACC
     }
 
     private final ValidateType UPDATE_CASH_LIMIT = ValidateType.UPDATE_CASH_LIMIT;
@@ -113,7 +117,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         //initialize customer account opening balance
         accounts.setBalance(0L);
         //initialize branchCode
-        accounts.setBranchCode(BranchCodeRetrieverHelper.getBranchCode(accounts.getHomeBranch()));
+        accounts.setBranchCode(getBranchCode(accounts.getHomeBranch()));
         //initialize account status OPEN
         accounts.setAccountStatus(STATUS_OPEN);
         //initialize cash limit
@@ -295,7 +299,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                                     accounts.getAccountStatus()), location);
                 return true;
             }
-
         }
         return false;
     }
@@ -308,7 +311,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         if (updateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
                 && null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
-            accounts.setBranchCode(BranchCodeRetrieverHelper.getBranchCode(newHomeBranch));
+            accounts.setBranchCode(getBranchCode(newHomeBranch));
             savedUpdatedAccount = accountsRepository.save(accounts);
         }
         return savedUpdatedAccount;
@@ -536,6 +539,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             case GET_ALL_ACC -> {
                 String locality = String.format("Inside switch ,for GET_ALL_ACC case under method %s", methodName);
                 if (null == foundCustomer) throw new CustomerException(CustomerException.class, locality, methodName);
+
+                //validate the genuineness of sorting fields
+                Set<String> allPageableFieldsOfAccounts=getAllPageableFieldsOfAccounts();
+                if(!allPageableFieldsOfAccounts.contains(sortBy)) throw new BadRequestException(BadRequestException.class,
+                        String.format("%s is not a valid field of account",sortBy),String.format("Inside %s of %s",locality,methodName));
 
                 List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
                 if (listOfAccounts.size() == 0)

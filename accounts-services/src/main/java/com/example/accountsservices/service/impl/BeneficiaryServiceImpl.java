@@ -9,7 +9,6 @@ import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BeneficiaryException;
-import com.example.accountsservices.helpers.BankCodeRetrieverHelper;
 import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
@@ -28,6 +27,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBankCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
@@ -208,7 +208,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         validate(fetchedAccount, beneficiaryDto, ADD_BEN);
         //Updating the beneficiary info & saving it
         Beneficiary beneficiaryAccount = mapToBeneficiary(beneficiaryDto);
-        beneficiaryAccount.setBankCode(BankCodeRetrieverHelper.getBankCode(beneficiaryAccount.getBenBank()));
+        beneficiaryAccount.setBankCode(getBankCode(beneficiaryAccount.getBenBank()));
         Beneficiary processedBeneficiaryAccount = setBeneficiaryAgeFromDOB(beneficiaryAccount);
         //establishing the beneficiary as child of Account and vice versa
         List<Beneficiary> beneficiaryList = new ArrayList<>();
@@ -303,7 +303,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         if(null!=newBenBank && !newBenBank.equals(oldBenBank))
         {
             oldBeneficiaryData.setBenBank(newBenBank);
-            oldBeneficiaryData.setBankCode(BankCodeRetrieverHelper.getBankCode(newBenBank));
+            oldBeneficiaryData.setBankCode(getBankCode(newBenBank));
         }
 
         return oldBeneficiaryData;
