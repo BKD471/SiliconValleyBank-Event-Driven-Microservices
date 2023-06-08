@@ -1,16 +1,27 @@
 package com.example.accountsservices.helpers;
 
+import com.example.accountsservices.model.Accounts;
+
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
 public class PagingHelper {
-    public static Set<String> getAllPageableFieldsOfAccounts(){
-        Set<String> fields=new HashSet<>();
-        fields.add("balance");fields.add("accountType");
-        fields.add("branchCode");fields.add("homeBranch");
-        fields.add("transferLimitPerDay");fields.add("creditScore");
-        fields.add("approvedLoanLimitBasedOnCreditScore");fields.add("totLoanIssuedSoFar");
-        fields.add("totalOutStandingAmountPayableToBank");fields.add("accountStatus");
-        return fields;
+
+    private static final Set<String> fieldNames = new HashSet<>();
+
+    static {
+        Accounts accountObj = new Accounts();
+        Field[] fields = accountObj.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            fieldNames.add(field.getName());
+        }
+        fieldNames.remove("listOfBeneficiary");
+        fieldNames.remove("listOfTransactions");
+        fieldNames.remove("customer");
+    }
+
+    public static Set<String> getAllPageableFieldsOfAccounts() {
+        return fieldNames;
     }
 }
