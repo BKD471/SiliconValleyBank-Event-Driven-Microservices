@@ -17,6 +17,10 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -30,6 +34,8 @@ import java.util.stream.Collectors;
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.getAllPageableFieldsOfAccounts;
+import static com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
+import static com.example.accountsservices.model.Accounts.AccountStatus;
 
 
 /**
@@ -47,9 +53,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomerRepository customerRepository;
     private final FIleServiceImpl fIleService;
-    private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
-    private final Accounts.AccountStatus STATUS_OPEN = Accounts.AccountStatus.OPEN;
-    private final Accounts.AccountStatus STATUS_CLOSED = Accounts.AccountStatus.CLOSED;
+    private final AccountStatus STATUS_BLOCKED = AccountStatus.BLOCKED;
+    private final AccountStatus STATUS_OPEN = AccountStatus.OPEN;
+    private final AccountStatus STATUS_CLOSED = AccountStatus.CLOSED;
     public static final String REQUEST_TO_BLOCK = "BLOCK";
     private final String INIT = "INIT";
     private final String UPDATE = "UPDATE";
@@ -72,6 +78,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final ValidateType CREATE_ACCOUNT = ValidateType.CREATE_ACC;
     private final ValidateType ADD_ACCOUNT = ValidateType.ADD_ACC;
     private final ValidateType UPLOAD_PROFILE_IMAGE = ValidateType.UPLOAD_PROFILE_IMAGE;
+    private final int DEFAULT_PAGE_SIZE=5;
+    private final DIRECTION PAGE_SORT_DIRECTION_ASCENDING= DIRECTION.asc;
+    private final DIRECTION PAGE_SORT_DIRECTION_DESCENDING= DIRECTION.desc;
 
     /**
      * @paramType AccountsRepository
@@ -215,9 +224,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 .build();
     }
 
-    private List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId) throws AccountsException {
+    private List<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId,Pageable pageable) throws AccountsException {
         String methodName = "getAllAccountsByCustomerId(Long) in AccountsServiceImpl";
-        Optional<List<Accounts>> allAccounts = accountsRepository.findAllByCustomer_CustomerId(customerId);
+        Optional<Page<Accounts>> allAccounts = accountsRepository.findAllByCustomer_CustomerId(customerId,pageable);
         if (allAccounts.isEmpty())
             throw new AccountsException(AccountsException.class, String.format("No such accounts present with this customer %s", customerId), methodName);
         return allAccounts.get().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())
@@ -375,8 +384,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
         String methodName = "deleteAllAccountsByCustomer(Long ) in AccountsServiceImpl";
         //checking whether customer exist
-        Optional<List<Accounts>> foundCustomer = accountsRepository.
-                findAllByCustomer_CustomerId(customerId);
+        Optional<Customer> foundCustomer=customerRepository.findById(customerId);
+
         if (foundCustomer.isEmpty())
             throw new AccountsException(AccountsException.class, String.format("No such customer exists with id %s", customerId), methodName);
         //deleting it
@@ -500,12 +509,15 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException {
         String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
 
+
         //get paging details
         int pageNumber = getInputRequestDto.getPageNumber();
         if(pageNumber<0) throw new BadRequestException(BadRequestException.class,
                 "pageNumber cant be in negative",methodName);
-        int pageSize = (getInputRequestDto.getPageSize()==0)? 5:getInputRequestDto.getPageSize();
+
+        int pageSize=getInputRequestDto.getPageSize();
         if(pageSize<0) throw new BadRequestException(BadRequestException.class,"Page Size can't be in negative",methodName);
+        pageSize = (getInputRequestDto.getPageSize()==0)? DEFAULT_PAGE_SIZE:getInputRequestDto.getPageSize();
 
         String sortBy = (null==getInputRequestDto.getSortBy()) ? "balance":getInputRequestDto.getSortBy();
         GetInputRequestDto.DIRECTION sortDir = (null==getInputRequestDto.getSortDir())? GetInputRequestDto.DIRECTION.asc:getInputRequestDto.getSortDir();
@@ -544,8 +556,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 Set<String> allPageableFieldsOfAccounts=getAllPageableFieldsOfAccounts();
                 if(!allPageableFieldsOfAccounts.contains(sortBy)) throw new BadRequestException(BadRequestException.class,
                         String.format("%s is not a valid field of account",sortBy),String.format("Inside %s of %s",locality,methodName));
+                //sorting
+                Sort sort=sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING)? Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
+                Pageable pageable= PageRequest.of(pageNumber,pageSize,sort);
 
-                List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
+
+                List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId,pageable);
                 if (listOfAccounts.size() == 0)
                     return  OutputDto.builder().defaultMessage(String.format("Customer with id %s have no accounts present", customerId)).build();
 
@@ -633,18 +649,18 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
                 return  OutputDto.builder().defaultMessage("BAAD MAIN KARNGE BSDK").build();
             }
-            case UPDATE_CUSTOMER_DETAILS -> {
-                String location = String.format("Inside UPDATE_CUSTOMER_DETAILS in %s", methodName);
-                if (Objects.isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
-                        "Please specify a customer id to update details", location);
-
-                CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
-                List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
-
-                return OutputDto.builder().listOfAccounts(listOfAccounts)
-                        .customer(mapToCustomerOutputDto(updatedCustomerDto))
-                        .defaultMessage(String.format("Customer with id %s has been updated",customerId)).build();
-            }
+//            case UPDATE_CUSTOMER_DETAILS -> {
+//                String location = String.format("Inside UPDATE_CUSTOMER_DETAILS in %s", methodName);
+//                if (Objects.isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
+//                        "Please specify a customer id to update details", location);
+//
+//                CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
+//                List<AccountsDto> listOfAccounts = getAllActiveAccountsByCustomerId(customerId);
+//
+//                return OutputDto.builder().listOfAccounts(listOfAccounts)
+//                        .customer(mapToCustomerOutputDto(updatedCustomerDto))
+//                        .defaultMessage(String.format("Customer with id %s has been updated",customerId)).build();
+//            }
             default ->
                     throw new AccountsException(AccountsException.class,
                             String.format("Invalid request type %s for PUT request", request), methodName);

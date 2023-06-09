@@ -64,9 +64,9 @@ public class Accounts extends Audit {
 
     @Column(name="acc_stts")
     @Enumerated(EnumType.STRING)
-    private AccountStatus accountStatus;
+    private  AccountStatus accountStatus;
 
-    public enum AccountStatus{
+    public static enum AccountStatus{
         OPEN,BLOCKED,CLOSED
     }
 

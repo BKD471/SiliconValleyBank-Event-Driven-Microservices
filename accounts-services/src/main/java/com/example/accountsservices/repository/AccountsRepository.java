@@ -2,6 +2,8 @@ package com.example.accountsservices.repository;
 
 import com.example.accountsservices.model.Accounts;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +21,9 @@ public interface AccountsRepository extends JpaRepository<Accounts, Long> {
 
     void deleteByAccountNumber(Long accountNumber);
 
-    Optional<List<Accounts>> findAllByCustomer_CustomerId(Long customerId);
+    Optional<Page<Accounts>> findAllByCustomer_CustomerId(Long customerId, Pageable pageable);
+
+
 
 
 //    @Modifying ///for update

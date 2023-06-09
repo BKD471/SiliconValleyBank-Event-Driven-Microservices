@@ -64,9 +64,9 @@ public class GetInputRequestDto {
   private int pageNumber;
   private int pageSize;
   private String sortBy;
-  private DIRECTION sortDir;
+  private  DIRECTION sortDir;
 
-  public enum DIRECTION{
+  public static enum DIRECTION{
     asc,desc
   }
 
