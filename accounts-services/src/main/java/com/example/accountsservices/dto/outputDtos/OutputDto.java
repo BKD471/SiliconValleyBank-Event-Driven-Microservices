@@ -16,7 +16,8 @@ public class OutputDto {
     private AccountsOutPutDto accounts;
     private BeneficiaryDto beneficiary;
     private TransactionsDto transactions;
-    private PageableResponseDto pageableResponse;
+    private PageableResponseDto<AccountsDto> accountsListPages;
+    private PageableResponseDto<BeneficiaryDto> beneficiaryListPages;
     private List<AccountsDto> listOfAccounts;
     private List<BeneficiaryDto> beneficiaryList;
     private List<TransactionsDto> transactionsList;

@@ -34,6 +34,12 @@ public class PutInputRequestDto {
     private String voterId;
     private String drivingLicense;
     private String passportNumber;
+
+    private int pageNumber;
+    private int pageSize;
+    private String sortBy;
+    private GetInputRequestDto.DIRECTION sortDir;
+
     private BeneficiaryDto.BenUpdateRequest benRequest;
     private Long beneficiaryId;
     private String beneficiaryName;

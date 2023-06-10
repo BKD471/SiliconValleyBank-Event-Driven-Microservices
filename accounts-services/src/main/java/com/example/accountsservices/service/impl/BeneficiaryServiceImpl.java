@@ -8,8 +8,8 @@ import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
+import com.example.accountsservices.exception.BadRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
-import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -17,6 +17,10 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,12 +28,14 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBankCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
+import static com.example.accountsservices.helpers.PagingHelper.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
+import static com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
 
 @Service
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
@@ -234,9 +240,13 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                 filter(ben -> ben.getBeneficiaryId().equals(benId)).findFirst();
     }
 
-    private List<Beneficiary> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount) throws AccountsException {
-        //get all beneficiaries
-        return fetchedAccount.getListOfBeneficiary();
+    private PageableResponseDto<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount,Pageable pageable) throws AccountsException {
+        String methodName = "getAllAccountsByCustomerId(Account,Pageable) in BeneficiaryServiceImpl";
+        Optional<Page<Beneficiary>> allPagedBeneficiary = beneficiaryRepository.findAllByAccounts_AccountNumber(fetchedAccount.getAccountNumber(), pageable);
+        if (allPagedBeneficiary.isEmpty())
+            throw new BeneficiaryException(BeneficiaryException.class,
+                    String.format("No such beneficiary present for this account ben id: %s", fetchedAccount.getAccountNumber()), methodName);
+        return getPageableResponse(allPagedBeneficiary.get(), BeneficiaryDto.class);
     }
 
     private Beneficiary processedBeneficiaryAccount(Beneficiary oldBeneficiaryData, Beneficiary newBeneficiaryData) throws AccountsException {
@@ -360,6 +370,20 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         beneficiaryRepository.deleteAllByAccounts_AccountNumber(fetchedAccounts.getAccountNumber());
     }
 
+    private PageableResponseDto<BeneficiaryDto> beneficiaryPagination(DIRECTION sortDir,String sortBy,int pageNumber,int pageSize,Accounts fetchedAccount) {
+        String methodName="beneficiaryPagination(DIRECTION,String,int,int,Accounts) in AccountsServiceImpl";
+        Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        PageableResponseDto<BeneficiaryDto> pageableResponseDto = getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount,pageable);
+
+        if (pageableResponseDto.getContent().size() == 0)
+            throw new BadRequestException(BadRequestException.class,
+                    String.format("Account with id %s have no beneficiary present", fetchedAccount.getAccountNumber()),
+                    methodName);
+
+        return  pageableResponseDto;
+    }
+
     @Override
     public OutputDto postRequestBenExecutor(PostInputRequestDto postInputDto) throws BeneficiaryException, AccountsException {
         String methodName = "postRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
@@ -429,9 +453,23 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         String methodName = "getRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         BeneficiaryDto beneficiaryDto = mapGetRequestInputDtoToBenDto(getInputRequestDto);
 
+        //get paging details
+        int pageNumber = getInputRequestDto.getPageNumber();
+        if (pageNumber < 0) throw new BadRequestException(BadRequestException.class,
+                "pageNumber cant be in negative", methodName);
+
+        int pageSize = getInputRequestDto.getPageSize();
+        if (pageSize < 0)
+            throw new BadRequestException(BadRequestException.class, "Page Size can't be in negative", methodName);
+        pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
+
+        String sortBy = (null == getInputRequestDto.getSortBy()) ? "beneficiaryName" : getInputRequestDto.getSortBy();
+        DIRECTION sortDir = (null == getInputRequestDto.getSortDir()) ? DIRECTION.asc : getInputRequestDto.getSortDir();
+
+
         //get the account
-        Long accountNUmber = getInputRequestDto.getAccountNumber();
-        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
+        Long accountNumber = getInputRequestDto.getAccountNumber();
+        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         BeneficiaryDto.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
@@ -455,13 +493,19 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
             }
             case GET_ALL_BEN -> {
                 location = "Inside GET_ALL_BEN";
-                List<BeneficiaryDto> beneficiaryList = getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount)
-                        .stream().map(MapperHelper::mapToBeneficiaryDto).collect(Collectors.toList());
+                //validate the genuineness of sorting fields
+                Set<String> allPageableFieldsOfAccounts = getAllPageableFieldsOfBeneficiary();
+                if (!allPageableFieldsOfAccounts.contains(sortBy))
+                    throw new BadRequestException(BadRequestException.class,
+                            String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", location, methodName));
+                //paging & sorting
+                PageableResponseDto<BeneficiaryDto> pageableResponseDto=beneficiaryPagination(sortDir,sortBy,pageNumber,pageSize,fetchedAccount);
+
 
                 return OutputDto.builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
-                        .beneficiaryList(beneficiaryList)
+                        .beneficiaryListPages(pageableResponseDto)
                         .defaultMessage(String.format("Fetched all beneficiaries of account:%s",fetchedAccount.getAccountNumber()))
                         .build();
             }
