@@ -42,6 +42,11 @@ public class PostInputRequestDto {
             message = "Invalid Email format")
     private String email;
 
+    @Pattern(regexp = PATTERN_FOR_PASSWORD,message = "Minimum eight characters," +
+            " at least one uppercase" +
+            " letter, one lowercase letter, " +
+            "one number and " +
+            "one special character")
     private String password;
 
     @Pattern(regexp = PATTERN_FOR_PHONE_NUMBER
@@ -49,7 +54,7 @@ public class PostInputRequestDto {
     private String phoneNumber;
 
     @Pattern(regexp = PATTERN_FOR_ADHAR
-    ,message = "Invalid Aadhar Number")
+    ,message = "Invalid Adhar Number")
     private String adharNumber;
 
     @Pattern(regexp = PATTERN_FOR_PAN_NUMBER,

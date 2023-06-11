@@ -9,4 +9,5 @@ public class RegexMatchersHelper {
     public static final String PATTERN_FOR_VOTER="^[A-Z]{3}[0-9]{7}$";
     public static final String PATTERN_FOR_DRIVING_LICENSE="(([A-Z]{2}[0-9]{2})( )|([A-Z]{2}-[0-9]{2}))((19|20)[0-9][0-9])[0-9]{7}$";
     public static final String PATTERN_FOR_PASSPORT="^[A-PR-WYa-pr-wy][1-9]\\d\\s?\\d{4}[1-9]$";
+    public static final String PATTERN_FOR_PASSWORD="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
 }

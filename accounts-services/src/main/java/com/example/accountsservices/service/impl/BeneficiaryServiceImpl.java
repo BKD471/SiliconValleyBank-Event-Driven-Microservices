@@ -3,6 +3,7 @@ package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.*;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
@@ -35,7 +36,6 @@ import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBankCo
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
-import static com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
 
 @Service
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
@@ -46,7 +46,6 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
     private final validateBenType ADD_BEN = validateBenType.ADD_BEN;
     private final validateBenType UPDATE_BEN = validateBenType.UPDATE_BEN;
-    private final validateBenType DELETE_BEN = validateBenType.DELETE_BEN;
     private final Beneficiary.RELATION FATHER = Beneficiary.RELATION.FATHER;
     private final Beneficiary.RELATION MOTHER = Beneficiary.RELATION.MOTHER;
     private final Beneficiary.RELATION SPOUSE = Beneficiary.RELATION.SPOUSE;
@@ -70,11 +69,11 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     //For validating Unhappy Paths
     private void validate(Accounts accounts, BeneficiaryDto beneficiaryDto, validateBenType type) throws BeneficiaryException {
         String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
-        String location="";
+        String location;
         switch (type) {
             case ADD_BEN -> {
                 location="Inside ADD_BEN";
-                boolean notPossible = false;
+                boolean notPossible ;
                 List<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
                 if (listOfBeneficiaries.size() >= 5) throw new BeneficiaryException(BeneficiaryException.class,
                         "You can't add more than 5 beneficiaries", String.format("%s of %s",location,methodName));
@@ -149,7 +148,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
             }
             case UPDATE_BEN -> {
                 location="Inside UPDATE_BEN";
-                boolean isTrue = true;
+                boolean isTrue;
                 if (null != beneficiaryDto.getBenDate_Of_Birth()) {
                     isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.getBenDate_Of_Birth().toString());
                     if (!isTrue)
@@ -475,7 +474,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
 
-        String location = "";
+        String location;
         switch (requestType) {
             case GET_BEN -> {
                 location = "Inside GET_BEN";

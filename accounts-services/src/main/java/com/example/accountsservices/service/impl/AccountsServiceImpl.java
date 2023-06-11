@@ -2,6 +2,7 @@ package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.dto.*;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
@@ -30,7 +31,6 @@ import java.util.List;
 
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
-import static com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
 import static com.example.accountsservices.helpers.PagingHelper.*;
 import static com.example.accountsservices.model.Accounts.AccountStatus;
 
