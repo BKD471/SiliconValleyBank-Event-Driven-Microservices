@@ -8,7 +8,7 @@ import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
-import com.example.accountsservices.exception.BadRequestException;
+import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
@@ -258,11 +258,11 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case UPLOAD_PROFILE_IMAGE -> {
                 location = "Inside UPLOAD_PROFILE_IMAGE";
-                if (null == customerDto.getCustomerImage()) throw new BadRequestException(BadRequestException.class,
+                if (null == customerDto.getCustomerImage()) throw new BadApiRequestException(BadApiRequestException.class,
                         "Please provide image", String.format("%s of %s", methodName, location));
                 double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
                 if (customerDto.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
-                    throw new BadRequestException(BadRequestException.class,
+                    throw new BadApiRequestException(BadApiRequestException.class,
                             "Your file is either corrupted or you are exceeding the max size of 100mb",
                             String.format("%s of %s", methodName, location));
             }
@@ -459,7 +459,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         PageableResponseDto<AccountsDto> pageableResponseDto = getAllActiveAccountsByCustomerId(customerId, pageable);
         if (pageableResponseDto.getContent().size() == 0)
-            throw new BadRequestException(BadRequestException.class,
+            throw new BadApiRequestException(BadApiRequestException.class,
                     String.format("Customer with id %s have no accounts present", customerId),
                     methodName);
 
@@ -520,12 +520,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         //get paging details
         int pageNumber = getInputRequestDto.getPageNumber();
-        if (pageNumber < 0) throw new BadRequestException(BadRequestException.class,
+        if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
 
         int pageSize = getInputRequestDto.getPageSize();
         if (pageSize < 0)
-            throw new BadRequestException(BadRequestException.class, "Page Size can't be in negative", methodName);
+            throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
         pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
 
         String sortBy = (null == getInputRequestDto.getSortBy()) ? "balance" : getInputRequestDto.getSortBy();
@@ -564,7 +564,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 //validate the genuineness of sorting fields
                 Set<String> allPageableFieldsOfAccounts = getAllPageableFieldsOfAccounts();
                 if (!allPageableFieldsOfAccounts.contains(sortBy))
-                    throw new BadRequestException(BadRequestException.class,
+                    throw new BadApiRequestException(BadApiRequestException.class,
                             String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", locality, methodName));
                 //paging & sorting
                 PageableResponseDto<AccountsDto> pageableResponseDto=accountsPagination(sortDir,sortBy,pageNumber,pageSize,customerId);
@@ -589,12 +589,12 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         //get paging details
         int pageNumber = putInputRequestDto.getPageNumber();
-        if (pageNumber < 0) throw new BadRequestException(BadRequestException.class,
+        if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
 
         int pageSize = putInputRequestDto.getPageSize();
         if (pageSize < 0)
-            throw new BadRequestException(BadRequestException.class, "Page Size can't be in negative", methodName);
+            throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
         pageSize = (putInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : putInputRequestDto.getPageSize();
 
         String sortBy = (null == putInputRequestDto.getSortBy()) ? "balance" : putInputRequestDto.getSortBy();

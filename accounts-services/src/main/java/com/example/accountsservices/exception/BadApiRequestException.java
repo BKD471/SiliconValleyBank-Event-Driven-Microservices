@@ -1,10 +1,10 @@
 package com.example.accountsservices.exception;
-public class BadRequestException extends RuntimeException {
+public class BadApiRequestException extends RuntimeException {
     private final String reason;
     private final String methodName;
     private final Object e;
 
-    public BadRequestException(Object e, String reason, String methodName) {
+    public BadApiRequestException(Object e, String reason, String methodName) {
         super(String.format("%s has occurred  for %s in %s",e,reason,methodName));
         this.e = e;
         this.reason = reason;
