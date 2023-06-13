@@ -9,7 +9,7 @@ import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
-import com.example.accountsservices.exception.BadRequestException;
+import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
@@ -376,7 +376,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         PageableResponseDto<BeneficiaryDto> pageableResponseDto = getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount,pageable);
 
         if (pageableResponseDto.getContent().size() == 0)
-            throw new BadRequestException(BadRequestException.class,
+            throw new BadApiRequestException(BadApiRequestException.class,
                     String.format("Account with id %s have no beneficiary present", fetchedAccount.getAccountNumber()),
                     methodName);
 
@@ -454,12 +454,12 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
 
         //get paging details
         int pageNumber = getInputRequestDto.getPageNumber();
-        if (pageNumber < 0) throw new BadRequestException(BadRequestException.class,
+        if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
 
         int pageSize = getInputRequestDto.getPageSize();
         if (pageSize < 0)
-            throw new BadRequestException(BadRequestException.class, "Page Size can't be in negative", methodName);
+            throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
         pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
 
         String sortBy = (null == getInputRequestDto.getSortBy()) ? "beneficiaryName" : getInputRequestDto.getSortBy();
@@ -495,7 +495,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                 //validate the genuineness of sorting fields
                 Set<String> allPageableFieldsOfAccounts = getAllPageableFieldsOfBeneficiary();
                 if (!allPageableFieldsOfAccounts.contains(sortBy))
-                    throw new BadRequestException(BadRequestException.class,
+                    throw new BadApiRequestException(BadApiRequestException.class,
                             String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", location, methodName));
                 //paging & sorting
                 PageableResponseDto<BeneficiaryDto> pageableResponseDto=beneficiaryPagination(sortDir,sortBy,pageNumber,pageSize,fetchedAccount);
