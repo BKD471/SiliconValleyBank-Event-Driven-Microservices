@@ -1,8 +1,13 @@
 package com.example.accountsservices.service;
 
+import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
+import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
+import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +19,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 
@@ -33,12 +39,16 @@ public class AccountsServiceTests {
     @MockBean
     private CustomerRepository customerRepository;
 
+    @MockBean
+    private AccountsRepository accountsRepository;
+
     Customer customer;
     Accounts accounts;
+
     @BeforeEach
-    public void setUp(){
-        String branchCode= CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
-        accounts=Accounts.builder()
+    public void setUp() {
+        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        accounts = Accounts.builder()
                 .accountNumber(1L)
                 .accountType(Accounts.AccountType.SAVINGS)
                 .accountStatus(Accounts.AccountStatus.OPEN)
@@ -53,17 +63,18 @@ public class AccountsServiceTests {
                 .homeBranch(Accounts.Branch.KOLKATA)
                 .build();
 
-        customer=Customer.builder()
+        customer = Customer.builder()
                 .customerId(1L)
                 .age(25)
-                .email("email@gmail.com")
+                .name("phoenix")
+                .email("phoenix@gmail.com")
                 .address("address")
                 .adharNumber("adhar")
                 .drivingLicense("driving")
                 .panNumber("pan")
                 .passportNumber("passport")
                 .imageName("img.png")
-                .DateOfBirth(LocalDate.of(1997,12,01))
+                .DateOfBirth(LocalDate.of(1997, 12, 01))
                 .voterId("voter")
                 .accounts(Collections.singletonList(accounts))
                 .build();
@@ -74,8 +85,82 @@ public class AccountsServiceTests {
 
 
     @Test
-    public void testCreateAccount(){
-       when(customerRepository.save(any())) .thenReturn(customer);
-       ///likhenge baad m :)
+    public void testCreateAccount() {
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(customerRepository.save(any())).thenReturn(customer);
+
+        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        PostInputRequestDto postInputRequestDto = PostInputRequestDto.builder()
+                .updateRequest(AccountsDto.UpdateRequest.CREATE_ACC)
+                .name("phoenix")
+                .email("phoenix@gmail.com")
+                .password("pass")
+                .phoneNumber("91-1234567890")
+                .homeBranch(Accounts.Branch.KOLKATA)
+                .dateOfBirthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 01)))
+                .adharNumber("adhar")
+                .panNumber("pan")
+                .voterId("voter")
+                .address("address")
+                .drivingLicense("driving")
+                .passportNumber("passport")
+                .accountType(Accounts.AccountType.SAVINGS)
+                .branchCode(branchCode)
+                .transferLimitPerDay(25000L)
+                .creditScore(750)
+                .age(25)
+                .build();
+        OutputDto response = accountsService.postRequestExecutor(postInputRequestDto);
+
+        assertEquals("phoenix@gmail.com", response.getCustomer().getEmail());
+        assertEquals("passport", response.getCustomer().getPassportNumber());
+        assertEquals("address", response.getCustomer().getAddress());
+        assertEquals("adhar", response.getCustomer().getAdharNumber());
+        assertEquals("voter", response.getCustomer().getVoterId());
+        assertEquals("driving", response.getCustomer().getDrivingLicense());
+        assertEquals("pan", response.getCustomer().getPanNumber());
+        assertEquals(25, response.getCustomer().getAge());
+        assertEquals(LocalDate.of(1997, 12, 01), response.getCustomer().getDateOfBirth());
+        assertEquals(60000L, response.getAccounts().getBalance());
+        assertEquals(25000L, response.getAccounts().getTransferLimitPerDay());
+        assertEquals(750, response.getAccounts().getCreditScore());
+    }
+
+    @Test
+    public void testAddAccount() throws IOException {
+        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+        Accounts processedAccount = Accounts.builder()
+                .accountNumber(2L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .anyActiveLoans(false)
+                .approvedLoanLimitBasedOnCreditScore(900000L)
+                .balance(90000L)
+                .branchCode(branchCode)
+                .totalOutStandingAmountPayableToBank(500000L)
+                .transferLimitPerDay(85000L)
+                .totLoanIssuedSoFar(550000L)
+                .creditScore(850)
+                .homeBranch(Accounts.Branch.CHENNAI)
+                .build();
+
+        when(accountsRepository.save(any())).thenReturn(processedAccount);
+
+
+        PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
+                .customerId(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .updateRequest(AccountsDto.UpdateRequest.ADD_ACCOUNT)
+                .homeBranch(Accounts.Branch.CHENNAI)
+                .build();
+        OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
+        assertEquals(850,response.getAccounts().getCreditScore());
+        assertEquals(90000L,response.getAccounts().getBalance());
+        assertEquals(Accounts.Branch.CHENNAI,response.getAccounts().getHomeBranch());
+
     }
 }
