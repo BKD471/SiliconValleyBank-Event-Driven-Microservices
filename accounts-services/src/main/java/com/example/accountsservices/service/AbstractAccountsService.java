@@ -35,7 +35,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
     public OutputDto  putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException { return null;}
     public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException { return null;}
     public OutputDto deleteRequestExecutor(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException{ return null;}
-
+    public OutputDto accountSetUp(PostInputRequestDto postInputRequestDto){return null;}
     //ben
     public OutputDto postRequestBenExecutor(PostInputRequestDto postInputDto) throws BeneficiaryException, AccountsException {return null;};
     public OutputDto putRequestBenExecutor(PutInputRequestDto putInputRequestDto) throws BeneficiaryException, AccountsException { return null;};

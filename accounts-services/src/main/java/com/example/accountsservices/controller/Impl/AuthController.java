@@ -4,6 +4,7 @@ import com.example.accountsservices.dto.CustomerDto;
 import com.example.accountsservices.dto.token.JwtRequest;
 import com.example.accountsservices.dto.token.JwtResponse;
 import com.example.accountsservices.exception.BadApiRequestException;
+import com.example.accountsservices.helpers.JwtHelper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,8 @@ public class AuthController {
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
+    private JwtHelper jwtHelper;
+    @Autowired
     private ModelMapper modelMapper;
 
     @GetMapping("/hello")
@@ -37,7 +40,7 @@ public class AuthController {
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest jwtRequest) {
         this.doAuthenticate(jwtRequest.getEmail(), jwtRequest.getPassword());
         UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
-        String token = null;
+        String token = jwtHelper.generateToken(userDetails);
         CustomerDto customerDto = modelMapper.map(userDetails, CustomerDto.class);
         JwtResponse jwtResponse = JwtResponse.builder()
                 .jwtToken(token)

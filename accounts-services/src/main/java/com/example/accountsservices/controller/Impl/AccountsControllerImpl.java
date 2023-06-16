@@ -25,7 +25,6 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -83,6 +82,20 @@ public class AccountsControllerImpl extends AbstractParentController implements 
     public ResponseEntity<OutputDto> postRequestForChange(PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
         OutputDto responseBody = accountsService.postRequestExecutor(postInputDto);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
+    }
+
+    /**
+     * @param postInputDto
+     * @return
+     * @throws AccountsException
+     * @throws ResponseException
+     * @throws CustomerException
+     * @throws IOException
+     */
+    @Override
+    public ResponseEntity<OutputDto> createAccount(PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
+        OutputDto responseBody=accountsService.accountSetUp(postInputDto);
+        return new ResponseEntity<>(responseBody,HttpStatus.CREATED);
     }
 
     /**

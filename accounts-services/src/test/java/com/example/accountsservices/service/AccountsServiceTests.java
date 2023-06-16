@@ -4,6 +4,7 @@ import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
+import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -111,7 +113,7 @@ public class AccountsServiceTests {
                 .creditScore(750)
                 .age(25)
                 .build();
-        OutputDto response = accountsService.postRequestExecutor(postInputRequestDto);
+        OutputDto response = accountsService.accountSetUp(postInputRequestDto);
 
         assertEquals("phoenix@gmail.com", response.getCustomer().getEmail());
         assertEquals("passport", response.getCustomer().getPassportNumber());
@@ -131,7 +133,6 @@ public class AccountsServiceTests {
     public void testAddAccount() throws IOException {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
-        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
         Accounts processedAccount = Accounts.builder()
                 .accountNumber(2L)
@@ -158,9 +159,51 @@ public class AccountsServiceTests {
                 .homeBranch(Accounts.Branch.CHENNAI)
                 .build();
         OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
-        assertEquals(850,response.getAccounts().getCreditScore());
-        assertEquals(90000L,response.getAccounts().getBalance());
-        assertEquals(Accounts.Branch.CHENNAI,response.getAccounts().getHomeBranch());
+        assertEquals(850, response.getAccounts().getCreditScore());
+        assertEquals(90000L, response.getAccounts().getBalance());
+        assertEquals(Accounts.Branch.CHENNAI, response.getAccounts().getHomeBranch());
+    }
 
+    @Test
+    public void updateHomeBranchTest() throws IOException {
+        String newBranchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.BANGALORE);
+
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+
+        PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .homeBranch(Accounts.Branch.BANGALORE)
+                .updateRequest(AccountsDto.UpdateRequest.UPDATE_HOME_BRANCH).build();
+
+        Accounts savedAccount = Accounts.builder()
+                .accountNumber(1L)
+                .homeBranch(Accounts.Branch.BANGALORE)
+                .branchCode(newBranchCode)
+                .accountType(Accounts.AccountType.CURRENT)
+                .build();
+        savedAccount.setCustomer(customer);
+        when(accountsRepository.save(any())).thenReturn(savedAccount);
+        OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
+
+        assertEquals(Accounts.Branch.BANGALORE, response.getAccounts().getHomeBranch());
+        assertEquals(newBranchCode, response.getAccounts().getBranchCode());
+    }
+
+    @Test
+    public void updateHomeBranchFailedTest() throws IOException {
+        String newBranchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+
+        PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .homeBranch(Accounts.Branch.KOLKATA)
+                .updateRequest(AccountsDto.UpdateRequest.UPDATE_HOME_BRANCH).build();
+
+        assertThrows(AccountsException.class, () -> {
+            accountsService.putRequestExecutor(putInputRequestDto);
+        });
     }
 }

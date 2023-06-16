@@ -15,11 +15,13 @@ import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -50,6 +52,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomerRepository customerRepository;
     private final FIleServiceImpl fIleService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private final AccountStatus STATUS_BLOCKED = AccountStatus.BLOCKED;
     private final AccountStatus STATUS_OPEN = AccountStatus.OPEN;
     private final AccountStatus STATUS_CLOSED = AccountStatus.CLOSED;
@@ -101,7 +106,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         Accounts.Branch finalNewhomeBranch = newhomeBranch;
         boolean isNotPermissible = listOfAccounts.stream().
-                anyMatch(account -> finalNewhomeBranch.equals(account.getHomeBranch()) && accountType.equals(account.getAccountType()));
+                anyMatch(account -> finalNewhomeBranch.equals(account.getHomeBranch())
+                        && accountType.equals(account.getAccountType()));
 
         if (isNotPermissible) throw new AccountsException(AccountsException.class,
                 String.format("You already have an account with same accountType %s" +
@@ -141,6 +147,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         LocalDate dob = customer.getDateOfBirth();
         int age = Period.between(dob, LocalDate.now()).getYears();
         customer.setAge(age);
+        //encode passwd
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         return customer;
     }
 
@@ -479,6 +487,15 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
 
+    /**
+     * @param postInputRequestDto
+     * @return
+     */
+    @Override
+    public OutputDto accountSetUp(PostInputRequestDto postInputRequestDto) {
+        return createAccount(postInputRequestDto);
+    }
+
     @Override
     public OutputDto postRequestExecutor(PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException {
         String methodName = "postRequestExecutor(InputDto) in AccountsServiceImpl";
@@ -499,9 +516,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
-            case CREATE_ACC -> {
-                return createAccount(postInputRequestDto);
-            }
             case LEND_LOAN -> {
                 //to be done...
                 return OutputDto.builder().defaultMessage("Baad main karenge").build();

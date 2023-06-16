@@ -11,6 +11,7 @@ import com.example.accountsservices.exception.CustomerException;
 import java.io.IOException;
 
 public interface IAccountsService {
+    OutputDto accountSetUp(PostInputRequestDto postInputRequestDto);
     OutputDto postRequestExecutor(PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException, IOException;
     OutputDto putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException;
     OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException;

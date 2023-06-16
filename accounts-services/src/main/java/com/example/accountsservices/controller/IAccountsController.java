@@ -29,6 +29,10 @@ public interface IAccountsController {
     @PostMapping("/post")
     ResponseEntity<OutputDto> postRequestForChange(@Valid @RequestBody PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException;
 
+    @PostMapping("/create")
+    ResponseEntity<OutputDto> createAccount(@Valid @RequestBody PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException;
+
+
     @PutMapping("/put")
     ResponseEntity<OutputDto> putRequestForChange(@Valid @RequestBody PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException;
 

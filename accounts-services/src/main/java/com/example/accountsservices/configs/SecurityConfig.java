@@ -32,7 +32,8 @@ public class SecurityConfig {
         httpSecurity.cors()
                 .disable().csrf()
                 .disable().authorizeHttpRequests((auth) ->
-                        auth.requestMatchers("/api/v1/auth/hello").permitAll()
+                        auth.requestMatchers("/api/v1/auth/login").permitAll()
+                                .requestMatchers("/api/v1/accounts/create").permitAll()
                                 .anyRequest().authenticated()).exceptionHandling(
                         exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

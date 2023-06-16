@@ -21,6 +21,7 @@ public class Accounts extends Audit {
     private Long accountNumber;
 
 
+
     @Column(name = "cust_balnc")
     private Long balance;
 

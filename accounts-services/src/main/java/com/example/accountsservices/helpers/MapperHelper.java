@@ -38,11 +38,11 @@ public class MapperHelper {
     public static AccountsDto mapToAccountsDto(Accounts accounts) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(accounts.getListOfBeneficiary()!=null && accounts.getListOfBeneficiary().size()>0){
+        if(null!=accounts.getListOfBeneficiary() && accounts.getListOfBeneficiary().size()>0){
             beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                             .collect(Collectors.toList());
         }
-        if(accounts.getListOfTransactions()!=null && accounts.getListOfTransactions().size()>0){
+        if(null!=accounts.getListOfTransactions() && accounts.getListOfTransactions().size()>0){
             transactionsDtoList=accounts.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
@@ -67,7 +67,7 @@ public class MapperHelper {
 
     public static Customer mapToCustomer(CustomerDto customerDto) {
         List<Accounts> listOfAccounts = new ArrayList<>();
-        if (customerDto.getAccounts() != null && customerDto.getAccounts().size()>0) {
+        if (null!=customerDto.getAccounts() && customerDto.getAccounts().size()>0) {
             listOfAccounts = customerDto.getAccounts().stream().
                     map(MapperHelper::mapToAccounts).collect(Collectors.toList());
         }
@@ -77,7 +77,7 @@ public class MapperHelper {
                 .DateOfBirth(customerDto.getDateOfBirth())
                 .age(customerDto.getAge())
                 .email(customerDto.getEmail())
-                .password(customerDto.getPassword())
+                //.password(customerDto.getPassword())
                 .phoneNumber(customerDto.getPhoneNumber())
                 .adharNumber(customerDto.getAdharNumber())
                 .panNumber(customerDto.getPanNumber())
@@ -92,7 +92,7 @@ public class MapperHelper {
 
     public static CustomerDto mapToCustomerDto(Customer customer) {
         List<AccountsDto> listOfAccounts = new ArrayList<>();
-        if (customer.getAccounts().size() > 0) {
+        if (null!=customer.getAccounts() && customer.getAccounts().size()>0) {
             listOfAccounts = customer.getAccounts().stream().
                     map(MapperHelper::mapToAccountsDto).collect(Collectors.toList());
         }
@@ -102,7 +102,6 @@ public class MapperHelper {
                 .DateOfBirth(customer.getDateOfBirth())
                 .age(customer.getAge())
                 .email(customer.getEmail())
-                .password(customer.getPassword())
                 .phoneNumber(customer.getPhoneNumber())
                 .adharNumber(customer.getAdharNumber())
                 .panNumber(customer.getPanNumber())
@@ -181,11 +180,11 @@ public class MapperHelper {
     public static Accounts inputToAccounts(PostInputRequestDto postInputRequestDto) {
         List<Beneficiary> beneficiaryList=new ArrayList<>();
         List<Transactions> transactionList=new ArrayList<>();
-        if(postInputRequestDto.getListOfBeneficiary()!=null && postInputRequestDto.getListOfBeneficiary().size()>0){
+        if(null!=postInputRequestDto.getListOfBeneficiary() && postInputRequestDto.getListOfBeneficiary().size()>0){
             beneficiaryList=postInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiary)
                     .collect(Collectors.toList());
         }
-        if(postInputRequestDto.getListOfTransactions()!=null && postInputRequestDto.getListOfTransactions().size()>0){
+        if(null!=postInputRequestDto.getListOfTransactions() && postInputRequestDto.getListOfTransactions().size()>0){
             transactionList=postInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactions)
                     .collect(Collectors.toList());
         }
@@ -232,11 +231,11 @@ public class MapperHelper {
     public static AccountsDto deleteRequestInputToAccountsDto(DeleteInputRequestDto deleteInputRequestDto) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(deleteInputRequestDto.getListOfBeneficiary()!=null && deleteInputRequestDto.getListOfBeneficiary().size()>0){
+        if(null!=deleteInputRequestDto.getListOfBeneficiary() && deleteInputRequestDto.getListOfBeneficiary().size()>0){
             beneficiaryDtoList=deleteInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
-        if(deleteInputRequestDto.getListOfTransactions()!=null && deleteInputRequestDto.getListOfTransactions().size()>0){
+        if(null!=deleteInputRequestDto.getListOfTransactions() && deleteInputRequestDto.getListOfTransactions().size()>0){
             transactionsDtoList=deleteInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
@@ -263,11 +262,11 @@ public class MapperHelper {
     public static AccountsDto putInputRequestToAccountsDto(PutInputRequestDto putInputRequestDto) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(putInputRequestDto.getListOfBeneficiary()!=null && putInputRequestDto.getListOfBeneficiary().size()>0){
+        if(null!=putInputRequestDto.getListOfBeneficiary() && putInputRequestDto.getListOfBeneficiary().size()>0){
             beneficiaryDtoList=putInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
-        if(putInputRequestDto.getListOfTransactions()!=null && putInputRequestDto.getListOfTransactions().size()>0){
+        if(null!=putInputRequestDto.getListOfTransactions() && putInputRequestDto.getListOfTransactions().size()>0){
             transactionsDtoList=putInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
@@ -294,11 +293,11 @@ public class MapperHelper {
     public static AccountsDto getInputToAccountsDto(GetInputRequestDto getInputRequestDto) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(getInputRequestDto.getListOfBeneficiary()!=null && getInputRequestDto.getListOfBeneficiary().size()>0){
+        if(null!=getInputRequestDto.getListOfBeneficiary() && getInputRequestDto.getListOfBeneficiary().size()>0){
             beneficiaryDtoList=getInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
-        if(getInputRequestDto.getListOfTransactions()!=null && getInputRequestDto.getListOfTransactions().size()>0){
+        if(null!=getInputRequestDto.getListOfTransactions() && getInputRequestDto.getListOfTransactions().size()>0){
             transactionsDtoList=getInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
@@ -336,7 +335,7 @@ public class MapperHelper {
                 .DateOfBirth(dob)
                 .age(postInputRequestDto.getAge())
                 .email(postInputRequestDto.getEmail())
-                .password(postInputRequestDto.getPassword())
+                //.password(postInputRequestDto.getPassword())
                 .phoneNumber(postInputRequestDto.getPhoneNumber())
                 .adharNumber(postInputRequestDto.getAdharNumber())
                 .panNumber(postInputRequestDto.getPanNumber())
@@ -363,7 +362,7 @@ public class MapperHelper {
                 .DateOfBirth(dob)
                 .age(deleteInputRequestDto.getAge())
                 .email(deleteInputRequestDto.getEmail())
-                .password(deleteInputRequestDto.getPassword())
+                //.password(deleteInputRequestDto.getPassword())
                 .phoneNumber(deleteInputRequestDto.getPhoneNumber())
                 .adharNumber(deleteInputRequestDto.getAdharNumber())
                 .panNumber(deleteInputRequestDto.getPanNumber())
@@ -389,7 +388,7 @@ public class MapperHelper {
                 .DateOfBirth(dob)
                 .age(putInputRequestDto.getAge())
                 .email(putInputRequestDto.getEmail())
-                .password(putInputRequestDto.getPassword())
+                //.password(putInputRequestDto.getPassword())
                 .phoneNumber(putInputRequestDto.getPhoneNumber())
                 .adharNumber(putInputRequestDto.getAdharNumber())
                 .panNumber(putInputRequestDto.getPanNumber())
@@ -415,7 +414,7 @@ public class MapperHelper {
                 .customerName(getInputRequestDto.getName())
                 .DateOfBirth(dob)
                 .age(getInputRequestDto.getAge())
-                .password(getInputRequestDto.getPassword())
+                //.password(getInputRequestDto.getPassword())
                 .email(getInputRequestDto.getEmail())
                 .phoneNumber(getInputRequestDto.getPhoneNumber())
                 .adharNumber(getInputRequestDto.getAdharNumber())
@@ -439,8 +438,8 @@ public class MapperHelper {
         return Customer.builder()
                 .name(postInputRequestDto.getName())
                 .DateOfBirth(dob)
-                .password(postInputRequestDto.getPassword())
                 .email(postInputRequestDto.getEmail())
+                .password(postInputRequestDto.getPassword())
                 .phoneNumber(postInputRequestDto.getPhoneNumber())
                 .adharNumber(postInputRequestDto.getAdharNumber())
                 .panNumber(postInputRequestDto.getPanNumber())
@@ -568,11 +567,11 @@ public class MapperHelper {
     public static PostInputRequestDto mapToinputDto(Customer customer, Accounts accounts) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(accounts.getListOfBeneficiary()!=null && accounts.getListOfBeneficiary().size()>0){
+        if(null!=accounts.getListOfBeneficiary() && accounts.getListOfBeneficiary().size()>0){
             beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
-        if(accounts.getListOfTransactions()!=null && accounts.getListOfTransactions().size()>0){
+        if(null!=accounts.getListOfTransactions() && accounts.getListOfTransactions().size()>0){
             transactionsDtoList=accounts.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
