@@ -7,8 +7,10 @@ import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.CustomerException;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+
 
 public interface IAccountsService {
     OutputDto accountSetUp(PostInputRequestDto postInputRequestDto);

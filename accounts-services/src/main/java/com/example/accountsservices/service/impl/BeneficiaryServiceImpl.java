@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
-@Service
+@Service("beneficiaryServicePrimary")
 public class BeneficiaryServiceImpl extends AbstractAccountsService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final AccountsRepository accountsRepository;

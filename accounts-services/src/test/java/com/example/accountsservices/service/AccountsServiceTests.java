@@ -16,17 +16,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -35,8 +36,13 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AccountsServiceTests {
+    @Qualifier("accountsServicePrimary")
     @Autowired
-    private AccountsServiceImpl accountsService;
+    private IAccountsService accountsService;
+
+    @Qualifier("fileServicePrimary")
+    @Autowired
+    private IFileService fileService;
 
     @MockBean
     private CustomerRepository customerRepository;
@@ -47,7 +53,7 @@ public class AccountsServiceTests {
     Customer customer;
     Accounts accounts;
 
-    private final int MAX_PERMISSIBLE_ACCOUNTS=5;
+    private final int MAX_PERMISSIBLE_ACCOUNTS = 5;
 
     @BeforeEach
     public void setUp() {
@@ -72,6 +78,7 @@ public class AccountsServiceTests {
                 .age(25)
                 .name("phoenix")
                 .email("phoenix@gmail.com")
+                .phoneNumber("+91-9876543217")
                 .address("address")
                 .adharNumber("adhar")
                 .drivingLicense("driving")
@@ -82,9 +89,7 @@ public class AccountsServiceTests {
                 .voterId("voter")
                 .accounts(Collections.singletonList(accounts))
                 .build();
-
         accounts.setCustomer(customer);
-
     }
 
 
@@ -117,18 +122,19 @@ public class AccountsServiceTests {
                 .build();
         OutputDto response = accountsService.accountSetUp(postInputRequestDto);
 
-        assertEquals("phoenix@gmail.com", response.getCustomer().getEmail());
-        assertEquals("passport", response.getCustomer().getPassportNumber());
-        assertEquals("address", response.getCustomer().getAddress());
-        assertEquals("adhar", response.getCustomer().getAdharNumber());
-        assertEquals("voter", response.getCustomer().getVoterId());
-        assertEquals("driving", response.getCustomer().getDrivingLicense());
-        assertEquals("pan", response.getCustomer().getPanNumber());
-        assertEquals(25, response.getCustomer().getAge());
-        assertEquals(LocalDate.of(1997, 12, 01), response.getCustomer().getDateOfBirth());
-        assertEquals(60000L, response.getAccounts().getBalance());
-        assertEquals(25000L, response.getAccounts().getTransferLimitPerDay());
-        assertEquals(750, response.getAccounts().getCreditScore());
+        assertEquals("phoenix@gmail.com", response.getCustomer().getEmail(),"Customer Email should have matched");
+        assertEquals("passport", response.getCustomer().getPassportNumber(),"Customer Passport should have matched");
+        assertEquals("address", response.getCustomer().getAddress(),"Customer address should have matched");
+        assertEquals("adhar", response.getCustomer().getAdharNumber(),"Customer adhar should have matched");
+        assertEquals("voter", response.getCustomer().getVoterId(),"Customer voter should have matched");
+        assertEquals("driving", response.getCustomer().getDrivingLicense(),"Customer driving should have matched");
+        assertEquals("pan", response.getCustomer().getPanNumber(),"Customer pan should have matched");
+        assertEquals(25, response.getCustomer().getAge(),"Customer age should have matched");
+        assertEquals(LocalDate.of(1997, 12, 01), response.getCustomer().getDateOfBirth(),
+                "Customer dob should have matched");
+        assertEquals(60000L, response.getAccounts().getBalance(),"Customer balance should have matched");
+        assertEquals(25000L, response.getAccounts().getTransferLimitPerDay(),"Customer transferLimit should have matched");
+        assertEquals(750, response.getAccounts().getCreditScore(),"Customer credit score should have matched");
     }
 
     @Test
@@ -161,9 +167,9 @@ public class AccountsServiceTests {
                 .homeBranch(Accounts.Branch.CHENNAI)
                 .build();
         OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
-        assertEquals(850, response.getAccounts().getCreditScore());
-        assertEquals(90000L, response.getAccounts().getBalance());
-        assertEquals(Accounts.Branch.CHENNAI, response.getAccounts().getHomeBranch());
+        assertEquals(850, response.getAccounts().getCreditScore(),"Account CreditScore should have matched");
+        assertEquals(90000L, response.getAccounts().getBalance(),"Account Balance should have matched");
+        assertEquals(Accounts.Branch.CHENNAI, response.getAccounts().getHomeBranch(),"Account Branch should have matched");
     }
 
     @Test
@@ -171,8 +177,8 @@ public class AccountsServiceTests {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
 
-        List<Accounts> accountsList= new ArrayList<>();
-        for(int i=0;i<MAX_PERMISSIBLE_ACCOUNTS;i++){
+        List<Accounts> accountsList = new ArrayList<>();
+        for (int i = 0; i < MAX_PERMISSIBLE_ACCOUNTS; i++) {
             accountsList.add(new Accounts());
         }
         customer.setAccounts(accountsList);
@@ -182,11 +188,12 @@ public class AccountsServiceTests {
                 .updateRequest(AccountsDto.UpdateRequest.ADD_ACCOUNT)
                 .homeBranch(Accounts.Branch.CHENNAI)
                 .build();
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(putInputRequestDto);
-        });
+        },"AccountsException should have been thrown");
 
     }
+
     @Test
     public void AddAccountFailedForInvalidCustomerIdTest() throws IOException {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
@@ -202,7 +209,7 @@ public class AccountsServiceTests {
         assertThrows(AccountsException.class,
                 () -> {
                     accountsService.putRequestExecutor(putInputRequestDto);
-                });
+                },"AccountsException should have been thrown");
     }
 
     @Test
@@ -227,8 +234,8 @@ public class AccountsServiceTests {
         when(accountsRepository.save(any())).thenReturn(savedAccount);
         OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
 
-        assertEquals(Accounts.Branch.BANGALORE, response.getAccounts().getHomeBranch());
-        assertEquals(newBranchCode, response.getAccounts().getBranchCode());
+        assertEquals(Accounts.Branch.BANGALORE, response.getAccounts().getHomeBranch(),"Accounts Branch should have matched");
+        assertEquals(newBranchCode, response.getAccounts().getBranchCode(),"Account Branch COde should have matched");
     }
 
     @Test
@@ -245,7 +252,7 @@ public class AccountsServiceTests {
 
         assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(putInputRequestDto);
-        });
+        },"AccountsException should have been thrown");
     }
 
     @Test
@@ -255,7 +262,7 @@ public class AccountsServiceTests {
         assertThrows(CustomerException.class,
                 () -> {
                     accountsService.putRequestExecutor(putInputRequestDto);
-                });
+                },"Customer Exception not being thrown");
     }
 
     @Test
@@ -265,6 +272,63 @@ public class AccountsServiceTests {
         assertThrows(AccountsException.class,
                 () -> {
                     accountsService.putRequestExecutor(putInputRequestDto);
-                });
+                },"AccountsException should have been thrown");
+    }
+
+    @Test
+    public void updateCustomerDataTest() throws IOException {
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+
+        Customer updatedCustomer= Customer.builder()
+                .customerId(1L)
+                .name("Updated Name")
+                .email("updated@gmail.com")
+                .phoneNumber("91-9345678912")
+                .adharNumber("1234-5678-9034")
+                .panNumber("GMDPD1234H")
+                .voterId("vtdindeqpfc")
+                .address("updated address")
+                .drivingLicense("HR-0619441199191")
+                .passportNumber("U6325787")
+                .DateOfBirth(LocalDate.of(2000, 01, 02)).build();
+
+        when(customerRepository.save(any())).thenReturn(updatedCustomer);
+        Sort sort = Sort.by("name").ascending();
+        Pageable pageable = PageRequest.of(1, 2, sort);
+        List<Accounts> accountsList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) accountsList.add(new Accounts());
+        Page<Accounts> allPagedAccounts = new PageImpl<>(accountsList);
+        when(accountsRepository.findAllByCustomer_CustomerId(anyLong(),any(Pageable.class))).thenReturn(Optional.of(allPagedAccounts));
+
+        PutInputRequestDto request = PutInputRequestDto.builder()
+                .customerId(1L)
+                .updateRequest(AccountsDto.UpdateRequest.UPDATE_CUSTOMER_DETAILS)
+                .name("Updated Name")
+                .email("updated@gmail.com")
+                .phoneNumber("91-9345678912")
+                .adharNumber("1234-5678-9034")
+                .panNumber("GMDPD1234H")
+                .voterId("vtdindeqpfc")
+                .address("updated address")
+                .drivingLicense("HR-0619441199191")
+                .passportNumber("U6325787")
+                .dateOfBirthInYYYYMMDD(String.valueOf(LocalDate.of(2000, 01, 02)))
+                .build();
+
+        OutputDto response = accountsService.putRequestExecutor(request);
+        assertNotNull(response.getCustomer(),"Customer should not be null");
+        assertEquals(response.getCustomer().getEmail(),request.getEmail(),"Customer Email should have updated");
+        assertEquals(response.getCustomer().getCustomerName(),request.getName(),"Customer Name should have updated");
+        assertEquals(response.getCustomer().getPhoneNumber(),request.getPhoneNumber(),"Customer Phone Number should have updated");
+        assertEquals(response.getCustomer().getAdharNumber(),request.getAdharNumber(),"Customer Adhar Number should have updated");
+        assertEquals(response.getCustomer().getPanNumber(),request.getPanNumber(),"Customer Pan Number should have updated");
+        assertEquals(response.getCustomer().getVoterId(),request.getVoterId(),"Customer Voter Id should have updated");
+        assertEquals(response.getCustomer().getAddress(),request.getAddress(),"Customer Address should have updated");
+        assertEquals(response.getCustomer().getDrivingLicense(),request.getDrivingLicense(),"Customer DrivingLicense should have updated");
+    }
+
+    @Test
+    public void uploadProfileImageTest(){
+
     }
 }

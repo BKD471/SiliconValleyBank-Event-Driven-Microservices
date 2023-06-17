@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 
@@ -47,7 +48,7 @@ import static com.example.accountsservices.model.Accounts.AccountStatus;
  * @specializedMethods None
  */
 
-@Service
+@Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomerRepository customerRepository;

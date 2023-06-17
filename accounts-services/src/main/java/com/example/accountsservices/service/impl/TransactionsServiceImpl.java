@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 
-@Service
+@Service("transactionsServicePrimary")
 public class TransactionsServiceImpl extends AbstractAccountsService {
     private final Transactions.TransactionType CREDIT = Transactions.TransactionType.CREDIT;
     private final Transactions.TransactionType DEBIT = Transactions.TransactionType.DEBIT;
