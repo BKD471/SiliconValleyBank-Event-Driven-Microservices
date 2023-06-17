@@ -376,10 +376,10 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     private void unCloseAccount(Accounts account) throws AccountsException {
-        if (updateValidator(account, mapToAccountsDto(account), null, RE_OPEN_ACCOUNT))
+        if (updateValidator(account, mapToAccountsDto(account), null, RE_OPEN_ACCOUNT)) {
+            account.setAccountStatus(STATUS_OPEN);
             accountsRepository.save(account);
-        account.setAccountStatus(STATUS_OPEN);
-        accountsRepository.save(account);
+        }
     }
 
     private void deleteAccount(Long accountNumber) throws AccountsException {

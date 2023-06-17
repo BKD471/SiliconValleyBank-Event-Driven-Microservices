@@ -1,6 +1,7 @@
 package com.example.accountsservices.service;
 
 import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
@@ -358,5 +359,79 @@ public class AccountsServiceTests {
         assertEquals(customerWithUploadedImage.getImageName()+".png",response.getCustomer().getImageName(),
                 "Image should have been uploaded");
        verify(customerRepository,times(1)).save(any());
+    }
+
+    @Test
+    public void blockAccountTest() throws AccountsException, IOException {
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        Accounts blockedAccnt=Accounts.builder()
+                .accountNumber(1L)
+                .accountStatus(Accounts.AccountStatus.BLOCKED)
+                .build();
+        when(accountsRepository.save(any())).thenReturn(blockedAccnt);
+
+        PutInputRequestDto request= PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .updateRequest(AccountsDto.UpdateRequest.BLOCK_ACC)
+                .build();
+
+        accountsService.putRequestExecutor(request);
+        verify(accountsRepository,times(1)).save(accounts);
+    }
+
+    @Test
+    public void closeAccountTest() throws AccountsException, IOException {
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        Accounts closedAccount=Accounts.builder()
+                .accountNumber(1L)
+                .accountStatus(Accounts.AccountStatus.CLOSED)
+                .build();
+        when(accountsRepository.save(any())).thenReturn(closedAccount);
+
+        PutInputRequestDto request= PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .updateRequest(AccountsDto.UpdateRequest.CLOSE_ACC)
+                .build();
+
+        accountsService.putRequestExecutor(request);
+        verify(accountsRepository,times(1)).save(accounts);
+    }
+
+    @Test
+    public void reOpenClosedAccountTest() throws AccountsException, IOException {
+
+        Accounts openedAccount=Accounts.builder()
+                .accountNumber(1L)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .build();
+        Accounts closedAccount=Accounts.builder()
+                .accountNumber(1L)
+                .accountStatus(Accounts.AccountStatus.CLOSED)
+                .build();
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(closedAccount));
+        when(accountsRepository.save(any())).thenReturn(openedAccount);
+
+        PutInputRequestDto request= PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .updateRequest(AccountsDto.UpdateRequest.RE_OPEN_ACC)
+                .accountStatus(Accounts.AccountStatus.CLOSED)
+                .build();
+
+        accountsService.putRequestExecutor(request);
+        verify(accountsRepository,times(1)).save(closedAccount);
+    }
+
+    @Test
+    public void deleteAccountTest() throws AccountsException, IOException {
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        DeleteInputRequestDto request= DeleteInputRequestDto.builder()
+                .accountNumber(1L)
+                .updateRequest(AccountsDto.UpdateRequest.DELETE_ACC)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .build();
+
+        accountsService.deleteRequestExecutor(request);
+        verify(accountsRepository,times(1)).deleteByAccountNumber(1L);
     }
 }
