@@ -5,6 +5,7 @@ import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
+import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
@@ -22,8 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,6 +46,8 @@ public class AccountsServiceTests {
 
     Customer customer;
     Accounts accounts;
+
+    private final int MAX_PERMISSIBLE_ACCOUNTS=5;
 
     @BeforeEach
     public void setUp() {
@@ -87,7 +89,7 @@ public class AccountsServiceTests {
 
 
     @Test
-    public void testCreateAccount() {
+    public void createAccountTest() {
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         when(customerRepository.save(any())).thenReturn(customer);
@@ -130,7 +132,7 @@ public class AccountsServiceTests {
     }
 
     @Test
-    public void testAddAccount() throws IOException {
+    public void addAccountTest() throws IOException {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
@@ -162,6 +164,45 @@ public class AccountsServiceTests {
         assertEquals(850, response.getAccounts().getCreditScore());
         assertEquals(90000L, response.getAccounts().getBalance());
         assertEquals(Accounts.Branch.CHENNAI, response.getAccounts().getHomeBranch());
+    }
+
+    @Test
+    public void addAccountValidationForMaxPermissibleAccountTest() throws IOException {
+        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+
+        List<Accounts> accountsList= new ArrayList<>();
+        for(int i=0;i<MAX_PERMISSIBLE_ACCOUNTS;i++){
+            accountsList.add(new Accounts());
+        }
+        customer.setAccounts(accountsList);
+        PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
+                .customerId(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .updateRequest(AccountsDto.UpdateRequest.ADD_ACCOUNT)
+                .homeBranch(Accounts.Branch.CHENNAI)
+                .build();
+        assertThrows(AccountsException.class,()->{
+            accountsService.putRequestExecutor(putInputRequestDto);
+        });
+
+    }
+    @Test
+    public void AddAccountFailedForInvalidCustomerIdTest() throws IOException {
+        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer)).thenReturn(Optional.empty());
+
+        PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
+                .customerId(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .updateRequest(AccountsDto.UpdateRequest.ADD_ACCOUNT)
+                .homeBranch(Accounts.Branch.CHENNAI)
+                .build();
+        assertThrows(AccountsException.class,
+                () -> {
+                    accountsService.putRequestExecutor(putInputRequestDto);
+                });
     }
 
     @Test
@@ -205,5 +246,25 @@ public class AccountsServiceTests {
         assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(putInputRequestDto);
         });
+    }
+
+    @Test
+    public void invalidCustomerIdFailedTest() throws IOException {
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
+        PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder().customerId(1L).build();
+        assertThrows(CustomerException.class,
+                () -> {
+                    accountsService.putRequestExecutor(putInputRequestDto);
+                });
+    }
+
+    @Test
+    public void invalidAccountNumberFailedTest() throws IOException {
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.empty());
+        PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder().accountNumber(47L).build();
+        assertThrows(AccountsException.class,
+                () -> {
+                    accountsService.putRequestExecutor(putInputRequestDto);
+                });
     }
 }

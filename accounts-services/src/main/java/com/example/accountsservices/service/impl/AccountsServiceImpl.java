@@ -255,9 +255,10 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case ADD_ACC -> {
                 location = "Inside ADD_ACC";
+                final int MAX_PERMISSIBLE_ACCOUNT=5;
                 //prevent a customer to create more than 10 accounts
                 Customer customer = accounts.getCustomer();
-                if (customer.getAccounts().size() >= 7) throw new AccountsException(AccountsException.class,
+                if (customer.getAccounts().size() >= MAX_PERMISSIBLE_ACCOUNT) throw new AccountsException(AccountsException.class,
                         "You can;t have more than 10 accounts",
                         String.format("%s of %s", location, methodName));
             }
