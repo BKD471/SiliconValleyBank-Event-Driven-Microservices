@@ -12,17 +12,17 @@ import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.ResponseException;
 import com.example.accountsservices.service.IBeneficiaryService;
-import com.example.accountsservices.service.impl.BeneficiaryServiceImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class BeneficiaryControllerImpl extends AbstractParentController implements IBeneficiaryController{
-    private  final IBeneficiaryService beneficiaryService;
+public class BeneficiaryControllerImpl extends AbstractParentController implements IBeneficiaryController {
+    private final IBeneficiaryService beneficiaryService;
 
-    BeneficiaryControllerImpl(BeneficiaryServiceImpl beneficiaryService){
-        this.beneficiaryService=beneficiaryService;
+    BeneficiaryControllerImpl(@Qualifier("beneficiaryServicePrimary") IBeneficiaryService beneficiaryService) {
+        this.beneficiaryService = beneficiaryService;
     }
 
     /**
@@ -34,8 +34,8 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
      */
     @Override
     public ResponseEntity<OutputDto> getRequestBenForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-        OutputDto responseBody=beneficiaryService.getRequestBenExecutor(getInputRequestDto);
-        return new ResponseEntity<>(responseBody,HttpStatus.OK);
+        OutputDto responseBody = beneficiaryService.getRequestBenExecutor(getInputRequestDto);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
     /**
@@ -47,8 +47,8 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
      */
     @Override
     public ResponseEntity<OutputDto> postRequestBenForChange(PostInputRequestDto postInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-        OutputDto responseBody=beneficiaryService.postRequestBenExecutor(postInputRequestDto);
-        return new ResponseEntity<>(responseBody,HttpStatus.CREATED);
+        OutputDto responseBody = beneficiaryService.postRequestBenExecutor(postInputRequestDto);
+        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
     /**
@@ -60,8 +60,8 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
      */
     @Override
     public ResponseEntity<OutputDto> putRequestBenForChange(PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-        OutputDto responseBody=beneficiaryService.putRequestBenExecutor(putInputRequestDto);
-        return  new ResponseEntity<>(responseBody,HttpStatus.ACCEPTED);
+        OutputDto responseBody = beneficiaryService.putRequestBenExecutor(putInputRequestDto);
+        return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
     }
 
     /**
@@ -73,7 +73,7 @@ public class BeneficiaryControllerImpl extends AbstractParentController implemen
      */
     @Override
     public ResponseEntity<OutputDto> deleteRequestBenForChange(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-         OutputDto responseBody=beneficiaryService.deleteRequestBenExecutor(deleteInputRequestDto);
-         return new ResponseEntity<>(responseBody,HttpStatus.ACCEPTED);
+        OutputDto responseBody = beneficiaryService.deleteRequestBenExecutor(deleteInputRequestDto);
+        return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
     }
 }

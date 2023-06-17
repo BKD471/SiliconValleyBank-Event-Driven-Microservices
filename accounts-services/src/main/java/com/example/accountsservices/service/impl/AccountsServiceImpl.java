@@ -15,7 +15,9 @@ import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.service.IFileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,8 +53,10 @@ import static com.example.accountsservices.model.Accounts.AccountStatus;
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
+
     private final CustomerRepository customerRepository;
-    private final FIleServiceImpl fIleService;
+
+    private final IFileService fIleService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -64,7 +68,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     private final String UPDATE = "UPDATE";
 
     @Value("${customer.profile.images.path}")
-    private String IMAGE_PATH;
+    private  String IMAGE_PATH;
 
     private enum ValidateType {
         UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH,
@@ -88,7 +92,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType NA
      */
     public AccountsServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository,
-                               FIleServiceImpl fIleService) {
+                               @Qualifier("fileServicePrimary") IFileService fIleService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
@@ -282,7 +286,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                         accountsDto, String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
-                Accounts.AccountStatus status = accounts.getAccountStatus();
+                AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED ->
                             throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), location);
@@ -294,7 +298,7 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 }
             }
             case RE_OPEN_ACCOUNT -> {
-                Accounts.AccountStatus status = accounts.getAccountStatus();
+                AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED -> {
                         return true;

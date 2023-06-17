@@ -15,8 +15,6 @@ import java.util.UUID;
 
 @Service("fileServicePrimary")
 public class FIleServiceImpl extends AbstractAccountsService {
-
-
     protected FIleServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
     }
@@ -24,7 +22,6 @@ public class FIleServiceImpl extends AbstractAccountsService {
     @Override
     public String uploadFile(MultipartFile file, String path) throws ResponseException, IOException {
         String methodName="uploadFile(MultipartFile,String) in FileServiceImpl";
-
 
         String originalFileName = file.getOriginalFilename();
         String fileName = UUID.randomUUID().toString();
@@ -48,7 +45,6 @@ public class FIleServiceImpl extends AbstractAccountsService {
             throw  new ResponseException(ResponseException.class,String.format("%s type not supported yet",extension),methodName);
         }
     }
-
 
     @Override
     public InputStream getResource(String path, String name) throws FileNotFoundException {

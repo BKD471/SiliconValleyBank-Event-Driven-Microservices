@@ -11,16 +11,17 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
-import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -54,6 +55,9 @@ public class AccountsServiceTests {
     Accounts accounts;
 
     private final int MAX_PERMISSIBLE_ACCOUNTS = 5;
+
+    @Value("${customer.profile.images.path}")
+    private String IMAGE_PATH;
 
     @BeforeEach
     public void setUp() {
@@ -328,7 +332,31 @@ public class AccountsServiceTests {
     }
 
     @Test
-    public void uploadProfileImageTest(){
+    public void uploadProfileImageTest() throws IOException{
+        UUID imageId = UUID.randomUUID();
+        mockStatic(UUID.class);
+        when(UUID.randomUUID()).thenReturn(imageId);
 
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+        Customer customerWithUploadedImage=Customer.builder()
+                .customerId(1L)
+                .imageName(imageId.toString())
+                .build();
+
+        when(customerRepository.save(any())).thenReturn(customerWithUploadedImage);
+
+
+        MockMultipartFile imgfile =
+                new MockMultipartFile("data", "uploadedfile.png", "text/plain", "some kml".getBytes());
+        PutInputRequestDto request= PutInputRequestDto.builder()
+                .customerId(1L)
+                .updateRequest(AccountsDto.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
+                .customerImage(imgfile)
+                .build();
+
+        OutputDto response=accountsService.putRequestExecutor(request);
+        assertEquals(customerWithUploadedImage.getImageName()+".png",response.getCustomer().getImageName(),
+                "Image should have been uploaded");
+       verify(customerRepository,times(1)).save(any());
     }
 }

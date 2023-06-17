@@ -14,9 +14,9 @@ import com.example.accountsservices.exception.ResponseException;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.IAccountsService;
-import com.example.accountsservices.service.impl.AccountsServiceImpl;
-import com.example.accountsservices.service.impl.FIleServiceImpl;
+import com.example.accountsservices.service.IFileService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,14 +33,14 @@ import java.util.Optional;
 public class AccountsControllerImpl extends AbstractParentController implements IAccountsController {
     private final IAccountsService accountsService;
     private final CustomerRepository customerRepository;
-    private final FIleServiceImpl fIleService;
+    private final IFileService fIleService;
 
     @Value("${customer.profile.images.path}")
     private String IMAGE_PATH;
 
-    AccountsControllerImpl(AccountsServiceImpl accountsService,
+    AccountsControllerImpl(@Qualifier("accountsServicePrimary") IAccountsService accountsService,
                            CustomerRepository customerRepository,
-                           FIleServiceImpl fIleService) {
+                           @Qualifier("fileServicePrimary") IFileService fIleService) {
         this.accountsService = accountsService;
         this.customerRepository = customerRepository;
         this.fIleService = fIleService;
@@ -94,8 +94,8 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      */
     @Override
     public ResponseEntity<OutputDto> createAccount(PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
-        OutputDto responseBody=accountsService.accountSetUp(postInputDto);
-        return new ResponseEntity<>(responseBody,HttpStatus.CREATED);
+        OutputDto responseBody = accountsService.accountSetUp(postInputDto);
+        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
     /**

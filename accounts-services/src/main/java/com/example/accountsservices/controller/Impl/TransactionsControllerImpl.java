@@ -7,7 +7,7 @@ import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
 import com.example.accountsservices.service.ITransactionsService;
-import com.example.accountsservices.service.impl.TransactionsServiceImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 public class TransactionsControllerImpl extends AbstractParentController implements ITransactionsController {
     private final ITransactionsService transactionsService;
 
-    TransactionsControllerImpl(TransactionsServiceImpl transactionsService) {
+    TransactionsControllerImpl(@Qualifier("transactionsServicePrimary") ITransactionsService transactionsService) {
         this.transactionsService = transactionsService;
     }
 
