@@ -393,6 +393,7 @@ public class MapperHelper {
                 .adharNumber(putInputRequestDto.getAdharNumber())
                 .panNumber(putInputRequestDto.getPanNumber())
                 .voterId(putInputRequestDto.getVoterId())
+
                 .drivingLicense(putInputRequestDto.getDrivingLicense())
                 .passportNumber(putInputRequestDto.getPassportNumber())
                 .imageName(putInputRequestDto.getImageName())

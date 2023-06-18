@@ -20,8 +20,6 @@ public class Accounts extends Audit {
     @Column(nullable = false, unique = true, name = "accnt_num")
     private Long accountNumber;
 
-
-
     @Column(name = "cust_balnc")
     private Long balance;
 
