@@ -1,5 +1,6 @@
 package com.example.accountsservices.dto.inputDtos;
 
+import com.example.accountsservices.dto.AbstractParentDto;
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.dto.TransactionsDto;
@@ -22,7 +23,7 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostInputRequestDto {
+public class PostInputRequestDto extends AbstractParentDto {
     private Long customerId;
 
     @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long")

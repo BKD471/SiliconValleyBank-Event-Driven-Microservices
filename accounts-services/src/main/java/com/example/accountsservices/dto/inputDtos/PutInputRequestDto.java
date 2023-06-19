@@ -1,5 +1,6 @@
 package com.example.accountsservices.dto.inputDtos;
 
+import com.example.accountsservices.dto.AbstractParentDto;
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.model.Accounts;
@@ -18,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PutInputRequestDto {
+public class PutInputRequestDto extends AbstractParentDto {
     private Long customerId;
     private String name;
     private int age;

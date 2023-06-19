@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PageableResponseDto<T> {
+public class PageableResponseDto<T> extends  AbstractParentDto {
     private List<T> content;
     private int pageNumber;
     private int pageSize;

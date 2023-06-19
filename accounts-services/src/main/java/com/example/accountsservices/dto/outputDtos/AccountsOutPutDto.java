@@ -1,5 +1,6 @@
 package com.example.accountsservices.dto.outputDtos;
 
+import com.example.accountsservices.dto.AbstractParentDto;
 import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.model.Accounts;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountsOutPutDto {
+public class AccountsOutPutDto extends AbstractParentDto {
     private Long accountNumber;
     private Long balance;
     private Accounts.Branch homeBranch;

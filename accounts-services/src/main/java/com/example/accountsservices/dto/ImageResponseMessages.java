@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ImageResponseMessages {
+public class ImageResponseMessages extends  AbstractParentDto{
     private String imageName;
     private String message;
     private boolean success;

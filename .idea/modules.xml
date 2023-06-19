@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/accounts-services/accounts-services.iml" filepath="$PROJECT_DIR$/accounts-services/accounts-services.iml" />
       <module fileurl="file://$PROJECT_DIR$/card-services/card-services.iml" filepath="$PROJECT_DIR$/card-services/card-services.iml" />
       <module fileurl="file://$PROJECT_DIR$/loans-services/loans-services.iml" filepath="$PROJECT_DIR$/loans-services/loans-services.iml" />
     </modules>

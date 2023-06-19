@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerDto {
+public class CustomerDto extends AbstractParentDto {
     private Long customerId;
     private LocalDate DateOfBirth;
     private String customerName;
