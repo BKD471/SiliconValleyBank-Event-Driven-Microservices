@@ -61,9 +61,10 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
 
     private Beneficiary setBeneficiaryAgeFromDOB(Beneficiary beneficiary) {
         //initialize the age of beneficiaries
-        int dobYear = beneficiary.getBenDate_Of_Birth().getYear();
-        int now = LocalDate.now().getYear();
-        beneficiary.setBenAge(now - dobYear);
+        LocalDate dob = beneficiary.getBenDate_Of_Birth();
+        LocalDate now=LocalDate.now();
+        int age=Period.between(dob,now).getYears();
+        beneficiary.setBenAge(age);
         return beneficiary;
     }
 
