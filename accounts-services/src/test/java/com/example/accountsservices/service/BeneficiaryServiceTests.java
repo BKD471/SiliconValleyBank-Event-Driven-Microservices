@@ -1,8 +1,10 @@
 package com.example.accountsservices.service;
 
 import com.example.accountsservices.dto.BeneficiaryDto;
+import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
+import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
@@ -22,12 +24,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -146,5 +145,74 @@ public class BeneficiaryServiceTests {
         assertEquals(bankCOde,response.getBeneficiary().getBankCode());
         assertEquals(age,response.getBeneficiary().getBenAge());
         assertEquals(request.getEmail(),response.getBeneficiary().getBeneficiaryEmail());
+    }
+
+    @Test
+    public void getBeneficiaryByIdTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        GetInputRequestDto request= GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .beneficiaryId(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
+                .build();
+
+        OutputDto response=beneficiaryService.getRequestBenExecutor(request);
+        assertNotNull(response.getBeneficiary());
+        assertEquals(beneficiary.getBeneficiaryEmail(),
+                response.getBeneficiary().getBeneficiaryEmail());
+        assertEquals(beneficiary.getBeneficiaryName(),
+                response.getBeneficiary().getBeneficiaryName());
+    }
+
+    @Test
+    public void getBeneficiaryByIdFailedForInvalidBenIdTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        GetInputRequestDto request= GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .beneficiaryId(69L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.getRequestBenExecutor(request);
+        },"Should have thrown Beneficiary Exceptions");
+    }
+
+    @Test
+    public void noBeneficiaryAccountsForAnAccountTest(){
+        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.BANGALORE);
+        List<Beneficiary> accountsList=new ArrayList<>();
+
+        Accounts accountWithNoBeneficiary=Accounts.builder()
+                .accountNumber(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .anyActiveLoans(false)
+                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .balance(60000L)
+                .branchCode(branchCode)
+                .totalOutStandingAmountPayableToBank(500000L)
+                .transferLimitPerDay(25000L)
+                .totLoanIssuedSoFar(450000L)
+                .listOfBeneficiary(accountsList)
+                .creditScore(750)
+                .homeBranch(Accounts.Branch.BANGALORE).build();
+
+
+
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accountWithNoBeneficiary));
+
+        GetInputRequestDto request= GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .beneficiaryId(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
+                .build();
+
+        assertThrows(BeneficiaryException.class ,()->{
+            beneficiaryService.getRequestBenExecutor(request);
+        });
     }
 }
