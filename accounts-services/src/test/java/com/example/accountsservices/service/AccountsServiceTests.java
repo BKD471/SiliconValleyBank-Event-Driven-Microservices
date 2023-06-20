@@ -582,7 +582,7 @@ public class AccountsServiceTests {
 
     @Test
     @DisplayName("Invalid request type for get")
-    public  void invalidGetRequestType() throws IOException {
+    public  void invalidGetRequestType() throws IOException,AccountsException {
         GetInputRequestDto request= GetInputRequestDto.builder().updateRequest(AccountsDto.UpdateRequest.ADD_ACCOUNT).build();
         assertThrows(AccountsException.class,()->{
             accountsService.getRequestExecutor(request);

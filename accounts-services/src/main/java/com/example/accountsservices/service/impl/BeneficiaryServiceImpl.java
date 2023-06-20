@@ -241,7 +241,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
                 filter(ben -> ben.getBeneficiaryId().equals(benId)).findFirst();
     }
 
-    private PageableResponseDto<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount,Pageable pageable) throws AccountsException {
+    private PageableResponseDto<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount,Pageable pageable) throws AccountsException, BeneficiaryException {
         String methodName = "getAllAccountsByCustomerId(Account,Pageable) in BeneficiaryServiceImpl";
         Optional<Page<Beneficiary>> allPagedBeneficiary = beneficiaryRepository.findAllByAccounts_AccountNumber(fetchedAccount.getAccountNumber(), pageable);
         if (allPagedBeneficiary.isEmpty())
@@ -371,7 +371,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         beneficiaryRepository.deleteAllByAccounts_AccountNumber(fetchedAccounts.getAccountNumber());
     }
 
-    private PageableResponseDto<BeneficiaryDto> beneficiaryPagination(DIRECTION sortDir,String sortBy,int pageNumber,int pageSize,Accounts fetchedAccount) {
+    private PageableResponseDto<BeneficiaryDto> beneficiaryPagination(DIRECTION sortDir,String sortBy,int pageNumber,int pageSize,Accounts fetchedAccount) throws BadApiRequestException, BeneficiaryException, AccountsException {
         String methodName="beneficiaryPagination(DIRECTION,String,int,int,Accounts) in AccountsServiceImpl";
         Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -450,7 +450,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
     }
 
     @Override
-    public OutputDto getRequestBenExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, BeneficiaryException {
+    public OutputDto getRequestBenExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, BeneficiaryException, BadApiRequestException {
         String methodName = "getRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         BeneficiaryDto beneficiaryDto = mapGetRequestInputDtoToBenDto(getInputRequestDto);
 
