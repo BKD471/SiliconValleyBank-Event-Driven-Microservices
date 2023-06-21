@@ -57,8 +57,6 @@ public class AccountsServiceTests {
     Customer customer;
     Accounts accounts;
 
-    private final int MAX_PERMISSIBLE_ACCOUNTS = 5;
-
     @Value("${customer.profile.images.path}")
     private String IMAGE_PATH;
 
@@ -190,6 +188,7 @@ public class AccountsServiceTests {
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
 
         List<Accounts> accountsList = new ArrayList<>();
+        int MAX_PERMISSIBLE_ACCOUNTS = 5;
         for (int i = 0; i < MAX_PERMISSIBLE_ACCOUNTS; i++) {
             accountsList.add(new Accounts());
         }

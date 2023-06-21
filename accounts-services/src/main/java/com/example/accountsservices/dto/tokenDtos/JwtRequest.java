@@ -1,7 +1,6 @@
-package com.example.accountsservices.dto.token;
+package com.example.accountsservices.dto.tokenDtos;
 
 import lombok.*;
-import org.springframework.stereotype.Service;
 
 @Getter
 @Setter

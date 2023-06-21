@@ -1,8 +1,8 @@
 package com.example.accountsservices.controller.Impl;
 
 import com.example.accountsservices.dto.CustomerDto;
-import com.example.accountsservices.dto.token.JwtRequest;
-import com.example.accountsservices.dto.token.JwtResponse;
+import com.example.accountsservices.dto.tokenDtos.JwtRequest;
+import com.example.accountsservices.dto.tokenDtos.JwtResponse;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.helpers.JwtHelper;
 import org.modelmapper.ModelMapper;

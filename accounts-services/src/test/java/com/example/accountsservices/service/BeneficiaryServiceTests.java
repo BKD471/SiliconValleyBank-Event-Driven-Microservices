@@ -19,9 +19,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -53,7 +55,6 @@ public class BeneficiaryServiceTests {
     public void setUp() {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
 
-
         accounts = Accounts.builder()
                 .accountNumber(1L)
                 .accountType(Accounts.AccountType.SAVINGS)
@@ -84,8 +85,6 @@ public class BeneficiaryServiceTests {
                 .voterId("voter")
                 .build();
 
-
-
         beneficiary = Beneficiary.builder()
                 .beneficiaryId(1L)
                 .beneficiaryAccountNumber(1L)
@@ -109,6 +108,7 @@ public class BeneficiaryServiceTests {
 
         accounts.setCustomer(customer);
         accounts.setListOfBeneficiary(Arrays.asList(beneficiary));
+        customer.setAccounts(Arrays.asList(accounts));
     }
 
 
@@ -201,7 +201,6 @@ public class BeneficiaryServiceTests {
                 .homeBranch(Accounts.Branch.BANGALORE).build();
 
 
-
         when(accountsRepository.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accountWithNoBeneficiary));
 
@@ -214,5 +213,25 @@ public class BeneficiaryServiceTests {
         assertThrows(BeneficiaryException.class ,()->{
             beneficiaryService.getRequestBenExecutor(request);
         });
+    }
+
+    @Test
+    public  void getAllBeneficiariesByAccountNumberTest(){
+
+        List<Beneficiary> beneficiaryList=new ArrayList<>();
+        for(int i=0;i<2;i++) beneficiaryList.add(new Beneficiary());
+        Page<Beneficiary> allPagedBeneficiary=new PageImpl<>(beneficiaryList);
+        when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(),any(Pageable.class))).thenReturn(Optional.of(allPagedBeneficiary));
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+       GetInputRequestDto request= GetInputRequestDto.builder()
+               .accountNumber(1L)
+               .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+               .build();
+
+
+       OutputDto response=beneficiaryService.getRequestBenExecutor(request);
+       assertNotNull(response.getAccounts().getListOfBeneficiary());
+       assertEquals(1,response.getAccounts().getListOfBeneficiary().size());
     }
 }

@@ -1,4 +1,4 @@
-package com.example.accountsservices.dto.token;
+package com.example.accountsservices.dto.tokenDtos;
 
 import com.example.accountsservices.dto.CustomerDto;
 import lombok.*;

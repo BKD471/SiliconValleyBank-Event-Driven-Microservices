@@ -18,7 +18,6 @@ public class PagingHelper {
     private static final Set<String> setOfBeneficiaryFieldNames = new HashSet<>();
     public static final int DEFAULT_PAGE_SIZE = 5;
     public static final DIRECTION PAGE_SORT_DIRECTION_ASCENDING = DIRECTION.asc;
-    public static final DIRECTION PAGE_SORT_DIRECTION_DESCENDING = DIRECTION.desc;
 
     static {
         //fetching the attribs of Accounts
