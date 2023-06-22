@@ -262,6 +262,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         Beneficiary.BanksSupported newBenBank=newBeneficiaryData.getBenBank();
         String newBeneficiaryPhoneNumber=newBeneficiaryData.getBenPhoneNumber();
         String newBeneficiaryEmail=newBeneficiaryData.getBeneficiaryEmail();
+        String newBenDrivingLicense=newBeneficiaryData.getBenDrivingLicense();
 
         String oldBeneficiaryName = oldBeneficiaryData.getBeneficiaryName();
         Long oldBeneficiaryNumber = oldBeneficiaryData.getBeneficiaryAccountNumber();
@@ -274,6 +275,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         Beneficiary.BanksSupported oldBenBank=oldBeneficiaryData.getBenBank();
         String oldBeneficiaryPhoneNumber=oldBeneficiaryData.getBenPhoneNumber();
         String oldBeneficiaryEmail=oldBeneficiaryData.getBeneficiaryEmail();
+        String oldDrivingLicense=oldBeneficiaryData.getBenDrivingLicense();
 
         if (null != newBeneficiaryName && !newBeneficiaryName.equalsIgnoreCase(oldBeneficiaryName))
             oldBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
@@ -315,6 +317,10 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService {
         {
             oldBeneficiaryData.setBenBank(newBenBank);
             oldBeneficiaryData.setBankCode(getBankCode(newBenBank));
+        }
+
+        if(null!=newBenDrivingLicense && !newBenDrivingLicense.equalsIgnoreCase(oldDrivingLicense)){
+            oldBeneficiaryData.setBenDrivingLicense(newBenDrivingLicense);
         }
 
         return oldBeneficiaryData;

@@ -1,9 +1,12 @@
 package com.example.accountsservices.service;
 
 import com.example.accountsservices.dto.BeneficiaryDto;
+import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
+import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
+import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
@@ -31,16 +34,16 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest
 public class BeneficiaryServiceTests {
 
-   @Autowired
-   @Qualifier("beneficiaryServicePrimary")
-   private IBeneficiaryService beneficiaryService;
+    @Autowired
+    @Qualifier("beneficiaryServicePrimary")
+    private IBeneficiaryService beneficiaryService;
 
     @MockBean
     BeneficiaryRepository beneficiaryRepository;
@@ -50,6 +53,8 @@ public class BeneficiaryServiceTests {
     Beneficiary beneficiary;
     Accounts accounts;
     Customer customer;
+
+    private final int MAX_PERMISSIBLE_BENEFICIARIES=5;
 
     @BeforeEach
     public void setUp() {
@@ -101,29 +106,28 @@ public class BeneficiaryServiceTests {
                 .imageName("img1.png")
                 .BenDate_Of_Birth(LocalDate.of(1997, 12, 01))
                 .benVoterId("ben voter 1")
-                .benAge(25)
                 .relation(Beneficiary.RELATION.SON)
                 .accounts(accounts)
                 .build();
 
         accounts.setCustomer(customer);
-        accounts.setListOfBeneficiary(Arrays.asList(beneficiary));
-        customer.setAccounts(Arrays.asList(accounts));
+        accounts.setListOfBeneficiary(Collections.singletonList(beneficiary));
+        customer.setAccounts(Collections.singletonList(accounts));
     }
 
 
     @Test
-    public void addBeneficiaryTest(){
-        String bankCOde=CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.AXIS);
-        LocalDate dob=LocalDate.of(1997,12,01);
-        int age= Period.between(dob,LocalDate.now()).getYears();
+    public void addBeneficiaryTest() {
+        String bankCOde = CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.AXIS);
+        LocalDate dob = LocalDate.of(1997, 12, 01);
+        int age = Period.between(dob, LocalDate.now()).getYears();
 
 
         when(accountsRepository.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
         when(accountsRepository.save(any())).thenReturn(accounts);
 
-        PostInputRequestDto request= PostInputRequestDto.builder()
+        PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
                 .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
                 .name("ben 2")
@@ -141,23 +145,147 @@ public class BeneficiaryServiceTests {
                 .drivingLicense("driving-no-2")
                 .build();
 
-        OutputDto response=beneficiaryService.postRequestBenExecutor(request);
-        assertEquals(bankCOde,response.getBeneficiary().getBankCode());
-        assertEquals(age,response.getBeneficiary().getBenAge());
-        assertEquals(request.getEmail(),response.getBeneficiary().getBeneficiaryEmail());
+        OutputDto response = beneficiaryService.postRequestBenExecutor(request);
+        assertEquals(bankCOde, response.getBeneficiary().getBankCode());
+        assertEquals(age, response.getBeneficiary().getBenAge());
+        assertEquals(request.getEmail(), response.getBeneficiary().getBeneficiaryEmail());
     }
 
     @Test
-    public void getBeneficiaryByIdTest(){
+    public void addBeneficiaryFailedForExceedingBeneficiaryLimitTest() {
+        LocalDate dob = LocalDate.of(1997, 12, 01);
+
+        List<Beneficiary> beneficiaryList=new ArrayList<>();
+        for(int i=0;i<MAX_PERMISSIBLE_BENEFICIARIES;i++) beneficiaryList.add(new Beneficiary());
+        accounts.setListOfBeneficiary(beneficiaryList);
+
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+        when(accountsRepository.save(any())).thenReturn(accounts);
+
+        PostInputRequestDto request = PostInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .name("ben 2")
+                .email("ben2@gmail.com")
+                .beneficiaryAccountNumber(3L)
+                .bloodRelation(Beneficiary.RELATION.SON)
+                .dateOfBirthInYYYYMMDD(String.valueOf(dob))
+                .benBank(Beneficiary.BanksSupported.AXIS)
+                .adharNumber("1234-5678-8888")
+                .address("ben 456 street")
+                .phoneNumber("+91-987654321")
+                .panNumber("GMDPD9876K")
+                .passportNumber("passport-no-2")
+                .voterId("ben voter 2")
+                .drivingLicense("driving-no-2")
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.postRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void addBeneficiaryFailedForConflictingAdharNumberTest() {
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        PostInputRequestDto request = PostInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .adharNumber("1234-5678-9999")
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.postRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void addBeneficiaryFailedForConflictingAdharNumberWhenSamePersonIsAddingHimselfAsBeneficiaryTest() {
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        PostInputRequestDto request = PostInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .email("phoenix@gmail.com")
+                .adharNumber("1234-5678-9999")
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.postRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void addBeneficiaryFailedForConflictingRelationForFatherTest() {
+        beneficiary.setRelation(Beneficiary.RELATION.FATHER);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        PostInputRequestDto request = PostInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+
+                .bloodRelation(Beneficiary.RELATION.FATHER)
+                .adharNumber("1234-5678-1234")
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.postRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void addBeneficiaryFailedForConflictingRelationForMotherTest() {
+        beneficiary.setRelation(Beneficiary.RELATION.MOTHER);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        PostInputRequestDto request = PostInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .bloodRelation(Beneficiary.RELATION.MOTHER)
+                .adharNumber("1234-5678-1234")
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.postRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void addBeneficiaryFailedForConflictingRelationForSpouseTest() {
+        beneficiary.setRelation(Beneficiary.RELATION.SPOUSE);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        PostInputRequestDto request = PostInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .email("phoenix@gmail.com")
+                .bloodRelation(Beneficiary.RELATION.SPOUSE)
+                .adharNumber("1234-5678-9999")
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.postRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void getBeneficiaryByIdTest() {
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
-        GetInputRequestDto request= GetInputRequestDto.builder()
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
                 .beneficiaryId(1L)
                 .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
                 .build();
 
-        OutputDto response=beneficiaryService.getRequestBenExecutor(request);
+        OutputDto response = beneficiaryService.getRequestBenExecutor(request);
         assertNotNull(response.getBeneficiary());
         assertEquals(beneficiary.getBeneficiaryEmail(),
                 response.getBeneficiary().getBeneficiaryEmail());
@@ -166,26 +294,26 @@ public class BeneficiaryServiceTests {
     }
 
     @Test
-    public void getBeneficiaryByIdFailedForInvalidBenIdTest(){
+    public void getBeneficiaryByIdFailedForInvalidBenIdTest() {
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
-        GetInputRequestDto request= GetInputRequestDto.builder()
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
                 .beneficiaryId(69L)
                 .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
                 .build();
 
-        assertThrows(BeneficiaryException.class,()->{
+        assertThrows(BeneficiaryException.class, () -> {
             beneficiaryService.getRequestBenExecutor(request);
-        },"Should have thrown Beneficiary Exceptions");
+        }, "Should have thrown Beneficiary Exceptions");
     }
 
     @Test
-    public void noBeneficiaryAccountsForAnAccountTest(){
-        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.BANGALORE);
-        List<Beneficiary> accountsList=new ArrayList<>();
+    public void noBeneficiaryAccountsForAnAccountTest() {
+        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.BANGALORE);
+        List<Beneficiary> accountsList = new ArrayList<>();
 
-        Accounts accountWithNoBeneficiary=Accounts.builder()
+        Accounts accountWithNoBeneficiary = Accounts.builder()
                 .accountNumber(1L)
                 .accountType(Accounts.AccountType.SAVINGS)
                 .accountStatus(Accounts.AccountStatus.OPEN)
@@ -204,34 +332,280 @@ public class BeneficiaryServiceTests {
         when(accountsRepository.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accountWithNoBeneficiary));
 
-        GetInputRequestDto request= GetInputRequestDto.builder()
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
                 .beneficiaryId(1L)
                 .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
                 .build();
 
-        assertThrows(BeneficiaryException.class ,()->{
+        assertThrows(BeneficiaryException.class, () -> {
             beneficiaryService.getRequestBenExecutor(request);
         });
     }
 
     @Test
-    public  void getAllBeneficiariesByAccountNumberTest(){
+    public void getAllBeneficiariesByAccountNumberTest() {
 
-        List<Beneficiary> beneficiaryList=new ArrayList<>();
-        for(int i=0;i<2;i++) beneficiaryList.add(new Beneficiary());
-        Page<Beneficiary> allPagedBeneficiary=new PageImpl<>(beneficiaryList);
-        when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(),any(Pageable.class))).thenReturn(Optional.of(allPagedBeneficiary));
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
+        Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
+        when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class))).thenReturn(Optional.of(allPagedBeneficiary));
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
-       GetInputRequestDto request= GetInputRequestDto.builder()
-               .accountNumber(1L)
-               .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
-               .build();
+        GetInputRequestDto request = GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                .build();
 
 
-       OutputDto response=beneficiaryService.getRequestBenExecutor(request);
-       assertNotNull(response.getAccounts().getListOfBeneficiary());
-       assertEquals(1,response.getAccounts().getListOfBeneficiary().size());
+        OutputDto response = beneficiaryService.getRequestBenExecutor(request);
+        assertNotNull(response.getAccounts().getListOfBeneficiary());
+        assertEquals(1, response.getAccounts().getListOfBeneficiary().size());
+    }
+
+    @Test
+    public void getAllBeneficiariesByAccountNumberFailedFOrInvalidSortByField() {
+
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
+        Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
+        when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class))).thenReturn(Optional.of(allPagedBeneficiary));
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        GetInputRequestDto request = GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                .sortBy("INVALID FIELD")
+                .build();
+
+
+        assertThrows(BadApiRequestException.class, ()->{
+            beneficiaryService.getRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void getAllBeneficiariesByAccountNumberFailedFOrInvalidPageSize() {
+
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
+        Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
+        when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class))).thenReturn(Optional.of(allPagedBeneficiary));
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        GetInputRequestDto request = GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                .sortBy("INVALID FIELD")
+                .build();
+
+
+        assertThrows(BadApiRequestException.class, ()->{
+            beneficiaryService.getRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void noBeneficiariesPresentForAccountTest(){
+            List<Beneficiary> beneficiaryList = new ArrayList<>();
+            for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
+            Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
+            when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class))).thenReturn(Optional.empty());
+            when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+            GetInputRequestDto request = GetInputRequestDto.builder()
+                    .accountNumber(1L)
+                    .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                    .build();
+
+            assertThrows(BeneficiaryException.class ,()->{
+                beneficiaryService.getRequestBenExecutor(request);
+            });
+    }
+
+
+    @Test
+    public void updateBeneficiaryTest() {
+        String bankCode = CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.ICICI);
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        Beneficiary processedAccount = Beneficiary.builder()
+                .beneficiaryAccountNumber(3L)
+                .beneficiaryId(1L)
+                .beneficiaryName("Updated Beneficiary Name")
+                .beneficiaryEmail("UpdatedEmail@gmail.com")
+                .relation(Beneficiary.RELATION.DAUGHTER)
+                .BenDate_Of_Birth(LocalDate.of(1997, 12, 02))
+                .benBank(Beneficiary.BanksSupported.ICICI)
+                .benAdharNumber("9876-5432-1111")
+                .benPanNumber("GMDPD6969M")
+                .benPassportNumber("U6696969")
+                .benPhoneNumber("+91-1234567809")
+                .benVoterId("ZSG2069697")
+                .benDrivingLicense("HR-0619026969697")
+                .bankCode(bankCode)
+                .build();
+
+        when(beneficiaryRepository.save(any())).thenReturn(processedAccount);
+
+        PutInputRequestDto request = PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .beneficiaryId(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.UPDATE_BEN)
+                .beneficiaryName("Updated Beneficiary Name")
+                .beneficiaryAccountNumber(3L)
+                .beneficiaryEmail("UpdatedEmail@gmail.com")
+                .bloodRelation(Beneficiary.RELATION.DAUGHTER)
+                .ben_date_of_birthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 02)))
+                .benBank(Beneficiary.BanksSupported.ICICI)
+                .benAdharNumber("9876-5432-1111")
+                .benPanNumber("GMDPD6969M")
+                .benPassportNumber("U6696969")
+                .benPhoneNumber("+91-1234567809")
+                .benVoterId("ZSG2069697")
+                .benDrivingLicense("HR-0619026969697")
+                .build();
+
+        OutputDto response = beneficiaryService.putRequestBenExecutor(request);
+        assertEquals(request.getBeneficiaryId(), response.getBeneficiary().getBeneficiaryId());
+        assertEquals(request.getBeneficiaryAccountNumber(),response.getBeneficiary().getBeneficiaryAccountNumber());
+        assertEquals(request.getBeneficiaryEmail(), response.getBeneficiary().getBeneficiaryEmail());
+        assertEquals(request.getBeneficiaryName(), response.getBeneficiary().getBeneficiaryName());
+        assertEquals(request.getBloodRelation(), response.getBeneficiary().getRelation());
+        assertEquals(request.getBen_date_of_birthInYYYYMMDD()
+                , response.getBeneficiary().getBenDate_Of_Birth().toString());
+        assertEquals(request.getBenBank(), response.getBeneficiary().getBenBank());
+        assertEquals(request.getBenAdharNumber(), response.getBeneficiary().getBenAdharNumber());
+        assertEquals(request.getBenDrivingLicense(), response.getBeneficiary().getBenDrivingLicense());
+        assertEquals(request.getBenPanNumber(), response.getBeneficiary().getBenPanNumber());
+        assertEquals(request.getBenPassportNumber(), response.getBeneficiary().getBenPassportNumber());
+        assertEquals(request.getBenPhoneNumber(), response.getBeneficiary().getBenPhoneNumber());
+        assertEquals(request.getBenVoterId(), response.getBeneficiary().getBenVoterId());
+        assertEquals(request.getBenDrivingLicense(), response.getBeneficiary().getBenDrivingLicense());
+        assertEquals(bankCode, response.getBeneficiary().getBankCode());
+    }
+
+    @Test
+    public void updateBeneficiaryAccountFailedForInvalidIdTest() {
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+
+        PutInputRequestDto request = PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .beneficiaryId(69L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.UPDATE_BEN)
+                .beneficiaryName("Updated Beneficiary Name")
+                .beneficiaryAccountNumber(3L)
+                .beneficiaryEmail("UpdatedEmail@gmail.com")
+                .bloodRelation(Beneficiary.RELATION.DAUGHTER)
+                .ben_date_of_birthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 02)))
+                .benBank(Beneficiary.BanksSupported.ICICI)
+                .benAdharNumber("9876-5432-1111")
+                .benPanNumber("GMDPD6969M")
+                .benPassportNumber("U6696969")
+                .benPhoneNumber("+91-1234567809")
+                .benVoterId("ZSG2069697")
+                .benDrivingLicense("HR-0619026969697")
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.putRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void deleteBeneficiariesForAnAccount() {
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        DeleteInputRequestDto request = DeleteInputRequestDto.builder()
+                .accountNumber(1L)
+                .beneficiaryId(1L).benRequest(BeneficiaryDto.BenUpdateRequest.DELETE_BEN)
+                .build();
+
+        beneficiaryService.deleteRequestBenExecutor(request);
+        verify(beneficiaryRepository, times(1)).deleteByBeneficiaryId(anyLong());
+    }
+
+    @Test
+    public void deleteBeneficiariesForAnAccountFailedForInvalidBeneficiaryIdTest() {
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        DeleteInputRequestDto request = DeleteInputRequestDto.builder()
+                .accountNumber(1L)
+                .beneficiaryId(null).
+                benRequest(BeneficiaryDto.BenUpdateRequest.DELETE_BEN)
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.deleteRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public  void deleteAllBeneficiariesForAnAccount(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        DeleteInputRequestDto request= DeleteInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.DELETE_ALL_BEN)
+                .build();
+
+        beneficiaryService.deleteRequestBenExecutor(request);
+        verify(beneficiaryRepository,times(1)).deleteAllByAccounts_AccountNumber(anyLong());
+    }
+
+    @Test
+    public void invalidRequestForPostRequestFailedTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        PostInputRequestDto request= PostInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.postRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void invalidRequestForGetRequestFailedTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        GetInputRequestDto request= GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.getRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void invalidRequestForPutRequestFailedTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        PutInputRequestDto request= PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.DELETE_BEN)
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.putRequestBenExecutor(request);
+        });
+    }
+
+    @Test
+    public void invalidRequestForDeleteRequestFailedTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        DeleteInputRequestDto request= DeleteInputRequestDto.builder()
+                .accountNumber(1L)
+                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .build();
+
+        assertThrows(BeneficiaryException.class,()->{
+            beneficiaryService.deleteRequestBenExecutor(request);
+        });
     }
 }
