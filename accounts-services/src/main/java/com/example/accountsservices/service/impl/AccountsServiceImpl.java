@@ -16,6 +16,7 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.service.IFileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +49,7 @@ import static com.example.accountsservices.model.Accounts.AccountStatus;
  * updateAccountByCustomerIdAndAccountNumber,updateBeneficiaryDetails
  * @specializedMethods None
  */
-
+@Slf4j
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractAccountsService {
     private final AccountsRepository accountsRepository;
@@ -99,6 +100,9 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     private Boolean checkConflictingAccountUpdateConditionForBranch(Accounts accounts, AccountsDto accountsDto, String locality) throws AccountsException {
+        log.debug("<----------------------------" +
+                "checkConflictingAccountUpdateConditionForBranch(Accounts,AccountsDto,String) AccountsServiceImpl started---------------------------------------" +
+                "----------------------------------------------------------------------------------------------------------------------->");
         String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
                 "coming from %s", locality);
         Accounts.Branch newhomeBranch ;
@@ -117,10 +121,15 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 String.format("You already have an account with same accountType %s" +
                                 "and same HomeBranch %s",
                         accounts.getAccountType(), accounts.getHomeBranch()), location);
+        log.debug("<----------checkConflictingAccountUpdateConditionForBranch(Accounts, AccountsDto,String) AccountsServiceImpl ended--" +
+                "-------------------------------------------------------------------------------------------------------------------------->");
         return true;
     }
 
     private Accounts processAccountInit(Accounts accounts, String req) throws AccountsException {
+        log.debug("<-------processAccountInit(Accounts accounts, String req) AccountsServiceImpl started------------------------------------------------------" +
+                "--------------------------------------------------------------------------------------------------------------------------" +
+                "------------>");
         String methodName = "processAccountInit(Accounts,String) in AccountsServiceImpl";
         //If request is adding another accounts for a customer already have an account
         //there should not be two accounts with  same accountType in same homeBranch
@@ -143,20 +152,28 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         accounts.setAnyActiveLoans(false);
         //credit score is 0 so approved limit should also be zero
         accounts.setApprovedLoanLimitBasedOnCreditScore(0L);
+        log.debug("<------processAccountInit(Accounts, String) AccountsServiceImpl ended -------------------------------------------------------------------" +
+                "----------------------------------------------------------------------------------------------------------------->");
         return accounts;
     }
 
     private Customer processCustomerInformation(Customer customer) {
+        log.debug("<-------processCustomerInformation(Customer) AccountsServiceImpl started--------------------------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------------->");
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
         int age = Period.between(dob, LocalDate.now()).getYears();
         customer.setAge(age);
         //encode passwd
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+        log.debug("<----------------processCustomerInformation(Customer) AccountsServiceImpl ended ------------------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------------->");
         return customer;
     }
 
     private OutputDto createAccount(PostInputRequestDto postInputRequestDto) throws AccountsException {
+        log.debug("<---------createAccount(PostInputRequestDto)started AccountsServiceImpl --------------------------------------------------------------------------" +
+                "----------------------------------------------------------------------------------------------------------------------->");
         Accounts account = inputToAccounts(postInputRequestDto);
         Customer customer = inputToCustomer(postInputRequestDto);
         account.setCustomer(customer);
@@ -178,6 +195,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
         //fetch the corresponding account of saved customer
         Long accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
+        log.debug("<------------createAccount(PostInputRequestDto) AccountsServiceImpl ended --------------------------------------------------------------" +
+                "-------------------------------------------------------------------------------------------------------------------->");
 
         return OutputDto.builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(savedCustomer)))
@@ -188,6 +207,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
 
 
     private OutputDto createAccountForAlreadyCreatedUser(Long customerId, Accounts loadAccount, AccountsDto accountsDto) throws AccountsException {
+        log.debug("<-------------- createAccountForAlreadyCreatedUser(Long,Accounts,AccountsDto) AccountsServiceImpl started -----------------------------" +
+                "------------------------------------------------------------------------------------------------------>--->");
         String methodName = "createAccountForAlreadyCreatedUser(Long,InoutDto) in AccountsServiceImpl";
 
         Optional<Customer> customer = customerRepository.findById(customerId);
@@ -206,6 +227,8 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         Accounts processedAccount = processAccountInit(accounts, UPDATE);
         //save it bebe
         Accounts savedAccount = accountsRepository.save(processedAccount);
+        log.debug("<-------createAccountForAlreadyCreatedUser(Long,Accounts,AccountsDto) AccountsServiceImpl ended -----------------------------------" +
+                "--------------------------------------------------------------------------------------------------------------------->");
 
         return OutputDto.builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(customer.get())))
@@ -220,9 +243,13 @@ public class AccountsServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     private OutputDto getAccountInfo(Long accountNumber) throws AccountsException {
+        log.debug("<-----------getAccountInfo(Long) AccountsServiceImpl started --------------------------------------------------------------------------" +
+                "--------------------------------------------------------------------------------------------------------------------->");
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
         Customer foundCustomer = foundAccount.getCustomer();
 
+        log.debug("<-----------getAccountInfo(Long) AccountsServiceImpl ended ---------------------------------------------------------------------------" +
+                "----------------------------------------------------------------------------------------------------------------->");
         return OutputDto.builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
                 .accounts(mapToAccountsOutputDto(mapToAccountsDto(foundAccount)))
@@ -231,16 +258,21 @@ public class AccountsServiceImpl extends AbstractAccountsService {
     }
 
     private PageableResponseDto<AccountsDto> getAllActiveAccountsByCustomerId(Long customerId, Pageable pageable) throws AccountsException {
+        log.debug("<-----------------getAllActiveAccountsByCustomerId(Long,Pageable) AccountsServiceImpl started -----------------------------------" +
+                "----------------------------------------------------------------------------------------------------------------->");
         String methodName = "getAllAccountsByCustomerId(Long) in AccountsServiceImpl";
         Optional<Page<Accounts>> allPagedAccounts = accountsRepository.findAllByCustomer_CustomerId(customerId, pageable);
         if (allPagedAccounts.isEmpty())
             throw new AccountsException(AccountsException.class,
                     String.format("No such accounts present with this customer %s", customerId), methodName);
-
+        log.debug("<------------------getAllActiveAccountsByCustomerId(Long,Pageable) AccountsServiceImpl ended ----------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------>");
         return getPageableResponse(allPagedAccounts.get(), AccountsDto.class);
     }
 
     private Boolean updateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, ValidateType request) throws AccountsException, BadApiRequestException {
+        log.debug("<---------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl started -----------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------------>");
         String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
         String location = "";
         switch (request) {
@@ -316,10 +348,16 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 return true;
             }
         }
+
+        log.debug("<-----------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl ended -----------------------" +
+                "----------" +
+                "-------------------------------------------------------------------------------------------------------------------------->");
         return false;
     }
 
     private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
+        log.debug("<-------------updateHomeBranch(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------------" +
+                "-------------------------------------------------------------------------------------------------------------------->");
         Accounts.Branch oldHomeBranch = accounts.getHomeBranch();
         Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
         Accounts savedUpdatedAccount = accounts;
@@ -330,10 +368,14 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             accounts.setBranchCode(getBranchCode(newHomeBranch));
             savedUpdatedAccount = accountsRepository.save(accounts);
         }
+        log.debug("<-----------------updateHomeBranch(AccountsDto accountsDto, Accounts accounts) AccountsServiceImpl ended --------------------------------" +
+                "----------------------------------------------------------------------------------------------------------------------->");
         return savedUpdatedAccount;
     }
 
     private Accounts increaseTransferLimit(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
+        log.debug("<------------increaseTransferLimit(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------->");
         String methodName = "increaseTransferLimit(AccountsDto,Accounts) in AccountsServiceImpl";
         Long oldCashLimit = accounts.getTransferLimitPerDay();
         Long newCashLimit = accountsDto.getTransferLimitPerDay();
@@ -348,21 +390,28 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                                 "six months old ", accounts.getAccountNumber()), methodName);
             savedAccount = accountsRepository.save(accounts);
         }
+        log.debug("<----------increaseTransferLimit(AccountsDto,Accounts) AccountsServiceImpl ended ------------------------------------------------------" +
+                "--------------------------------------------------------------------------------------------------------------------->");
         return savedAccount;
     }
 
     private void blockAccount(Accounts foundAccount) throws AccountsException {
         //Note: block is very urgent so no prior validation is required  for ongoing loan
         //but authority reserves right to scrutiny any ongoing loan Emi
-
+         log.debug("<----------blockAccount(Accounts) AccountsServiceImpl started --------------------------------------------------------------------------" +
+                 "------------------------------------------------------------------------------------------------------------------->");
         updateValidator(foundAccount, mapToAccountsDto(foundAccount), null, BLOCK_ACCOUNT);
         //Block it
         foundAccount.setAccountStatus(STATUS_BLOCKED);
         //save it
         accountsRepository.save(foundAccount);
+        log.debug("<-----------blockAccount(Accounts) AccountsServiceImpl ended ----------------------------------------------------------------------------" +
+                "--------------------------------------------------------------------------------------------------------------------->");
     }
 
     private void closeAccount(Accounts foundAccount) throws AccountsException {
+        log.debug("<--------closeAccount(Accounts) AccountsServiceImpl started ----------------------------------------------------------------------------" +
+                "----------------------------------------------------------------------------------------------------------------------->");
         String methodName = "closeAccount(accountNUmber) in AccountsServiceImpl";
         //check if he has pending loan
         if (updateValidator(foundAccount, mapToAccountsDto(foundAccount), null, CLOSE_ACCOUNT))
@@ -372,23 +421,35 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         foundAccount.setAccountStatus(STATUS_CLOSED);
         //save it
         accountsRepository.save(foundAccount);
+        log.debug("<----------closeAccount(Accounts) AccountsServiceImpl ended ----------------------------------------------------------------------------" +
+                "---------------------------------------------------------------------------------------------------------------------->");
     }
 
     private void unCloseAccount(Accounts account) throws AccountsException {
+        log.debug("<-----------------unCloseAccount(Accounts) AccountsServiceImpl started ----------------------------------------------------------------------" +
+                "-------------------------------------------------------------------------------------------------------->");
         if (updateValidator(account, mapToAccountsDto(account), null, RE_OPEN_ACCOUNT)) {
             account.setAccountStatus(STATUS_OPEN);
             accountsRepository.save(account);
         }
+        log.debug("<------------unCloseAccount(Accounts) AccountsServiceImpl ended -----------------------------------------------------------------------" +
+                "--------------------------------------------------------------------------------------------------------------------->");
     }
 
     private void deleteAccount(Long accountNumber) throws AccountsException {
+        log.debug("<-----------deleteAccount(Long) AccountsServiceImpl started -------------------------------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------>");
         //checking whether account exist or not
         fetchAccountByAccountNumber(accountNumber);
         //deleting it
         accountsRepository.deleteByAccountNumber(accountNumber);
+        log.debug("<-------------deleteAccount(Long) AccountsServiceImpl ended -------------------------------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------->");
     }
 
     private void deleteAllAccountsByCustomer(Long customerId) throws AccountsException {
+        log.debug("<-----------deleteAllAccountsByCustomer(Long) AccountsServiceImpl started-----------------------------------------------------------------------" +
+                "---------------------------------------------------------------------------------------------------------------->");
         String methodName = "deleteAllAccountsByCustomer(Long ) in AccountsServiceImpl";
         //checking whether customer exist
         Optional<Customer> foundCustomer = customerRepository.findById(customerId);
@@ -397,9 +458,13 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             throw new AccountsException(AccountsException.class, String.format("No such customer exists with id %s", customerId), methodName);
         //deleting it
         accountsRepository.deleteAllByCustomer_CustomerId(customerId);
+        log.debug("<-----------deleteAllAccountsByCustomer(Long) AccountsServiceImpl ended ----------------------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------->");
     }
 
     private Customer updateCustomerDetails(Customer oldCustomerRecord, CustomerDto newCustomerRecord) {
+        log.debug("<-----------updateCustomerDetails(Customer,CustomerDto ) AccountsServiceImpl started-----------------------" +
+                "--------------------------------------------------------------------------------------------------------------------->");
         String oldName = oldCustomerRecord.getName();
         String newName = newCustomerRecord.getCustomerName();
 
@@ -429,44 +494,58 @@ public class AccountsServiceImpl extends AbstractAccountsService {
         String oldPassportNumber = oldCustomerRecord.getPassportNumber();
         String newPassportNumber = newCustomerRecord.getPassportNumber();
 
-        if (null!=newName && !oldName.equalsIgnoreCase(newName))
+        if (null != newName && !oldName.equalsIgnoreCase(newName))
             newCustomerRecord.setCustomerName(newName);
-        if (null!=newDateOfBirth && !oldDateOfBirth.equals(newDateOfBirth)) {
+        if (null != newDateOfBirth && !oldDateOfBirth.equals(newDateOfBirth)) {
             newCustomerRecord.setDateOfBirth(newDateOfBirth);
             newCustomerRecord.setAge(newAge);
         }
-        if (null!=newEmail && !oldEmail.equalsIgnoreCase(newEmail))
+        if (null != newEmail && !oldEmail.equalsIgnoreCase(newEmail))
             newCustomerRecord.setEmail(newEmail);
-        if (null!=newPhoneNumber && !oldPhoneNumber.equalsIgnoreCase(newPhoneNumber))
+        if (null != newPhoneNumber && !oldPhoneNumber.equalsIgnoreCase(newPhoneNumber))
             newCustomerRecord.setCustomerName(newPhoneNumber);
-        if (null!=newAdharNumber && !oldAdharNumber.equalsIgnoreCase(newAdharNumber))
+        if (null != newAdharNumber && !oldAdharNumber.equalsIgnoreCase(newAdharNumber))
             newCustomerRecord.setCustomerName(newAdharNumber);
-        if (null!=newPassportNumber && !oldPassportNumber.equalsIgnoreCase(newPassportNumber))
+        if (null != newPassportNumber && !oldPassportNumber.equalsIgnoreCase(newPassportNumber))
             newCustomerRecord.setCustomerName(newPassportNumber);
-        if (null!=newPanNumber && !oldPanNumber.equalsIgnoreCase(newPanNumber))
+        if (null != newPanNumber && !oldPanNumber.equalsIgnoreCase(newPanNumber))
             newCustomerRecord.setCustomerName(newPanNumber);
-        if (null!=newVoterId && !voterId.equalsIgnoreCase(newVoterId))
+        if (null != newVoterId && !voterId.equalsIgnoreCase(newVoterId))
             newCustomerRecord.setCustomerName(newVoterId);
-        if (null!=newDrivingLicense && !oldDrivingLicense.equalsIgnoreCase(newDrivingLicense))
+        if (null != newDrivingLicense && !oldDrivingLicense.equalsIgnoreCase(newDrivingLicense))
             newCustomerRecord.setDrivingLicense(newDrivingLicense);
 
         Customer updatedCustomer = mapToCustomer(newCustomerRecord);
 
         //auditing does not work during update so manually set it
         updatedCustomer.setCreatedBy("Admin");
+        log.debug("<------------updateCustomerDetails(Customer oldCustomerRecord, CustomerDto newCustomerRecord) AccountsServiceImpl ended -----------------" +
+                "------------------------------------------------------------------------------------------------------------------------>");
         return customerRepository.save(updatedCustomer);
     }
-
     private int getCreditScore(Long accountNumber) {
+        log.debug("<----------getCreditScore(Long ) AccountsServiceImpl started -----------------------------------" +
+                "------------------------------------------------------------------------------>");
         ///to be done
+
+        log.debug("<-----------getCreditScore(Long ) AccountsServiceImpl ended -----------------------------------------" +
+                "------------------------------------------------------------------------------------->");
         return 0;
     }
 
     private int updateCreditScore(AccountsDto accountsDto) {
+        log.debug("<------------updateCreditScore(AccountsDto) AccountsServiceImpl started -------------------" +
+                "----------------------------------------------------------------------------------->");
+        //to be done
+        log.debug("<-------------updateCreditScore(AccountsDto) AccountsServiceImpl ended ----------------------" +
+                "------------------------------------------------------------------------------->");
         return 0;
     }
 
     private PageableResponseDto<AccountsDto> accountsPagination(DIRECTION sortDir,String sortBy,int pageNumber,int pageSize,Long customerId) {
+        log.debug("<---------accountsPagination(DIRECTION,String ,int,int Long) AccountsServiceImpl started ------------------------------------------------" +
+                "-------------------------------------------------------------------------------------------------------------------->");
+
         String methodName="accountsPagination(DIRECTION,String,int,int,Long) in AccountsServiceImpl";
         Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -480,15 +559,20 @@ public class AccountsServiceImpl extends AbstractAccountsService {
                 && !STATUS_CLOSED.equals(accounts.getAccountStatus())).toList();
 
         pageableResponseDto.setContent(onlyActiveAccounts);
+        log.debug("<-----------------accountsPagination(DIRECTION,String,int,int,long) AccountsServiceImpl ended -------------------------------------------------------------------------------------------------------------->");
         return  pageableResponseDto;
     }
 
     private void uploadProfileImage(CustomerDto customerDto) throws IOException {
+        log.debug("<-------------uploadProfileImage(CustomerDto) AccountsServiceImpl started --------------------------------------------------------------" +
+                "---------------------------------------------------------------------------------------------------------------------->");
         updateValidator(null, null, customerDto, UPLOAD_PROFILE_IMAGE);
         String imageName = fIleService.uploadFile(customerDto.getCustomerImage(), IMAGE_PATH);
         Customer customer = fetchCustomerByCustomerNumber(customerDto.getCustomerId());
         customer.setImageName(imageName);
         customerRepository.save(customer);
+        log.debug("<--------------uploadProfileImage(CustomerDto) AccountsServiceImpl ended ----------------------------------------------------------------" +
+                "--------------------------------------------------------------------------------------------------------------------->");
     }
 
 

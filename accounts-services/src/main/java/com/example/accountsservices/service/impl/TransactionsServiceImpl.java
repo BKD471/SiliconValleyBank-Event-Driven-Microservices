@@ -14,6 +14,7 @@ import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.SortDateComparator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 
+@Slf4j
 @Service("transactionsServicePrimary")
 public class TransactionsServiceImpl extends AbstractAccountsService {
     private final Transactions.TransactionType CREDIT = Transactions.TransactionType.CREDIT;
@@ -37,6 +39,8 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
     }
 
     private Transactions updateBalance(Accounts accounts, Transactions transactions, Long amount, Transactions.TransactionType transactionType) throws TransactionException {
+        log.debug("<--------------------updateBalance(Accounts, Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl started ----------" +
+                "--------------------------------------------------------------------------------------------------------->");
         String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
 
         Long previousBalance = accounts.getBalance();
@@ -53,6 +57,8 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
 
         //update the latest balance to accounts db
         accountsRepository.save(accounts);
+        log.debug("<---------updateBalance(Accounts , Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl ended -----------------" +
+                "-------------------------------------------------------------------------------------------------------------->");
         return transactions;
     }
 
@@ -61,6 +67,8 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
      * @returnType AccountsDto
      */
     private TransactionsDto payOrDepositMoney(TransactionsDto transactionsDto, Transactions.TransactionType transactionType) throws AccountsException, TransactionException {
+        log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl started -----------------------" +
+                "-------------------------------------------------------------------------------------------------------------------------->");
         //fetch account
         Long accountNumber = transactionsDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
@@ -81,6 +89,8 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
 
         //save in DB & return
         Transactions savedTransactions = transactionsRepository.save(recentTransaction);
+        log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl ended ------------------------" +
+                "------------------------------------------------------------------------------------------------------------------------>");
         return mapToTransactionsDto(savedTransactions);
     }
 
@@ -153,6 +163,8 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
     }
 
     private TransactionsDto payBills(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+        log.debug("<---------payBills(TransactionsDto transactionsDto) started --------------------------------------------------------------------" +
+                "--------------------------------------------------------------------------------->");
         String methodName="payBills(TransactionDto) in TransactionsServiceImpl";
 
         switch (transactionsDto.getDescription()) {
@@ -200,7 +212,8 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
             default -> throw  new TransactionException(TransactionException.class,
                     "we do not support this types of transaction yet",methodName);
         }
+        log.debug("<--------------------payBills(TransactionsDto) ended -------------------" +
+                "------------------------------------------------------------------------------------------------>");
         return transactionsDto;
     }
-
 }
