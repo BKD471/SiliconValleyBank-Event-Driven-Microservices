@@ -21,7 +21,7 @@ import java.util.Optional;
 
 
 
-public abstract class AbstractAccountsService implements IAccountsService, ITransactionsService, IBeneficiaryService,IFileService {
+public abstract class AbstractAccountsService {
     private  final  AccountsRepository accountsRepository;
     private  final CustomerRepository customerRepository;
     private  static final Accounts.AccountStatus STATUS_BLOCKED= Accounts.AccountStatus.BLOCKED;
@@ -31,24 +31,7 @@ public abstract class AbstractAccountsService implements IAccountsService, ITran
         this.accountsRepository=accountsRepository;
         this.customerRepository=customerRepository;
     }
-    public OutputDto postRequestExecutor(PostInputRequestDto postInputDto) throws AccountsException, CustomerException, IOException { return null;}
-    public OutputDto  putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException { return null;}
-    public OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException { return null;}
-    public OutputDto deleteRequestExecutor(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException{ return null;}
-    public OutputDto accountSetUp(PostInputRequestDto postInputRequestDto){return null;}
-    //ben
-    public OutputDto postRequestBenExecutor(PostInputRequestDto postInputDto) throws BeneficiaryException, AccountsException {return null;};
-    public OutputDto putRequestBenExecutor(PutInputRequestDto putInputRequestDto) throws BeneficiaryException, AccountsException { return null;};
-    public OutputDto getRequestBenExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, BeneficiaryException, BadApiRequestException { return null;};
-    public OutputDto deleteRequestBenExecutor(DeleteInputRequestDto deleteInputRequestDto) throws BeneficiaryException, AccountsException {return null;};
 
-    //transactions
-    public OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws  TransactionException , AccountsException { return null;}
-    public OutputDto getPastSixMonthsTransactionsForAnAccount( Long accountNumber) throws AccountsException {return null;}
-
-    //file service
-    public String uploadFile(MultipartFile image, String path) throws IOException {return null;}
-    public InputStream getResource(String path, String name) throws FileNotFoundException {return null;}
 
     protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
         String methodName="fetchAccountByAccountNumber(Long,String vararg) in AbstractAccountsService";

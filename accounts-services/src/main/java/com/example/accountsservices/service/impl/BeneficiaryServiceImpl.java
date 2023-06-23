@@ -18,6 +18,7 @@ import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.service.IBeneficiaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,7 +42,7 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
 @Slf4j
 @Service("beneficiaryServicePrimary")
-public class BeneficiaryServiceImpl extends AbstractAccountsService {
+public class BeneficiaryServiceImpl extends AbstractAccountsService implements IBeneficiaryService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final AccountsRepository accountsRepository;
     public enum validateBenType {

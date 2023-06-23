@@ -7,6 +7,7 @@ import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
+import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
@@ -184,7 +185,6 @@ public class AccountsServiceTests {
     @Test
     @DisplayName("Adding accounts failed when no of accounts exceeds the permissible limit")
     public void addAccountValidationForMaxPermissibleAccountTest() throws IOException {
-        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
 
         List<Accounts> accountsList = new ArrayList<>();
@@ -208,7 +208,6 @@ public class AccountsServiceTests {
     @Test
     @DisplayName("Adding accounts failed for invalid Customer Id")
     public void AddAccountFailedForInvalidCustomerIdTest() throws IOException {
-        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.CHENNAI);
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer)).thenReturn(Optional.empty());
 
@@ -228,7 +227,6 @@ public class AccountsServiceTests {
     @DisplayName("Test update home branch")
     public void updateHomeBranchTest() throws IOException {
         String newBranchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.BANGALORE);
-
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
 
@@ -254,8 +252,6 @@ public class AccountsServiceTests {
     @Test
     @DisplayName("Update home branch failed when there is already another account with same type ")
     public void updateHomeBranchFailedTest() throws IOException {
-        String newBranchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
-
         when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
 
@@ -359,12 +355,12 @@ public class AccountsServiceTests {
         when(customerRepository.save(any())).thenReturn(customerWithUploadedImage);
 
 
-        MockMultipartFile imgfile =
-                new MockMultipartFile("data", "uploadedfile.png", "text/plain", "some kml".getBytes());
+        MockMultipartFile imgFile =
+                new MockMultipartFile("data", "uploadedFile.png", "text/plain", "some kml".getBytes());
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .customerId(1L)
                 .updateRequest(AccountsDto.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
-                .customerImage(imgfile)
+                .customerImage(imgFile)
                 .build();
 
         OutputDto response=accountsService.putRequestExecutor(request);
@@ -558,6 +554,21 @@ public class AccountsServiceTests {
     }
 
     @Test
+    @DisplayName("Delete all accounts by customer Failed")
+    public void deleteAllAccountsByCustomerFailedTest(){
+        when(customerRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        DeleteInputRequestDto request=DeleteInputRequestDto.builder()
+                .updateRequest(AccountsDto.UpdateRequest.DELETE_ALL_ACC)
+                .customerId(1L)
+                .build();
+
+        assertThrows(AccountsException.class,()->{
+            accountsService.deleteRequestExecutor(request);
+        });
+    }
+
+    @Test
     @DisplayName("Get all accounts")
     public void getAllAccTest() throws AccountsException,IOException{
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
@@ -580,8 +591,24 @@ public class AccountsServiceTests {
     }
 
     @Test
+    @DisplayName("Get all accounts Failed for customer with no accounts")
+    public void getAllAccTestFailedForCustomerWithNoAccounts() throws AccountsException,IOException{
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+        when(accountsRepository.findAllByCustomer_CustomerId(anyLong(),any(Pageable.class))).thenReturn(Optional.empty());
+
+        GetInputRequestDto request= GetInputRequestDto.builder()
+                .customerId(1L)
+                .updateRequest(AccountsDto.UpdateRequest.GET_ALL_ACC)
+                .build();
+
+       assertThrows(AccountsException.class,()->{
+           accountsService.getRequestExecutor(request);
+       });
+    }
+
+    @Test
     @DisplayName("Invalid request type for get")
-    public  void invalidGetRequestType() throws IOException,AccountsException {
+    public  void invalidGetRequestType() throws AccountsException {
         GetInputRequestDto request= GetInputRequestDto.builder().updateRequest(AccountsDto.UpdateRequest.ADD_ACCOUNT).build();
         assertThrows(AccountsException.class,()->{
             accountsService.getRequestExecutor(request);
@@ -612,6 +639,98 @@ public class AccountsServiceTests {
         DeleteInputRequestDto request= DeleteInputRequestDto.builder().updateRequest(AccountsDto.UpdateRequest.UPDATE_CREDIT_SCORE).build();
         assertThrows(AccountsException.class,()->{
             accountsService.deleteRequestExecutor(request);
+        });
+    }
+
+    @Test
+    @DisplayName("Null update Request type for get")
+    public  void nullUpdateGetRequestFailedTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        GetInputRequestDto request=GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .updateRequest(null)
+                .build();
+
+        assertThrows(AccountsException.class,()->{
+            accountsService.getRequestExecutor(request);
+        });
+    }
+
+    @Test
+    @DisplayName("Null update Request type for put")
+    public  void nullUpdatePutRequestFailedTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        PutInputRequestDto request=PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .updateRequest(null)
+                .build();
+
+        assertThrows(AccountsException.class,()->{
+            accountsService.putRequestExecutor(request);
+        });
+    }
+
+    @Test
+    @DisplayName("Null update Request type for post")
+    public  void nullUpdatePostRequestFailedTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        PostInputRequestDto request=PostInputRequestDto.builder()
+                .accountNumber(1L)
+                .updateRequest(null)
+                .build();
+
+        assertThrows(AccountsException.class,()->{
+            accountsService.postRequestExecutor(request);
+        });
+    }
+
+    @Test
+    @DisplayName("Null update Request type for delete")
+    public  void nullUpdateDeleteRequestFailedTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+
+        DeleteInputRequestDto request=DeleteInputRequestDto.builder()
+                .accountNumber(1L)
+                .updateRequest(null)
+                .build();
+
+        assertThrows(AccountsException.class,()->{
+            accountsService.deleteRequestExecutor(request);
+        });
+    }
+
+    @Test
+    @DisplayName("Put request Failed for Invalid page SIze")
+    public void invalidPageSizeForUpdateCustomerDataTest(){
+        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        PutInputRequestDto request=PutInputRequestDto.builder()
+                .accountNumber(1L)
+                .pageSize(-69)
+                .build();
+
+        assertThrows(BadApiRequestException.class,()->{
+           accountsService.putRequestExecutor(request);
+        });
+    }
+
+    @Test
+    @DisplayName("request Failed for Invalid page filed")
+    public void invalidPageFieldForGetALLACCTest(){
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+        when(customerRepository.findById(anyLong()))
+                .thenReturn(Optional.of(customer));
+        GetInputRequestDto request=GetInputRequestDto.builder()
+                .accountNumber(1L)
+                .customerId(1L)
+                .sortBy("INVALID FIELD")
+                .updateRequest(AccountsDto.UpdateRequest.GET_ALL_ACC)
+                .build();
+
+        assertThrows(BadApiRequestException.class,()->{
+            accountsService.getRequestExecutor(request);
         });
     }
 

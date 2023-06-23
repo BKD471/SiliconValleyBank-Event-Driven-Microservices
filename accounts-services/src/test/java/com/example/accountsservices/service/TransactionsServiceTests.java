@@ -1,8 +1,11 @@
 package com.example.accountsservices.service;
 
 
+import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
+import com.example.accountsservices.exception.TransactionException;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
+import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
@@ -23,8 +26,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static com.example.accountsservices.helpers.MapperHelper.mapToTransactions;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +59,7 @@ public class TransactionsServiceTests {
                 .accountStatus(Accounts.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
-                .balance(60000L)
+                .balance(500000L)
                 .branchCode(branchCode)
                 .totalOutStandingAmountPayableToBank(500000L)
                 .transferLimitPerDay(25000L)
@@ -112,4 +116,332 @@ public class TransactionsServiceTests {
         assertNotNull(response.getAccounts().getListOfTransactions());
         assertEquals(2,response.getAccounts().getListOfTransactions().size());
     }
+
+    @Test
+    public void payOrDepositMoneyTestForCredit(){
+        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        TransactionsDto transactionsDto=TransactionsDto.builder()
+                .transactionId(1L)
+                .accountNumber(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.CREDIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.SALARY)
+                .transactionTimeStamp(LocalDateTime.now())
+                .build();
+
+        long finalBalance=accounts.getBalance()+transactionsDto.getTransactionAmount();
+        Accounts accountStateAfterTransaction=Accounts.builder()
+                .accountNumber(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .anyActiveLoans(false)
+                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .branchCode(branchCode)
+                .totalOutStandingAmountPayableToBank(500000L)
+                .transferLimitPerDay(25000L)
+                .totLoanIssuedSoFar(450000L)
+                .creditScore(750)
+                .homeBranch(Accounts.Branch.KOLKATA)
+                .balance(finalBalance)
+                .build();
+
+        Transactions transactionsState= Transactions.builder()
+                .transactionId(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.CREDIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.SALARY)
+                .accounts(accountStateAfterTransaction)
+                .build();
+        transactionsState.setTransactionTimeStamp(LocalDateTime.now());
+        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+
+        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
+        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+
+        OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
+        assertNotNull(response.getTransactions());
+        assertEquals(finalBalance,response.getAccounts().getBalance());
+    }
+
+    @Test
+    public void payOrDepositMoneyTestForDebit(){
+        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        TransactionsDto transactionsDto=TransactionsDto.builder()
+                .transactionId(1L)
+                .accountNumber(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.ELECTRICITY)
+                .transactionTimeStamp(LocalDateTime.now())
+                .build();
+
+        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        Accounts accountStateAfterTransaction=Accounts.builder()
+                .accountNumber(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .anyActiveLoans(false)
+                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .branchCode(branchCode)
+                .totalOutStandingAmountPayableToBank(500000L)
+                .transferLimitPerDay(25000L)
+                .totLoanIssuedSoFar(450000L)
+                .creditScore(750)
+                .homeBranch(Accounts.Branch.KOLKATA)
+                .balance(finalBalance)
+                .build();
+
+        Transactions transactionsState= Transactions.builder()
+                .transactionId(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.ELECTRICITY)
+                .accounts(accountStateAfterTransaction)
+                .build();
+        transactionsState.setTransactionTimeStamp(LocalDateTime.now());
+        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+
+        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
+        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+
+        OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
+        assertNotNull(response.getTransactions());
+        assertEquals(finalBalance,response.getAccounts().getBalance());
+    }
+
+    @Test
+    public void payOrDepositMoneyTestFailedForDebitWhenAmountExceedsBalance(){
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        TransactionsDto transactionsDto=TransactionsDto.builder()
+                .transactionId(1L)
+                .accountNumber(1L)
+                .transactionAmount(800000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.ELECTRICITY)
+                .transactionTimeStamp(LocalDateTime.now())
+                .build();
+
+        assertThrows(TransactionException.class,()->{
+            transactionsService.transactionsExecutor(transactionsDto);
+        });
+    }
+
+    @Test
+    public void payOrDepositMoneyTestForDebitFORRent(){
+        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        TransactionsDto transactionsDto=TransactionsDto.builder()
+                .transactionId(1L)
+                .accountNumber(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.RENT)
+                .transactionTimeStamp(LocalDateTime.now())
+                .build();
+
+        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        Accounts accountStateAfterTransaction=Accounts.builder()
+                .accountNumber(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .anyActiveLoans(false)
+                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .branchCode(branchCode)
+                .totalOutStandingAmountPayableToBank(500000L)
+                .transferLimitPerDay(25000L)
+                .totLoanIssuedSoFar(450000L)
+                .creditScore(750)
+                .homeBranch(Accounts.Branch.KOLKATA)
+                .balance(finalBalance)
+                .build();
+
+        Transactions transactionsState= Transactions.builder()
+                .transactionId(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.RENT)
+                .accounts(accountStateAfterTransaction)
+                .build();
+        transactionsState.setTransactionTimeStamp(LocalDateTime.now());
+        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+
+        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
+        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+
+        OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
+        assertNotNull(response.getTransactions());
+        assertEquals(finalBalance,response.getAccounts().getBalance());
+    }
+
+    @Test
+    public void payOrDepositMoneyTestForDebitForFamilyEXPENSE(){
+        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        TransactionsDto transactionsDto=TransactionsDto.builder()
+                .transactionId(1L)
+                .accountNumber(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.FAMILY)
+                .transactionTimeStamp(LocalDateTime.now())
+                .build();
+
+        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        Accounts accountStateAfterTransaction=Accounts.builder()
+                .accountNumber(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .anyActiveLoans(false)
+                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .branchCode(branchCode)
+                .totalOutStandingAmountPayableToBank(500000L)
+                .transferLimitPerDay(25000L)
+                .totLoanIssuedSoFar(450000L)
+                .creditScore(750)
+                .homeBranch(Accounts.Branch.KOLKATA)
+                .balance(finalBalance)
+                .build();
+
+        Transactions transactionsState= Transactions.builder()
+                .transactionId(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.FAMILY)
+                .accounts(accountStateAfterTransaction)
+                .build();
+        transactionsState.setTransactionTimeStamp(LocalDateTime.now());
+        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+
+        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
+        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+
+        OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
+        assertNotNull(response.getTransactions());
+        assertEquals(finalBalance,response.getAccounts().getBalance());
+    }
+
+    @Test
+    public void payOrDepositMoneyTestForDebitForInvestMent(){
+        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        TransactionsDto transactionsDto=TransactionsDto.builder()
+                .transactionId(1L)
+                .accountNumber(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.INVESTMENT)
+                .transactionTimeStamp(LocalDateTime.now())
+                .build();
+
+        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        Accounts accountStateAfterTransaction=Accounts.builder()
+                .accountNumber(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .anyActiveLoans(false)
+                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .branchCode(branchCode)
+                .totalOutStandingAmountPayableToBank(500000L)
+                .transferLimitPerDay(25000L)
+                .totLoanIssuedSoFar(450000L)
+                .creditScore(750)
+                .homeBranch(Accounts.Branch.KOLKATA)
+                .balance(finalBalance)
+                .build();
+
+        Transactions transactionsState= Transactions.builder()
+                .transactionId(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.INVESTMENT)
+                .accounts(accountStateAfterTransaction)
+                .build();
+        transactionsState.setTransactionTimeStamp(LocalDateTime.now());
+        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+
+        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
+        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+
+        OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
+        assertNotNull(response.getTransactions());
+        assertEquals(finalBalance,response.getAccounts().getBalance());
+    }
+
+    @Test
+    public void payOrDepositMoneyTestForDebitForEShopping(){
+        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        when(accountsRepository.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
+
+        TransactionsDto transactionsDto=TransactionsDto.builder()
+                .transactionId(1L)
+                .accountNumber(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.E_SHOPPING)
+                .transactionTimeStamp(LocalDateTime.now())
+                .build();
+
+        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        Accounts accountStateAfterTransaction=Accounts.builder()
+                .accountNumber(1L)
+                .accountType(Accounts.AccountType.SAVINGS)
+                .accountStatus(Accounts.AccountStatus.OPEN)
+                .anyActiveLoans(false)
+                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .branchCode(branchCode)
+                .totalOutStandingAmountPayableToBank(500000L)
+                .transferLimitPerDay(25000L)
+                .totLoanIssuedSoFar(450000L)
+                .creditScore(750)
+                .homeBranch(Accounts.Branch.KOLKATA)
+                .balance(finalBalance)
+                .build();
+
+        Transactions transactionsState= Transactions.builder()
+                .transactionId(1L)
+                .transactionAmount(100000L)
+                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactedAccountNumber("123")
+                .description(Transactions.DescriptionType.E_SHOPPING)
+                .accounts(accountStateAfterTransaction)
+                .build();
+        transactionsState.setTransactionTimeStamp(LocalDateTime.now());
+        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+
+        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
+        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+
+        OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
+        assertNotNull(response.getTransactions());
+        assertEquals(finalBalance,response.getAccounts().getBalance());
+    }
+
+
 }

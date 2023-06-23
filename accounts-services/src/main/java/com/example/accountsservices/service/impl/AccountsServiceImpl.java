@@ -15,6 +15,7 @@ import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.IFileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ import static com.example.accountsservices.model.Accounts.AccountStatus;
  */
 @Slf4j
 @Service("accountsServicePrimary")
-public class AccountsServiceImpl extends AbstractAccountsService {
+public class AccountsServiceImpl extends AbstractAccountsService implements IAccountsService {
     private final AccountsRepository accountsRepository;
 
     private final CustomerRepository customerRepository;
@@ -767,7 +768,6 @@ public class AccountsServiceImpl extends AbstractAccountsService {
             }
             case INC_APPROVED_LOAN_LIMIT -> {
                 //to be done.....
-
                 return OutputDto.builder().defaultMessage("BAAD MAIN KARNGE BSDK").build();
             }
             case UPDATE_CUSTOMER_DETAILS -> {

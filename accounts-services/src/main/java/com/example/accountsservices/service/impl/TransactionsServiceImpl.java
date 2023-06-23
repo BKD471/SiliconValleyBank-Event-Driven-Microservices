@@ -14,6 +14,8 @@ import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.SortDateComparator;
+import com.example.accountsservices.service.IFileService;
+import com.example.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -24,7 +26,7 @@ import static com.example.accountsservices.helpers.MapperHelper.*;
 
 @Slf4j
 @Service("transactionsServicePrimary")
-public class TransactionsServiceImpl extends AbstractAccountsService {
+public class TransactionsServiceImpl extends AbstractAccountsService implements ITransactionsService {
     private final Transactions.TransactionType CREDIT = Transactions.TransactionType.CREDIT;
     private final Transactions.TransactionType DEBIT = Transactions.TransactionType.DEBIT;
     private final TransactionsRepository transactionsRepository;
@@ -42,7 +44,6 @@ public class TransactionsServiceImpl extends AbstractAccountsService {
         log.debug("<--------------------updateBalance(Accounts, Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl started ----------" +
                 "--------------------------------------------------------------------------------------------------------->");
         String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
-
         Long previousBalance = accounts.getBalance();
 
         if (CREDIT.equals(transactionType)) {
