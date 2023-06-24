@@ -1,15 +1,12 @@
 package com.example.accountsservices.controller;
 
 
-import com.example.accountsservices.dto.AccountsDto;
-import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
+
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
-import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.providers.ObjectMapperProviders;
 import com.example.accountsservices.service.IAccountsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -24,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -121,6 +119,58 @@ public class AccountsControllerTest {
               .accept(MediaType.APPLICATION_JSON)
       ).andDo(print()).andExpect(status().isCreated())
               .andExpect(jsonPath("$.accounts").exists());
+    }
+
+    @Test
+    @DisplayName("Test the get requests")
+    public void getRequestForChangeTest() throws Exception {
+        when(accountsServiceMock.getRequestExecutor(any())).thenReturn(dto);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/accounts/get")
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiaGFza2FyQGdtYWlsLmNvbSIsImlhdCI6MTY4NzYzMDQ2OCwiZXhwIjoxNjg3NjQ4NDY4fQ.TBQCCSem8346uXSkrR27Md3J24hakaj8xYCA1nwrZw0h8zyZM6dmFJxTUrDOkXPZsXHVmBuPcRzpp67959H3Og")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(convertObjToJsonString(dto))
+                        .accept(MediaType.APPLICATION_JSON)
+                ).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.accounts").exists());
+    }
+
+    @Test
+    @DisplayName("Test the post requests")
+    public void postRequestForChangeTest() throws Exception {
+        when(accountsServiceMock.postRequestExecutor(any())).thenReturn(dto);
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/accounts/post")
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiaGFza2FyQGdtYWlsLmNvbSIsImlhdCI6MTY4NzYzMDQ2OCwiZXhwIjoxNjg3NjQ4NDY4fQ.TBQCCSem8346uXSkrR27Md3J24hakaj8xYCA1nwrZw0h8zyZM6dmFJxTUrDOkXPZsXHVmBuPcRzpp67959H3Og")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(convertObjToJsonString(dto))
+                        .accept(MediaType.APPLICATION_JSON)
+                ).andDo(print()).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.accounts").exists());
+    }
+
+    @Test
+    @DisplayName("Test the put requests")
+    public void putRequestForChangeTest() throws Exception {
+        when(accountsServiceMock.putRequestExecutor(any())).thenReturn(dto);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/accounts/put")
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiaGFza2FyQGdtYWlsLmNvbSIsImlhdCI6MTY4NzYzMDQ2OCwiZXhwIjoxNjg3NjQ4NDY4fQ.TBQCCSem8346uXSkrR27Md3J24hakaj8xYCA1nwrZw0h8zyZM6dmFJxTUrDOkXPZsXHVmBuPcRzpp67959H3Og")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(convertObjToJsonString(dto))
+                        .accept(MediaType.APPLICATION_JSON)
+                ).andDo(print()).andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.accounts").exists());
+    }
+
+    @Test
+    @DisplayName("Test the delete requests")
+    public void deleteRequestForChangeTest() throws Exception {
+        when(accountsServiceMock.deleteRequestExecutor(any())).thenReturn(dto);
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/accounts/delete")
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiaGFza2FyQGdtYWlsLmNvbSIsImlhdCI6MTY4NzYzMDQ2OCwiZXhwIjoxNjg3NjQ4NDY4fQ.TBQCCSem8346uXSkrR27Md3J24hakaj8xYCA1nwrZw0h8zyZM6dmFJxTUrDOkXPZsXHVmBuPcRzpp67959H3Og")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(convertObjToJsonString(dto))
+                        .accept(MediaType.APPLICATION_JSON)
+                ).andDo(print()).andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.accounts").exists());
     }
 
     private String convertObjToJsonString(Object dto) {
