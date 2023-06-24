@@ -1,6 +1,8 @@
 package com.example.accountsservices.controller;
 
 
+import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.helpers.MapperHelper;
@@ -53,7 +55,6 @@ public class AccountsControllerTest {
     Customer customer;
     Beneficiary beneficiary;
     OutputDto dto;
-
     ObjectMapper objectMapper;
     @BeforeEach
     public void init(){
