@@ -7,7 +7,7 @@ import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.validator.ValidAge;
+//import com.example.accountsservices.validator.ValidAge;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +33,7 @@ public class PostInputRequestDto extends AbstractParentDto {
 
     @Pattern(regexp = PATTERN_FOR_DOB,
             message = "Please provide DOB in YYYY-MM-DD format")
-    @ValidAge
+    //@ValidAge
     private String dateOfBirthInYYYYMMDD;
 
     private Accounts.AccountType accountType;
@@ -78,7 +78,7 @@ public class PostInputRequestDto extends AbstractParentDto {
     @Size(min=3,max = 60,message = "Beneficiary Name must be at least 3 and at most 60 chars long")
     private String beneficiaryName;
 
-    @NotBlank(message = "Please provide address")
+    //@NotBlank(message = "Please provide address")
     private String address;
     private String imageName;
     private MultipartFile customerImage;

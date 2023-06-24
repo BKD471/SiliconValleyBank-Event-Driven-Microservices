@@ -5,13 +5,11 @@ import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.TransactionException;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
-import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
-import com.example.accountsservices.service.impl.TransactionsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.example.accountsservices.helpers.MapperHelper.mapToTransactions;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -41,10 +38,10 @@ public class TransactionsServiceTests {
     ITransactionsService transactionsService;
 
     @MockBean
-    AccountsRepository accountsRepository;
+    AccountsRepository accountsRepositoryMock;
 
     @MockBean
-    TransactionsRepository transactionsRepository;
+    TransactionsRepository transactionsRepositoryMock;
 
     Accounts accounts;
     Customer customer;
@@ -110,7 +107,8 @@ public class TransactionsServiceTests {
 
         List<Transactions> transactionsList = new ArrayList<>(Arrays.asList(transactions2, transactions1));
         accounts.setListOfTransactions(transactionsList);
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
 
         OutputDto response=transactionsService.getPastSixMonthsTransactionsForAnAccount(1L);
         assertNotNull(response.getAccounts().getListOfTransactions());
@@ -120,7 +118,7 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForCredit(){
         String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
@@ -160,8 +158,10 @@ public class TransactionsServiceTests {
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
         accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
 
-        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
-        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+        when(accountsRepositoryMock.save(any()))
+                .thenReturn(accountStateAfterTransaction);
+        when(transactionsRepositoryMock.save(any()))
+                .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
         assertNotNull(response.getTransactions());
@@ -171,7 +171,7 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebit(){
         String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
@@ -211,8 +211,10 @@ public class TransactionsServiceTests {
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
         accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
 
-        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
-        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+        when(accountsRepositoryMock.save(any()))
+                .thenReturn(accountStateAfterTransaction);
+        when(transactionsRepositoryMock.save(any()))
+                .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
         assertNotNull(response.getTransactions());
@@ -221,7 +223,7 @@ public class TransactionsServiceTests {
 
     @Test
     public void payOrDepositMoneyTestFailedForDebitWhenAmountExceedsBalance(){
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
@@ -242,7 +244,7 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebitFORRent(){
         String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
@@ -282,8 +284,10 @@ public class TransactionsServiceTests {
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
         accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
 
-        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
-        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+        when(accountsRepositoryMock.save(any()))
+                .thenReturn(accountStateAfterTransaction);
+        when(transactionsRepositoryMock.save(any()))
+                .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
         assertNotNull(response.getTransactions());
@@ -293,7 +297,7 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebitForFamilyEXPENSE(){
         String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
@@ -333,8 +337,10 @@ public class TransactionsServiceTests {
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
         accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
 
-        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
-        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+        when(accountsRepositoryMock.save(any()))
+                .thenReturn(accountStateAfterTransaction);
+        when(transactionsRepositoryMock.save(any()))
+                .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
         assertNotNull(response.getTransactions());
@@ -344,7 +350,7 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebitForInvestMent(){
         String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
@@ -384,8 +390,10 @@ public class TransactionsServiceTests {
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
         accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
 
-        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
-        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+        when(accountsRepositoryMock.save(any()))
+                .thenReturn(accountStateAfterTransaction);
+        when(transactionsRepositoryMock.save(any()))
+                .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
         assertNotNull(response.getTransactions());
@@ -395,7 +403,7 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebitForEShopping(){
         String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
@@ -435,13 +443,13 @@ public class TransactionsServiceTests {
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
         accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
 
-        when(accountsRepository.save(any())).thenReturn(accountStateAfterTransaction);
-        when(transactionsRepository.save(any())).thenReturn(transactionsState);
+        when(accountsRepositoryMock.save(any()))
+                .thenReturn(accountStateAfterTransaction);
+        when(transactionsRepositoryMock.save(any()))
+                .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
         assertNotNull(response.getTransactions());
         assertEquals(finalBalance,response.getAccounts().getBalance());
     }
-
-
 }

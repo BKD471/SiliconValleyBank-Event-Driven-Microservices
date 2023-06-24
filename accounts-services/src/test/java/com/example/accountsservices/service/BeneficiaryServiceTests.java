@@ -46,9 +46,9 @@ public class BeneficiaryServiceTests {
     private IBeneficiaryService beneficiaryService;
 
     @MockBean
-    BeneficiaryRepository beneficiaryRepository;
+    BeneficiaryRepository beneficiaryRepositoryMock;
     @MockBean
-    AccountsRepository accountsRepository;
+    AccountsRepository accountsRepositoryMock;
 
     Beneficiary beneficiary;
     Accounts accounts;
@@ -123,9 +123,9 @@ public class BeneficiaryServiceTests {
         int age = Period.between(dob, LocalDate.now()).getYears();
 
 
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
-        when(accountsRepository.save(any())).thenReturn(accounts);
+        when(accountsRepositoryMock.save(any())).thenReturn(accounts);
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
@@ -159,9 +159,9 @@ public class BeneficiaryServiceTests {
         for(int i=0;i<MAX_PERMISSIBLE_BENEFICIARIES;i++) beneficiaryList.add(new Beneficiary());
         accounts.setListOfBeneficiary(beneficiaryList);
 
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
-        when(accountsRepository.save(any())).thenReturn(accounts);
+        when(accountsRepositoryMock.save(any())).thenReturn(accounts);
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
@@ -188,7 +188,7 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void addBeneficiaryFailedForConflictingAdharNumberTest() {
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
@@ -204,7 +204,7 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void addBeneficiaryFailedForConflictingAdharNumberWhenSamePersonIsAddingHimselfAsBeneficiaryTest() {
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
@@ -222,7 +222,7 @@ public class BeneficiaryServiceTests {
     @Test
     public void addBeneficiaryFailedForConflictingRelationForFatherTest() {
         beneficiary.setRelation(Beneficiary.RELATION.FATHER);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
@@ -241,7 +241,7 @@ public class BeneficiaryServiceTests {
     @Test
     public void addBeneficiaryFailedForConflictingRelationForMotherTest() {
         beneficiary.setRelation(Beneficiary.RELATION.MOTHER);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
@@ -259,7 +259,7 @@ public class BeneficiaryServiceTests {
     @Test
     public void addBeneficiaryFailedForConflictingRelationForSpouseTest() {
         beneficiary.setRelation(Beneficiary.RELATION.SPOUSE);
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
@@ -277,7 +277,8 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void getBeneficiaryByIdTest() {
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
@@ -295,7 +296,8 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void getBeneficiaryByIdFailedForInvalidBenIdTest() {
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
@@ -329,7 +331,7 @@ public class BeneficiaryServiceTests {
                 .homeBranch(Accounts.Branch.BANGALORE).build();
 
 
-        when(accountsRepository.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accountWithNoBeneficiary));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
@@ -349,8 +351,9 @@ public class BeneficiaryServiceTests {
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
         Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
-        when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class))).thenReturn(Optional.of(allPagedBeneficiary));
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class)))
+                .thenReturn(Optional.of(allPagedBeneficiary));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
@@ -365,19 +368,18 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void getAllBeneficiariesByAccountNumberFailedFOrInvalidSortByField() {
-
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
         Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
-        when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class))).thenReturn(Optional.of(allPagedBeneficiary));
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class)))
+                .thenReturn(Optional.of(allPagedBeneficiary));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
                 .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
                 .sortBy("INVALID FIELD")
                 .build();
-
 
         assertThrows(BadApiRequestException.class, ()->{
             beneficiaryService.getRequestBenExecutor(request);
@@ -386,12 +388,12 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void getAllBeneficiariesByAccountNumberFailedFOrInvalidPageSize() {
-
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
         Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
-        when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class))).thenReturn(Optional.of(allPagedBeneficiary));
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class)))
+                .thenReturn(Optional.of(allPagedBeneficiary));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
@@ -407,11 +409,9 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void noBeneficiariesPresentForAccountTest(){
-            List<Beneficiary> beneficiaryList = new ArrayList<>();
-            for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
-            Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
-            when(beneficiaryRepository.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class))).thenReturn(Optional.empty());
-            when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+            when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class)))
+                    .thenReturn(Optional.empty());
+            when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
             GetInputRequestDto request = GetInputRequestDto.builder()
                     .accountNumber(1L)
@@ -427,7 +427,7 @@ public class BeneficiaryServiceTests {
     @Test
     public void updateBeneficiaryTest() {
         String bankCode = CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.ICICI);
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         Beneficiary processedAccount = Beneficiary.builder()
                 .beneficiaryAccountNumber(3L)
                 .beneficiaryId(1L)
@@ -445,7 +445,7 @@ public class BeneficiaryServiceTests {
                 .bankCode(bankCode)
                 .build();
 
-        when(beneficiaryRepository.save(any())).thenReturn(processedAccount);
+        when(beneficiaryRepositoryMock.save(any())).thenReturn(processedAccount);
 
         PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber(1L)
@@ -486,8 +486,8 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void updateBeneficiaryAccountFailedForInvalidIdTest() {
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
-
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
 
         PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber(1L)
@@ -514,7 +514,8 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void deleteBeneficiariesForAnAccount() {
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .accountNumber(1L)
@@ -522,12 +523,13 @@ public class BeneficiaryServiceTests {
                 .build();
 
         beneficiaryService.deleteRequestBenExecutor(request);
-        verify(beneficiaryRepository, times(1)).deleteByBeneficiaryId(anyLong());
+        verify(beneficiaryRepositoryMock, times(1)).deleteByBeneficiaryId(anyLong());
     }
 
     @Test
     public void deleteBeneficiariesForAnAccountFailedForInvalidBeneficiaryIdTest() {
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .accountNumber(1L)
@@ -542,7 +544,7 @@ public class BeneficiaryServiceTests {
 
     @Test
     public  void deleteAllBeneficiariesForAnAccount(){
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request= DeleteInputRequestDto.builder()
                 .accountNumber(1L)
@@ -550,12 +552,13 @@ public class BeneficiaryServiceTests {
                 .build();
 
         beneficiaryService.deleteRequestBenExecutor(request);
-        verify(beneficiaryRepository,times(1)).deleteAllByAccounts_AccountNumber(anyLong());
+        verify(beneficiaryRepositoryMock,times(1))
+                .deleteAllByAccounts_AccountNumber(anyLong());
     }
 
     @Test
     public void invalidRequestForPostRequestFailedTest(){
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request= PostInputRequestDto.builder()
                 .accountNumber(1L)
@@ -569,7 +572,8 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void invalidRequestForGetRequestFailedTest(){
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request= GetInputRequestDto.builder()
                 .accountNumber(1L)
@@ -583,7 +587,7 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void invalidRequestForPutRequestFailedTest(){
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber(1L)
@@ -597,7 +601,7 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void invalidRequestForDeleteRequestFailedTest(){
-        when(accountsRepository.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request= DeleteInputRequestDto.builder()
                 .accountNumber(1L)
