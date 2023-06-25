@@ -1,0 +1,173 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AuthController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.accountsservices.controller.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: AuthController (com.example.accountsservices.controller.Impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuthController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.6%
+  </span>
+  <span class="absValue">
+    (1/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.accountsservices.controller.Impl;
+&nbsp;
+&nbsp;import com.example.accountsservices.dto.CustomerDto;
+&nbsp;import com.example.accountsservices.dto.tokenDtos.JwtRequest;
+&nbsp;import com.example.accountsservices.dto.tokenDtos.JwtResponse;
+&nbsp;import com.example.accountsservices.exception.BadApiRequestException;
+&nbsp;import com.example.accountsservices.helpers.JwtHelper;
+&nbsp;import org.modelmapper.ModelMapper;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.authentication.AuthenticationManager;
+&nbsp;import org.springframework.security.authentication.BadCredentialsException;
+&nbsp;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+&nbsp;import org.springframework.security.core.userdetails.UserDetails;
+&nbsp;import org.springframework.security.core.userdetails.UserDetailsService;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.security.Principal;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/v1/auth&quot;)
+<b class="fc">&nbsp;public class AuthController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private AuthenticationManager manager;
+&nbsp;    @Autowired
+&nbsp;    private UserDetailsService userDetailsService;
+&nbsp;    @Autowired
+&nbsp;    private JwtHelper jwtHelper;
+&nbsp;    @Autowired
+&nbsp;    private ModelMapper modelMapper;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/hello&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; hello() {
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(&quot;hello&quot;, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public ResponseEntity&lt;JwtResponse&gt; login(@RequestBody JwtRequest jwtRequest) {
+<b class="nc">&nbsp;        this.doAuthenticate(jwtRequest.getEmail(), jwtRequest.getPassword());</b>
+<b class="nc">&nbsp;        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());</b>
+<b class="nc">&nbsp;        String token = jwtHelper.generateToken(userDetails);</b>
+<b class="nc">&nbsp;        CustomerDto customerDto = modelMapper.map(userDetails, CustomerDto.class);</b>
+<b class="nc">&nbsp;        JwtResponse jwtResponse = JwtResponse.builder()</b>
+<b class="nc">&nbsp;                .jwtToken(token)</b>
+<b class="nc">&nbsp;                .customer(customerDto).build();</b>
+&nbsp;
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(jwtResponse, HttpStatus.CREATED);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/current&quot;)
+&nbsp;    public ResponseEntity&lt;CustomerDto&gt; getCurrentUser(Principal principal) {
+<b class="nc">&nbsp;        String userName = principal.getName();</b>
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(modelMapper.map(userDetailsService.loadUserByUsername(userName)</b>
+&nbsp;                , CustomerDto.class)
+&nbsp;                , HttpStatus.OK);
+&nbsp;    }
+&nbsp;
+&nbsp;    private void doAuthenticate(String email, String password) {
+<b class="nc">&nbsp;        String methodName = &quot;doAuthenticate(String,String) in AuthController&quot;;</b>
+<b class="nc">&nbsp;        UsernamePasswordAuthenticationToken auth =</b>
+&nbsp;                new UsernamePasswordAuthenticationToken(email, password);
+&nbsp;        try {
+<b class="nc">&nbsp;            manager.authenticate(auth);</b>
+<b class="nc">&nbsp;        } catch (BadCredentialsException e) {</b>
+<b class="nc">&nbsp;            throw new BadApiRequestException(BadApiRequestException.class, &quot;Invalid Credentials&quot;, methodName);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-25 22:52</div>
+</div>
+</body>
+</html>

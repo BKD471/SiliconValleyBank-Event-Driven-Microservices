@@ -1,0 +1,148 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TransactionsControllerImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.accountsservices.controller.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: TransactionsControllerImpl (com.example.accountsservices.controller.Impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TransactionsControllerImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.accountsservices.controller.Impl;
+&nbsp;
+&nbsp;import com.example.accountsservices.controller.AbstractParentController;
+&nbsp;import com.example.accountsservices.controller.ITransactionsController;
+&nbsp;import com.example.accountsservices.dto.outputDtos.OutputDto;
+&nbsp;import com.example.accountsservices.dto.TransactionsDto;
+&nbsp;import com.example.accountsservices.exception.AccountsException;
+&nbsp;import com.example.accountsservices.exception.TransactionException;
+&nbsp;import com.example.accountsservices.service.ITransactionsService;
+&nbsp;import org.springframework.beans.factory.annotation.Qualifier;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;
+&nbsp;@RestController
+&nbsp;public class TransactionsControllerImpl extends AbstractParentController implements ITransactionsController {
+&nbsp;    private final ITransactionsService transactionsService;
+&nbsp;
+<b class="fc">&nbsp;    TransactionsControllerImpl(@Qualifier(&quot;transactionsServicePrimary&quot;) ITransactionsService transactionsService) {</b>
+<b class="fc">&nbsp;        this.transactionsService = transactionsService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param transactionsDto
+&nbsp;     * @return
+&nbsp;     * @throws TransactionException
+&nbsp;     * @throws AccountsException
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ResponseEntity&lt;OutputDto&gt; executeTransactions(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+<b class="fc">&nbsp;        OutputDto responseDto = transactionsService.transactionsExecutor(transactionsDto);</b>
+<b class="fc">&nbsp;        return new ResponseEntity&lt;&gt;(responseDto, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param accountNumber
+&nbsp;     * @return
+&nbsp;     * @throws AccountsException
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ResponseEntity&lt;OutputDto&gt; getPastSixMonthsTransaction(Long accountNumber) throws AccountsException {
+<b class="fc">&nbsp;        OutputDto responseDto = transactionsService.getPastSixMonthsTransactionsForAnAccount(accountNumber);</b>
+<b class="fc">&nbsp;        return new ResponseEntity&lt;&gt;(responseDto, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-25 22:52</div>
+</div>
+</body>
+</html>

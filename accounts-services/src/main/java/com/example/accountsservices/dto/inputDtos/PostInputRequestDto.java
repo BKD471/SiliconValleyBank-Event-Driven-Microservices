@@ -34,6 +34,7 @@ public class PostInputRequestDto extends AbstractParentDto {
 
     @Pattern(regexp = PATTERN_FOR_DOB,
             message = "Please provide DOB in YYYY-MM-DD format")
+    @Pattern(regexp = PATTERN_FOR_NOT_NULL_CHARS,message = "Please mention date")
     @ValidAge
     private String dateOfBirthInYYYYMMDD;
 

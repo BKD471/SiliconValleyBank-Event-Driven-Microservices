@@ -1,0 +1,88 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > IAccountsService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.accountsservices.service</a>
+</div>
+
+<h1>Coverage Summary for Class: IAccountsService (com.example.accountsservices.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IAccountsService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.accountsservices.service;
+&nbsp;
+&nbsp;import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
+&nbsp;import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
+&nbsp;import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
+&nbsp;import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
+&nbsp;import com.example.accountsservices.dto.outputDtos.OutputDto;
+&nbsp;import com.example.accountsservices.exception.AccountsException;
+&nbsp;import com.example.accountsservices.exception.CustomerException;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;
+&nbsp;
+&nbsp;public interface IAccountsService {
+&nbsp;    OutputDto accountSetUp(PostInputRequestDto postInputRequestDto);
+&nbsp;    OutputDto postRequestExecutor(PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException, IOException;
+&nbsp;    OutputDto putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException;
+&nbsp;    OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException;
+&nbsp;    OutputDto deleteRequestExecutor(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-25 22:52</div>
+</div>
+</body>
+</html>

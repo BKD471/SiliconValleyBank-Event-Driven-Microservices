@@ -1,14 +1,16 @@
 package com.example.accountsservices.dto;
 
 
+import com.example.accountsservices.helpers.RegexMatchersHelper;
 import com.example.accountsservices.model.Transactions;
+import com.example.accountsservices.validator.NotNullEnum;
 import com.example.accountsservices.validator.ValidDescription;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import java.time.LocalDateTime;
 
 import static com.example.accountsservices.helpers.RegexMatchersHelper.PATTERN_FOR_NOT_NULL_CHARS;
+
 
 @Getter
 @Setter
@@ -26,7 +28,7 @@ public class TransactionsDto extends AbstractParentDto {
     @Min(value =1, message = "Please provide a transacted Account Number")
     private String transactedAccountNumber;
     private Transactions.TransactionType transactionType;
-    @NonNull
+    @NotNullEnum(regexp = PATTERN_FOR_NOT_NULL_CHARS,message = "Field can;t be null")
     @ValidDescription
     private Transactions.DescriptionType description;
 }

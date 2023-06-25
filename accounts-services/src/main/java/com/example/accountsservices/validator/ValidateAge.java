@@ -15,7 +15,8 @@ public class ValidateAge implements ConstraintValidator<ValidAge,String> {
     public boolean isValid(String value, ConstraintValidatorContext context) {
         //regex pattern already checks for null case
         //ignoring null here for test
-        if(null==value) return true;
+        if(value==null) return true;
+        if(value.trim().length()==0) return false;
         LocalDate today=LocalDate.now();
         int years= Period.between(LocalDate.parse(value),today).getYears();
         return years >= 18;

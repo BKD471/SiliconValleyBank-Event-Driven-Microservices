@@ -15,6 +15,7 @@ public class ValidateDescription implements ConstraintValidator<ValidDescription
      */
     @Override
     public boolean isValid(Transactions.DescriptionType value, ConstraintValidatorContext context) {
+        //null check is already taken care by @notnullEnum
         if(null==value) return true;
         Set<Transactions.DescriptionType> validFields=new HashSet<>();
         validFields.add(Transactions.DescriptionType.ELECTRICITY);
