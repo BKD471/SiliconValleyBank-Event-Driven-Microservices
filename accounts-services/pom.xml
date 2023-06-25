@@ -89,6 +89,10 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
+
+		<!-- Thanks for using https://jar-download.com -->
+
+
 		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -115,6 +119,21 @@
 			<artifactId>mockito-inline</artifactId>
 			<version>5.2.0</version>
 			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.github.gastaldi</groupId>
+            <artifactId>descriptor-rule</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+		<dependency>
+			<groupId>com.networknt</groupId>
+			<artifactId>yaml-rule</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.pixiv</groupId>
+			<artifactId>scalafix-pixiv-rule_2.13</artifactId>
+			<version>4.0.1</version>
 		</dependency>
 
 

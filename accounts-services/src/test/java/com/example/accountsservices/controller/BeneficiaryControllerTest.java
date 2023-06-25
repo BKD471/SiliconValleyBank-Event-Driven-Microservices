@@ -1,22 +1,13 @@
 package com.example.accountsservices.controller;
 
 
-
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.CustomerRepository;
-import com.example.accountsservices.service.IAccountsService;
-import com.example.accountsservices.service.IFileService;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletResponseWrapper;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Assertions;
+import com.example.accountsservices.service.IBeneficiaryService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,32 +19,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Locale;
-import java.util.Optional;
 
 import static com.example.accountsservices.helpers.MapperHelper.*;
+import static com.example.accountsservices.helpers.MapperHelper.mapToAccountsDto;
 import static com.example.accountsservices.helpers.ObjectToJsonStringConverterHelper.convertObjToJsonString;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,19 +39,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-public class AccountsControllerTest {
+public class BeneficiaryControllerTest {
 
     @MockBean
-    @Qualifier("accountsServicePrimary")
-    private IAccountsService accountsServiceMock;
-
-    @MockBean
-    @Qualifier("fileServicePrimary")
-    private IFileService fileServiceMock;
-
-    private InputStream is;
-
-    private final String BASE_URL_ACCOUNTS="/api/v1/accounts/";
+    @Qualifier("beneficiaryServicePrimary")
+    private IBeneficiaryService beneficiaryServiceMock;
 
     @Autowired
     private MockMvc mockMvc;
@@ -81,21 +51,16 @@ public class AccountsControllerTest {
     @Value("${test.token}")
     private String token;
 
-
-    private WebApplicationContext context;
-
     Accounts accounts;
     Customer customer;
     Beneficiary beneficiary;
-
-    InputStream stubInputStream;
     OutputDto dto;
-    @BeforeEach
-    public void init() throws IOException {
-         stubInputStream =
-                IOUtils.toInputStream("some test data for my input stream", "UTF-8");
+    ObjectMapper objectMapper;
 
-        String branchCode=CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+    private final String BASE_URL_BENEFICIARY="/api/v1/beneficiary/";
+    @BeforeEach
+    public void init(){
+        String branchCode= CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
         accounts = Accounts.builder()
                 .accountNumber(1L)
                 .accountType(Accounts.AccountType.SAVINGS)
@@ -129,12 +94,36 @@ public class AccountsControllerTest {
                 .voterId("voter")
                 .accounts(Collections.singletonList(accounts))
                 .build();
+
+        beneficiary = Beneficiary.builder()
+                .beneficiaryId(1L)
+                .beneficiaryAccountNumber(1L)
+                .beneficiaryName("ben 1")
+                .beneficiaryEmail("ben1@gmail.com")
+                .address("ben 123 street")
+                .benAdharNumber("1234-5678-9999")
+                .benDrivingLicense("driving-no-1")
+                .benPassportNumber("passport-no-1")
+                .benPhoneNumber("+91-123456789")
+                .benPanNumber("GMDPD7592K")
+                .benBank(Beneficiary.BanksSupported.AXIS)
+                .bankCode(CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.AXIS))
+                .imageName("img1.png")
+                .BenDate_Of_Birth(LocalDate.of(1997, 12, 01))
+                .benVoterId("ben voter 1")
+                .relation(Beneficiary.RELATION.SON)
+                .accounts(accounts)
+                .build();
+
         accounts.setCustomer(customer);
+        accounts.setListOfBeneficiary(Collections.singletonList(beneficiary));
+        customer.setAccounts(Collections.singletonList(accounts));
+
         dto=OutputDto.builder()
                 .defaultMessage("Account with id 1 is created for customer 1")
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(customer)))
                 .accounts(mapToAccountsOutputDto(mapToAccountsDto(accounts)))
-                .beneficiary(null)
+                .beneficiary(mapToBeneficiaryDto(beneficiary))
                 .transactions(null)
                 .accountsListPages(null)
                 .beneficiaryListPages(null)
@@ -145,92 +134,54 @@ public class AccountsControllerTest {
     }
 
     @Test
-    @DisplayName("Test the create account")
-    public void createAccountTest() throws  Exception{
-      when(accountsServiceMock.accountSetUp(any())).thenReturn(dto);
-      this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL_ACCOUNTS+"create")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(convertObjToJsonString(dto))
-              .accept(MediaType.APPLICATION_JSON)
-      ).andDo(print()).andExpect(status().isCreated())
-              .andExpect(jsonPath("$.accounts").exists());
-    }
-
-    @Test
     @DisplayName("Test the get requests")
-    public void getRequestForChangeTest() throws Exception {
-        when(accountsServiceMock.getRequestExecutor(any())).thenReturn(dto);
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL_ACCOUNTS+"get")
+    public void getRequestBenForChangeTest() throws Exception {
+        when(beneficiaryServiceMock.getRequestBenExecutor(any())).thenReturn(dto);
+        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL_BENEFICIARY+"get")
                         .header(HttpHeaders.AUTHORIZATION,"Bearer "+token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(convertObjToJsonString(dto))
                         .accept(MediaType.APPLICATION_JSON)
                 ).andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.accounts").exists());
+                .andExpect(jsonPath("$.beneficiary").exists());
     }
 
     @Test
     @DisplayName("Test the post requests")
     public void postRequestForChangeTest() throws Exception {
-        when(accountsServiceMock.postRequestExecutor(any())).thenReturn(dto);
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL_ACCOUNTS+"post")
+        when(beneficiaryServiceMock.postRequestBenExecutor(any())).thenReturn(dto);
+        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL_BENEFICIARY+"post")
                         .header(HttpHeaders.AUTHORIZATION,"Bearer "+token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(convertObjToJsonString(dto))
                         .accept(MediaType.APPLICATION_JSON)
                 ).andDo(print()).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.accounts").exists());
+                .andExpect(jsonPath("$.beneficiary").exists());
     }
 
     @Test
     @DisplayName("Test the put requests")
     public void putRequestForChangeTest() throws Exception {
-        when(accountsServiceMock.putRequestExecutor(any())).thenReturn(dto);
-        this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL_ACCOUNTS+"put")
+        when(beneficiaryServiceMock.putRequestBenExecutor(any())).thenReturn(dto);
+        this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL_BENEFICIARY+"put")
                         .header(HttpHeaders.AUTHORIZATION,"Bearer "+token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(convertObjToJsonString(dto))
                         .accept(MediaType.APPLICATION_JSON)
                 ).andDo(print()).andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.accounts").exists());
+                .andExpect(jsonPath("$.beneficiary").exists());
     }
 
     @Test
     @DisplayName("Test the delete requests")
     public void deleteRequestForChangeTest() throws Exception {
-        when(accountsServiceMock.deleteRequestExecutor(any())).thenReturn(dto);
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL_ACCOUNTS+"delete")
+        when(beneficiaryServiceMock.deleteRequestBenExecutor(any())).thenReturn(dto);
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL_BENEFICIARY+"delete")
                         .header(HttpHeaders.AUTHORIZATION,"Bearer "+token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(convertObjToJsonString(dto))
                         .accept(MediaType.APPLICATION_JSON)
                 ).andDo(print()).andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.accounts").exists());
-    }
-
-    @Test
-    public  void uploadImageTest() throws Exception{
-        when(accountsServiceMock.putRequestExecutor(any())).thenReturn(dto);
-        long customerId=1L;
-
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("customerImage", "upload.png", "multipart/form-data", is);
-        ResultActions mvcResult= this.mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PUT,BASE_URL_ACCOUNTS+"upload/image/"+customerId)
-                        .file(mockMultipartFile)
-                        .header(HttpHeaders.AUTHORIZATION,"Bearer "+token)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isAccepted());
-        Assertions.assertNotNull(mvcResult.andExpect(status().isAccepted())
-                .andReturn().getResponse().getContentAsString());
-    }
-
-    @Test
-    public  void serveUserImageTest() throws Exception{
-        when(fileServiceMock.getResource(anyString(),anyString())).thenReturn(stubInputStream);
-
-        long customerId=1L;
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL_ACCOUNTS+"/serve/image/"+customerId)
-                        .header(HttpHeaders.AUTHORIZATION,"Bearer "+token)
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                ).andDo(print()).andExpect(status().isOk());
+                .andExpect(jsonPath("$.beneficiary").exists());
     }
 }
