@@ -7,7 +7,6 @@ import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.AccountsOutPutDto;
 import com.example.accountsservices.dto.outputDtos.CustomerOutPutDto;
-import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -565,53 +564,6 @@ public class MapperHelper {
                 .build();
     }
 
-    public static PostInputRequestDto mapToinputDto(Customer customer, Accounts accounts) {
-        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
-        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(null!=accounts.getListOfBeneficiary() && accounts.getListOfBeneficiary().size()>0){
-            beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
-                    .collect(Collectors.toList());
-        }
-        if(null!=accounts.getListOfTransactions() && accounts.getListOfTransactions().size()>0){
-            transactionsDtoList=accounts.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
-                    .collect(Collectors.toList());
-        }
-
-        return PostInputRequestDto.builder()
-                //setting customer info
-                .name(customer.getName())
-                .dateOfBirthInYYYYMMDD(customer.getDateOfBirth().toString())
-                .age(customer.getAge())
-                .email(customer.getEmail())
-                .password(customer.getPassword())
-                .phoneNumber(customer.getPhoneNumber())
-                .adharNumber(customer.getAdharNumber())
-                .panNumber(customer.getPanNumber())
-                .voterId(customer.getVoterId())
-                .drivingLicense(customer.getDrivingLicense())
-                .passportNumber(customer.getPassportNumber())
-                .address(customer.getAddress())
-                .imageName(customer.getImageName())
-
-                //setting account info
-                .accountNumber(accounts.getAccountNumber())
-                .balance(accounts.getBalance())
-                .accountType(accounts.getAccountType())
-                .branchCode(accounts.getBranchCode())
-                .homeBranch(accounts.getHomeBranch())
-                .transferLimitPerDay(accounts.getTransferLimitPerDay())
-                .creditScore(accounts.getCreditScore())
-                .approvedLoanLimitBasedOnCreditScore(accounts.getApprovedLoanLimitBasedOnCreditScore())
-                .anyActiveLoans(accounts.getAnyActiveLoans())
-                .totLoanIssuedSoFar(accounts.getTotLoanIssuedSoFar())
-                .totalOutStandingAmountPayableToBank(accounts.getTotalOutStandingAmountPayableToBank())
-                .accountStatus(accounts.getAccountStatus())
-                .listOfBeneficiary(beneficiaryDtoList)
-                .listOfTransactions(transactionsDtoList)
-                .customer(accounts.getCustomer())
-                .build();
-    }
-
     public static CustomerOutPutDto mapToCustomerOutputDto(CustomerDto customerDto) {
         return CustomerOutPutDto.builder()
                 .customerId(customerDto.getCustomerId())
@@ -648,25 +600,4 @@ public class MapperHelper {
                 .listOfTransactions(accountsDto.getListOfTransactions())
                 .build();
     }
-
-    public static OutputDto mapToOutPutDto(CustomerDto customerDto, AccountsDto accountsDto, String message) {
-        return OutputDto.builder()
-                .defaultMessage(message)
-                .customer(mapToCustomerOutputDto(customerDto))
-                .accounts(mapToAccountsOutputDto(accountsDto))
-                .build();
-    }
-
-    public static OutputDto customerDtoToOutPut(CustomerDto customerDto) {
-        return OutputDto.builder()
-                .customer(mapToCustomerOutputDto(customerDto))
-                .build();
-    }
-
-    public static OutputDto accountsDtoToOutPut(AccountsDto accountsDto) {
-        return OutputDto.builder()
-                .accounts(mapToAccountsOutputDto(accountsDto))
-                .build();
-    }
-
 }

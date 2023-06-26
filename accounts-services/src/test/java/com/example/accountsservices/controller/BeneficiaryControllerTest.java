@@ -7,8 +7,7 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.service.IBeneficiaryService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 public class BeneficiaryControllerTest {
-
     @MockBean
     @Qualifier("beneficiaryServicePrimary")
     private IBeneficiaryService beneficiaryServiceMock;
@@ -51,15 +49,13 @@ public class BeneficiaryControllerTest {
     @Value("${test.token}")
     private String token;
 
-    Accounts accounts;
-    Customer customer;
-    Beneficiary beneficiary;
-    OutputDto dto;
-    ObjectMapper objectMapper;
-
+    private static Accounts accounts;
+    private static Customer customer;
+    private static Beneficiary beneficiary;
+    private static OutputDto dto;
     private final String BASE_URL_BENEFICIARY="/api/v1/beneficiary/";
-    @BeforeEach
-    public void init(){
+    @BeforeAll
+    public static void init(){
         String branchCode= CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
         accounts = Accounts.builder()
                 .accountNumber(1L)

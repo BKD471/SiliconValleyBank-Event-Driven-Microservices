@@ -14,6 +14,7 @@ import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +41,6 @@ import static org.mockito.Mockito.*;
 @AutoConfigureMockMvc
 @SpringBootTest
 public class BeneficiaryServiceTests {
-
     @Autowired
     @Qualifier("beneficiaryServicePrimary")
     private IBeneficiaryService beneficiaryService;
@@ -50,14 +50,13 @@ public class BeneficiaryServiceTests {
     @MockBean
     AccountsRepository accountsRepositoryMock;
 
-    Beneficiary beneficiary;
-    Accounts accounts;
-    Customer customer;
-
+    private  Beneficiary beneficiary;
+    private  Accounts accounts;
+    private  Customer customer;
     private final int MAX_PERMISSIBLE_BENEFICIARIES=5;
 
     @BeforeEach
-    public void setUp() {
+    public void init() {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
 
         accounts = Accounts.builder()

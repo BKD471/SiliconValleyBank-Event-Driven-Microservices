@@ -14,7 +14,6 @@ import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.SortDateComparator;
-import com.example.accountsservices.service.IFileService;
 import com.example.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

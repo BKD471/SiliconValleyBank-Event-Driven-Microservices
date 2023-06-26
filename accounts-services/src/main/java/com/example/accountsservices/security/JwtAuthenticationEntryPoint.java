@@ -1,6 +1,5 @@
 package com.example.accountsservices.security;
 
-import jakarta.persistence.Column;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

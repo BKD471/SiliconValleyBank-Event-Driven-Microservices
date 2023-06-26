@@ -5,11 +5,10 @@ import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
-import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.service.ITransactionsService;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,8 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 public class TransactionsControllerTest {
-
-
     @MockBean
     @Qualifier("transactionsServicePrimary")
     private ITransactionsService transactionsServiceMock;
@@ -56,16 +53,14 @@ public class TransactionsControllerTest {
     @Value("${test.token}")
     private String token;
 
-    Accounts accounts;
-    Customer customer;
-
-    List<Transactions> transactionsList;
-    OutputDto dto;
-
+    private static Accounts accounts;
+    private static Customer customer;
+    private static List<Transactions> transactionsList;
+    private static OutputDto dto;
     private final String BASE_URL_TRANSACTIONS = "/api/v1/transactions/";
 
-    @BeforeEach
-    public void init() {
+    @BeforeAll
+    public static void init() {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
 
         accounts = Accounts.builder()

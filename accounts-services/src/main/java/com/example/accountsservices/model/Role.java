@@ -3,10 +3,7 @@ package com.example.accountsservices.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -14,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name="roles")
+@Builder
 public class Role {
     @Id
     private String roleId;

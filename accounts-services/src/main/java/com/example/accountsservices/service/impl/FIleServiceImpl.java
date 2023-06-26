@@ -35,9 +35,8 @@ public class FIleServiceImpl extends AbstractAccountsService implements IFileSer
            extension.equalsIgnoreCase(".avif")){
 
             File folder=new File(path);
-            boolean isCreated;
             if(!folder.exists()){
-                isCreated=folder.mkdirs();
+                folder.mkdirs();
             }
             Files.copy(file.getInputStream(), Paths.get(fullPathWithFileName));
             return fileNameWithExtension;

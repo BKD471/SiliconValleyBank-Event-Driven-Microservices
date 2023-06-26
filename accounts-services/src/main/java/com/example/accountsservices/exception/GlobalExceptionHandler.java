@@ -1,22 +1,20 @@
 package com.example.accountsservices.exception;
 
 import com.example.accountsservices.dto.ErrorDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -25,6 +23,8 @@ public class GlobalExceptionHandler {
             CustomerException.class})
     public ResponseEntity<ErrorDetails> handleAllUncheckedCustomException(Exception e, WebRequest web) {
         ErrorDetails error = new ErrorDetails(LocalTime.now(), e.getMessage(), web.getDescription(false));
+        log.error(String.format("<==========================%s====================================================================" +
+                "=======================================================================>",e.getMessage()));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -38,6 +38,8 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
 
         });
+        log.error(String.format("<============%s=====================================================" +
+                "============================================================================>",ex.getMessage()));
         return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
     }
 
@@ -45,7 +47,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGenericException(Exception e, WebRequest web) {
         ErrorDetails error = new ErrorDetails(LocalTime.now(), e.getMessage(), web.getDescription(false));
+        log.error(String.format("<============%s=========================================================================================" +
+                "==================================================>",e.getMessage()));
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }

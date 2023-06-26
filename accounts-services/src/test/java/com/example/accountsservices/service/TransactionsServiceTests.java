@@ -10,6 +10,7 @@ import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.TransactionsRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,11 +44,11 @@ public class TransactionsServiceTests {
     @MockBean
     TransactionsRepository transactionsRepositoryMock;
 
-    Accounts accounts;
-    Customer customer;
+    private static Accounts accounts;
+    private static Customer customer;
 
-    @BeforeEach
-    public void init() {
+    @BeforeAll
+    public static void init() {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
 
         accounts = Accounts.builder()

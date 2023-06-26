@@ -7,7 +7,6 @@ import com.example.accountsservices.dto.TransactionsDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-//import com.example.accountsservices.validator.ValidAge;
 import com.example.accountsservices.validator.ValidAge;
 import jakarta.validation.constraints.*;
 import lombok.*;

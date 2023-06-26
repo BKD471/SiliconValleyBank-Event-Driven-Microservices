@@ -1,22 +1,12 @@
 package com.example.accountsservices.service;
 
-import com.example.accountsservices.dto.*;
-import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
-import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
-import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
-import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
-import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.*;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
 
 

@@ -1,6 +1,5 @@
 package com.example.accountsservices.validator;
 
-import com.example.accountsservices.model.Transactions;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

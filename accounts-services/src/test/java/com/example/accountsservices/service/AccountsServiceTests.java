@@ -14,6 +14,7 @@ import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,14 +56,14 @@ public class AccountsServiceTests {
     @MockBean
     private AccountsRepository accountsRepositoryMock;
 
-    Customer customer;
-    Accounts accounts;
+    private Customer customer;
+    private Accounts accounts;
 
     @Value("${customer.profile.images.path}")
     private String IMAGE_PATH;
 
     @BeforeEach
-    public void setUp() {
+    public  void init() {
         String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
         accounts = Accounts.builder()
                 .accountNumber(1L)

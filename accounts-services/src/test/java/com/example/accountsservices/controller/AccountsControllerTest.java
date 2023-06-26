@@ -5,21 +5,11 @@ package com.example.accountsservices.controller;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
-import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.IFileService;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletResponseWrapper;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,21 +23,13 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Locale;
-import java.util.Optional;
 
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.ObjectToJsonStringConverterHelper.convertObjToJsonString;
@@ -82,16 +64,12 @@ public class AccountsControllerTest {
     private String token;
 
 
-    private WebApplicationContext context;
-
-    Accounts accounts;
-    Customer customer;
-    Beneficiary beneficiary;
-
-    InputStream stubInputStream;
-    OutputDto dto;
-    @BeforeEach
-    public void init() throws IOException {
+    private static Accounts accounts;
+    private static Customer customer;
+    private static InputStream stubInputStream;
+    private static OutputDto dto;
+    @BeforeAll
+    public static void init() throws IOException {
          stubInputStream =
                 IOUtils.toInputStream("some test data for my input stream", "UTF-8");
 
