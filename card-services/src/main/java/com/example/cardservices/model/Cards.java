@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 
 
 @Getter
@@ -15,24 +16,59 @@ import lombok.Setter;
 @Entity
 public class Cards extends  Audit{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cardId;
+    @Column(name = "card_number")
+    private String cardNumber;
 
     @Column(name = "customer_id")
     private Long customerId;
 
-    @Column(name = "card_number")
-    private String cardNumber;
-
     @Column(name = "card_type")
-    private String cardType;
+    @Enumerated(EnumType.STRING)
+    private CARD_TYPE cardType;
+
+    private enum CARD_TYPE{
+        TRAVEL,FUEL,REWARD,SECURED,BUSINESS,STUDENT,PREMIUM,
+        CASHBACK,LIFESTYLE,ENTERTAINMENT,SHOPPING
+    }
+
+    @Column(name = "cardPaymentSystem")
+    @Enumerated(EnumType.STRING)
+    private CARD_NETWORK cardNetwork;
+
+    private enum CARD_NETWORK{
+        VISA,MASTERCARD,RU_PAY
+    }
+
+    //last blld summary
+    @Column(name = "stmt_due")
+    private double statementDue;
+    @Column(name = "mn_due")
+    private double minimumDue;
+    @Column(name = "due_dt")
+    private LocalDate dueDate;
+
+    //last pmt dtls
+    @Column(name = "amnt_paid")
+    private double amountPaid;
+
+    @Column(name = "lst_pd_dt")
+    private LocalDate lastPaidDate;
+
+    @Column(name = "curr_out_standing")
+    private double currentOutStanding;
+
+    @Column(name = "un_bld_out_standing")
+    private double unBilledOutstanding;
+
+    @Column(name = "avail_lmt")
+    private double availableLimit;
 
     @Column(name = "total_limit")
     private Long totalLimit;
 
-    @Column(name = "amount_used")
-    private Long amountUsed;
+    @Column(name = "crdt_score")
+    private int creditScore;
 
-    @Column(name = "available_amount")
-    private Long availableAmount;
+    @Column(name = "reward_pts")
+    private int rewardPoints;
 }

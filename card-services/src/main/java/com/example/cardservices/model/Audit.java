@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 public class Audit {
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
-    protected LocalDateTime createdDate;
+    protected LocalDateTime issuedDate;
+
     @CreatedBy
     protected  String authorizedBy;
     protected LocalDateTime expiredDate;
