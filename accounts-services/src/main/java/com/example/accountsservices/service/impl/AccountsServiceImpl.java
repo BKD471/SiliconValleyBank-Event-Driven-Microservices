@@ -814,4 +814,25 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
                     String.format("Invalid request type %s for DELETE request", request), methodName);
         }
     }
+
+    /**
+     * @param deleteInputRequestDto
+     * @return
+     */
+    @Override
+    public OutputDto deleteCustomer(DeleteInputRequestDto deleteInputRequestDto) {
+        String methodName="deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
+
+        Long customerId= deleteInputRequestDto.getCustomerId();
+        DeleteInputRequestDto.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
+        if(null==deleteRequest || null==customerId) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
+
+        Optional<Customer> foundCustomer=fetchCustomerByCustomerNumber(customerId)
+        customerRepository.delete(foundCustomer.get());
+        return OutputDto.builder()
+                .defaultMessage(String.format("Customer with id %s is deleted",customerId))
+                .build();
+    }
+
+
 }

@@ -135,4 +135,14 @@ public class AccountsControllerImpl extends AbstractParentController implements 
         OutputDto responseBody = accountsService.deleteRequestExecutor(deleteInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
     }
+
+    /**
+     * @param deleteInputRequestDto
+     * @return
+     */
+    @Override
+    public ResponseEntity<OutputDto> deleteCustomer(DeleteInputRequestDto deleteInputRequestDto) {
+        OutputDto responseBody=accountsService.deleteCustomer(deleteInputRequestDto);
+        return new ResponseEntity<>(responseBody,HttpStatus.ACCEPTED);
+    }
 }

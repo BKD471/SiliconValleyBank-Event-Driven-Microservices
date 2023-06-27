@@ -33,7 +33,12 @@ public class DeleteInputRequestDto extends AbstractParentDto {
     private String voterId;
     private String drivingLicense;
     private String passportNumber;
+    private DeleteRequest deleteRequest;
+    public enum DeleteRequest{
+        DELETE_CUSTOMER
+    }
     private BeneficiaryDto.BenUpdateRequest benRequest;
+
     private Long beneficiaryId;
     private String beneficiaryName;
     private Long beneficiaryAccountNumber;

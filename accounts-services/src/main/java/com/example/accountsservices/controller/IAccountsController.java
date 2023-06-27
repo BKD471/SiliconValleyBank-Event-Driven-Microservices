@@ -11,6 +11,7 @@ import com.example.accountsservices.exception.ResponseException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,4 +42,8 @@ public interface IAccountsController {
                                                   @PathVariable Long customerId) throws IOException;
     @DeleteMapping("/delete")
     ResponseEntity<OutputDto> deleteRequestForChange(@Valid @RequestBody DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException;
+
+    @DeleteMapping("/delete/customer")
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<OutputDto> deleteCustomer(@Valid @RequestBody DeleteInputRequestDto deleteInputRequestDto);
 }

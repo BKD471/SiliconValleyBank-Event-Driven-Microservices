@@ -18,4 +18,5 @@ public interface IAccountsService {
     OutputDto putRequestExecutor(PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException;
     OutputDto getRequestExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException, IOException;
     OutputDto deleteRequestExecutor(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException;
+    OutputDto deleteCustomer(DeleteInputRequestDto deleteInputRequestDto);
 }
