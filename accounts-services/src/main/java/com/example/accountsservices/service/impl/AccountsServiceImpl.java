@@ -10,10 +10,13 @@ import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.CustomerException;
+import com.example.accountsservices.exception.RolesException;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
+import com.example.accountsservices.model.Role;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.CustomerRepository;
+import com.example.accountsservices.repository.RoleRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.IFileService;
@@ -54,11 +57,12 @@ import static com.example.accountsservices.model.Accounts.AccountStatus;
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractAccountsService implements IAccountsService {
     private final AccountsRepository accountsRepository;
-
+    private final RoleRepository roleRepository;
     private final CustomerRepository customerRepository;
-
     private final IFileService fIleService;
 
+    @Value("${normal.role.id}")
+    private String NORMAL_ROLE_ID;
     @Autowired
     private PasswordEncoder passwordEncoder;
     private final AccountStatus STATUS_BLOCKED = AccountStatus.BLOCKED;
@@ -93,10 +97,11 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
      * @returnType NA
      */
     public AccountsServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository,
-                               @Qualifier("fileServicePrimary") IFileService fIleService) {
+                              RoleRepository roleRepository, @Qualifier("fileServicePrimary") IFileService fIleService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
+        this.roleRepository=roleRepository;
         this.fIleService = fIleService;
     }
 
@@ -159,12 +164,20 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     }
 
     private Customer processCustomerInformation(Customer customer) {
+        String methodName="processCustomerInformation(Customer)";
+
         log.debug("<-------processCustomerInformation(Customer) AccountsServiceImpl started--------------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------->");
         //set customer age from dob
         LocalDate dob = customer.getDateOfBirth();
         int age = Period.between(dob, LocalDate.now()).getYears();
         customer.setAge(age);
+
+        //set role
+        Optional<Role> roles=roleRepository.findById(NORMAL_ROLE_ID);
+        if(roles.isEmpty()) throw new RolesException(RolesException.class,"No roles found",methodName);
+        customer.getRoles().add(roles.get());
+
         //encode passwd
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         log.debug("<----------------processCustomerInformation(Customer) AccountsServiceImpl ended ------------------------------------------------------------" +

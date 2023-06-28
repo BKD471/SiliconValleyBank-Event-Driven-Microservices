@@ -37,14 +37,14 @@ public class AccountsDto extends AbstractParentDto {
         UPDATE_CUSTOMER_DETAILS,
         UPLOAD_CUSTOMER_IMAGE,
         GET_CUSTOMER_IMAGE,
+        GET_CREDIT_SCORE,
+        GET_ACC_INFO,
+        GET_ALL_ACC,
         BLOCK_ACC,
         CLOSE_ACC,
         RE_OPEN_ACC,
         INC_TRANSFER_LIMIT,
         INC_APPROVED_LOAN_LIMIT,
-        GET_CREDIT_SCORE,
-        GET_ACC_INFO,
-        GET_ALL_ACC,
         DELETE_ACC,
         DELETE_ALL_ACC
     }

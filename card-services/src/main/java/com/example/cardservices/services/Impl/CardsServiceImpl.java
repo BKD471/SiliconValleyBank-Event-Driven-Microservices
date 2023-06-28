@@ -1,15 +1,9 @@
 package com.example.cardservices.services.Impl;
 
 import com.example.cardservices.dto.CardsDto;
-import com.example.cardservices.mapper.CardsMapper;
-import com.example.cardservices.model.Cards;
-import com.example.cardservices.repository.CardsRepository;
 import com.example.cardservices.services.CardsService;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CardsServiceImpl implements CardsService {
@@ -19,7 +13,18 @@ public class CardsServiceImpl implements CardsService {
      * @return
      */
     @Override
-    public CardsDto createCards(CardsDto cardsDto) {
+    public CardsDto issueCard(CardsDto cardsDto) {
+        return null;
+    }
+
+
+
+    /**
+     * @param customerId
+     * @return
+     */
+    @Override
+    public List<CardsDto> getAllCardsByCustomerId(Long customerId) {
         return null;
     }
 
@@ -28,7 +33,25 @@ public class CardsServiceImpl implements CardsService {
      * @return
      */
     @Override
-    public List<CardsDto> getAllCardsByCustomerId(Long customerId) {
+    public int generateCreditScore(Long customerId) {
+        return 0;
+    }
+
+    /**
+     * @param customerId
+     * @return
+     */
+    @Override
+    public boolean requestForRevisedCreditLimit(Long customerId) {
+        return false;
+    }
+
+    /**
+     * @param customerId
+     * @return
+     */
+    @Override
+    public CardsDto convertLoanToFlexiPay(Long customerId) {
         return null;
     }
 }
