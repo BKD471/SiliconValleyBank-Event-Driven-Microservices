@@ -20,6 +20,7 @@ import com.example.accountsservices.repository.RoleRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.IFileService;
+import com.example.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,6 +61,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     private final RoleRepository roleRepository;
     private final CustomerRepository customerRepository;
     private final IFileService fIleService;
+    private final IValidationService validationService;
 
     @Value("${normal.role.id}")
     private String NORMAL_ROLE_ID;
@@ -75,7 +77,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     @Value("${customer.profile.images.path}")
     private  String IMAGE_PATH;
 
-    private enum ValidateType {
+    public enum ValidateType {
         UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH,
         GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE,
         UPLOAD_PROFILE_IMAGE, CLOSE_ACCOUNT, RE_OPEN_ACCOUNT,
@@ -97,40 +99,16 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
      * @returnType NA
      */
     public AccountsServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository,
-                              RoleRepository roleRepository, @Qualifier("fileServicePrimary") IFileService fIleService) {
+                              RoleRepository roleRepository,IValidationService validationService, @Qualifier("fileServicePrimary") IFileService fIleService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
         this.roleRepository=roleRepository;
         this.fIleService = fIleService;
+        this.validationService=validationService;
     }
 
-    private Boolean checkConflictingAccountUpdateConditionForBranch(Accounts accounts, AccountsDto accountsDto, String locality) throws AccountsException {
-        log.debug("<----------------------------" +
-                "checkConflictingAccountUpdateConditionForBranch(Accounts,AccountsDto,String) AccountsServiceImpl started---------------------------------------" +
-                "----------------------------------------------------------------------------------------------------------------------->");
-        String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
-                "coming from %s", locality);
-        Accounts.Branch newhomeBranch ;
-        newhomeBranch = (null == accountsDto) ? accounts.getHomeBranch() : accountsDto.getHomeBranch();
-        Accounts.AccountType accountType = accounts.getAccountType();
 
-        //get all accounts for customer
-        List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
-
-        Accounts.Branch finalNewhomeBranch = newhomeBranch;
-        boolean isNotPermissible = listOfAccounts.stream().
-                anyMatch(account -> finalNewhomeBranch.equals(account.getHomeBranch())
-                        && accountType.equals(account.getAccountType()));
-
-        if (isNotPermissible) throw new AccountsException(AccountsException.class,
-                String.format("You already have an account with same accountType %s" +
-                                "and same HomeBranch %s",
-                        accounts.getAccountType(), accounts.getHomeBranch()), location);
-        log.debug("<----------checkConflictingAccountUpdateConditionForBranch(Accounts, AccountsDto,String) AccountsServiceImpl ended--" +
-                "-------------------------------------------------------------------------------------------------------------------------->");
-        return true;
-    }
 
     private Accounts processAccountInit(Accounts accounts, String req) throws AccountsException {
         log.debug("<-------processAccountInit(Accounts accounts, String req) AccountsServiceImpl started------------------------------------------------------" +
@@ -140,7 +118,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //If request is adding another accounts for a customer already have an account
         //there should not be two accounts with  same accountType in same homeBranch
         if (req.equalsIgnoreCase(UPDATE)) {
-            checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
+            validationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
         }
 
         //initialize customer account opening balance
@@ -192,7 +170,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         Customer customer = inputToCustomer(postInputRequestDto);
         account.setCustomer(customer);
 
-        updateValidator(account, mapToAccountsDto(account), null, CREATE_ACCOUNT);
+        validationService.accountsUpdateValidator(account, mapToAccountsDto(account), null, CREATE_ACCOUNT);
 
         Accounts processedAccount = processAccountInit(account, INIT);
         Customer processedCustomer = processCustomerInformation(customer);
@@ -233,7 +211,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         }
         loadAccount.setCustomer(customer.get());
         //validate
-        updateValidator(loadAccount, accountsDto, null, ADD_ACCOUNT);
+        validationService.accountsUpdateValidator(loadAccount, accountsDto, null, ADD_ACCOUNT);
         //some critical processing
         Accounts accounts = mapToAccounts(accountsDto);
         //register this customer as the owner of this account
@@ -284,90 +262,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         return getPageableResponse(allPagedAccounts.get(), AccountsDto.class);
     }
 
-    private Boolean updateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, ValidateType request) throws AccountsException, BadApiRequestException {
-        log.debug("<---------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl started -----------------------------------" +
-                "------------------------------------------------------------------------------------------------------------------------>");
-        String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
-        String location = "";
-        switch (request) {
-            case CREATE_ACC -> {
-                location = "Inside CREATE_ACC";
-                //check whether such account owner is already present
-                List<Accounts> accountsList = accountsRepository.findAll();
-                //if no accounts by far then certainly we can add
-                if (accountsList.isEmpty()) return true;
 
-                String adharNumber = accounts.getCustomer().getAdharNumber();
-                boolean isNotPossible = accountsList.stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
-                if (isNotPossible)
-                    throw new AccountsException(AccountsException.class, String.format("You already have an account with adhar:%s", adharNumber),
-                            String.format("%s of %s", location, methodName));
-            }
-            case ADD_ACC -> {
-                location = "Inside ADD_ACC";
-                final int MAX_PERMISSIBLE_ACCOUNT=5;
-                //prevent a customer to create more than 10 accounts
-                Customer customer = accounts.getCustomer();
-                if (customer.getAccounts().size() >= MAX_PERMISSIBLE_ACCOUNT) throw new AccountsException(AccountsException.class,
-                        "You can;t have more than 10 accounts",
-                        String.format("%s of %s", location, methodName));
-            }
-            case UPDATE_CASH_LIMIT -> {
-                return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
-            }
-            case UPLOAD_PROFILE_IMAGE -> {
-                location = "Inside UPLOAD_PROFILE_IMAGE";
-                if (null == customerDto.getCustomerImage()) throw new BadApiRequestException(BadApiRequestException.class,
-                        "Please provide image", String.format("%s of %s", methodName, location));
-                double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
-                if (customerDto.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
-                    throw new BadApiRequestException(BadApiRequestException.class,
-                            "Your file is either corrupted or you are exceeding the max size of 100mb",
-                            String.format("%s of %s", methodName, location));
-            }
-            case UPDATE_HOME_BRANCH -> {
-                location = "Inside UPDATE_HOME_BRANCH";
-                return checkConflictingAccountUpdateConditionForBranch(accounts,
-                        accountsDto, String.format("%s of %s", location, methodName));
-            }
-            case CLOSE_ACCOUNT -> {
-                AccountStatus status = accounts.getAccountStatus();
-                switch (status) {
-                    case CLOSED ->
-                            throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), location);
-                    case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location);
-                    case OPEN -> {
-                        return accounts.getAnyActiveLoans();
-                    }
-                }
-            }
-            case RE_OPEN_ACCOUNT -> {
-                AccountStatus status = accounts.getAccountStatus();
-                switch (status) {
-                    case CLOSED -> {
-                        return true;
-                    }
-                    case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location);
-                    case OPEN ->
-                            throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), location);
-                }
-            }
-            case BLOCK_ACCOUNT -> {
-                if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
-                    throw new AccountsException(AccountsException.class,
-                            String.format("Status of Account: %s is already Blocked",
-                                    accounts.getAccountStatus()), location);
-                return true;
-            }
-        }
-
-        log.debug("<-----------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl ended -----------------------" +
-                "----------" +
-                "-------------------------------------------------------------------------------------------------------------------------->");
-        return false;
-    }
 
     private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
         log.debug("<-------------updateHomeBranch(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------------" +
@@ -376,7 +271,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
         Accounts savedUpdatedAccount = accounts;
 
-        if (updateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
+        if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
                 && null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             accounts.setBranchCode(getBranchCode(newHomeBranch));
@@ -396,7 +291,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
 
         Accounts savedAccount = accounts;
         if (null != newCashLimit && !newCashLimit.equals(oldCashLimit)) {
-            if (updateValidator(accounts, accountsDto, null, UPDATE_CASH_LIMIT))
+            if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_CASH_LIMIT))
                 accounts.setTransferLimitPerDay(newCashLimit);
             else
                 throw new AccountsException(AccountsException.class,
@@ -414,7 +309,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //but authority reserves right to scrutiny any ongoing loan Emi
          log.debug("<----------blockAccount(Accounts) AccountsServiceImpl started --------------------------------------------------------------------------" +
                  "------------------------------------------------------------------------------------------------------------------->");
-        updateValidator(foundAccount, mapToAccountsDto(foundAccount), null, BLOCK_ACCOUNT);
+        validationService.accountsUpdateValidator(foundAccount, mapToAccountsDto(foundAccount), null, BLOCK_ACCOUNT);
         //Block it
         foundAccount.setAccountStatus(STATUS_BLOCKED);
         //save it
@@ -428,7 +323,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
                 "----------------------------------------------------------------------------------------------------------------------->");
         String methodName = "closeAccount(accountNUmber) in AccountsServiceImpl";
         //check if he has pending loan
-        if (updateValidator(foundAccount, mapToAccountsDto(foundAccount), null, CLOSE_ACCOUNT))
+        if (validationService.accountsUpdateValidator(foundAccount, mapToAccountsDto(foundAccount), null, CLOSE_ACCOUNT))
             throw new AccountsException(AccountsException.class, String.format("This account with id %s still has " +
                     "running loan. Please consider paying it before closing", foundAccount.getAccountNumber()), methodName);
         //close it
@@ -442,7 +337,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     private void unCloseAccount(Accounts account) throws AccountsException {
         log.debug("<-----------------unCloseAccount(Accounts) AccountsServiceImpl started ----------------------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------->");
-        if (updateValidator(account, mapToAccountsDto(account), null, RE_OPEN_ACCOUNT)) {
+        if (validationService.accountsUpdateValidator(account, mapToAccountsDto(account), null, RE_OPEN_ACCOUNT)) {
             account.setAccountStatus(STATUS_OPEN);
             accountsRepository.save(account);
         }
@@ -580,7 +475,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     private void uploadProfileImage(CustomerDto customerDto) throws IOException {
         log.debug("<-------------uploadProfileImage(CustomerDto) AccountsServiceImpl started --------------------------------------------------------------" +
                 "---------------------------------------------------------------------------------------------------------------------->");
-        updateValidator(null, null, customerDto, UPLOAD_PROFILE_IMAGE);
+        validationService.accountsUpdateValidator(null, null, customerDto, UPLOAD_PROFILE_IMAGE);
         String imageName = fIleService.uploadFile(customerDto.getCustomerImage(), IMAGE_PATH);
         Customer customer = fetchCustomerByCustomerNumber(customerDto.getCustomerId());
         customer.setImageName(imageName);
@@ -846,6 +741,4 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
                 .defaultMessage(String.format("Customer with id %s is deleted",customerId))
                 .build();
     }
-
-
 }

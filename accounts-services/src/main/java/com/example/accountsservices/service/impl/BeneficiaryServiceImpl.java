@@ -19,6 +19,7 @@ import com.example.accountsservices.repository.BeneficiaryRepository;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.service.IBeneficiaryService;
+import com.example.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,21 +45,23 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 public class BeneficiaryServiceImpl extends AbstractAccountsService implements IBeneficiaryService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final AccountsRepository accountsRepository;
+
+    private final IValidationService validationService;
     public enum validateBenType {
         ADD_BEN, UPDATE_BEN, DELETE_BEN
     }
     private final validateBenType ADD_BEN = validateBenType.ADD_BEN;
     private final validateBenType UPDATE_BEN = validateBenType.UPDATE_BEN;
-    private final Beneficiary.RELATION FATHER = Beneficiary.RELATION.FATHER;
-    private final Beneficiary.RELATION MOTHER = Beneficiary.RELATION.MOTHER;
-    private final Beneficiary.RELATION SPOUSE = Beneficiary.RELATION.SPOUSE;
+
 
     BeneficiaryServiceImpl(AccountsRepository accountsRepository,
                            CustomerRepository customerRepository,
-                           BeneficiaryRepository beneficiaryRepository) {
+                           BeneficiaryRepository beneficiaryRepository,
+                           IValidationService validationService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.beneficiaryRepository = beneficiaryRepository;
+        this.validationService=validationService;
     }
 
     private Beneficiary setBeneficiaryAgeFromDOB(Beneficiary beneficiary) {
@@ -75,157 +78,14 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
     }
 
     //For validating Unhappy Paths
-    private void validate(Accounts accounts, BeneficiaryDto beneficiaryDto, validateBenType type) throws BeneficiaryException {
-        log.debug("<----validate(Accounts,BeneficiaryDto, validateBenType) BeneficiaryServiceImpl started -----------------------------------" +
-                "------------------------------------------------------------------------------------------------------>");
-        String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
-        String location;
-        switch (type) {
-            case ADD_BEN -> {
-                location="Inside ADD_BEN";
-                boolean notPossible ;
-                List<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
-                if (listOfBeneficiaries.size() >= 5) throw new BeneficiaryException(BeneficiaryException.class,
-                        "You can't add more than 5 beneficiaries", String.format("%s of %s",location,methodName));
 
-                //mandatory fields
-                String email=accounts.getCustomer().getEmail();
-                String adharNumber=accounts.getCustomer().getAdharNumber();
-                String panNumber=accounts.getCustomer().getPanNumber();
-                String phoneNumber=accounts.getCustomer().getPhoneNumber();
-
-                //not  mandatory  fields
-                String voterId=accounts.getCustomer().getVoterId();
-                String drivingLicense=accounts.getCustomer().getDrivingLicense();
-                String passport=accounts.getCustomer().getPassportNumber();
-
-
-                //new incoming fields
-                String newEmail=beneficiaryDto.getBeneficiaryEmail();
-                String newAdharNumber = beneficiaryDto.getBenAdharNumber();
-                String newPanNumber=beneficiaryDto.getBenPanNumber();
-                String newPhoneNumber=beneficiaryDto.getBenPhoneNumber();
-
-                String newVoterId=beneficiaryDto.getBenVoterId();
-                String newDrivingLicense=beneficiaryDto.getBenDrivingLicense();
-                String newPassportNumber=beneficiaryDto.getBenPassportNumber();
-
-                //you can't add yourself as your beneficiary  ,
-                // check by mandatory as well as optional fields
-                // if any matches then either yr info is incorrect or
-                //you already have this as beneficiary
-                if (adharNumber.equalsIgnoreCase(newAdharNumber) ||
-                        email.equalsIgnoreCase(newEmail) ||
-                        panNumber.equalsIgnoreCase(newPanNumber) ||
-                        phoneNumber.equalsIgnoreCase(newPhoneNumber) ||
-                 (null!=voterId && voterId.equalsIgnoreCase(newVoterId))
-                        || (null!=drivingLicense && drivingLicense.equalsIgnoreCase(newDrivingLicense))
-                        || (null!=passport && passport.equalsIgnoreCase(newPassportNumber))
-                )
-                    throw new BeneficiaryException(BeneficiaryException.class, "You can't add yourself as beneficiary",
-                            String.format("%s of %s",location,methodName));
-
-
-                //check if the same person already exist as a beneficiary
-                notPossible = listOfBeneficiaries.stream().anyMatch(ben ->
-                                ben.getBenAdharNumber().equalsIgnoreCase(newAdharNumber)
-                        || ben.getBeneficiaryEmail().equalsIgnoreCase(newEmail)
-                                        || ben.getBenPanNumber().equalsIgnoreCase(newPanNumber)
-                                || ben.getBenPhoneNumber().equalsIgnoreCase(newPhoneNumber)
-                                        || (null!=newVoterId && ben.getBenVoterId().equalsIgnoreCase(newVoterId))
-                                        || (null!=newDrivingLicense && ben.getBenDrivingLicense().equalsIgnoreCase(newDrivingLicense))
-                                        || (null!=newPassportNumber && ben.getBenPassportNumber().equalsIgnoreCase(newPassportNumber)));
-                if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
-                        "This person is already added as a beneficiary",String.format("%s of %s",location,methodName));
-
-                switch (beneficiaryDto.getRelation()) {
-                    case FATHER -> {
-                        notPossible = listOfBeneficiaries.stream().anyMatch(ben -> ben.getRelation().equals(FATHER));
-                        if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
-                                "You already have added one person as a father", String.format("%s of %s",location,methodName));
-                    }
-                    case MOTHER -> {
-                        notPossible = listOfBeneficiaries.stream().anyMatch(ben -> ben.getRelation().equals(MOTHER));
-                        if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
-                                "You already have added one person as a mother", String.format("%s of %s",location,methodName));
-                    }
-                    case SPOUSE -> {
-                        notPossible = listOfBeneficiaries.stream().anyMatch(ben -> ben.getRelation().equals(SPOUSE));
-                        if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
-                                "You already have added one person as a spouse", String.format("%s of %s",location,methodName));
-                    }
-                }
-
-            }
-            case UPDATE_BEN -> {
-                location="Inside UPDATE_BEN";
-                boolean isTrue;
-                if (null != beneficiaryDto.getBenDate_Of_Birth()) {
-                    isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.getBenDate_Of_Birth().toString());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give DOB in YYYY-mm-dd format",
-                                String.format("%s of %s",location,methodName));
-                }
-
-                if (null != beneficiaryDto.getBeneficiaryEmail()) {
-                    isTrue = Pattern.matches(PATTERN_FOR_EMAIL, beneficiaryDto.getBeneficiaryEmail());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give email in valid format",
-                                String.format("%s of %s",location,methodName));
-                }
-
-                if (null != beneficiaryDto.getBenPhoneNumber()) {
-                    isTrue = Pattern.matches(PATTERN_FOR_PHONE_NUMBER, beneficiaryDto.getBenPhoneNumber());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give phone Number in valid format e.g +xx-xxxxxxxxxx",
-                                String.format("%s of %s",location,methodName));
-                }
-                if (null != beneficiaryDto.getBenAdharNumber()) {
-                    isTrue = Pattern.matches(PATTERN_FOR_ADHAR, beneficiaryDto.getBenAdharNumber());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give adhar number in valid xxxx-xxxx-xxxx format",
-                                String.format("%s of %s",location,methodName));
-                }
-                if (null != beneficiaryDto.getBenPanNumber()) {
-                    isTrue = Pattern.matches(PATTERN_FOR_PAN_NUMBER, beneficiaryDto.getBenPanNumber());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give pan number in valid format",
-                                String.format("%s of %s",location,methodName));
-                }
-                if (null != beneficiaryDto.getBenPassportNumber()) {
-                    isTrue = Pattern.matches(PATTERN_FOR_PASSPORT, beneficiaryDto.getBenPassportNumber());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give passport number in valid format",
-                                String.format("%s of %s",location,methodName));
-                }
-                if (null != beneficiaryDto.getBenVoterId()) {
-                    isTrue = Pattern.matches(PATTERN_FOR_VOTER, beneficiaryDto.getBenVoterId());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give voter in valid format",
-                                String.format("%s of %s",location,methodName));
-                }
-                if (null != beneficiaryDto.getBenDrivingLicense()) {
-                    isTrue = Pattern.matches(PATTERN_FOR_DRIVING_LICENSE, beneficiaryDto.getBenDrivingLicense());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give driving license in valid format",
-                                String.format("%s of %s",location,methodName));
-                }
-            }
-            case DELETE_BEN -> {
-            }
-            default -> throw new BeneficiaryException(BeneficiaryException.class,
-                    "Invalid type of request", methodName);
-        }
-        log.debug("<-------------------validate(Accounts, BeneficiaryDto, validateBenType) BeneficiaryServiceImpl ended ---------------------" +
-                "--------------------------------------------------------------------------------------------------->");
-    }
     private Beneficiary addBeneficiary(Accounts fetchedAccount, BeneficiaryDto beneficiaryDto) throws AccountsException, BeneficiaryException {
         log.debug("<-----------------addBeneficiary(Accounts,BeneficiaryDto) BeneficiaryServiceImpl started ---------------------------------" +
                 "---------------------------------------------------------------------------------------------->");
         String methodName="addBeneficiary(Accounts,BeneficiaryDto) in BeneficiaryServiceImpl";
 
         //validate
-        validate(fetchedAccount, beneficiaryDto, ADD_BEN);
+        validationService.beneficiaryUpdateValidator(fetchedAccount, beneficiaryDto, ADD_BEN);
         //Updating the beneficiary info & saving it
         Beneficiary beneficiaryAccount = mapToBeneficiary(beneficiaryDto);
         beneficiaryAccount.setBankCode(getBankCode(beneficiaryAccount.getBenBank()));
@@ -364,7 +224,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         String methodName = "updateBeneficiaryDetailsOfAnAccount(Long , BeneficiaryDto ) in BeneficiaryServiceImpl";
 
         //validate
-        validate(fetchedAccounts, beneficiaryDto, UPDATE_BEN);
+        validationService.beneficiaryUpdateValidator(fetchedAccounts, beneficiaryDto, UPDATE_BEN);
 
         //fetch the beneficiary from beneficiaryList
         Long BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
