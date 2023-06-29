@@ -15,7 +15,7 @@ public class Beneficiary extends Audit{
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="ben_id")
-    private Long beneficiaryId;
+    private long beneficiaryId;
 
     @Column(name = "ben_name",nullable = false)
     private String beneficiaryName;
@@ -32,7 +32,7 @@ public class Beneficiary extends Audit{
     private String bankCode;
 
     @Column(name = "ben_acnt_num",nullable = false)
-    private Long beneficiaryAccountNumber;
+    private long beneficiaryAccountNumber;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

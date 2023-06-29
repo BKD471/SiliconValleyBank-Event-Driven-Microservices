@@ -18,10 +18,10 @@ public class Accounts extends Audit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true, name = "accnt_num")
-    private Long accountNumber;
+    private long accountNumber;
 
     @Column(name = "cust_balnc")
-    private Long balance;
+    private long balance;
 
     @Column(name = "accnt_type",nullable = false)
     @Enumerated(EnumType.STRING)
@@ -44,28 +44,28 @@ public class Accounts extends Audit {
     }
 
     @Column(name = "trnsfr_lmt_pr_d")
-    private Long transferLimitPerDay;
+    private long transferLimitPerDay;
 
     @Column(name = "crdt_scr")
     private int creditScore;
 
     @Column(name="apprvd_loan_bso_crdt_scr")
-    private Long approvedLoanLimitBasedOnCreditScore;
+    private long approvedLoanLimitBasedOnCreditScore;
 
     @Column(name="is_ln_actv")
     private Boolean anyActiveLoans;
 
     @Column(name="tot_loan_issued_sf")
-    private Long totLoanIssuedSoFar;
+    private long totLoanIssuedSoFar;
 
     @Column(name="tot_out_amnt")
-    private Long totalOutStandingAmountPayableToBank;
+    private long totalOutStandingAmountPayableToBank;
 
     @Column(name="acc_stts")
     @Enumerated(EnumType.STRING)
     private  AccountStatus accountStatus;
 
-    public static enum AccountStatus{
+    public enum AccountStatus{
         OPEN,BLOCKED,CLOSED
     }
 

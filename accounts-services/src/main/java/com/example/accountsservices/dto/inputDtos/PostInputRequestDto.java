@@ -1,6 +1,5 @@
 package com.example.accountsservices.dto.inputDtos;
 
-import com.example.accountsservices.dto.AbstractParentDto;
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.dto.TransactionsDto;
@@ -23,13 +22,13 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostInputRequestDto extends AbstractParentDto {
-    private Long customerId;
+public class PostInputRequestDto {
+    private long customerId;
 
     @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long")
     private String name;
     private int age;
-    private Long accountNumber;
+    private long accountNumber;
 
     @Pattern(regexp = PATTERN_FOR_DOB,
             message = "Please provide DOB in YYYY-MM-DD format")
@@ -74,7 +73,7 @@ public class PostInputRequestDto extends AbstractParentDto {
     private String passportNumber;
 
     private BeneficiaryDto.BenUpdateRequest benRequest;
-    private Long beneficiaryId;
+    private long beneficiaryId;
 
     @Size(min=3,max = 60,message = "Beneficiary Name must be at least 3 and at most 60 chars long")
     private String beneficiaryName;
@@ -82,21 +81,21 @@ public class PostInputRequestDto extends AbstractParentDto {
     @Size(min=10,max = 1000,message = "Please provide address")
     private String address;
     private String imageName;
-    private MultipartFile customerImage;
-    private Long beneficiaryAccountNumber;
+    private long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
     private int benAge;
     private Beneficiary.BanksSupported benBank;
-    private Long balance;
+    private long balance;
     private AccountsDto.UpdateRequest updateRequest;
     private String branchCode;
-    private Long transferLimitPerDay;
+    private long transferLimitPerDay;
     private int creditScore;
     private Accounts.AccountStatus accountStatus;
-    private Long approvedLoanLimitBasedOnCreditScore;
+    private long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
-    private Long totLoanIssuedSoFar;
-    private Long totalOutStandingAmountPayableToBank;
+    private long totLoanIssuedSoFar;
+    private long totalOutStandingAmountPayableToBank;
+    private MultipartFile customerImage;
     private List<BeneficiaryDto> listOfBeneficiary = new ArrayList<>();
     private List<TransactionsDto> listOfTransactions = new ArrayList<>();
     private Customer customer;

@@ -26,7 +26,7 @@ public class Cards extends  Audit{
     @Enumerated(EnumType.STRING)
     private CARD_TYPE cardType;
 
-    private enum CARD_TYPE{
+    public enum CARD_TYPE{
         TRAVEL,FUEL,REWARD,SECURED,BUSINESS,STUDENT,PREMIUM,
         CASHBACK,LIFESTYLE,ENTERTAINMENT,SHOPPING
     }
@@ -35,7 +35,7 @@ public class Cards extends  Audit{
     @Enumerated(EnumType.STRING)
     private CARD_NETWORK cardNetwork;
 
-    private enum CARD_NETWORK{
+    public enum CARD_NETWORK{
         VISA,MASTERCARD,RU_PAY
     }
 

@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutputDto extends AbstractParentDto{
+public class OutputDto {
     private String defaultMessage;
     private CustomerOutPutDto customer;
     private AccountsOutPutDto accounts;

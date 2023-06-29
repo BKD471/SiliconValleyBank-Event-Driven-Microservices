@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class Customer extends Audit implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
+    private long customerId;
 
     @Column(nullable = false,name="cust_name")
     private String name;

@@ -1,6 +1,5 @@
 package com.example.accountsservices.dto.inputDtos;
 
-import com.example.accountsservices.dto.AbstractParentDto;
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.model.Accounts;
@@ -19,11 +18,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PutInputRequestDto extends AbstractParentDto {
-    private Long customerId;
+public class PutInputRequestDto {
+    private long customerId;
     private String name;
     private int age;
-    private Long accountNumber;
+    private long accountNumber;
     private String dateOfBirthInYYYYMMDD;
     private Accounts.AccountType accountType;
     private Accounts.Branch homeBranch;
@@ -42,9 +41,9 @@ public class PutInputRequestDto extends AbstractParentDto {
     private GetInputRequestDto.DIRECTION sortDir;
 
     private BeneficiaryDto.BenUpdateRequest benRequest;
-    private Long beneficiaryId;
+    private long beneficiaryId;
     private String beneficiaryName;
-    private Long beneficiaryAccountNumber;
+    private long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
     private String ben_date_of_birthInYYYYMMDD;
     private int benAge;
@@ -56,19 +55,19 @@ public class PutInputRequestDto extends AbstractParentDto {
     private String beneficiaryEmail;
     private String benVoterId;
     private String benDrivingLicense;
-    private Long balance;
+    private long balance;
     private AccountsDto.UpdateRequest updateRequest;
     private String branchCode;
-    private Long transferLimitPerDay;
+    private long transferLimitPerDay;
     private int creditScore;
     private String address;
     private String imageName;
-    private MultipartFile customerImage;
     private Accounts.AccountStatus accountStatus;
-    private Long approvedLoanLimitBasedOnCreditScore;
+    private long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
-    private Long totLoanIssuedSoFar;
-    private Long totalOutStandingAmountPayableToBank;
+    private long totLoanIssuedSoFar;
+    private long totalOutStandingAmountPayableToBank;
+    private MultipartFile customerImage;
     private List<Beneficiary> listOfBeneficiary = new ArrayList<>();
     private List<Transactions> listOfTransactions = new ArrayList<>();
     private Customer customer;

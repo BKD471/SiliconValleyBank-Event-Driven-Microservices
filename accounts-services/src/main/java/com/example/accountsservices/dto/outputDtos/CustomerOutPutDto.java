@@ -1,6 +1,5 @@
 package com.example.accountsservices.dto.outputDtos;
 
-import com.example.accountsservices.dto.AbstractParentDto;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,8 +10,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerOutPutDto extends AbstractParentDto {
-    private Long customerId;
+public class CustomerOutPutDto {
+    private long customerId;
     private String customerName;
     private String email;
     private LocalDate DateOfBirth;

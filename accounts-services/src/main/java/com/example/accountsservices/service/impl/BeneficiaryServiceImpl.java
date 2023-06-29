@@ -107,7 +107,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         return createdBeneficiary.get();
     }
 
-    private Optional<Beneficiary> getBeneficiaryById(Accounts fetchedAccount, Long benId) throws BeneficiaryException {
+    private Optional<Beneficiary> getBeneficiaryById(Accounts fetchedAccount, long benId) throws BeneficiaryException {
         log.debug("<-----------------getBeneficiaryById(Accounts, Long ) BeneficiaryServiceImpl started ----------------------------------" +
                 "---------------------------------------------------------------------------------------------->");
         String methodName = "getBeneficiaryById(Accounts,Long";
@@ -117,7 +117,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         log.debug("<-------------------------getBeneficiaryById(Accounts, Long) BeneficiaryServiceImpl ended --------------------------------" +
                 "--------------------------------------------------------------------------------------------->");
         return fetchedAccount.getListOfBeneficiary().stream().
-                filter(ben -> ben.getBeneficiaryId().equals(benId)).findFirst();
+                filter(ben -> ben.getBeneficiaryId()==benId).findFirst();
     }
 
     private PageableResponseDto<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount,Pageable pageable) throws AccountsException, BeneficiaryException {

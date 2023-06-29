@@ -1,12 +1,12 @@
 package com.example.cardservices.services.Impl;
 
 import com.example.cardservices.dto.CardsDto;
-import com.example.cardservices.services.CardsService;
+import com.example.cardservices.services.ICardsService;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CardsServiceImpl implements CardsService {
+public class CardsServiceImpl implements ICardsService {
 
     /**
      * @param cardsDto

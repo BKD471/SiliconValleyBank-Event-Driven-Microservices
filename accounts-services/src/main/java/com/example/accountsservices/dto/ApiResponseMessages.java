@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApiResponseMessages extends AbstractParentDto{
+public class ApiResponseMessages {
     private String message;
     private boolean success;
     private HttpStatus status;

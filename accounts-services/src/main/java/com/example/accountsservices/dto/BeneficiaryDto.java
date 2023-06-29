@@ -13,10 +13,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BeneficiaryDto extends AbstractParentDto{
-    private Long beneficiaryId;
+public class BeneficiaryDto {
+    private long beneficiaryId;
     private String beneficiaryName;
-    private Long beneficiaryAccountNumber;
+    private long beneficiaryAccountNumber;
 
     @JsonIgnore
     @JsonProperty(value = "benUpdateRequest")

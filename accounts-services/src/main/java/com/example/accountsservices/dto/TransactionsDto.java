@@ -16,7 +16,7 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.PATTERN_F
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionsDto extends AbstractParentDto {
+public class TransactionsDto {
     @Min(value =1, message = "Please provide an account Number")
     private Long accountNumber;
     private LocalDateTime transactionTimeStamp;

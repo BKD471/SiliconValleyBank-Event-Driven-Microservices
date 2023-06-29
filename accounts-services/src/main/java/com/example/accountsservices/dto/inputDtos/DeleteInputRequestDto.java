@@ -1,6 +1,5 @@
 package com.example.accountsservices.dto.inputDtos;
 
-import com.example.accountsservices.dto.AbstractParentDto;
 import com.example.accountsservices.dto.AccountsDto;
 import com.example.accountsservices.dto.BeneficiaryDto;
 import com.example.accountsservices.model.Accounts;
@@ -17,11 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DeleteInputRequestDto extends AbstractParentDto {
-    private Long customerId;
+public class DeleteInputRequestDto {
+    private long customerId;
     private String name;
     private int age;
-    private Long accountNumber;
+    private long accountNumber;
     private String dateOfBirthInYYYYMMDD;
     private Accounts.AccountType accountType;
     private Accounts.Branch homeBranch;
@@ -39,9 +38,9 @@ public class DeleteInputRequestDto extends AbstractParentDto {
     }
     private BeneficiaryDto.BenUpdateRequest benRequest;
 
-    private Long beneficiaryId;
+    private long beneficiaryId;
     private String beneficiaryName;
-    private Long beneficiaryAccountNumber;
+    private long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
     private String ben_date_of_birthINYYYYMMDD;
     private int benAge;
@@ -53,16 +52,16 @@ public class DeleteInputRequestDto extends AbstractParentDto {
     private String beneficiaryEmail;
     private String benVoterId;
     private String benDrivingLicense;
-    private Long balance;
+    private long balance;
     private AccountsDto.UpdateRequest updateRequest;
     private String branchCode;
-    private Long transferLimitPerDay;
+    private long transferLimitPerDay;
     private int creditScore;
     private Accounts.AccountStatus accountStatus;
-    private Long approvedLoanLimitBasedOnCreditScore;
+    private long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
-    private Long totLoanIssuedSoFar;
-    private Long totalOutStandingAmountPayableToBank;
+    private long totLoanIssuedSoFar;
+    private long totalOutStandingAmountPayableToBank;
     private String address;
     private String imageName;
     private List<Beneficiary> listOfBeneficiary = new ArrayList<>();

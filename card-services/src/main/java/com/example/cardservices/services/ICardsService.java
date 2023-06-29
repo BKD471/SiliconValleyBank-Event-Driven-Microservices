@@ -4,7 +4,7 @@ import com.example.cardservices.dto.CardsDto;
 
 import java.util.*;
 
-public interface CardsService {
+public interface ICardsService {
     CardsDto issueCard(CardsDto cardsDto);
     List<CardsDto> getAllCardsByCustomerId(Long customerId);
     int generateCreditScore(Long customerId);

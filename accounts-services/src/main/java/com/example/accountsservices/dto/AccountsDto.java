@@ -12,19 +12,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountsDto extends AbstractParentDto {
-    private Long accountNumber;
-    private Long balance;
+public class AccountsDto {
+    private long accountNumber;
+    private long balance;
     private Accounts.AccountType accountType;
     private Accounts.AccountStatus accountStatus;
     private String branchCode;
     private Accounts.Branch homeBranch;
-    private Long transferLimitPerDay;
+    private long transferLimitPerDay;
     private int creditScore;
-    private Long approvedLoanLimitBasedOnCreditScore;
+    private long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
-    private Long totalOutstandingAmountPayableToBank;
-    private Long totLoanIssuedSoFar;
+    private long totalOutstandingAmountPayableToBank;
+    private long totLoanIssuedSoFar;
     @JsonIgnore
     @JsonProperty(value = "updateRequest")
     private UpdateRequest updateRequest;

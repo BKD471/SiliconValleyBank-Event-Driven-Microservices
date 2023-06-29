@@ -12,8 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerDto extends AbstractParentDto {
-    private Long customerId;
+public class CustomerDto {
+    private long customerId;
     private LocalDate DateOfBirth;
     private String customerName;
     private int age;

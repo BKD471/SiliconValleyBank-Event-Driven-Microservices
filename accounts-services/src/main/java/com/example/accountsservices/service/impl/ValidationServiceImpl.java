@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
-import static com.example.accountsservices.helpers.RegexMatchersHelper.PATTERN_FOR_DRIVING_LICENSE;
 
 @Service
 @Primary
