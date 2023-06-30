@@ -3,12 +3,12 @@ package com.example.accountsservices.exception;
 public class BeneficiaryException extends RuntimeException{
    private final String reason;
    private final String methodName;
-   private final Object obj;
+   private final Object className;
 
-   public BeneficiaryException(Object obj,String reason,String methodName){
-       super(String.format("%s has occurred  for %s in %s",obj,reason,methodName));
+   public BeneficiaryException(Object className,String reason,String methodName){
+       super(String.format("%s has occurred  for %s in %s",className,reason,methodName));
        this.reason=reason;
        this.methodName=methodName;
-       this.obj=obj;
+       this.className=className;
    }
 }

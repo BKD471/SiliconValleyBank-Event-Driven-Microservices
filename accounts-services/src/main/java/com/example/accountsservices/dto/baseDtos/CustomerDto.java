@@ -1,4 +1,4 @@
-package com.example.accountsservices.dto;
+package com.example.accountsservices.dto.baseDtos;
 
 
 import lombok.*;

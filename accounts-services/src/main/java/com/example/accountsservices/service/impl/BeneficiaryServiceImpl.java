@@ -1,16 +1,20 @@
 package com.example.accountsservices.service.impl;
 
 
-import com.example.accountsservices.dto.*;
+import com.example.accountsservices.dto.baseDtos.AccountsDto;
+import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
+import com.example.accountsservices.dto.baseDtos.CustomerDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
-import com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
+import com.example.accountsservices.dto.responseDtos.PageableResponseDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -33,12 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBankCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
-import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
 @Slf4j
 @Service("beneficiaryServicePrimary")
@@ -120,7 +122,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
                 filter(ben -> ben.getBeneficiaryId()==benId).findFirst();
     }
 
-    private PageableResponseDto<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount,Pageable pageable) throws AccountsException, BeneficiaryException {
+    private PageableResponseDto<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount, Pageable pageable) throws AccountsException, BeneficiaryException {
         log.debug("<------------- getAllBeneficiariesOfAnAccountByAccountNumber(Accounts,Pageable) BeneficiaryServiceImpl started -------------" +
                 "--------------------------------------------------------------------------------------------------->");
         String methodName = "getAllAccountsByCustomerId(Account,Pageable) in BeneficiaryServiceImpl";
@@ -144,7 +146,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         String newBeneficiaryPanNumber = newBeneficiaryData.getBenPanNumber();
         String newBeneficiaryPassport = newBeneficiaryData.getBenPassportNumber();
         String newBeneficiaryVoterId = newBeneficiaryData.getBenVoterId();
-        Beneficiary.BanksSupported newBenBank=newBeneficiaryData.getBenBank();
+        AllEnumConstantHelpers.BanksSupported newBenBank=newBeneficiaryData.getBenBank();
         String newBeneficiaryPhoneNumber=newBeneficiaryData.getBenPhoneNumber();
         String newBeneficiaryEmail=newBeneficiaryData.getBeneficiaryEmail();
         String newBenDrivingLicense=newBeneficiaryData.getBenDrivingLicense();
@@ -157,7 +159,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         String oldBeneficiaryPanNumber = oldBeneficiaryData.getBenPanNumber();
         String oldBeneficiaryPassport = oldBeneficiaryData.getBenPassportNumber();
         String oldBeneficiaryVoterId = oldBeneficiaryData.getBenVoterId();
-        Beneficiary.BanksSupported oldBenBank=oldBeneficiaryData.getBenBank();
+        AllEnumConstantHelpers.BanksSupported oldBenBank=oldBeneficiaryData.getBenBank();
         String oldBeneficiaryPhoneNumber=oldBeneficiaryData.getBenPhoneNumber();
         String oldBeneficiaryEmail=oldBeneficiaryData.getBeneficiaryEmail();
         String oldDrivingLicense=oldBeneficiaryData.getBenDrivingLicense();
@@ -308,7 +310,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Customer customer = fetchedAccount.getCustomer();
         CustomerDto customerDto = mapToCustomerDto(customer);
 
-        BeneficiaryDto.BenUpdateRequest requestType = postInputDto.getBenRequest();
+        AllEnumConstantHelpers.BenUpdateRequest requestType = postInputDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
@@ -339,7 +341,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         //get customer
         Customer loadCustomer = fetchedAccount.getCustomer();
 
-        BeneficiaryDto.BenUpdateRequest requestType = putInputRequestDto.getBenRequest();
+        AllEnumConstantHelpers.BenUpdateRequest requestType = putInputRequestDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
@@ -381,7 +383,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Long accountNumber = getInputRequestDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
-        BeneficiaryDto.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
+        AllEnumConstantHelpers.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
 
@@ -433,7 +435,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Long accountNUmber = deleteInputRequestDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
 
-        BeneficiaryDto.BenUpdateRequest requestType = deleteInputRequestDto.getBenRequest();
+        AllEnumConstantHelpers.BenUpdateRequest requestType = deleteInputRequestDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {

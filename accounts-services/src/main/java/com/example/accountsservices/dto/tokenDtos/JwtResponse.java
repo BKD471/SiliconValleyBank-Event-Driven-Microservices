@@ -1,6 +1,6 @@
 package com.example.accountsservices.dto.tokenDtos;
 
-import com.example.accountsservices.dto.CustomerDto;
+import com.example.accountsservices.dto.baseDtos.CustomerDto;
 import lombok.*;
 
 @Getter

@@ -1,4 +1,4 @@
-package com.example.accountsservices.dto;
+package com.example.accountsservices.dto.baseDtos;
 
 
 import com.example.accountsservices.model.Transactions;

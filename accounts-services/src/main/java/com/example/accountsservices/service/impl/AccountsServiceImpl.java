@@ -1,16 +1,18 @@
 package com.example.accountsservices.service.impl;
 
-import com.example.accountsservices.dto.*;
+import com.example.accountsservices.dto.baseDtos.AccountsDto;
+import com.example.accountsservices.dto.baseDtos.CustomerDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
-import com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
+import com.example.accountsservices.dto.responseDtos.PageableResponseDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.RolesException;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Role;
@@ -39,10 +41,11 @@ import java.time.Period;
 import java.util.*;
 import java.util.List;
 
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION.asc;
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
-import static com.example.accountsservices.model.Accounts.AccountStatus;
 
 
 /**
@@ -67,9 +70,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     private String NORMAL_ROLE_ID;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    private final AccountStatus STATUS_BLOCKED = AccountStatus.BLOCKED;
-    private final AccountStatus STATUS_OPEN = AccountStatus.OPEN;
-    private final AccountStatus STATUS_CLOSED = AccountStatus.CLOSED;
+
     public static final String REQUEST_TO_BLOCK = "BLOCK";
     private final String INIT = "INIT";
     private final String UPDATE = "UPDATE";
@@ -126,7 +127,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //initialize branchCode
         accounts.setBranchCode(getBranchCode(accounts.getHomeBranch()));
         //initialize account status OPEN
-        accounts.setAccountStatus(STATUS_OPEN);
+        accounts.setAccountStatus(STATUS_OPENED);
         //initialize cash limit
         accounts.setTransferLimitPerDay(100000L);
 
@@ -267,8 +268,8 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
         log.debug("<-------------updateHomeBranch(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
-        Accounts.Branch oldHomeBranch = accounts.getHomeBranch();
-        Accounts.Branch newHomeBranch = accountsDto.getHomeBranch();
+        AllEnumConstantHelpers.Branch oldHomeBranch = accounts.getHomeBranch();
+        AllEnumConstantHelpers.Branch newHomeBranch = accountsDto.getHomeBranch();
         Accounts savedUpdatedAccount = accounts;
 
         if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
@@ -338,7 +339,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         log.debug("<-----------------unCloseAccount(Accounts) AccountsServiceImpl started ----------------------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------->");
         if (validationService.accountsUpdateValidator(account, mapToAccountsDto(account), null, RE_OPEN_ACCOUNT)) {
-            account.setAccountStatus(STATUS_OPEN);
+            account.setAccountStatus(STATUS_OPENED);
             accountsRepository.save(account);
         }
         log.debug("<------------unCloseAccount(Accounts) AccountsServiceImpl ended -----------------------------------------------------------------------" +
@@ -451,7 +452,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         return 0;
     }
 
-    private PageableResponseDto<AccountsDto> accountsPagination(DIRECTION sortDir,String sortBy,int pageNumber,int pageSize,Long customerId) {
+    private PageableResponseDto<AccountsDto> accountsPagination(DIRECTION sortDir, String sortBy, int pageNumber, int pageSize, Long customerId) {
         log.debug("<---------accountsPagination(DIRECTION,String ,int,int Long) AccountsServiceImpl started ------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
 
@@ -512,7 +513,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
+        AllEnumConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case LEND_LOAN -> {
                 //to be done...
@@ -541,7 +542,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
 
         String sortBy = (null == getInputRequestDto.getSortBy()) ? "balance" : getInputRequestDto.getSortBy();
-        DIRECTION sortDir = (null == getInputRequestDto.getSortDir()) ? DIRECTION.asc : getInputRequestDto.getSortDir();
+        AllEnumConstantHelpers.DIRECTION sortDir = (null == getInputRequestDto.getSortDir()) ? asc : getInputRequestDto.getSortDir();
 
 
         //map
@@ -559,7 +560,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
+        AllEnumConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case GET_CREDIT_SCORE -> {
                 getCreditScore(accountNumber);
@@ -625,7 +626,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
+        AllEnumConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case ADD_ACCOUNT -> {
                 return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);
@@ -705,7 +706,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        AccountsDto.UpdateRequest request = accountsDto.getUpdateRequest();
+        AllEnumConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case DELETE_ACC -> {
                 Long accountNumber = accountsDto.getAccountNumber();
@@ -732,7 +733,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         String methodName="deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
 
         Long customerId= deleteInputRequestDto.getCustomerId();
-        DeleteInputRequestDto.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
+        AllEnumConstantHelpers.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
         if(null==deleteRequest || null==customerId) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
 
         Customer foundCustomer=fetchCustomerByCustomerNumber(customerId);

@@ -2,6 +2,7 @@ package com.example.accountsservices.controller;
 
 
 import com.example.accountsservices.dto.outputDtos.OutputDto;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
@@ -56,11 +57,11 @@ public class BeneficiaryControllerTest {
     private final String BASE_URL_BENEFICIARY="/api/v1/beneficiary/";
     @BeforeAll
     public static void init(){
-        String branchCode= CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        String branchCode= CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
         accounts = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(Accounts.AccountType.SAVINGS)
-                .accountStatus(Accounts.AccountStatus.OPEN)
+                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(60000L)
@@ -69,7 +70,7 @@ public class BeneficiaryControllerTest {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(Accounts.Branch.KOLKATA)
+                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
                 .build();
 
         accounts.setCreatedDate(LocalDate.of(1990,12,01));

@@ -1,7 +1,8 @@
 package com.example.accountsservices.controller;
 
-import com.example.accountsservices.dto.TransactionsDto;
+import com.example.accountsservices.dto.baseDtos.TransactionsDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
@@ -61,12 +62,12 @@ public class TransactionsControllerTest {
 
     @BeforeAll
     public static void init() {
-        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
 
         accounts = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(Accounts.AccountType.SAVINGS)
-                .accountStatus(Accounts.AccountStatus.OPEN)
+                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(500000L)
@@ -75,7 +76,7 @@ public class TransactionsControllerTest {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(Accounts.Branch.KOLKATA)
+                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
                 .build();
         customer = Customer.builder()
                 .customerId(1L)

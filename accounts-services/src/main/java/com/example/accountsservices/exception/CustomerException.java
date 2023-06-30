@@ -2,11 +2,11 @@ package com.example.accountsservices.exception;
 public class CustomerException extends RuntimeException {
     private final String reason;
     private final String methodName;
-    private final Object e;
+    private final Object className;
 
-    public CustomerException(Object e, String reason, String methodName) {
-        super(String.format("%s has occurred  for %s in %s",e,reason,methodName));
-        this.e = e;
+    public CustomerException(Object className, String reason, String methodName) {
+        super(String.format("%s has occurred  for %s in %s",className,reason,methodName));
+        this.className = className;
         this.reason = reason;
         this.methodName = methodName;
     }

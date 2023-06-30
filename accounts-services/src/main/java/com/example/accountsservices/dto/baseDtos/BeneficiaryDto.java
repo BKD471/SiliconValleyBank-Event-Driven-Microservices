@@ -1,5 +1,6 @@
-package com.example.accountsservices.dto;
+package com.example.accountsservices.dto.baseDtos;
 
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Beneficiary;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,21 +21,11 @@ public class BeneficiaryDto {
 
     @JsonIgnore
     @JsonProperty(value = "benUpdateRequest")
-    private BenUpdateRequest benUpdateRequest;
-
-    public enum BenUpdateRequest {
-        ADD_BEN,
-        UPDATE_BEN,
-        GET_ALL_BEN,
-        GET_BEN,
-        DELETE_BEN,
-        DELETE_ALL_BEN
-    }
-
+    private AllEnumConstantHelpers.BenUpdateRequest benUpdateRequest;
     private Beneficiary.RELATION relation;
     private LocalDate BenDate_Of_Birth;
     private int benAge;
-    private Beneficiary.BanksSupported benBank;
+    private AllEnumConstantHelpers.BanksSupported benBank;
     private String bankCode;
     private String benAdharNumber;
     private String benPhoneNumber;

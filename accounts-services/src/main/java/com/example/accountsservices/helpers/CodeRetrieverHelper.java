@@ -1,15 +1,13 @@
 package com.example.accountsservices.helpers;
 
 import com.example.accountsservices.exception.AccountsException;
-import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.accountsservices.model.Accounts.Branch.*;
-import static com.example.accountsservices.model.Accounts.Branch.DELHI;
-import static com.example.accountsservices.model.Beneficiary.BanksSupported.*;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.BanksSupported.*;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.Branch.*;
 
 public class CodeRetrieverHelper {
     //Bank code
@@ -37,8 +35,8 @@ public class CodeRetrieverHelper {
     private static final String KERALA_UID = "KER01121997";
     private static final String DELHI_UID = "DEL01121997";
 
-    private static final Map<Beneficiary.BanksSupported, String> hashedBankCode = new HashMap<>();
-    private static final Map<Accounts.Branch, String> hashedBranchCode = new HashMap<>();
+    private static final Map<AllEnumConstantHelpers.BanksSupported, String> hashedBankCode = new HashMap<>();
+    private static final Map<AllEnumConstantHelpers.Branch, String> hashedBranchCode = new HashMap<>();
 
     static {
         //set bank codes
@@ -67,7 +65,7 @@ public class CodeRetrieverHelper {
         hashedBranchCode.put(DELHI, DELHI_UID);
     }
 
-    public static String getBankCode(Beneficiary.BanksSupported banksSupported) throws AccountsException {
+    public static String getBankCode(AllEnumConstantHelpers.BanksSupported banksSupported) throws AccountsException {
         String methodName = "getBankCode(Account.Branch) in BankCodeRetrieverHelper";
         if (hashedBankCode.containsKey(banksSupported)) return hashedBankCode.get(banksSupported);
         throw new AccountsException(AccountsException.class, String.format("No such" +
@@ -75,7 +73,7 @@ public class CodeRetrieverHelper {
 
     }
 
-    public static String getBranchCode(Accounts.Branch homeBranch) throws AccountsException {
+    public static String getBranchCode(AllEnumConstantHelpers.Branch homeBranch) throws AccountsException {
         String methodName = "getBranchCode(Account.Branch) in BranchCodeHelper";
         if (hashedBranchCode.containsKey(homeBranch)) return hashedBranchCode.get(homeBranch);
         throw new AccountsException(AccountsException.class, String.format("No such" +

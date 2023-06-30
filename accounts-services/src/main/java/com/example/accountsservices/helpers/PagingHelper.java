@@ -1,6 +1,6 @@
 package com.example.accountsservices.helpers;
 
-import com.example.accountsservices.dto.PageableResponseDto;
+import com.example.accountsservices.dto.responseDtos.PageableResponseDto;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import org.modelmapper.ModelMapper;
@@ -11,13 +11,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import  com.example.accountsservices.dto.inputDtos.GetInputRequestDto.DIRECTION;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION.asc;
 
 public class PagingHelper {
     private static final Set<String> setOfAccountFieldNames = new HashSet<>();
     private static final Set<String> setOfBeneficiaryFieldNames = new HashSet<>();
     public static final int DEFAULT_PAGE_SIZE = 5;
-    public static final DIRECTION PAGE_SORT_DIRECTION_ASCENDING = DIRECTION.asc;
+    public static final DIRECTION PAGE_SORT_DIRECTION_ASCENDING = asc;
 
     static {
         //fetching the attribs of Accounts

@@ -1,11 +1,12 @@
 package com.example.accountsservices.service.impl;
 
-import com.example.accountsservices.dto.AccountsDto;
-import com.example.accountsservices.dto.BeneficiaryDto;
-import com.example.accountsservices.dto.CustomerDto;
+import com.example.accountsservices.dto.baseDtos.AccountsDto;
+import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
+import com.example.accountsservices.dto.baseDtos.CustomerDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -20,6 +21,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.STATUS_BLOCKED;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
 @Service
@@ -27,7 +29,6 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 @Slf4j
 public class ValidationServiceImpl implements IValidationService {
     private final AccountsRepository accountsRepository;
-    private final Accounts.AccountStatus STATUS_BLOCKED = Accounts.AccountStatus.BLOCKED;
     private final Beneficiary.RELATION FATHER = Beneficiary.RELATION.FATHER;
     private final Beneficiary.RELATION MOTHER = Beneficiary.RELATION.MOTHER;
     private final Beneficiary.RELATION SPOUSE = Beneficiary.RELATION.SPOUSE;
@@ -87,7 +88,7 @@ public class ValidationServiceImpl implements IValidationService {
                         accountsDto, String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
-                Accounts.AccountStatus status = accounts.getAccountStatus();
+                AllEnumConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED ->
                             throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), location);
@@ -99,7 +100,7 @@ public class ValidationServiceImpl implements IValidationService {
                 }
             }
             case RE_OPEN_ACCOUNT -> {
-                Accounts.AccountStatus status = accounts.getAccountStatus();
+                AllEnumConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED -> {
                         return true;

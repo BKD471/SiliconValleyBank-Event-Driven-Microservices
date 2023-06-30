@@ -1,5 +1,6 @@
 package com.example.accountsservices.model;
 
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -20,14 +21,9 @@ public class Beneficiary extends Audit{
     @Column(name = "ben_name",nullable = false)
     private String beneficiaryName;
 
-
-    public enum BanksSupported{
-        SBI,AXIS,HDFC,ICICI,CANARA,PNB,ORIENTAL,BOI,YES,BANDHAN,BOB
-    }
-
     @Column(name="ben_bank",nullable = false)
     @Enumerated(EnumType.STRING)
-    private BanksSupported benBank;
+    private AllEnumConstantHelpers.BanksSupported benBank;
 
     private String bankCode;
 

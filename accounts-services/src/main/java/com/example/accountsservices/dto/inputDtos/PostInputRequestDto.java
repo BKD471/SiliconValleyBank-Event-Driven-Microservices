@@ -1,8 +1,9 @@
 package com.example.accountsservices.dto.inputDtos;
 
-import com.example.accountsservices.dto.AccountsDto;
-import com.example.accountsservices.dto.BeneficiaryDto;
-import com.example.accountsservices.dto.TransactionsDto;
+import com.example.accountsservices.dto.baseDtos.AccountsDto;
+import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
+import com.example.accountsservices.dto.baseDtos.TransactionsDto;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -36,8 +37,8 @@ public class PostInputRequestDto {
     @ValidAge
     private String dateOfBirthInYYYYMMDD;
 
-    private Accounts.AccountType accountType;
-    private Accounts.Branch homeBranch;
+    private AllEnumConstantHelpers.AccountType accountType;
+    private AllEnumConstantHelpers.Branch homeBranch;
 
     @Pattern(regexp = PATTERN_FOR_EMAIL,
             message = "Invalid Email format")
@@ -72,7 +73,7 @@ public class PostInputRequestDto {
     @Pattern(regexp = PATTERN_FOR_PASSPORT,message = "Invalid Passport Number")
     private String passportNumber;
 
-    private BeneficiaryDto.BenUpdateRequest benRequest;
+    private AllEnumConstantHelpers.BenUpdateRequest benRequest;
     private long beneficiaryId;
 
     @Size(min=3,max = 60,message = "Beneficiary Name must be at least 3 and at most 60 chars long")
@@ -84,13 +85,13 @@ public class PostInputRequestDto {
     private long beneficiaryAccountNumber;
     private Beneficiary.RELATION bloodRelation;
     private int benAge;
-    private Beneficiary.BanksSupported benBank;
+    private AllEnumConstantHelpers.BanksSupported benBank;
     private long balance;
-    private AccountsDto.UpdateRequest updateRequest;
+    private AllEnumConstantHelpers.UpdateRequest updateRequest;
     private String branchCode;
     private long transferLimitPerDay;
     private int creditScore;
-    private Accounts.AccountStatus accountStatus;
+    private AllEnumConstantHelpers.AccountStatus accountStatus;
     private long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
     private long totLoanIssuedSoFar;

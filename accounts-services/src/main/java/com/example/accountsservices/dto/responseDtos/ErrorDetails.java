@@ -1,4 +1,4 @@
-package com.example.accountsservices.dto;
+package com.example.accountsservices.dto.responseDtos;
 
 import java.time.LocalTime;
 

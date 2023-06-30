@@ -1,6 +1,6 @@
 package com.example.accountsservices.exception;
 
-import com.example.accountsservices.dto.ErrorDetails;
+import com.example.accountsservices.dto.responseDtos.ErrorDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

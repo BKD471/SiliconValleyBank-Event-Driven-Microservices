@@ -1,6 +1,9 @@
 package com.example.accountsservices.helpers;
 
-import com.example.accountsservices.dto.*;
+import com.example.accountsservices.dto.baseDtos.AccountsDto;
+import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
+import com.example.accountsservices.dto.baseDtos.CustomerDto;
+import com.example.accountsservices.dto.baseDtos.TransactionsDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;

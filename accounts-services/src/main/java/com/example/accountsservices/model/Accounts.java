@@ -1,5 +1,6 @@
 package com.example.accountsservices.model;
 
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,23 +26,14 @@ public class Accounts extends Audit {
 
     @Column(name = "accnt_type",nullable = false)
     @Enumerated(EnumType.STRING)
-    private AccountType accountType;
-
-    public  enum  AccountType{
-        SAVINGS,CURRENT
-    }
-
+    private AllEnumConstantHelpers.AccountType accountType;
 
     @Column(name="branch_code")
     private String branchCode;
 
     @Column( name = "branch_addr",nullable = false)
     @Enumerated(EnumType.STRING)
-    private Branch homeBranch;
-
-    public enum Branch{
-        KOLKATA,CHENNAI,BANGALORE,HYDERABAD,DELHI,BHUBANESWAR,MUMBAI,BARODA,PATNA,KERALA
-    }
+    private AllEnumConstantHelpers.Branch homeBranch;
 
     @Column(name = "trnsfr_lmt_pr_d")
     private long transferLimitPerDay;
@@ -63,12 +55,7 @@ public class Accounts extends Audit {
 
     @Column(name="acc_stts")
     @Enumerated(EnumType.STRING)
-    private  AccountStatus accountStatus;
-
-    public enum AccountStatus{
-        OPEN,BLOCKED,CLOSED
-    }
-
+    private AllEnumConstantHelpers.AccountStatus accountStatus;
 
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL)
     private List<Beneficiary> listOfBeneficiary=new ArrayList<>();

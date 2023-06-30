@@ -1,6 +1,6 @@
 package com.example.accountsservices.service;
 
-import com.example.accountsservices.dto.BeneficiaryDto;
+import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
@@ -8,13 +8,13 @@ import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.AccountsRepository;
 import com.example.accountsservices.repository.BeneficiaryRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,12 +57,12 @@ public class BeneficiaryServiceTests {
 
     @BeforeEach
     public void init() {
-        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.KOLKATA);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
 
         accounts = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(Accounts.AccountType.SAVINGS)
-                .accountStatus(Accounts.AccountStatus.OPEN)
+                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(60000L)
@@ -71,7 +71,7 @@ public class BeneficiaryServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(Accounts.Branch.KOLKATA)
+                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
                 .build();
         customer = Customer.builder()
                 .customerId(1L)
@@ -100,8 +100,8 @@ public class BeneficiaryServiceTests {
                 .benPassportNumber("passport-no-1")
                 .benPhoneNumber("+91-123456789")
                 .benPanNumber("GMDPD7592K")
-                .benBank(Beneficiary.BanksSupported.AXIS)
-                .bankCode(CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.AXIS))
+                .benBank(AllEnumConstantHelpers.BanksSupported.AXIS)
+                .bankCode(CodeRetrieverHelper.getBankCode(AllEnumConstantHelpers.BanksSupported.AXIS))
                 .imageName("img1.png")
                 .BenDate_Of_Birth(LocalDate.of(1997, 12, 01))
                 .benVoterId("ben voter 1")
@@ -117,7 +117,7 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void addBeneficiaryTest() {
-        String bankCOde = CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.AXIS);
+        String bankCOde = CodeRetrieverHelper.getBankCode(AllEnumConstantHelpers.BanksSupported.AXIS);
         LocalDate dob = LocalDate.of(1997, 12, 01);
         int age = Period.between(dob, LocalDate.now()).getYears();
 
@@ -128,13 +128,13 @@ public class BeneficiaryServiceTests {
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .name("ben 2")
                 .email("ben2@gmail.com")
                 .beneficiaryAccountNumber(3L)
                 .bloodRelation(Beneficiary.RELATION.SON)
                 .dateOfBirthInYYYYMMDD(String.valueOf(dob))
-                .benBank(Beneficiary.BanksSupported.AXIS)
+                .benBank(AllEnumConstantHelpers.BanksSupported.AXIS)
                 .adharNumber("1234-5678-8888")
                 .address("ben 456 street")
                 .phoneNumber("+91-987654321")
@@ -164,13 +164,13 @@ public class BeneficiaryServiceTests {
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .name("ben 2")
                 .email("ben2@gmail.com")
                 .beneficiaryAccountNumber(3L)
                 .bloodRelation(Beneficiary.RELATION.SON)
                 .dateOfBirthInYYYYMMDD(String.valueOf(dob))
-                .benBank(Beneficiary.BanksSupported.AXIS)
+                .benBank(AllEnumConstantHelpers.BanksSupported.AXIS)
                 .adharNumber("1234-5678-8888")
                 .address("ben 456 street")
                 .phoneNumber("+91-987654321")
@@ -192,7 +192,7 @@ public class BeneficiaryServiceTests {
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .adharNumber("1234-5678-9999")
                 .build();
 
@@ -208,7 +208,7 @@ public class BeneficiaryServiceTests {
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .email("phoenix@gmail.com")
                 .adharNumber("1234-5678-9999")
                 .build();
@@ -226,8 +226,7 @@ public class BeneficiaryServiceTests {
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
-
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .bloodRelation(Beneficiary.RELATION.FATHER)
                 .adharNumber("1234-5678-1234")
                 .build();
@@ -245,7 +244,7 @@ public class BeneficiaryServiceTests {
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .bloodRelation(Beneficiary.RELATION.MOTHER)
                 .adharNumber("1234-5678-1234")
                 .build();
@@ -263,7 +262,7 @@ public class BeneficiaryServiceTests {
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .email("phoenix@gmail.com")
                 .bloodRelation(Beneficiary.RELATION.SPOUSE)
                 .adharNumber("1234-5678-9999")
@@ -282,7 +281,7 @@ public class BeneficiaryServiceTests {
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
                 .beneficiaryId(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.GET_BEN)
                 .build();
 
         OutputDto response = beneficiaryService.getRequestBenExecutor(request);
@@ -301,7 +300,7 @@ public class BeneficiaryServiceTests {
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
                 .beneficiaryId(69L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.GET_BEN)
                 .build();
 
         assertThrows(BeneficiaryException.class, () -> {
@@ -311,13 +310,13 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void noBeneficiaryAccountsForAnAccountTest() {
-        String branchCode = CodeRetrieverHelper.getBranchCode(Accounts.Branch.BANGALORE);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.BANGALORE);
         List<Beneficiary> accountsList = new ArrayList<>();
 
         Accounts accountWithNoBeneficiary = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(Accounts.AccountType.SAVINGS)
-                .accountStatus(Accounts.AccountStatus.OPEN)
+                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(60000L)
@@ -327,7 +326,7 @@ public class BeneficiaryServiceTests {
                 .totLoanIssuedSoFar(450000L)
                 .listOfBeneficiary(accountsList)
                 .creditScore(750)
-                .homeBranch(Accounts.Branch.BANGALORE).build();
+                .homeBranch(AllEnumConstantHelpers.Branch.BANGALORE).build();
 
 
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
@@ -336,7 +335,7 @@ public class BeneficiaryServiceTests {
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
                 .beneficiaryId(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.GET_BEN)
                 .build();
 
         assertThrows(BeneficiaryException.class, () -> {
@@ -356,7 +355,7 @@ public class BeneficiaryServiceTests {
 
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                 .build();
 
 
@@ -376,7 +375,7 @@ public class BeneficiaryServiceTests {
 
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                 .sortBy("INVALID FIELD")
                 .build();
 
@@ -396,7 +395,7 @@ public class BeneficiaryServiceTests {
 
         GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                 .sortBy("INVALID FIELD")
                 .build();
 
@@ -414,7 +413,7 @@ public class BeneficiaryServiceTests {
 
             GetInputRequestDto request = GetInputRequestDto.builder()
                     .accountNumber(1L)
-                    .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                    .benRequest(AllEnumConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                     .build();
 
             assertThrows(BeneficiaryException.class ,()->{
@@ -425,7 +424,7 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void updateBeneficiaryTest() {
-        String bankCode = CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.ICICI);
+        String bankCode = CodeRetrieverHelper.getBankCode(AllEnumConstantHelpers.BanksSupported.ICICI);
         when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         Beneficiary processedAccount = Beneficiary.builder()
                 .beneficiaryAccountNumber(3L)
@@ -434,7 +433,7 @@ public class BeneficiaryServiceTests {
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
                 .relation(Beneficiary.RELATION.DAUGHTER)
                 .BenDate_Of_Birth(LocalDate.of(1997, 12, 02))
-                .benBank(Beneficiary.BanksSupported.ICICI)
+                .benBank(AllEnumConstantHelpers.BanksSupported.ICICI)
                 .benAdharNumber("9876-5432-1111")
                 .benPanNumber("GMDPD6969M")
                 .benPassportNumber("U6696969")
@@ -449,13 +448,13 @@ public class BeneficiaryServiceTests {
         PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber(1L)
                 .beneficiaryId(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.UPDATE_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.UPDATE_BEN)
                 .beneficiaryName("Updated Beneficiary Name")
                 .beneficiaryAccountNumber(3L)
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
                 .bloodRelation(Beneficiary.RELATION.DAUGHTER)
                 .ben_date_of_birthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 02)))
-                .benBank(Beneficiary.BanksSupported.ICICI)
+                .benBank(AllEnumConstantHelpers.BanksSupported.ICICI)
                 .benAdharNumber("9876-5432-1111")
                 .benPanNumber("GMDPD6969M")
                 .benPassportNumber("U6696969")
@@ -491,13 +490,13 @@ public class BeneficiaryServiceTests {
         PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber(1L)
                 .beneficiaryId(69L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.UPDATE_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.UPDATE_BEN)
                 .beneficiaryName("Updated Beneficiary Name")
                 .beneficiaryAccountNumber(3L)
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
                 .bloodRelation(Beneficiary.RELATION.DAUGHTER)
                 .ben_date_of_birthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 02)))
-                .benBank(Beneficiary.BanksSupported.ICICI)
+                .benBank(AllEnumConstantHelpers.BanksSupported.ICICI)
                 .benAdharNumber("9876-5432-1111")
                 .benPanNumber("GMDPD6969M")
                 .benPassportNumber("U6696969")
@@ -518,7 +517,7 @@ public class BeneficiaryServiceTests {
 
         DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .accountNumber(1L)
-                .beneficiaryId(1L).benRequest(BeneficiaryDto.BenUpdateRequest.DELETE_BEN)
+                .beneficiaryId(1L).benRequest(AllEnumConstantHelpers.BenUpdateRequest.DELETE_BEN)
                 .build();
 
         beneficiaryService.deleteRequestBenExecutor(request);
@@ -532,8 +531,8 @@ public class BeneficiaryServiceTests {
 
         DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .accountNumber(1L)
-                .beneficiaryId(null).
-                benRequest(BeneficiaryDto.BenUpdateRequest.DELETE_BEN)
+                .beneficiaryId(0).
+                benRequest(AllEnumConstantHelpers.BenUpdateRequest.DELETE_BEN)
                 .build();
 
         assertThrows(BeneficiaryException.class,()->{
@@ -547,7 +546,7 @@ public class BeneficiaryServiceTests {
 
         DeleteInputRequestDto request= DeleteInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.DELETE_ALL_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.DELETE_ALL_BEN)
                 .build();
 
         beneficiaryService.deleteRequestBenExecutor(request);
@@ -561,7 +560,7 @@ public class BeneficiaryServiceTests {
 
         PostInputRequestDto request= PostInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.GET_ALL_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                 .build();
 
         assertThrows(BeneficiaryException.class,()->{
@@ -576,7 +575,7 @@ public class BeneficiaryServiceTests {
 
         GetInputRequestDto request= GetInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .build();
 
         assertThrows(BeneficiaryException.class,()->{
@@ -590,7 +589,7 @@ public class BeneficiaryServiceTests {
 
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.DELETE_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.DELETE_BEN)
                 .build();
 
         assertThrows(BeneficiaryException.class,()->{
@@ -604,7 +603,7 @@ public class BeneficiaryServiceTests {
 
         DeleteInputRequestDto request= DeleteInputRequestDto.builder()
                 .accountNumber(1L)
-                .benRequest(BeneficiaryDto.BenUpdateRequest.ADD_BEN)
+                .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .build();
 
         assertThrows(BeneficiaryException.class,()->{

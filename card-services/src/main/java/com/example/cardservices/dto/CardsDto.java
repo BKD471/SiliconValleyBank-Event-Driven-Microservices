@@ -17,16 +17,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CardsDto {
     private String cardNumber;
-    private long customerId;
+    private Long customerId;
     private Cards.CARD_TYPE cardType;
     private Cards.CARD_NETWORK cardNetwork;
 
-    //last blld summary
+    //last billed summary
     private double statementDue;
     private double minimumDue;
     private LocalDate dueDate;
 
-    //last pmt dtls
+    //last payment details
     private double amountPaid;
     private LocalDate lastPaidDate;
     private double currentOutStanding;

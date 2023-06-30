@@ -3,7 +3,7 @@ package com.example.accountsservices.controller.Impl;
 import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.ITransactionsController;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
-import com.example.accountsservices.dto.TransactionsDto;
+import com.example.accountsservices.dto.baseDtos.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
 import com.example.accountsservices.service.ITransactionsService;

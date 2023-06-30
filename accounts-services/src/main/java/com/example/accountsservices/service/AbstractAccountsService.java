@@ -9,12 +9,12 @@ import com.example.accountsservices.repository.CustomerRepository;
 
 import java.util.Optional;
 
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.STATUS_BLOCKED;
 
 
 public abstract class AbstractAccountsService {
     private  final  AccountsRepository accountsRepository;
     private  final CustomerRepository customerRepository;
-    private  static final Accounts.AccountStatus STATUS_BLOCKED= Accounts.AccountStatus.BLOCKED;
 
     protected AbstractAccountsService(AccountsRepository accountsRepository,
                                       CustomerRepository customerRepository){

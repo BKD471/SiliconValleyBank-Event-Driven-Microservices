@@ -1,22 +1,17 @@
 package com.example.accountsservices.service;
 
-import com.example.accountsservices.dto.AccountsDto;
-import com.example.accountsservices.dto.BeneficiaryDto;
-import com.example.accountsservices.dto.CustomerDto;
+import com.example.accountsservices.dto.baseDtos.AccountsDto;
+import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
+import com.example.accountsservices.dto.baseDtos.CustomerDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
-import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import com.example.accountsservices.service.impl.BeneficiaryServiceImpl;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.regex.Pattern;
-
-import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
-import static com.example.accountsservices.helpers.RegexMatchersHelper.PATTERN_FOR_DRIVING_LICENSE;
 
 public interface IValidationService {
     org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(IValidationService.class);
@@ -26,14 +21,14 @@ public interface IValidationService {
                 "----------------------------------------------------------------------------------------------------------------------->");
         String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
                 "coming from %s", locality);
-        Accounts.Branch newhomeBranch ;
+        AllEnumConstantHelpers.Branch newhomeBranch ;
         newhomeBranch = (null == accountsDto) ? accounts.getHomeBranch() : accountsDto.getHomeBranch();
-        Accounts.AccountType accountType = accounts.getAccountType();
+        AllEnumConstantHelpers.AccountType accountType = accounts.getAccountType();
 
         //get all accounts for customer
         List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
 
-        Accounts.Branch finalNewhomeBranch = newhomeBranch;
+        AllEnumConstantHelpers.Branch finalNewhomeBranch = newhomeBranch;
         boolean isNotPermissible = listOfAccounts.stream().
                 anyMatch(account -> finalNewhomeBranch.equals(account.getHomeBranch())
                         && accountType.equals(account.getAccountType()));

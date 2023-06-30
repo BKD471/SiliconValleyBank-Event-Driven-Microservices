@@ -2,7 +2,7 @@ package com.example.accountsservices.controller.Impl;
 
 import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.IAccountsController;
-import com.example.accountsservices.dto.AccountsDto;
+import com.example.accountsservices.dto.baseDtos.AccountsDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
@@ -11,6 +11,7 @@ import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.ResponseException;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.CustomerRepository;
 import com.example.accountsservices.service.IAccountsService;
@@ -117,7 +118,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
     @Override
     public ResponseEntity<OutputDto> uploadCustomerImage(MultipartFile image, Long customerId) throws IOException {
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
-                .updateRequest(AccountsDto.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
+                .updateRequest(AllEnumConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerId(customerId)
                 .customerImage(image)
                 .build();
