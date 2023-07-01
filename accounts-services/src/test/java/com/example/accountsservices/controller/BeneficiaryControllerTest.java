@@ -103,12 +103,12 @@ public class BeneficiaryControllerTest {
                 .benPassportNumber("passport-no-1")
                 .benPhoneNumber("+91-123456789")
                 .benPanNumber("GMDPD7592K")
-                .benBank(Beneficiary.BanksSupported.AXIS)
-                .bankCode(CodeRetrieverHelper.getBankCode(Beneficiary.BanksSupported.AXIS))
+                .benBank(AllEnumConstantHelpers.BanksSupported.AXIS)
+                .bankCode(CodeRetrieverHelper.getBankCode(AllEnumConstantHelpers.BanksSupported.AXIS))
                 .imageName("img1.png")
                 .BenDate_Of_Birth(LocalDate.of(1997, 12, 01))
                 .benVoterId("ben voter 1")
-                .relation(Beneficiary.RELATION.SON)
+                .relation(AllEnumConstantHelpers.RELATION.SON)
                 .accounts(accounts)
                 .build();
 

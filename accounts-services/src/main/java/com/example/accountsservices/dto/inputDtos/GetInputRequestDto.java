@@ -38,7 +38,7 @@ public class GetInputRequestDto {
   private long beneficiaryId;
   private String beneficiaryName;
   private long beneficiaryAccountNumber;
-  private Beneficiary.RELATION bloodRelation;
+  private AllEnumConstantHelpers.RELATION bloodRelation;
   private String ben_date_of_birthINYYYYMMDD;
   private int benAge;
   private AllEnumConstantHelpers.BanksSupported benBank;

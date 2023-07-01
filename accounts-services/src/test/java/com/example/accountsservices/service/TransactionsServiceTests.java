@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -89,8 +90,8 @@ public class TransactionsServiceTests {
         Transactions transactions1=Transactions.builder()
                 .transactionId(1L)
                 .transactedAccountNumber("1L")
-                .transactionType(Transactions.TransactionType.DEBIT)
-                .description(Transactions.DescriptionType.ELECTRICITY)
+                .transactionType(AllEnumConstantHelpers.TransactionType.DEBIT)
+                .description(ELECTRICITY)
                 .accounts(accounts)
                 .transactionAmount(60000L)
                 .build();
@@ -98,8 +99,8 @@ public class TransactionsServiceTests {
         Transactions transactions2=Transactions.builder()
                 .transactionId(2L)
                 .transactedAccountNumber("2L")
-                .transactionType(Transactions.TransactionType.CREDIT)
-                .description(Transactions.DescriptionType.SALARY)
+                .transactionType(CREDIT)
+                .description(SALARY)
                 .accounts(accounts)
                 .transactionAmount(160000L)
                 .build();
@@ -126,9 +127,9 @@ public class TransactionsServiceTests {
                 .transactionId(1L)
                 .accountNumber(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.CREDIT)
+                .transactionType(CREDIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.SALARY)
+                .description(SALARY)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
@@ -151,9 +152,9 @@ public class TransactionsServiceTests {
         Transactions transactionsState= Transactions.builder()
                 .transactionId(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.CREDIT)
+                .transactionType(CREDIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.SALARY)
+                .description(SALARY)
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
@@ -179,9 +180,9 @@ public class TransactionsServiceTests {
                 .transactionId(1L)
                 .accountNumber(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.ELECTRICITY)
+                .description(ELECTRICITY)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
@@ -204,9 +205,9 @@ public class TransactionsServiceTests {
         Transactions transactionsState= Transactions.builder()
                 .transactionId(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.ELECTRICITY)
+                .description(ELECTRICITY)
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
@@ -231,9 +232,9 @@ public class TransactionsServiceTests {
                 .transactionId(1L)
                 .accountNumber(1L)
                 .transactionAmount(800000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.ELECTRICITY)
+                .description(ELECTRICITY)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
@@ -252,9 +253,9 @@ public class TransactionsServiceTests {
                 .transactionId(1L)
                 .accountNumber(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.RENT)
+                .description(RENT)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
@@ -277,9 +278,9 @@ public class TransactionsServiceTests {
         Transactions transactionsState= Transactions.builder()
                 .transactionId(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.RENT)
+                .description(RENT)
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
@@ -305,9 +306,9 @@ public class TransactionsServiceTests {
                 .transactionId(1L)
                 .accountNumber(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.FAMILY)
+                .description(FAMILY)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
@@ -330,9 +331,9 @@ public class TransactionsServiceTests {
         Transactions transactionsState= Transactions.builder()
                 .transactionId(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.FAMILY)
+                .description(FAMILY)
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
@@ -358,9 +359,9 @@ public class TransactionsServiceTests {
                 .transactionId(1L)
                 .accountNumber(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.INVESTMENT)
+                .description(INVESTMENT)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
@@ -383,9 +384,9 @@ public class TransactionsServiceTests {
         Transactions transactionsState= Transactions.builder()
                 .transactionId(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.INVESTMENT)
+                .description(INVESTMENT)
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
@@ -411,9 +412,9 @@ public class TransactionsServiceTests {
                 .transactionId(1L)
                 .accountNumber(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.E_SHOPPING)
+                .description(E_SHOPPING)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
@@ -436,9 +437,9 @@ public class TransactionsServiceTests {
         Transactions transactionsState= Transactions.builder()
                 .transactionId(1L)
                 .transactionAmount(100000L)
-                .transactionType(Transactions.TransactionType.DEBIT)
+                .transactionType(DEBIT)
                 .transactedAccountNumber("123")
-                .description(Transactions.DescriptionType.E_SHOPPING)
+                .description(E_SHOPPING)
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());

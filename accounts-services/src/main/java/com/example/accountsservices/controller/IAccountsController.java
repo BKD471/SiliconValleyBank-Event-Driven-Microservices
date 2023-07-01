@@ -5,6 +5,7 @@ import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
+import com.example.accountsservices.dto.responseDtos.ImageResponseMessages;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.ResponseException;
@@ -38,8 +39,8 @@ public interface IAccountsController {
     ResponseEntity<OutputDto> putRequestForChange(@Valid @RequestBody PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException;
 
     @PutMapping("/upload/image/{customerId}")
-    ResponseEntity<OutputDto> uploadCustomerImage(@RequestParam("customerImage")MultipartFile image,
-                                                  @PathVariable Long customerId) throws IOException;
+    ResponseEntity<ImageResponseMessages> uploadCustomerImage(@RequestParam("customerImage")MultipartFile image,
+                                                              @PathVariable Long customerId) throws IOException;
     @DeleteMapping("/delete")
     ResponseEntity<OutputDto> deleteRequestForChange(@Valid @RequestBody DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException;
 

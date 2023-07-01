@@ -22,7 +22,7 @@ public class BeneficiaryDto {
     @JsonIgnore
     @JsonProperty(value = "benUpdateRequest")
     private AllEnumConstantHelpers.BenUpdateRequest benUpdateRequest;
-    private Beneficiary.RELATION relation;
+    private AllEnumConstantHelpers.RELATION relation;
     private LocalDate BenDate_Of_Birth;
     private int benAge;
     private AllEnumConstantHelpers.BanksSupported benBank;

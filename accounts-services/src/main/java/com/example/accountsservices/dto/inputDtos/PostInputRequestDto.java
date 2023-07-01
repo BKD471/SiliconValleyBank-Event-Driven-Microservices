@@ -83,7 +83,7 @@ public class PostInputRequestDto {
     private String address;
     private String imageName;
     private long beneficiaryAccountNumber;
-    private Beneficiary.RELATION bloodRelation;
+    private AllEnumConstantHelpers.RELATION bloodRelation;
     private int benAge;
     private AllEnumConstantHelpers.BanksSupported benBank;
     private long balance;

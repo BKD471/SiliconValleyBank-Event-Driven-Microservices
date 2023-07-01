@@ -1,7 +1,6 @@
 package com.example.accountsservices.dto.baseDtos;
 
 import com.example.accountsservices.helpers.AllEnumConstantHelpers;
-import com.example.accountsservices.model.Accounts;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

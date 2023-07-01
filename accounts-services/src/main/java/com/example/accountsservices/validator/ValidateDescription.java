@@ -1,36 +1,39 @@
 package com.example.accountsservices.validator;
 
-import com.example.accountsservices.model.Transactions;
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class ValidateDescription implements ConstraintValidator<ValidDescription, Transactions.DescriptionType> {
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DescriptionType.EMI;
+
+public class ValidateDescription implements ConstraintValidator<ValidDescription, DescriptionType> {
     /**
      * @param value   object to validate
      * @param context context in which the constraint is evaluated
      * @return
      */
     @Override
-    public boolean isValid(Transactions.DescriptionType value, ConstraintValidatorContext context) {
+    public boolean isValid(AllEnumConstantHelpers.DescriptionType value, ConstraintValidatorContext context) {
         //null check is already taken care by @notnullEnum
         if(null==value) return true;
-        Set<Transactions.DescriptionType> validFields=new HashSet<>();
-        validFields.add(Transactions.DescriptionType.ELECTRICITY);
-        validFields.add(Transactions.DescriptionType.SALARY);
-        validFields.add(Transactions.DescriptionType.DEPOSIT);
-        validFields.add(Transactions.DescriptionType.RECEIVED_FROM_OTHER_ACCOUNT);
-        validFields.add(Transactions.DescriptionType.EMI);
-        validFields.add(Transactions.DescriptionType.CREDIT_CARD_BILL_PAYMENT);
-        validFields.add(Transactions.DescriptionType.DONATION);
-        validFields.add(Transactions.DescriptionType.RENT);
-        validFields.add(Transactions.DescriptionType.E_SHOPPING);
-        validFields.add(Transactions.DescriptionType.BUSINESS);
-        validFields.add(Transactions.DescriptionType.INVESTMENT);
-        validFields.add(Transactions.DescriptionType.FAMILY);
-        validFields.add(Transactions.DescriptionType.OTHERS);
+        Set<AllEnumConstantHelpers.DescriptionType> validFields=new HashSet<>();
+        validFields.add(ELECTRICITY);
+        validFields.add(SALARY);
+        validFields.add(DEPOSIT);
+        validFields.add(RECEIVED_FROM_OTHER_ACCOUNT);
+        validFields.add(EMI);
+        validFields.add(CREDIT_CARD_BILL_PAYMENT);
+        validFields.add(DONATION);
+        validFields.add(RENT);
+        validFields.add(E_SHOPPING);
+        validFields.add(BUSINESS);
+        validFields.add(INVESTMENT);
+        validFields.add(FAMILY);
+        validFields.add(OTHERS);
         return validFields.contains(value);
     }
 }

@@ -5,7 +5,6 @@ import com.example.accountsservices.dto.baseDtos.AccountsDto;
 import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.example.accountsservices.dto.baseDtos.CustomerDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
@@ -38,6 +37,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.validateBenType.ADD_BEN;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.validateBenType.UPDATE_BEN;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION;
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBankCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
@@ -49,11 +51,8 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
     private final AccountsRepository accountsRepository;
 
     private final IValidationService validationService;
-    public enum validateBenType {
-        ADD_BEN, UPDATE_BEN, DELETE_BEN
-    }
-    private final validateBenType ADD_BEN = validateBenType.ADD_BEN;
-    private final validateBenType UPDATE_BEN = validateBenType.UPDATE_BEN;
+
+
 
 
     BeneficiaryServiceImpl(AccountsRepository accountsRepository,
@@ -142,7 +141,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Long newBeneficiaryNumber = newBeneficiaryData.getBeneficiaryAccountNumber();
         LocalDate newBeneficiaryDOB = newBeneficiaryData.getBenDate_Of_Birth();
         String newBeneficiaryAdharNumber = newBeneficiaryData.getBenAdharNumber();
-        Beneficiary.RELATION newBeneficaryRelation = newBeneficiaryData.getRelation();
+        AllEnumConstantHelpers.RELATION newBeneficaryRelation = newBeneficiaryData.getRelation();
         String newBeneficiaryPanNumber = newBeneficiaryData.getBenPanNumber();
         String newBeneficiaryPassport = newBeneficiaryData.getBenPassportNumber();
         String newBeneficiaryVoterId = newBeneficiaryData.getBenVoterId();
@@ -155,7 +154,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Long oldBeneficiaryNumber = oldBeneficiaryData.getBeneficiaryAccountNumber();
         LocalDate oldBeneficiaryDOB = oldBeneficiaryData.getBenDate_Of_Birth();
         String oldBeneficiaryAdharNumber = oldBeneficiaryData.getBenAdharNumber();
-        Beneficiary.RELATION oldBeneficiaryRelation = oldBeneficiaryData.getRelation();
+        AllEnumConstantHelpers.RELATION oldBeneficiaryRelation = oldBeneficiaryData.getRelation();
         String oldBeneficiaryPanNumber = oldBeneficiaryData.getBenPanNumber();
         String oldBeneficiaryPassport = oldBeneficiaryData.getBenPassportNumber();
         String oldBeneficiaryVoterId = oldBeneficiaryData.getBenVoterId();

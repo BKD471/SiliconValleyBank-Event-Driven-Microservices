@@ -35,11 +35,6 @@ public class AllEnumConstantHelpers {
         DELETE_CUSTOMER
     }
 
-    public  enum DIRECTION{
-        asc,desc;
-    }
-    public static DIRECTION ASC=DIRECTION.asc;
-
     public  enum  AccountType{
         SAVINGS,CURRENT
     }
@@ -51,11 +46,97 @@ public class AllEnumConstantHelpers {
         OPEN,BLOCKED,CLOSED
     }
 
-    public static AccountStatus STATUS_BLOCKED=AccountStatus.BLOCKED;
-    public static AccountStatus STATUS_CLOSED=AccountStatus.CLOSED;
-    public static AccountStatus STATUS_OPENED=AccountStatus.OPEN;
+
+    public  enum DIRECTION{
+        asc,desc;
+    }
 
     public enum BanksSupported{
         SBI,AXIS,HDFC,ICICI,CANARA,PNB,ORIENTAL,BOI,YES,BANDHAN,BOB
     }
+
+    public enum RELATION{
+        FATHER,MOTHER,SPOUSE,SON,DAUGHTER
+    }
+
+
+    public enum AccountsValidateType {
+        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH,
+        GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE,
+        UPLOAD_PROFILE_IMAGE, CLOSE_ACCOUNT, RE_OPEN_ACCOUNT,
+        BLOCK_ACCOUNT, CREATE_ACC, ADD_ACC
+    }
+
+    public enum DescriptionType{
+        //credit types
+        SALARY,
+        DEPOSIT,
+        RECEIVED_FROM_OTHER_ACCOUNT,
+
+
+        //debit types
+        EMI,
+        CREDIT_CARD_BILL_PAYMENT,
+        DONATION,
+        RENT,
+        E_SHOPPING,
+        BUSINESS,
+        INVESTMENT,
+        FAMILY,
+        ELECTRICITY,
+        OTHERS
+    }
+
+    public enum TransactionType {
+        CREDIT, DEBIT
+    }
+
+    public enum validateBenType {
+        ADD_BEN, UPDATE_BEN, DELETE_BEN
+    }
+
+    public static final DIRECTION ASC=DIRECTION.asc;
+    public static final AccountStatus STATUS_BLOCKED=AccountStatus.BLOCKED;
+    public static final  AccountStatus STATUS_CLOSED=AccountStatus.CLOSED;
+    public static final AccountStatus STATUS_OPENED=AccountStatus.OPEN;
+
+
+    public static final RELATION FATHER=RELATION.FATHER;
+    public static final RELATION MOTHER=RELATION.MOTHER;
+    public  static  final RELATION SPOUSE=RELATION.SPOUSE;
+    public static final RELATION SON=RELATION.SON;
+    public  static  final RELATION DAUGHTER=RELATION.DAUGHTER;
+
+
+
+    public static final TransactionType CREDIT=TransactionType.CREDIT;
+    public static final TransactionType DEBIT=TransactionType.DEBIT;
+
+
+
+    public static final DescriptionType SALARY=DescriptionType.SALARY;
+    public static final DescriptionType DEPOSIT=DescriptionType.DEPOSIT;
+    public static final DescriptionType RECEIVED_FROM_OTHER_ACCOUNT=DescriptionType.RECEIVED_FROM_OTHER_ACCOUNT;
+    public static final DescriptionType CREDIT_CARD_BILL_PAYMENT=DescriptionType.CREDIT_CARD_BILL_PAYMENT;
+    public static final DescriptionType DONATION=DescriptionType.DONATION;
+    public static final DescriptionType RENT=DescriptionType.RENT;
+    public static final DescriptionType E_SHOPPING=DescriptionType.E_SHOPPING;
+    public static final DescriptionType BUSINESS=DescriptionType.BUSINESS;
+    public static final DescriptionType INVESTMENT=DescriptionType.INVESTMENT;
+    public static final DescriptionType FAMILY=DescriptionType.FAMILY;
+    public static final DescriptionType ELECTRICITY=DescriptionType.ELECTRICITY;
+    public static final DescriptionType OTHERS=DescriptionType.OTHERS;
+
+
+
+    public static final AccountsValidateType UPDATE_CASH_LIMIT = AccountsValidateType.UPDATE_CASH_LIMIT;
+    public static final AccountsValidateType UPDATE_HOME_BRANCH = AccountsValidateType.UPDATE_HOME_BRANCH;
+    public static final AccountsValidateType CLOSE_ACCOUNT = AccountsValidateType.CLOSE_ACCOUNT;
+    public static final AccountsValidateType RE_OPEN_ACCOUNT = AccountsValidateType.RE_OPEN_ACCOUNT;
+    public static final AccountsValidateType BLOCK_ACCOUNT = AccountsValidateType.BLOCK_ACCOUNT;
+    public static final AccountsValidateType CREATE_ACCOUNT = AccountsValidateType.CREATE_ACC;
+    public static final AccountsValidateType ADD_ACCOUNT = AccountsValidateType.ADD_ACC;
+    public static final AccountsValidateType UPLOAD_PROFILE_IMAGE = AccountsValidateType.UPLOAD_PROFILE_IMAGE;
+    public static final validateBenType ADD_BEN = validateBenType.ADD_BEN;
+    public static final validateBenType UPDATE_BEN = validateBenType.UPDATE_BEN;
 }

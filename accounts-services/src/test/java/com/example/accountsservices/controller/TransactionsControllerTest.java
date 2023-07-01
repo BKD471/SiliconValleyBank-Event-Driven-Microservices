@@ -99,8 +99,8 @@ public class TransactionsControllerTest {
         Transactions transactions1=Transactions.builder()
                 .transactionId(1L)
                 .transactedAccountNumber("1L")
-                .transactionType(Transactions.TransactionType.DEBIT)
-                .description(Transactions.DescriptionType.ELECTRICITY)
+                .transactionType(AllEnumConstantHelpers.TransactionType.DEBIT)
+                .description(AllEnumConstantHelpers.DescriptionType.ELECTRICITY)
                 .accounts(accounts)
                 .transactionAmount(60000L)
                 .build();
@@ -108,8 +108,8 @@ public class TransactionsControllerTest {
         Transactions transactions2=Transactions.builder()
                 .transactionId(2L)
                 .transactedAccountNumber("2L")
-                .transactionType(Transactions.TransactionType.CREDIT)
-                .description(Transactions.DescriptionType.SALARY)
+                .transactionType(AllEnumConstantHelpers.TransactionType.CREDIT)
+                .description(AllEnumConstantHelpers.DescriptionType.SALARY)
                 .accounts(accounts)
                 .transactionAmount(160000L)
                 .build();

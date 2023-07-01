@@ -8,9 +8,6 @@ import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
 import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
-import com.example.accountsservices.service.impl.AccountsServiceImpl;
-import com.example.accountsservices.service.impl.BeneficiaryServiceImpl;
-
 import java.util.List;
 
 public interface IValidationService {
@@ -42,6 +39,6 @@ public interface IValidationService {
         return true;
     }
 
-    Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AccountsServiceImpl.ValidateType request) throws AccountsException, BadApiRequestException ;
-    void beneficiaryUpdateValidator(Accounts accounts, BeneficiaryDto beneficiaryDto, BeneficiaryServiceImpl.validateBenType type) throws BeneficiaryException ;
+    Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AllEnumConstantHelpers.AccountsValidateType request) throws AccountsException, BadApiRequestException ;
+    void beneficiaryUpdateValidator(Accounts accounts, BeneficiaryDto beneficiaryDto, AllEnumConstantHelpers.validateBenType type) throws BeneficiaryException ;
 }

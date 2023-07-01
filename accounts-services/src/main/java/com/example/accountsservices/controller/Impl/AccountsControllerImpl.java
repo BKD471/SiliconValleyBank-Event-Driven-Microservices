@@ -8,6 +8,7 @@ import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PutInputRequestDto;
+import com.example.accountsservices.dto.responseDtos.ImageResponseMessages;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.ResponseException;
@@ -116,14 +117,20 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @return
      */
     @Override
-    public ResponseEntity<OutputDto> uploadCustomerImage(MultipartFile image, Long customerId) throws IOException {
+    public ResponseEntity<ImageResponseMessages> uploadCustomerImage(MultipartFile image, Long customerId) throws IOException {
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
                 .updateRequest(AllEnumConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerId(customerId)
                 .customerImage(image)
                 .build();
         OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
-        return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
+        ImageResponseMessages imgResponseMessages= ImageResponseMessages.builder()
+                .message(responseBody.getDefaultMessage())
+                .imageName(responseBody.getCustomer().getImageName())
+                .status(HttpStatus.CREATED)
+                .success(true)
+                .build();
+        return new ResponseEntity<>(imgResponseMessages, HttpStatus.CREATED);
     }
 
     /**

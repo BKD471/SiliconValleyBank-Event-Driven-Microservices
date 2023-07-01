@@ -32,11 +32,7 @@ public class Beneficiary extends Audit{
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private RELATION relation;
-
-    public enum RELATION{
-        FATHER,MOTHER,SPOUSE,SON,DAUGHTER
-    }
+    private AllEnumConstantHelpers.RELATION relation;
 
     @Email
     @Column(name="ben_email",nullable = false)

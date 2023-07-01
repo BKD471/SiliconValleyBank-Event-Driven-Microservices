@@ -78,21 +78,6 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     @Value("${customer.profile.images.path}")
     private  String IMAGE_PATH;
 
-    public enum ValidateType {
-        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH,
-        GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE,
-        UPLOAD_PROFILE_IMAGE, CLOSE_ACCOUNT, RE_OPEN_ACCOUNT,
-        BLOCK_ACCOUNT, CREATE_ACC, ADD_ACC
-    }
-
-    private final ValidateType UPDATE_CASH_LIMIT = ValidateType.UPDATE_CASH_LIMIT;
-    private final ValidateType UPDATE_HOME_BRANCH = ValidateType.UPDATE_HOME_BRANCH;
-    private final ValidateType CLOSE_ACCOUNT = ValidateType.CLOSE_ACCOUNT;
-    private final ValidateType RE_OPEN_ACCOUNT = ValidateType.RE_OPEN_ACCOUNT;
-    private final ValidateType BLOCK_ACCOUNT = ValidateType.BLOCK_ACCOUNT;
-    private final ValidateType CREATE_ACCOUNT = ValidateType.CREATE_ACC;
-    private final ValidateType ADD_ACCOUNT = ValidateType.ADD_ACC;
-    private final ValidateType UPLOAD_PROFILE_IMAGE = ValidateType.UPLOAD_PROFILE_IMAGE;
 
 
     /**

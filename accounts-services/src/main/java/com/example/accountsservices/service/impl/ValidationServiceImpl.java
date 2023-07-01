@@ -21,7 +21,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.STATUS_BLOCKED;
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
 @Service
@@ -29,17 +29,13 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 @Slf4j
 public class ValidationServiceImpl implements IValidationService {
     private final AccountsRepository accountsRepository;
-    private final Beneficiary.RELATION FATHER = Beneficiary.RELATION.FATHER;
-    private final Beneficiary.RELATION MOTHER = Beneficiary.RELATION.MOTHER;
-    private final Beneficiary.RELATION SPOUSE = Beneficiary.RELATION.SPOUSE;
-
     ValidationServiceImpl(AccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
     }
 
 
     @Override
-    public Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AccountsServiceImpl.ValidateType request) throws AccountsException, BadApiRequestException {
+    public Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AccountsValidateType request) throws AccountsException, BadApiRequestException {
         log.debug("<---------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
         String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
@@ -127,7 +123,7 @@ public class ValidationServiceImpl implements IValidationService {
     }
 
     @Override
-    public void beneficiaryUpdateValidator(Accounts accounts, BeneficiaryDto beneficiaryDto, BeneficiaryServiceImpl.validateBenType type) throws BeneficiaryException {
+    public void beneficiaryUpdateValidator(Accounts accounts, BeneficiaryDto beneficiaryDto, validateBenType type) throws BeneficiaryException {
         log.debug("<----validate(Accounts,BeneficiaryDto, validateBenType) BeneficiaryServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
         String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";

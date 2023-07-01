@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 
+import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -105,7 +106,7 @@ public class BeneficiaryServiceTests {
                 .imageName("img1.png")
                 .BenDate_Of_Birth(LocalDate.of(1997, 12, 01))
                 .benVoterId("ben voter 1")
-                .relation(Beneficiary.RELATION.SON)
+                .relation(SON)
                 .accounts(accounts)
                 .build();
 
@@ -132,7 +133,7 @@ public class BeneficiaryServiceTests {
                 .name("ben 2")
                 .email("ben2@gmail.com")
                 .beneficiaryAccountNumber(3L)
-                .bloodRelation(Beneficiary.RELATION.SON)
+                .bloodRelation(SON)
                 .dateOfBirthInYYYYMMDD(String.valueOf(dob))
                 .benBank(AllEnumConstantHelpers.BanksSupported.AXIS)
                 .adharNumber("1234-5678-8888")
@@ -168,7 +169,7 @@ public class BeneficiaryServiceTests {
                 .name("ben 2")
                 .email("ben2@gmail.com")
                 .beneficiaryAccountNumber(3L)
-                .bloodRelation(Beneficiary.RELATION.SON)
+                .bloodRelation(SON)
                 .dateOfBirthInYYYYMMDD(String.valueOf(dob))
                 .benBank(AllEnumConstantHelpers.BanksSupported.AXIS)
                 .adharNumber("1234-5678-8888")
@@ -220,14 +221,14 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void addBeneficiaryFailedForConflictingRelationForFatherTest() {
-        beneficiary.setRelation(Beneficiary.RELATION.FATHER);
+        beneficiary.setRelation(FATHER);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
                 .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
-                .bloodRelation(Beneficiary.RELATION.FATHER)
+                .bloodRelation(FATHER)
                 .adharNumber("1234-5678-1234")
                 .build();
 
@@ -238,14 +239,14 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void addBeneficiaryFailedForConflictingRelationForMotherTest() {
-        beneficiary.setRelation(Beneficiary.RELATION.MOTHER);
+        beneficiary.setRelation(MOTHER);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber(1L)
                 .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
-                .bloodRelation(Beneficiary.RELATION.MOTHER)
+                .bloodRelation(MOTHER)
                 .adharNumber("1234-5678-1234")
                 .build();
 
@@ -256,7 +257,7 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void addBeneficiaryFailedForConflictingRelationForSpouseTest() {
-        beneficiary.setRelation(Beneficiary.RELATION.SPOUSE);
+        beneficiary.setRelation(SPOUSE);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
@@ -264,7 +265,7 @@ public class BeneficiaryServiceTests {
                 .accountNumber(1L)
                 .benRequest(AllEnumConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .email("phoenix@gmail.com")
-                .bloodRelation(Beneficiary.RELATION.SPOUSE)
+                .bloodRelation(SPOUSE)
                 .adharNumber("1234-5678-9999")
                 .build();
 
@@ -431,7 +432,7 @@ public class BeneficiaryServiceTests {
                 .beneficiaryId(1L)
                 .beneficiaryName("Updated Beneficiary Name")
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
-                .relation(Beneficiary.RELATION.DAUGHTER)
+                .relation(DAUGHTER)
                 .BenDate_Of_Birth(LocalDate.of(1997, 12, 02))
                 .benBank(AllEnumConstantHelpers.BanksSupported.ICICI)
                 .benAdharNumber("9876-5432-1111")
@@ -452,7 +453,7 @@ public class BeneficiaryServiceTests {
                 .beneficiaryName("Updated Beneficiary Name")
                 .beneficiaryAccountNumber(3L)
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
-                .bloodRelation(Beneficiary.RELATION.DAUGHTER)
+                .bloodRelation(DAUGHTER)
                 .ben_date_of_birthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 02)))
                 .benBank(AllEnumConstantHelpers.BanksSupported.ICICI)
                 .benAdharNumber("9876-5432-1111")
@@ -494,7 +495,7 @@ public class BeneficiaryServiceTests {
                 .beneficiaryName("Updated Beneficiary Name")
                 .beneficiaryAccountNumber(3L)
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
-                .bloodRelation(Beneficiary.RELATION.DAUGHTER)
+                .bloodRelation(DAUGHTER)
                 .ben_date_of_birthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 02)))
                 .benBank(AllEnumConstantHelpers.BanksSupported.ICICI)
                 .benAdharNumber("9876-5432-1111")

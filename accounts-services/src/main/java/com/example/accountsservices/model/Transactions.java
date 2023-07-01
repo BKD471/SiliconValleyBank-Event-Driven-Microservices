@@ -1,5 +1,6 @@
 package com.example.accountsservices.model;
 
+import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,35 +25,11 @@ public class Transactions extends AuditTransactions{
 
     @Column(name = "trans-type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private TransactionType transactionType;
-
-    public enum TransactionType {
-        CREDIT, DEBIT
-    }
+    private AllEnumConstantHelpers.TransactionType transactionType;
 
     @Column(name = "desc_type",nullable = false)
     @Enumerated(EnumType.STRING)
-    private DescriptionType description;
-
-    public enum DescriptionType{
-        //credit types
-        SALARY,
-        DEPOSIT,
-        RECEIVED_FROM_OTHER_ACCOUNT,
-
-
-        //debit types
-        EMI,
-        CREDIT_CARD_BILL_PAYMENT,
-        DONATION,
-        RENT,
-        E_SHOPPING,
-        BUSINESS,
-        INVESTMENT,
-        FAMILY,
-        ELECTRICITY,
-        OTHERS
-    }
+    private AllEnumConstantHelpers.DescriptionType description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
