@@ -10,7 +10,7 @@ import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.repository.AccountsRepository;
+import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -28,8 +28,8 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 @Primary
 @Slf4j
 public class ValidationServiceImpl implements IValidationService {
-    private final AccountsRepository accountsRepository;
-    ValidationServiceImpl(AccountsRepository accountsRepository) {
+    private final IAccountsRepository accountsRepository;
+    ValidationServiceImpl(IAccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
     }
 

@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CardsRepository extends JpaRepository<Cards,Long> {
+public interface ICardsRepository extends JpaRepository<Cards,Long> {
     Optional<List<Cards>> findAllByCustomerId(Long id);
-
-
 }

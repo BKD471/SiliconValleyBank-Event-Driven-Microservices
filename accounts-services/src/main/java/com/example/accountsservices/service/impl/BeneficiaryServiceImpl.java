@@ -17,9 +17,9 @@ import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.BeneficiaryRepository;
-import com.example.accountsservices.repository.CustomerRepository;
+import com.example.accountsservices.repository.IAccountsRepository;
+import com.example.accountsservices.repository.IBeneficiaryRepository;
+import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.service.IBeneficiaryService;
 import com.example.accountsservices.service.IValidationService;
@@ -47,17 +47,17 @@ import static com.example.accountsservices.helpers.PagingHelper.*;
 @Slf4j
 @Service("beneficiaryServicePrimary")
 public class BeneficiaryServiceImpl extends AbstractAccountsService implements IBeneficiaryService {
-    private final BeneficiaryRepository beneficiaryRepository;
-    private final AccountsRepository accountsRepository;
+    private final IBeneficiaryRepository beneficiaryRepository;
+    private final IAccountsRepository accountsRepository;
 
     private final IValidationService validationService;
 
 
 
 
-    BeneficiaryServiceImpl(AccountsRepository accountsRepository,
-                           CustomerRepository customerRepository,
-                           BeneficiaryRepository beneficiaryRepository,
+    BeneficiaryServiceImpl(IAccountsRepository accountsRepository,
+                           ICustomerRepository customerRepository,
+                           IBeneficiaryRepository beneficiaryRepository,
                            IValidationService validationService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;

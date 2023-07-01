@@ -10,9 +10,9 @@ import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.CustomerRepository;
-import com.example.accountsservices.repository.TransactionsRepository;
+import com.example.accountsservices.repository.IAccountsRepository;
+import com.example.accountsservices.repository.ICustomerRepository;
+import com.example.accountsservices.repository.ITransactionsRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.SortDateComparator;
 import com.example.accountsservices.service.ITransactionsService;
@@ -31,12 +31,12 @@ import static com.example.accountsservices.helpers.MapperHelper.*;
 @Service("transactionsServicePrimary")
 public class TransactionsServiceImpl extends AbstractAccountsService implements ITransactionsService {
 
-    private final TransactionsRepository transactionsRepository;
-    private final AccountsRepository accountsRepository;
+    private final ITransactionsRepository transactionsRepository;
+    private final IAccountsRepository accountsRepository;
 
-    TransactionsServiceImpl(TransactionsRepository transactionsRepository,
-                            AccountsRepository accountsRepository,
-                            CustomerRepository customerRepository) {
+    TransactionsServiceImpl(ITransactionsRepository transactionsRepository,
+                            IAccountsRepository accountsRepository,
+                            ICustomerRepository customerRepository) {
         super(accountsRepository,customerRepository);
         this.transactionsRepository = transactionsRepository;
         this.accountsRepository = accountsRepository;

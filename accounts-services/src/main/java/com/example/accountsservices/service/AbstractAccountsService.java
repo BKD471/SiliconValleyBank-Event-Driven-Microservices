@@ -1,11 +1,11 @@
 package com.example.accountsservices.service;
 
 import com.example.accountsservices.exception.*;
+import com.example.accountsservices.repository.IAccountsRepository;
+import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.CustomerRepository;
 
 import java.util.Optional;
 
@@ -13,11 +13,11 @@ import static com.example.accountsservices.helpers.AllEnumConstantHelpers.STATUS
 
 
 public abstract class AbstractAccountsService {
-    private  final  AccountsRepository accountsRepository;
-    private  final CustomerRepository customerRepository;
+    private  final IAccountsRepository accountsRepository;
+    private  final ICustomerRepository customerRepository;
 
-    protected AbstractAccountsService(AccountsRepository accountsRepository,
-                                      CustomerRepository customerRepository){
+    protected AbstractAccountsService(IAccountsRepository accountsRepository,
+                                      ICustomerRepository customerRepository){
         this.accountsRepository=accountsRepository;
         this.customerRepository=customerRepository;
     }

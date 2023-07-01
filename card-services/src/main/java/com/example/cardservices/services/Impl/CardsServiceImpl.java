@@ -4,7 +4,7 @@ import com.example.cardservices.CardsException;
 import com.example.cardservices.dto.CardsDto;
 import com.example.cardservices.mapper.CardsMapper;
 import com.example.cardservices.model.Cards;
-import com.example.cardservices.repository.CardsRepository;
+import com.example.cardservices.repository.ICardsRepository;
 import com.example.cardservices.services.ICardsService;
 import com.example.cardservices.services.IValidationService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +18,8 @@ import static com.example.cardservices.mapper.CardsMapper.mapToCardsDto;
 @Service
 public class CardsServiceImpl implements ICardsService {
     private final IValidationService validationService;
-    private final CardsRepository cardsRepository;
-    CardsServiceImpl(IValidationService validationService,CardsRepository cardsRepository){
+    private final ICardsRepository cardsRepository;
+    CardsServiceImpl(IValidationService validationService,ICardsRepository cardsRepository){
         this.validationService=validationService;
         this.cardsRepository=cardsRepository;
     }

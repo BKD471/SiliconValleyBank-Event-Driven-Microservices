@@ -1,7 +1,7 @@
 package com.example.accountsservices;
 
 import com.example.accountsservices.model.Role;
-import com.example.accountsservices.repository.RoleRepository;
+import com.example.accountsservices.repository.IRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -21,8 +21,7 @@ public class AccountsServicesApplication implements CommandLineRunner {
 	private String role_admin_id;
 
 	@Autowired
-	private RoleRepository roleRepository;
-
+	private IRoleRepository roleRepository;
 
 	/**
 	 * @param args incoming main method arguments

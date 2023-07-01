@@ -1,8 +1,8 @@
 package com.example.accountsservices.service.impl;
 
 import com.example.accountsservices.exception.ResponseException;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.CustomerRepository;
+import com.example.accountsservices.repository.IAccountsRepository;
+import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.service.IFileService;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Service("fileServicePrimary")
 public class FIleServiceImpl extends AbstractAccountsService implements IFileService {
-    protected FIleServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository) {
+    protected FIleServiceImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
     }
 

@@ -9,8 +9,8 @@ import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Transactions;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.TransactionsRepository;
+import com.example.accountsservices.repository.IAccountsRepository;
+import com.example.accountsservices.repository.ITransactionsRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,10 +40,10 @@ public class TransactionsServiceTests {
     ITransactionsService transactionsService;
 
     @MockBean
-    AccountsRepository accountsRepositoryMock;
+    IAccountsRepository accountsRepositoryMock;
 
     @MockBean
-    TransactionsRepository transactionsRepositoryMock;
+    ITransactionsRepository transactionsRepositoryMock;
 
     private static Accounts accounts;
     private static Customer customer;

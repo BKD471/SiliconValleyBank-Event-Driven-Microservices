@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface BeneficiaryRepository extends JpaRepository<Beneficiary,Long> {
+public interface IBeneficiaryRepository extends JpaRepository<Beneficiary,Long> {
     void deleteByBeneficiaryId(Long beneficiaryId);
     void deleteAllByAccounts_AccountNumber(Long accountNUmber);
     Optional<Page<Beneficiary>> findAllByAccounts_AccountNumber(Long AccountNumber, Pageable pageable);

@@ -16,9 +16,9 @@ import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Role;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.CustomerRepository;
-import com.example.accountsservices.repository.RoleRepository;
+import com.example.accountsservices.repository.IAccountsRepository;
+import com.example.accountsservices.repository.ICustomerRepository;
+import com.example.accountsservices.repository.IRoleRepository;
 import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.IFileService;
@@ -60,9 +60,9 @@ import static com.example.accountsservices.helpers.PagingHelper.*;
 @Slf4j
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractAccountsService implements IAccountsService {
-    private final AccountsRepository accountsRepository;
-    private final RoleRepository roleRepository;
-    private final CustomerRepository customerRepository;
+    private final IAccountsRepository accountsRepository;
+    private final IRoleRepository roleRepository;
+    private final ICustomerRepository customerRepository;
     private final IFileService fIleService;
     private final IValidationService validationService;
 
@@ -84,8 +84,8 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
      * @paramType AccountsRepository
      * @returnType NA
      */
-    public AccountsServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository,
-                              RoleRepository roleRepository,IValidationService validationService, @Qualifier("fileServicePrimary") IFileService fIleService) {
+    public AccountsServiceImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository,
+                              IRoleRepository roleRepository,IValidationService validationService, @Qualifier("fileServicePrimary") IFileService fIleService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;

@@ -13,8 +13,8 @@ import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.CustomerRepository;
+import com.example.accountsservices.repository.IAccountsRepository;
+import com.example.accountsservices.repository.ICustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,10 +51,10 @@ public class AccountsServiceTests {
     private IFileService fileService;
 
     @MockBean
-    private CustomerRepository customerRepositoryMock;
+    private ICustomerRepository customerRepositoryMock;
 
     @MockBean
-    private AccountsRepository accountsRepositoryMock;
+    private IAccountsRepository accountsRepositoryMock;
 
     private Customer customer;
     private Accounts accounts;

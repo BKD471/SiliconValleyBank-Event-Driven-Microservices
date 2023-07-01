@@ -1,6 +1,5 @@
 package com.example.accountsservices.service;
 
-import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
@@ -13,8 +12,8 @@ import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.repository.AccountsRepository;
-import com.example.accountsservices.repository.BeneficiaryRepository;
+import com.example.accountsservices.repository.IAccountsRepository;
+import com.example.accountsservices.repository.IBeneficiaryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,9 +46,9 @@ public class BeneficiaryServiceTests {
     private IBeneficiaryService beneficiaryService;
 
     @MockBean
-    BeneficiaryRepository beneficiaryRepositoryMock;
+    IBeneficiaryRepository beneficiaryRepositoryMock;
     @MockBean
-    AccountsRepository accountsRepositoryMock;
+    IAccountsRepository accountsRepositoryMock;
 
     private  Beneficiary beneficiary;
     private  Accounts accounts;
