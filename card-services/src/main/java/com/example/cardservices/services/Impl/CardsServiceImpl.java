@@ -2,37 +2,40 @@ package com.example.cardservices.services.Impl;
 
 import com.example.cardservices.CardsException;
 import com.example.cardservices.dto.CardsDto;
+import com.example.cardservices.mapper.CardsMapper;
+import com.example.cardservices.model.Cards;
+import com.example.cardservices.repository.CardsRepository;
 import com.example.cardservices.services.ICardsService;
 import com.example.cardservices.services.IValidationService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+import static com.example.cardservices.helpers.AllEnumConstantHelpers.ISSUE_CARD;
+import static com.example.cardservices.mapper.CardsMapper.mapToCards;
+import static com.example.cardservices.mapper.CardsMapper.mapToCardsDto;
+
 @Service
 public class CardsServiceImpl implements ICardsService {
     private final IValidationService validationService;
-    CardsServiceImpl(IValidationService validationService){
+    private final CardsRepository cardsRepository;
+    CardsServiceImpl(IValidationService validationService,CardsRepository cardsRepository){
         this.validationService=validationService;
+        this.cardsRepository=cardsRepository;
     }
 
-    public  enum CardsValidationType{
-        ISSUE_CARD,GENERATE_CREDIT_SCORE,REQUEST_FOR_REVISED_CREDIT_LIMIT,FLEXI_PAY
-    }
 
-    public CardsValidationType ISSUE_CARD=CardsValidationType.ISSUE_CARD;
-    public CardsValidationType GENERATE_CREDIT_SCORE=CardsValidationType.GENERATE_CREDIT_SCORE;
-    public CardsValidationType REQUEST_FOR_REVISED_CREDIT_LIMIT=CardsValidationType.REQUEST_FOR_REVISED_CREDIT_LIMIT;
-    public CardsValidationType FLEXI_PAY=CardsValidationType.FLEXI_PAY;
     /**
      * @param cardsDto
      * @return
      */
     @Override
     public CardsDto issueCard(CardsDto cardsDto) {
-        String methodName="issueCard(CardsDto) in CardsServiceImpl";
+        //validating the unhappy path
         validationService.cardsValidator(cardsDto,null,ISSUE_CARD);
-
-        return null;
+        Cards card= mapToCards(cardsDto);
+        Cards savedCards=cardsRepository.save(card);
+        return mapToCardsDto(savedCards);
     }
 
 
