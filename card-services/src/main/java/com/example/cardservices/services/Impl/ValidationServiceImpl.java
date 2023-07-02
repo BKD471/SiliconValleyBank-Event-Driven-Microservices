@@ -4,11 +4,16 @@ import com.example.cardservices.exception.BadApiRequestException;
 import com.example.cardservices.exception.CardsException;
 import com.example.cardservices.dto.CardsDto;
 import com.example.cardservices.helpers.AllEnumConstantHelpers;
+import com.example.cardservices.helpers.SortCardsByTime;
 import com.example.cardservices.model.Cards;
 import com.example.cardservices.repository.ICardsRepository;
 import com.example.cardservices.services.IValidationService;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +61,19 @@ public class ValidationServiceImpl implements IValidationService {
                         methodName);
             }
             case GENERATE_CREDIT_SCORE -> {
+                Optional<List<Cards>> foundCardsList=cardsRepository.findAllByCustomerId(customerId);
+                if(foundCardsList.isEmpty()) throw new CardsException(CardsException.class
+                        ,"No cards available for this account,so can't generate credit score",methodName);
 
+                foundCardsList.get().sort(new SortCardsByTime());
+                LocalDateTime now=LocalDateTime.now();
+                LocalDateTime oldestCardIssuedDate=foundCardsList.get().get(0).getIssuedDate();
+
+                double SECONDS_TO_MONTHS_CONVERTER_FRACTION=((double) 1 /(86400*30*6));
+                double monthsOld=  (Duration.between(oldestCardIssuedDate,now).getSeconds())*SECONDS_TO_MONTHS_CONVERTER_FRACTION;
+
+                if(monthsOld<6) throw  new CardsException(CardsException.class,
+                        "You oldest credit account should be at least six months old",methodName);
             }
             case REQUEST_FOR_REVISED_CREDIT_LIMIT -> {
 
