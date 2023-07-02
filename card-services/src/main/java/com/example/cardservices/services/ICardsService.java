@@ -9,5 +9,5 @@ public interface ICardsService {
     List<CardsDto> getAllCardsByCustomerId(Long customerId);
     int generateCreditScore(Long customerId);
     boolean requestForRevisedCreditLimit(Long customerId);
-    CardsDto convertLoanToFlexiPay(Long customerId);
+    CardsDto convertEmiToFlexiPay(Long customerId);
 }

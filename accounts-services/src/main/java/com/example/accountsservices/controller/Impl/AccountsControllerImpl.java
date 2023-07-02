@@ -2,7 +2,6 @@ package com.example.accountsservices.controller.Impl;
 
 import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.IAccountsController;
-import com.example.accountsservices.dto.baseDtos.AccountsDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
@@ -14,7 +13,7 @@ import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.ResponseException;
 import com.example.accountsservices.helpers.AllEnumConstantHelpers;
 import com.example.accountsservices.model.Customer;
-import com.example.accountsservices.repository.CustomerRepository;
+import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.IFileService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,14 +33,14 @@ import java.util.Optional;
 @RestController
 public class AccountsControllerImpl extends AbstractParentController implements IAccountsController {
     private final IAccountsService accountsService;
-    private final CustomerRepository customerRepository;
+    private final ICustomerRepository customerRepository;
     private final IFileService fIleService;
 
     @Value("${customer.profile.images.path}")
     private String IMAGE_PATH;
 
     AccountsControllerImpl(@Qualifier("accountsServicePrimary") IAccountsService accountsService,
-                           CustomerRepository customerRepository,
+                           ICustomerRepository customerRepository,
                            @Qualifier("fileServicePrimary") IFileService fIleService) {
         this.accountsService = accountsService;
         this.customerRepository = customerRepository;

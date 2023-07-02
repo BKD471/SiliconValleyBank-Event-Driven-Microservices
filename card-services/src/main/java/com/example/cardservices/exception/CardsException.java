@@ -1,4 +1,4 @@
-package com.example.cardservices;
+package com.example.cardservices.exception;
 
 public class CardsException extends RuntimeException{
     private Object className;

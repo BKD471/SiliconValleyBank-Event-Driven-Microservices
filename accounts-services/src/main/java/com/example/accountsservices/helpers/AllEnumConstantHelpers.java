@@ -2,33 +2,12 @@ package com.example.accountsservices.helpers;
 
 public class AllEnumConstantHelpers {
     public  enum UpdateRequest {
-        CREATE_ACC,
-        ADD_ACCOUNT,
-        LEND_LOAN,
-        UPDATE_HOME_BRANCH,
-        UPDATE_CREDIT_SCORE,
-        UPDATE_CUSTOMER_DETAILS,
-        UPLOAD_CUSTOMER_IMAGE,
-        GET_CUSTOMER_IMAGE,
-        GET_CREDIT_SCORE,
-        GET_ACC_INFO,
-        GET_ALL_ACC,
-        BLOCK_ACC,
-        CLOSE_ACC,
-        RE_OPEN_ACC,
-        INC_TRANSFER_LIMIT,
-        INC_APPROVED_LOAN_LIMIT,
-        DELETE_ACC,
-        DELETE_ALL_ACC
+        CREATE_ACC,ADD_ACCOUNT,LEND_LOAN,UPDATE_HOME_BRANCH,UPDATE_CREDIT_SCORE,UPDATE_CUSTOMER_DETAILS,
+        UPLOAD_CUSTOMER_IMAGE,GET_CUSTOMER_IMAGE,GET_CREDIT_SCORE,GET_ACC_INFO,GET_ALL_ACC,BLOCK_ACC,
+        CLOSE_ACC,RE_OPEN_ACC,INC_TRANSFER_LIMIT,INC_APPROVED_LOAN_LIMIT,DELETE_ACC,DELETE_ALL_ACC
     }
-
     public enum BenUpdateRequest {
-        ADD_BEN,
-        UPDATE_BEN,
-        GET_ALL_BEN,
-        GET_BEN,
-        DELETE_BEN,
-        DELETE_ALL_BEN
+        ADD_BEN,UPDATE_BEN,GET_ALL_BEN,GET_BEN,DELETE_BEN,DELETE_ALL_BEN
     }
 
     public enum DeleteRequest{
@@ -61,30 +40,15 @@ public class AllEnumConstantHelpers {
 
 
     public enum AccountsValidateType {
-        UPDATE_CASH_LIMIT, UPDATE_HOME_BRANCH,
-        GENERATE_CREDIT_SCORE, UPDATE_CREDIT_SCORE,
-        UPLOAD_PROFILE_IMAGE, CLOSE_ACCOUNT, RE_OPEN_ACCOUNT,
-        BLOCK_ACCOUNT, CREATE_ACC, ADD_ACC
+        UPDATE_CASH_LIMIT,UPDATE_HOME_BRANCH,GENERATE_CREDIT_SCORE,UPDATE_CREDIT_SCORE,
+        UPLOAD_PROFILE_IMAGE,CLOSE_ACCOUNT,RE_OPEN_ACCOUNT,BLOCK_ACCOUNT,CREATE_ACC, ADD_ACC
     }
 
     public enum DescriptionType{
         //credit types
-        SALARY,
-        DEPOSIT,
-        RECEIVED_FROM_OTHER_ACCOUNT,
-
-
+        SALARY,DEPOSIT,RECEIVED_FROM_OTHER_ACCOUNT,
         //debit types
-        EMI,
-        CREDIT_CARD_BILL_PAYMENT,
-        DONATION,
-        RENT,
-        E_SHOPPING,
-        BUSINESS,
-        INVESTMENT,
-        FAMILY,
-        ELECTRICITY,
-        OTHERS
+        EMI,CREDIT_CARD_BILL_PAYMENT,DONATION,RENT,E_SHOPPING,BUSINESS,INVESTMENT,FAMILY,ELECTRICITY,OTHERS
     }
 
     public enum TransactionType {
