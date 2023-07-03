@@ -69,11 +69,18 @@ public class CardsServiceImpl implements ICardsService {
     }
 
     /**
-     * @param customerId
+     * @param cardNumber
      * @return
      */
     @Override
-    public boolean requestForRevisedCreditLimit(Long customerId) {
+    public boolean requestForRevisedCreditLimitForACard(String cardNumber) {
+        String methodName="requestForRevisedCreditLimitForACard(String) CardsServiceImpl";
+        Optional<Cards> loadCard=cardsRepository.findByCardNumber(cardNumber);
+        if(loadCard.isEmpty()) throw new CardsException(CardsException.class,
+                String.format("No cards exist with card Number %s",cardNumber),methodName);
+
+        validationService.cardsValidator(null,loadCard.get(),REQUEST_FOR_REVISED_CREDIT_LIMIT);
+
         return false;
     }
 
@@ -83,6 +90,7 @@ public class CardsServiceImpl implements ICardsService {
      */
     @Override
     public CardsDto convertEmiToFlexiPay(Long customerId) {
+
         return null;
     }
 }

@@ -12,8 +12,6 @@ public class SortCardsByTime implements Comparator<Cards> {
      */
     @Override
     public int compare(Cards o1, Cards o2) {
-        if(o1.getIssuedDate().isBefore(o2.getIssuedDate())) return -1;
-        else if(o1.getIssuedDate().isAfter(o2.getIssuedDate())) return 1;
-        return 0;
+        return (o1.getIssuedDate().isBefore(o2.getIssuedDate())) ? -1: (o1.getIssuedDate().isAfter(o2.getIssuedDate()))? 1:0;
     }
 }

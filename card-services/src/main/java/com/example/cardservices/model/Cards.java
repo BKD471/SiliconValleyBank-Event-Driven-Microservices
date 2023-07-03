@@ -64,9 +64,14 @@ public class Cards extends  Audit{
     @Column(name = "total_limit")
     private Long totalLimit;
 
+    @Column(name="last_cred_limit_rfereshed")
+    private LocalDate lastRefreshedCreditLimit;
+
     @Column(name = "crdt_score")
     private int creditScore;
 
     @Column(name = "reward_pts")
     private int rewardPoints;
+
+
 }

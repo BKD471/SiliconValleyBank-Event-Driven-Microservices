@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class ValidationServiceImpl implements IValidationService {
    private final ICardsRepository cardsRepository;
    private final int MAX_PERMISSIBLE_CARDS=5;
+   private final int MAX_TIME_LIMIT_FOR_ANY_NEW_CREDIT_ACTIVITY_IN_MONTHS=6;
 
    ValidationServiceImpl(ICardsRepository cardsRepository){
        this.cardsRepository=cardsRepository;
@@ -69,14 +71,17 @@ public class ValidationServiceImpl implements IValidationService {
                 LocalDateTime now=LocalDateTime.now();
                 LocalDateTime oldestCardIssuedDate=foundCardsList.get().get(0).getIssuedDate();
 
-                double SECONDS_TO_MONTHS_CONVERTER_FRACTION=((double) 1 /(86400*30*6));
-                double monthsOld=  (Duration.between(oldestCardIssuedDate,now).getSeconds())*SECONDS_TO_MONTHS_CONVERTER_FRACTION;
+                double SECONDS_TO_MONTHS_CONVERTER_FRACTION=((double)1/(86400*30*6));
+                double monthsOld=(Duration.between(oldestCardIssuedDate,now).getSeconds())*SECONDS_TO_MONTHS_CONVERTER_FRACTION;
 
-                if(monthsOld<6) throw  new CardsException(CardsException.class,
+                if(monthsOld<MAX_TIME_LIMIT_FOR_ANY_NEW_CREDIT_ACTIVITY_IN_MONTHS) throw  new CardsException(CardsException.class,
                         "You oldest credit account should be at least six months old",methodName);
             }
             case REQUEST_FOR_REVISED_CREDIT_LIMIT -> {
-
+                LocalDate lastRevisedCreditLtDate=cards.getLastRefreshedCreditLimit();
+                int months= Period.between(lastRevisedCreditLtDate,LocalDate.now()).getYears();
+                LocalDate nextCreditLimitRevisedDate=lastRevisedCreditLtDate.plusMonths(MAX_TIME_LIMIT_FOR_ANY_NEW_CREDIT_ACTIVITY_IN_MONTHS);
+                if(months<MAX_TIME_LIMIT_FOR_ANY_NEW_CREDIT_ACTIVITY_IN_MONTHS) throw new CardsException(CardsException.class,String.format("You can't request for credit limit before %s",nextCreditLimitRevisedDate),methodName);
             }
             case FLEXI_PAY -> {
 

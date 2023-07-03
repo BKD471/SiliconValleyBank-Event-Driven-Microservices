@@ -8,6 +8,6 @@ public interface ICardsService {
     CardsDto issueCard(CardsDto cardsDto);
     List<CardsDto> getAllCardsByCustomerId(Long customerId);
     int generateCreditScore(Long customerId);
-    boolean requestForRevisedCreditLimit(Long customerId);
+    boolean requestForRevisedCreditLimitForACard(String cardNumber);
     CardsDto convertEmiToFlexiPay(Long customerId);
 }

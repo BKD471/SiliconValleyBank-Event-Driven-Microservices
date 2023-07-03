@@ -12,8 +12,7 @@ public class SortDateComparator implements Comparator<Transactions> {
      */
     @Override
     public int compare(Transactions a, Transactions b) {
-        if(a.getTransactionTimeStamp().isBefore(b.getTransactionTimeStamp())) return -1;
-        else if(a.getTransactionTimeStamp().isAfter(b.getTransactionTimeStamp())) return 1;
-        return  0;
+        return (a.getTransactionTimeStamp().isBefore(b.getTransactionTimeStamp()))? -1:
+                (a.getTransactionTimeStamp().isAfter(b.getTransactionTimeStamp()))? 1:0;
     }
 }
