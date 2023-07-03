@@ -13,7 +13,7 @@ import com.example.accountsservices.dto.responseDtos.PageableResponseDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -37,9 +37,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.validateBenType.ADD_BEN;
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.validateBenType.UPDATE_BEN;
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION;
+import static com.example.accountsservices.helpers.AllConstantHelpers.validateBenType.ADD_BEN;
+import static com.example.accountsservices.helpers.AllConstantHelpers.validateBenType.UPDATE_BEN;
+import static com.example.accountsservices.helpers.AllConstantHelpers.DIRECTION;
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBankCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
@@ -49,7 +49,6 @@ import static com.example.accountsservices.helpers.PagingHelper.*;
 public class BeneficiaryServiceImpl extends AbstractAccountsService implements IBeneficiaryService {
     private final IBeneficiaryRepository beneficiaryRepository;
     private final IAccountsRepository accountsRepository;
-
     private final IValidationService validationService;
 
 
@@ -141,11 +140,11 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Long newBeneficiaryNumber = newBeneficiaryData.getBeneficiaryAccountNumber();
         LocalDate newBeneficiaryDOB = newBeneficiaryData.getBenDate_Of_Birth();
         String newBeneficiaryAdharNumber = newBeneficiaryData.getBenAdharNumber();
-        AllEnumConstantHelpers.RELATION newBeneficaryRelation = newBeneficiaryData.getRelation();
+        AllConstantHelpers.RELATION newBeneficaryRelation = newBeneficiaryData.getRelation();
         String newBeneficiaryPanNumber = newBeneficiaryData.getBenPanNumber();
         String newBeneficiaryPassport = newBeneficiaryData.getBenPassportNumber();
         String newBeneficiaryVoterId = newBeneficiaryData.getBenVoterId();
-        AllEnumConstantHelpers.BanksSupported newBenBank=newBeneficiaryData.getBenBank();
+        AllConstantHelpers.BanksSupported newBenBank=newBeneficiaryData.getBenBank();
         String newBeneficiaryPhoneNumber=newBeneficiaryData.getBenPhoneNumber();
         String newBeneficiaryEmail=newBeneficiaryData.getBeneficiaryEmail();
         String newBenDrivingLicense=newBeneficiaryData.getBenDrivingLicense();
@@ -154,11 +153,11 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Long oldBeneficiaryNumber = oldBeneficiaryData.getBeneficiaryAccountNumber();
         LocalDate oldBeneficiaryDOB = oldBeneficiaryData.getBenDate_Of_Birth();
         String oldBeneficiaryAdharNumber = oldBeneficiaryData.getBenAdharNumber();
-        AllEnumConstantHelpers.RELATION oldBeneficiaryRelation = oldBeneficiaryData.getRelation();
+        AllConstantHelpers.RELATION oldBeneficiaryRelation = oldBeneficiaryData.getRelation();
         String oldBeneficiaryPanNumber = oldBeneficiaryData.getBenPanNumber();
         String oldBeneficiaryPassport = oldBeneficiaryData.getBenPassportNumber();
         String oldBeneficiaryVoterId = oldBeneficiaryData.getBenVoterId();
-        AllEnumConstantHelpers.BanksSupported oldBenBank=oldBeneficiaryData.getBenBank();
+        AllConstantHelpers.BanksSupported oldBenBank=oldBeneficiaryData.getBenBank();
         String oldBeneficiaryPhoneNumber=oldBeneficiaryData.getBenPhoneNumber();
         String oldBeneficiaryEmail=oldBeneficiaryData.getBeneficiaryEmail();
         String oldDrivingLicense=oldBeneficiaryData.getBenDrivingLicense();
@@ -309,7 +308,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Customer customer = fetchedAccount.getCustomer();
         CustomerDto customerDto = mapToCustomerDto(customer);
 
-        AllEnumConstantHelpers.BenUpdateRequest requestType = postInputDto.getBenRequest();
+        AllConstantHelpers.BenUpdateRequest requestType = postInputDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
@@ -340,7 +339,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         //get customer
         Customer loadCustomer = fetchedAccount.getCustomer();
 
-        AllEnumConstantHelpers.BenUpdateRequest requestType = putInputRequestDto.getBenRequest();
+        AllConstantHelpers.BenUpdateRequest requestType = putInputRequestDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
@@ -382,7 +381,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Long accountNumber = getInputRequestDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
-        AllEnumConstantHelpers.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
+        AllConstantHelpers.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
 
@@ -434,7 +433,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         Long accountNUmber = deleteInputRequestDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
 
-        AllEnumConstantHelpers.BenUpdateRequest requestType = deleteInputRequestDto.getBenRequest();
+        AllConstantHelpers.BenUpdateRequest requestType = deleteInputRequestDto.getBenRequest();
         if (null == requestType) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {

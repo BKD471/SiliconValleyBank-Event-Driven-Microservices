@@ -11,7 +11,7 @@ import com.example.accountsservices.dto.responseDtos.ImageResponseMessages;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.ResponseException;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.service.IAccountsService;
@@ -118,7 +118,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
     @Override
     public ResponseEntity<ImageResponseMessages> uploadCustomerImage(MultipartFile image, Long customerId) throws IOException {
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
+                .updateRequest(AllConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerId(customerId)
                 .customerImage(image)
                 .build();

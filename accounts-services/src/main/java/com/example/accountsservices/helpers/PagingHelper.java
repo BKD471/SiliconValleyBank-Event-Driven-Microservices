@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION;
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION.asc;
+import static com.example.accountsservices.helpers.AllConstantHelpers.DIRECTION;
+import static com.example.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
 
 public class PagingHelper {
     private static final Set<String> setOfAccountFieldNames = new HashSet<>();

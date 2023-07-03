@@ -2,8 +2,7 @@ package com.example.accountsservices.dto.outputDtos;
 
 import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.example.accountsservices.dto.baseDtos.TransactionsDto;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
-import com.example.accountsservices.model.Accounts;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import lombok.*;
 
 import java.util.List;
@@ -16,9 +15,9 @@ import java.util.List;
 public class AccountsOutPutDto {
     private long accountNumber;
     private long balance;
-    private AllEnumConstantHelpers.Branch homeBranch;
-    private AllEnumConstantHelpers.AccountType accountType;
-    private AllEnumConstantHelpers.AccountStatus accountStatus;
+    private AllConstantHelpers.Branch homeBranch;
+    private AllConstantHelpers.AccountType accountType;
+    private AllConstantHelpers.AccountStatus accountStatus;
     private String branchCode;
     private long transferLimitPerDay;
     private int creditScore;

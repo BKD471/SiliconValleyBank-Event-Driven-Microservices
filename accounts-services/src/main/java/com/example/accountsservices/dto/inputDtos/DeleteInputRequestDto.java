@@ -1,8 +1,6 @@
 package com.example.accountsservices.dto.inputDtos;
 
-import com.example.accountsservices.dto.baseDtos.AccountsDto;
-import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -23,8 +21,8 @@ public class DeleteInputRequestDto {
     private int age;
     private long accountNumber;
     private String dateOfBirthInYYYYMMDD;
-    private AllEnumConstantHelpers.AccountType accountType;
-    private AllEnumConstantHelpers.Branch homeBranch;
+    private AllConstantHelpers.AccountType accountType;
+    private AllConstantHelpers.Branch homeBranch;
     private String email;
     private String password;
     private String phoneNumber;
@@ -33,15 +31,15 @@ public class DeleteInputRequestDto {
     private String voterId;
     private String drivingLicense;
     private String passportNumber;
-    private AllEnumConstantHelpers.DeleteRequest deleteRequest;
-    private AllEnumConstantHelpers.BenUpdateRequest benRequest;
+    private AllConstantHelpers.DeleteRequest deleteRequest;
+    private AllConstantHelpers.BenUpdateRequest benRequest;
     private long beneficiaryId;
     private String beneficiaryName;
     private long beneficiaryAccountNumber;
-    private AllEnumConstantHelpers.RELATION bloodRelation;
+    private AllConstantHelpers.RELATION bloodRelation;
     private String ben_date_of_birthINYYYYMMDD;
     private int benAge;
-    private AllEnumConstantHelpers.BanksSupported benBank;
+    private AllConstantHelpers.BanksSupported benBank;
     private String benAdharNumber;
     private String benPhoneNumber;
     private String benPanNumber;
@@ -50,11 +48,11 @@ public class DeleteInputRequestDto {
     private String benVoterId;
     private String benDrivingLicense;
     private long balance;
-    private AllEnumConstantHelpers.UpdateRequest updateRequest;
+    private AllConstantHelpers.UpdateRequest updateRequest;
     private String branchCode;
     private long transferLimitPerDay;
     private int creditScore;
-    private AllEnumConstantHelpers.AccountStatus accountStatus;
+    private AllConstantHelpers.AccountStatus accountStatus;
     private long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
     private long totLoanIssuedSoFar;

@@ -6,7 +6,7 @@ import com.example.accountsservices.dto.baseDtos.CustomerDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
@@ -21,7 +21,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
+import static com.example.accountsservices.helpers.AllConstantHelpers.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 
 @Service
@@ -32,7 +32,6 @@ public class ValidationServiceImpl implements IValidationService {
     ValidationServiceImpl(IAccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
     }
-
 
     @Override
     public Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AccountsValidateType request) throws AccountsException, BadApiRequestException {
@@ -84,7 +83,7 @@ public class ValidationServiceImpl implements IValidationService {
                         accountsDto, String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
-                AllEnumConstantHelpers.AccountStatus status = accounts.getAccountStatus();
+                AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED ->
                             throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), location);
@@ -96,7 +95,7 @@ public class ValidationServiceImpl implements IValidationService {
                 }
             }
             case RE_OPEN_ACCOUNT -> {
-                AllEnumConstantHelpers.AccountStatus status = accounts.getAccountStatus();
+                AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED -> {
                         return true;

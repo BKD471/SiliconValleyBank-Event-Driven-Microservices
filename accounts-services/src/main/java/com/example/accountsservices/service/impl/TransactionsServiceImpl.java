@@ -5,7 +5,7 @@ import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.baseDtos.TransactionsDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.CREDIT;
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DEBIT;
+import static com.example.accountsservices.helpers.AllConstantHelpers.*;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 
 @Slf4j
@@ -42,7 +41,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
         this.accountsRepository = accountsRepository;
     }
 
-    private Transactions updateBalance(Accounts accounts, Transactions transactions, Long amount, AllEnumConstantHelpers.TransactionType transactionType) throws TransactionException {
+    private Transactions updateBalance(Accounts accounts, Transactions transactions, Long amount, AllConstantHelpers.TransactionType transactionType) throws TransactionException {
         log.debug("<--------------------updateBalance(Accounts, Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl started ----------" +
                 "--------------------------------------------------------------------------------------------------------->");
         String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
@@ -69,7 +68,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
      * @param transactionsDto
      * @returnType AccountsDto
      */
-    private TransactionsDto payOrDepositMoney(TransactionsDto transactionsDto, AllEnumConstantHelpers.TransactionType transactionType) throws AccountsException, TransactionException {
+    private TransactionsDto payOrDepositMoney(TransactionsDto transactionsDto, AllConstantHelpers.TransactionType transactionType) throws AccountsException, TransactionException {
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl started -----------------------" +
                 "-------------------------------------------------------------------------------------------------------------------------->");
         //fetch account

@@ -1,8 +1,7 @@
 package com.example.accountsservices.dto.baseDtos;
 
 
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
-import com.example.accountsservices.model.Transactions;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.validator.NotNullEnum;
 import com.example.accountsservices.validator.ValidDescription;
 import jakarta.validation.constraints.Min;
@@ -27,8 +26,8 @@ public class TransactionsDto {
     private Long transactionAmount;
     @Min(value =1, message = "Please provide a transacted Account Number")
     private String transactedAccountNumber;
-    private AllEnumConstantHelpers.TransactionType transactionType;
+    private AllConstantHelpers.TransactionType transactionType;
     @NotNullEnum(regexp = PATTERN_FOR_NOT_NULL_CHARS,message = "Field can;t be null")
     @ValidDescription
-    private AllEnumConstantHelpers.DescriptionType description;
+    private AllConstantHelpers.DescriptionType description;
 }

@@ -1,14 +1,14 @@
 package com.example.accountsservices.validator;
 
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DescriptionType.EMI;
+import static com.example.accountsservices.helpers.AllConstantHelpers.*;
+import static com.example.accountsservices.helpers.AllConstantHelpers.DescriptionType.EMI;
 
 public class ValidateDescription implements ConstraintValidator<ValidDescription, DescriptionType> {
     /**
@@ -17,10 +17,10 @@ public class ValidateDescription implements ConstraintValidator<ValidDescription
      * @return
      */
     @Override
-    public boolean isValid(AllEnumConstantHelpers.DescriptionType value, ConstraintValidatorContext context) {
+    public boolean isValid(AllConstantHelpers.DescriptionType value, ConstraintValidatorContext context) {
         //null check is already taken care by @notnullEnum
         if(null==value) return true;
-        Set<AllEnumConstantHelpers.DescriptionType> validFields=new HashSet<>();
+        Set<AllConstantHelpers.DescriptionType> validFields=new HashSet<>();
         validFields.add(ELECTRICITY);
         validFields.add(SALARY);
         validFields.add(DEPOSIT);

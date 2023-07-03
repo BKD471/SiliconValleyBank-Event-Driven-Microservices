@@ -1,6 +1,6 @@
 package com.example.accountsservices.dto.baseDtos;
 
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -14,10 +14,10 @@ import java.util.List;
 public class AccountsDto {
     private long accountNumber;
     private long balance;
-    private AllEnumConstantHelpers.AccountType accountType;
-    private AllEnumConstantHelpers.AccountStatus accountStatus;
+    private AllConstantHelpers.AccountType accountType;
+    private AllConstantHelpers.AccountStatus accountStatus;
     private String branchCode;
-    private AllEnumConstantHelpers.Branch homeBranch;
+    private AllConstantHelpers.Branch homeBranch;
     private long transferLimitPerDay;
     private int creditScore;
     private long approvedLoanLimitBasedOnCreditScore;
@@ -26,7 +26,7 @@ public class AccountsDto {
     private long totLoanIssuedSoFar;
     @JsonIgnore
     @JsonProperty(value = "updateRequest")
-    private AllEnumConstantHelpers.UpdateRequest updateRequest;
+    private AllConstantHelpers.UpdateRequest updateRequest;
 
     private List<BeneficiaryDto> listOfBeneficiary;
     private List<TransactionsDto> listOfTransactions;

@@ -4,7 +4,7 @@ package com.example.accountsservices.service;
 import com.example.accountsservices.dto.baseDtos.TransactionsDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.TransactionException;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
+import static com.example.accountsservices.helpers.AllConstantHelpers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -50,12 +50,12 @@ public class TransactionsServiceTests {
 
     @BeforeAll
     public static void init() {
-        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
 
         accounts = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(500000L)
@@ -64,7 +64,7 @@ public class TransactionsServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
         customer = Customer.builder()
                 .customerId(1L)
@@ -90,7 +90,7 @@ public class TransactionsServiceTests {
         Transactions transactions1=Transactions.builder()
                 .transactionId(1L)
                 .transactedAccountNumber("1L")
-                .transactionType(AllEnumConstantHelpers.TransactionType.DEBIT)
+                .transactionType(AllConstantHelpers.TransactionType.DEBIT)
                 .description(ELECTRICITY)
                 .accounts(accounts)
                 .transactionAmount(60000L)
@@ -119,7 +119,7 @@ public class TransactionsServiceTests {
 
     @Test
     public void payOrDepositMoneyTestForCredit(){
-        String branchCode=CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
@@ -136,8 +136,8 @@ public class TransactionsServiceTests {
         long finalBalance=accounts.getBalance()+transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .branchCode(branchCode)
@@ -145,7 +145,7 @@ public class TransactionsServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
                 .build();
 
@@ -172,7 +172,7 @@ public class TransactionsServiceTests {
 
     @Test
     public void payOrDepositMoneyTestForDebit(){
-        String branchCode=CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
@@ -189,8 +189,8 @@ public class TransactionsServiceTests {
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .branchCode(branchCode)
@@ -198,7 +198,7 @@ public class TransactionsServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
                 .build();
 
@@ -245,7 +245,7 @@ public class TransactionsServiceTests {
 
     @Test
     public void payOrDepositMoneyTestForDebitFORRent(){
-        String branchCode=CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
@@ -262,8 +262,8 @@ public class TransactionsServiceTests {
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .branchCode(branchCode)
@@ -271,7 +271,7 @@ public class TransactionsServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
                 .build();
 
@@ -298,7 +298,7 @@ public class TransactionsServiceTests {
 
     @Test
     public void payOrDepositMoneyTestForDebitForFamilyEXPENSE(){
-        String branchCode=CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
@@ -315,8 +315,8 @@ public class TransactionsServiceTests {
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .branchCode(branchCode)
@@ -324,7 +324,7 @@ public class TransactionsServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
                 .build();
 
@@ -351,7 +351,7 @@ public class TransactionsServiceTests {
 
     @Test
     public void payOrDepositMoneyTestForDebitForInvestMent(){
-        String branchCode=CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
@@ -368,8 +368,8 @@ public class TransactionsServiceTests {
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .branchCode(branchCode)
@@ -377,7 +377,7 @@ public class TransactionsServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
                 .build();
 
@@ -404,7 +404,7 @@ public class TransactionsServiceTests {
 
     @Test
     public void payOrDepositMoneyTestForDebitForEShopping(){
-        String branchCode=CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
 
@@ -421,8 +421,8 @@ public class TransactionsServiceTests {
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .branchCode(branchCode)
@@ -430,7 +430,7 @@ public class TransactionsServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
                 .build();
 

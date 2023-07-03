@@ -1,6 +1,6 @@
 package com.example.accountsservices.model;
 
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -23,7 +23,7 @@ public class Beneficiary extends Audit{
 
     @Column(name="ben_bank",nullable = false)
     @Enumerated(EnumType.STRING)
-    private AllEnumConstantHelpers.BanksSupported benBank;
+    private AllConstantHelpers.BanksSupported benBank;
 
     private String bankCode;
 
@@ -32,7 +32,7 @@ public class Beneficiary extends Audit{
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private AllEnumConstantHelpers.RELATION relation;
+    private AllConstantHelpers.RELATION relation;
 
     @Email
     @Column(name="ben_email",nullable = false)

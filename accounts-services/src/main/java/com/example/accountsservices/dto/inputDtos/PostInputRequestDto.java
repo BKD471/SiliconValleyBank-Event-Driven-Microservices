@@ -1,11 +1,9 @@
 package com.example.accountsservices.dto.inputDtos;
 
-import com.example.accountsservices.dto.baseDtos.AccountsDto;
 import com.example.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.example.accountsservices.dto.baseDtos.TransactionsDto;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.model.Accounts;
-import com.example.accountsservices.model.Beneficiary;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.validator.ValidAge;
 import jakarta.validation.constraints.*;
@@ -37,8 +35,8 @@ public class PostInputRequestDto {
     @ValidAge
     private String dateOfBirthInYYYYMMDD;
 
-    private AllEnumConstantHelpers.AccountType accountType;
-    private AllEnumConstantHelpers.Branch homeBranch;
+    private AllConstantHelpers.AccountType accountType;
+    private AllConstantHelpers.Branch homeBranch;
 
     @Pattern(regexp = PATTERN_FOR_EMAIL,
             message = "Invalid Email format")
@@ -73,7 +71,7 @@ public class PostInputRequestDto {
     @Pattern(regexp = PATTERN_FOR_PASSPORT,message = "Invalid Passport Number")
     private String passportNumber;
 
-    private AllEnumConstantHelpers.BenUpdateRequest benRequest;
+    private AllConstantHelpers.BenUpdateRequest benRequest;
     private long beneficiaryId;
 
     @Size(min=3,max = 60,message = "Beneficiary Name must be at least 3 and at most 60 chars long")
@@ -83,15 +81,15 @@ public class PostInputRequestDto {
     private String address;
     private String imageName;
     private long beneficiaryAccountNumber;
-    private AllEnumConstantHelpers.RELATION bloodRelation;
+    private AllConstantHelpers.RELATION bloodRelation;
     private int benAge;
-    private AllEnumConstantHelpers.BanksSupported benBank;
+    private AllConstantHelpers.BanksSupported benBank;
     private long balance;
-    private AllEnumConstantHelpers.UpdateRequest updateRequest;
+    private AllConstantHelpers.UpdateRequest updateRequest;
     private String branchCode;
     private long transferLimitPerDay;
     private int creditScore;
-    private AllEnumConstantHelpers.AccountStatus accountStatus;
+    private AllConstantHelpers.AccountStatus accountStatus;
     private long approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
     private long totLoanIssuedSoFar;

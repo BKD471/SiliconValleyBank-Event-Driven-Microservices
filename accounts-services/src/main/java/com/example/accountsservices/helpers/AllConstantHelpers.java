@@ -1,6 +1,6 @@
 package com.example.accountsservices.helpers;
 
-public class AllEnumConstantHelpers {
+public class AllConstantHelpers {
     public  enum UpdateRequest {
         CREATE_ACC,ADD_ACCOUNT,LEND_LOAN,UPDATE_HOME_BRANCH,UPDATE_CREDIT_SCORE,UPDATE_CUSTOMER_DETAILS,
         UPLOAD_CUSTOMER_IMAGE,GET_CUSTOMER_IMAGE,GET_CREDIT_SCORE,GET_ACC_INFO,GET_ALL_ACC,BLOCK_ACC,
@@ -103,4 +103,5 @@ public class AllEnumConstantHelpers {
     public static final AccountsValidateType UPLOAD_PROFILE_IMAGE = AccountsValidateType.UPLOAD_PROFILE_IMAGE;
     public static final validateBenType ADD_BEN = validateBenType.ADD_BEN;
     public static final validateBenType UPDATE_BEN = validateBenType.UPDATE_BEN;
+    public static final String REQUEST_TO_BLOCK = "BLOCK";
 }

@@ -2,7 +2,7 @@ package com.example.accountsservices.controller;
 
 import com.example.accountsservices.dto.baseDtos.TransactionsDto;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.helpers.MapperHelper;
 import com.example.accountsservices.model.Accounts;
@@ -62,12 +62,12 @@ public class TransactionsControllerTest {
 
     @BeforeAll
     public static void init() {
-        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
 
         accounts = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(500000L)
@@ -76,7 +76,7 @@ public class TransactionsControllerTest {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
         customer = Customer.builder()
                 .customerId(1L)
@@ -99,8 +99,8 @@ public class TransactionsControllerTest {
         Transactions transactions1=Transactions.builder()
                 .transactionId(1L)
                 .transactedAccountNumber("1L")
-                .transactionType(AllEnumConstantHelpers.TransactionType.DEBIT)
-                .description(AllEnumConstantHelpers.DescriptionType.ELECTRICITY)
+                .transactionType(AllConstantHelpers.TransactionType.DEBIT)
+                .description(AllConstantHelpers.DescriptionType.ELECTRICITY)
                 .accounts(accounts)
                 .transactionAmount(60000L)
                 .build();
@@ -108,8 +108,8 @@ public class TransactionsControllerTest {
         Transactions transactions2=Transactions.builder()
                 .transactionId(2L)
                 .transactedAccountNumber("2L")
-                .transactionType(AllEnumConstantHelpers.TransactionType.CREDIT)
-                .description(AllEnumConstantHelpers.DescriptionType.SALARY)
+                .transactionType(AllConstantHelpers.TransactionType.CREDIT)
+                .description(AllConstantHelpers.DescriptionType.SALARY)
                 .accounts(accounts)
                 .transactionAmount(160000L)
                 .build();

@@ -1,6 +1,5 @@
 package com.example.accountsservices.service;
 
-import com.example.accountsservices.dto.baseDtos.AccountsDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.GetInputRequestDto;
 import com.example.accountsservices.dto.inputDtos.PostInputRequestDto;
@@ -9,7 +8,7 @@ import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.CustomerException;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
@@ -64,11 +63,11 @@ public class AccountsServiceTests {
 
     @BeforeEach
     public  void init() {
-        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         accounts = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(60000L)
@@ -77,7 +76,7 @@ public class AccountsServiceTests {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
 
         accounts.setCreatedDate(LocalDate.of(1990,12,01));
@@ -111,14 +110,14 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(accounts));
         when(customerRepositoryMock.save(any())).thenReturn(customer);
 
-        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         PostInputRequestDto postInputRequestDto = PostInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.CREATE_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.CREATE_ACC)
                 .name("phoenix")
                 .email("phoenix@gmail.com")
                 .password("pass")
                 .phoneNumber("91-1234567890")
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .dateOfBirthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 01)))
                 .adharNumber("adhar")
                 .panNumber("pan")
@@ -126,7 +125,7 @@ public class AccountsServiceTests {
                 .address("address")
                 .drivingLicense("driving")
                 .passportNumber("passport")
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .branchCode(branchCode)
                 .transferLimitPerDay(25000L)
                 .creditScore(750)
@@ -152,15 +151,15 @@ public class AccountsServiceTests {
     @Test
     @DisplayName("Test add accounts")
     public void addAccountTest() throws IOException {
-        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.CHENNAI);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.CHENNAI);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
         when(customerRepositoryMock.findById(anyLong()))
                 .thenReturn(Optional.of(customer));
         Accounts processedAccount = Accounts.builder()
                 .accountNumber(2L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(900000L)
                 .balance(90000L)
@@ -169,7 +168,7 @@ public class AccountsServiceTests {
                 .transferLimitPerDay(85000L)
                 .totLoanIssuedSoFar(550000L)
                 .creditScore(850)
-                .homeBranch(AllEnumConstantHelpers.Branch.CHENNAI)
+                .homeBranch(AllConstantHelpers.Branch.CHENNAI)
                 .build();
 
         when(accountsRepositoryMock.save(any())).thenReturn(processedAccount);
@@ -177,14 +176,14 @@ public class AccountsServiceTests {
 
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
                 .customerId(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.ADD_ACCOUNT)
-                .homeBranch(AllEnumConstantHelpers.Branch.CHENNAI)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .updateRequest(AllConstantHelpers.UpdateRequest.ADD_ACCOUNT)
+                .homeBranch(AllConstantHelpers.Branch.CHENNAI)
                 .build();
         OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
         assertEquals(850, response.getAccounts().getCreditScore(),"Account CreditScore should have matched");
         assertEquals(90000L, response.getAccounts().getBalance(),"Account Balance should have matched");
-        assertEquals(AllEnumConstantHelpers.Branch.CHENNAI, response.getAccounts().getHomeBranch(),"Account Branch should have matched");
+        assertEquals(AllConstantHelpers.Branch.CHENNAI, response.getAccounts().getHomeBranch(),"Account Branch should have matched");
     }
 
     @Test
@@ -200,9 +199,9 @@ public class AccountsServiceTests {
         customer.setAccounts(accountsList);
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
                 .customerId(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.ADD_ACCOUNT)
-                .homeBranch(AllEnumConstantHelpers.Branch.CHENNAI)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .updateRequest(AllConstantHelpers.UpdateRequest.ADD_ACCOUNT)
+                .homeBranch(AllConstantHelpers.Branch.CHENNAI)
                 .build();
         assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(putInputRequestDto);
@@ -220,9 +219,9 @@ public class AccountsServiceTests {
 
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
                 .customerId(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.ADD_ACCOUNT)
-                .homeBranch(AllEnumConstantHelpers.Branch.CHENNAI)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .updateRequest(AllConstantHelpers.UpdateRequest.ADD_ACCOUNT)
+                .homeBranch(AllConstantHelpers.Branch.CHENNAI)
                 .build();
         assertThrows(AccountsException.class,
                 () -> {
@@ -233,7 +232,7 @@ public class AccountsServiceTests {
     @Test
     @DisplayName("Test update home branch")
     public void updateHomeBranchTest() throws IOException {
-        String newBranchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.BANGALORE);
+        String newBranchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.BANGALORE);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
         when(customerRepositoryMock.findById(anyLong()))
@@ -241,20 +240,20 @@ public class AccountsServiceTests {
 
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .homeBranch(AllEnumConstantHelpers.Branch.BANGALORE)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.UPDATE_HOME_BRANCH).build();
+                .homeBranch(AllConstantHelpers.Branch.BANGALORE)
+                .updateRequest(AllConstantHelpers.UpdateRequest.UPDATE_HOME_BRANCH).build();
 
         Accounts savedAccount = Accounts.builder()
                 .accountNumber(1L)
-                .homeBranch(AllEnumConstantHelpers.Branch.BANGALORE)
+                .homeBranch(AllConstantHelpers.Branch.BANGALORE)
                 .branchCode(newBranchCode)
-                .accountType(AllEnumConstantHelpers.AccountType.CURRENT)
+                .accountType(AllConstantHelpers.AccountType.CURRENT)
                 .build();
         savedAccount.setCustomer(customer);
         when(accountsRepositoryMock.save(any())).thenReturn(savedAccount);
         OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
 
-        assertEquals(AllEnumConstantHelpers.Branch.BANGALORE, response.getAccounts().getHomeBranch(),"Accounts Branch should have matched");
+        assertEquals(AllConstantHelpers.Branch.BANGALORE, response.getAccounts().getHomeBranch(),"Accounts Branch should have matched");
         assertEquals(newBranchCode, response.getAccounts().getBranchCode(),"Account Branch COde should have matched");
     }
 
@@ -268,8 +267,8 @@ public class AccountsServiceTests {
 
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.UPDATE_HOME_BRANCH).build();
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
+                .updateRequest(AllConstantHelpers.UpdateRequest.UPDATE_HOME_BRANCH).build();
 
         assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(putInputRequestDto);
@@ -329,7 +328,7 @@ public class AccountsServiceTests {
 
         PutInputRequestDto request = PutInputRequestDto.builder()
                 .customerId(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.UPDATE_CUSTOMER_DETAILS)
+                .updateRequest(AllConstantHelpers.UpdateRequest.UPDATE_CUSTOMER_DETAILS)
                 .name("Updated Name")
                 .email("updated@gmail.com")
                 .phoneNumber("91-9345678912")
@@ -374,7 +373,7 @@ public class AccountsServiceTests {
                 new MockMultipartFile("data", "uploadedFile.png", "text/plain", "some kml".getBytes());
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .customerId(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
+                .updateRequest(AllConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerImage(imgFile)
                 .build();
 
@@ -391,13 +390,13 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(accounts));
         Accounts blockedAccount=Accounts.builder()
                 .accountNumber(1L)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.BLOCKED)
+                .accountStatus(AllConstantHelpers.AccountStatus.BLOCKED)
                 .build();
         when(accountsRepositoryMock.save(any())).thenReturn(blockedAccount);
 
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.BLOCK_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.BLOCK_ACC)
                 .build();
 
         accountsService.putRequestExecutor(request);
@@ -408,13 +407,13 @@ public class AccountsServiceTests {
     @DisplayName("Failed blocking account test")
     public void blockAccountFailedTest() throws AccountsException {
         Accounts blockedAccounts= accounts;
-        blockedAccounts.setAccountStatus(AllEnumConstantHelpers.AccountStatus.BLOCKED);
+        blockedAccounts.setAccountStatus(AllConstantHelpers.AccountStatus.BLOCKED);
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(blockedAccounts));
 
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.BLOCK_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.BLOCK_ACC)
                 .build();
 
         assertThrows(AccountsException.class,()->{accountsService.putRequestExecutor(request);});
@@ -427,13 +426,13 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(accounts));
         Accounts closedAccount=Accounts.builder()
                 .accountNumber(1L)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.CLOSED)
+                .accountStatus(AllConstantHelpers.AccountStatus.CLOSED)
                 .build();
         when(accountsRepositoryMock.save(any())).thenReturn(closedAccount);
 
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.CLOSE_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.CLOSE_ACC)
                 .build();
 
         accountsService.putRequestExecutor(request);
@@ -446,11 +445,11 @@ public class AccountsServiceTests {
 
         Accounts openedAccount=Accounts.builder()
                 .accountNumber(1L)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .build();
         Accounts closedAccount=Accounts.builder()
                 .accountNumber(1L)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.CLOSED)
+                .accountStatus(AllConstantHelpers.AccountStatus.CLOSED)
                 .build();
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(closedAccount));
@@ -458,8 +457,8 @@ public class AccountsServiceTests {
 
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.RE_OPEN_ACC)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.CLOSED)
+                .updateRequest(AllConstantHelpers.UpdateRequest.RE_OPEN_ACC)
+                .accountStatus(AllConstantHelpers.AccountStatus.CLOSED)
                 .build();
 
         accountsService.putRequestExecutor(request);
@@ -474,8 +473,8 @@ public class AccountsServiceTests {
 
         DeleteInputRequestDto request= DeleteInputRequestDto.builder()
                 .accountNumber(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.DELETE_ACC)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .updateRequest(AllConstantHelpers.UpdateRequest.DELETE_ACC)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .build();
 
         accountsService.deleteRequestExecutor(request);
@@ -489,7 +488,7 @@ public class AccountsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         GetInputRequestDto request=GetInputRequestDto.builder()
                 .accountNumber(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.GET_ACC_INFO)
+                .updateRequest(AllConstantHelpers.UpdateRequest.GET_ACC_INFO)
                 .build();
         OutputDto response=accountsService.getRequestExecutor(request);
         assertNotNull(response.getAccounts(),"Accounts should nt be null");
@@ -505,9 +504,9 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(accounts));
         when(customerRepositoryMock.save(any())).thenReturn(customer);
 
-        String branchCode = CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         PostInputRequestDto postInputRequestDto = PostInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.CREATE_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.CREATE_ACC)
                 .adharNumber("adhar")
                 .build();
 
@@ -532,7 +531,7 @@ public class AccountsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.INC_TRANSFER_LIMIT)
+                .updateRequest(AllConstantHelpers.UpdateRequest.INC_TRANSFER_LIMIT)
                 .transferLimitPerDay(125000L)
                 .build();
 
@@ -554,7 +553,7 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(accounts));
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.INC_TRANSFER_LIMIT)
+                .updateRequest(AllConstantHelpers.UpdateRequest.INC_TRANSFER_LIMIT)
                 .transferLimitPerDay(125000L)
                 .build();
 
@@ -569,7 +568,7 @@ public class AccountsServiceTests {
     public void deleteAllAccountsByCustomerTest(){
         when(customerRepositoryMock.findById(anyLong())).thenReturn(Optional.of(customer));
         DeleteInputRequestDto request=DeleteInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.DELETE_ALL_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.DELETE_ALL_ACC)
                 .customerId(1L)
                 .build();
 
@@ -584,7 +583,7 @@ public class AccountsServiceTests {
         when(customerRepositoryMock.findById(anyLong()))
                 .thenReturn(Optional.empty());
         DeleteInputRequestDto request=DeleteInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.DELETE_ALL_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.DELETE_ALL_ACC)
                 .customerId(1L)
                 .build();
 
@@ -605,7 +604,7 @@ public class AccountsServiceTests {
 
         GetInputRequestDto request= GetInputRequestDto.builder()
                 .customerId(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.GET_ALL_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.GET_ALL_ACC)
                 .build();
 
         accountsService.getRequestExecutor(request);
@@ -622,7 +621,7 @@ public class AccountsServiceTests {
 
         GetInputRequestDto request= GetInputRequestDto.builder()
                 .customerId(1L)
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.GET_ALL_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.GET_ALL_ACC)
                 .build();
 
        assertThrows(AccountsException.class,()->{
@@ -634,7 +633,7 @@ public class AccountsServiceTests {
     @DisplayName("Invalid request type for get")
     public  void invalidGetRequestType() throws AccountsException {
         GetInputRequestDto request= GetInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.ADD_ACCOUNT).build();
+                .updateRequest(AllConstantHelpers.UpdateRequest.ADD_ACCOUNT).build();
         assertThrows(AccountsException.class,()->{
             accountsService.getRequestExecutor(request);
         });
@@ -644,7 +643,7 @@ public class AccountsServiceTests {
     @DisplayName("Invalid request type for put")
     public  void invalidPutRequestType(){
         PutInputRequestDto request= PutInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.GET_ACC_INFO).build();
+                .updateRequest(AllConstantHelpers.UpdateRequest.GET_ACC_INFO).build();
         assertThrows(AccountsException.class,()->{
             accountsService.putRequestExecutor(request);
         });
@@ -654,7 +653,7 @@ public class AccountsServiceTests {
     @DisplayName("Invalid request type for post")
     public  void invalidPostRequestType(){
         PostInputRequestDto request= PostInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.DELETE_ACC).build();
+                .updateRequest(AllConstantHelpers.UpdateRequest.DELETE_ACC).build();
         assertThrows(AccountsException.class,()->{
             accountsService.postRequestExecutor(request);
         });
@@ -664,7 +663,7 @@ public class AccountsServiceTests {
     @DisplayName("Invalid request type for delete")
     public  void invalidDeleteRequestType(){
         DeleteInputRequestDto request= DeleteInputRequestDto.builder()
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.UPDATE_CREDIT_SCORE).build();
+                .updateRequest(AllConstantHelpers.UpdateRequest.UPDATE_CREDIT_SCORE).build();
         assertThrows(AccountsException.class,()->{
             accountsService.deleteRequestExecutor(request);
         });
@@ -759,7 +758,7 @@ public class AccountsServiceTests {
                 .accountNumber(1L)
                 .customerId(1L)
                 .sortBy("INVALID FIELD")
-                .updateRequest(AllEnumConstantHelpers.UpdateRequest.GET_ALL_ACC)
+                .updateRequest(AllConstantHelpers.UpdateRequest.GET_ALL_ACC)
                 .build();
 
         assertThrows(BadApiRequestException.class,()->{

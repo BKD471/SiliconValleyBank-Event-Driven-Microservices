@@ -1,7 +1,6 @@
 package com.example.accountsservices.dto.outputDtos;
 
 import lombok.*;
-
 import java.time.LocalDate;
 
 

@@ -3,7 +3,7 @@ package com.example.accountsservices.controller;
 
 
 import com.example.accountsservices.dto.outputDtos.OutputDto;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
@@ -74,11 +74,11 @@ public class AccountsControllerTest {
          stubInputStream =
                 IOUtils.toInputStream("some test data for my input stream", "UTF-8");
 
-        String branchCode=CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         accounts = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(60000L)
@@ -87,7 +87,7 @@ public class AccountsControllerTest {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
 
         accounts.setCreatedDate(LocalDate.of(1990,12,01));

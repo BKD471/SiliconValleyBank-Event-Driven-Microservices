@@ -2,7 +2,7 @@ package com.example.accountsservices.controller;
 
 
 import com.example.accountsservices.dto.outputDtos.OutputDto;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Beneficiary;
@@ -57,11 +57,11 @@ public class BeneficiaryControllerTest {
     private final String BASE_URL_BENEFICIARY="/api/v1/beneficiary/";
     @BeforeAll
     public static void init(){
-        String branchCode= CodeRetrieverHelper.getBranchCode(AllEnumConstantHelpers.Branch.KOLKATA);
+        String branchCode= CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         accounts = Accounts.builder()
                 .accountNumber(1L)
-                .accountType(AllEnumConstantHelpers.AccountType.SAVINGS)
-                .accountStatus(AllEnumConstantHelpers.AccountStatus.OPEN)
+                .accountType(AllConstantHelpers.AccountType.SAVINGS)
+                .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
                 .approvedLoanLimitBasedOnCreditScore(500000L)
                 .balance(60000L)
@@ -70,7 +70,7 @@ public class BeneficiaryControllerTest {
                 .transferLimitPerDay(25000L)
                 .totLoanIssuedSoFar(450000L)
                 .creditScore(750)
-                .homeBranch(AllEnumConstantHelpers.Branch.KOLKATA)
+                .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
 
         accounts.setCreatedDate(LocalDate.of(1990,12,01));
@@ -103,12 +103,12 @@ public class BeneficiaryControllerTest {
                 .benPassportNumber("passport-no-1")
                 .benPhoneNumber("+91-123456789")
                 .benPanNumber("GMDPD7592K")
-                .benBank(AllEnumConstantHelpers.BanksSupported.AXIS)
-                .bankCode(CodeRetrieverHelper.getBankCode(AllEnumConstantHelpers.BanksSupported.AXIS))
+                .benBank(AllConstantHelpers.BanksSupported.AXIS)
+                .bankCode(CodeRetrieverHelper.getBankCode(AllConstantHelpers.BanksSupported.AXIS))
                 .imageName("img1.png")
                 .BenDate_Of_Birth(LocalDate.of(1997, 12, 01))
                 .benVoterId("ben voter 1")
-                .relation(AllEnumConstantHelpers.RELATION.SON)
+                .relation(AllConstantHelpers.RELATION.SON)
                 .accounts(accounts)
                 .build();
 

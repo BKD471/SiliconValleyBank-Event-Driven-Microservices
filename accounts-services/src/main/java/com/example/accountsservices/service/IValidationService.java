@@ -6,7 +6,7 @@ import com.example.accountsservices.dto.baseDtos.CustomerDto;
 import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import java.util.List;
 
@@ -18,14 +18,14 @@ public interface IValidationService {
                 "----------------------------------------------------------------------------------------------------------------------->");
         String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
                 "coming from %s", locality);
-        AllEnumConstantHelpers.Branch newhomeBranch ;
+        AllConstantHelpers.Branch newhomeBranch ;
         newhomeBranch = (null == accountsDto) ? accounts.getHomeBranch() : accountsDto.getHomeBranch();
-        AllEnumConstantHelpers.AccountType accountType = accounts.getAccountType();
+        AllConstantHelpers.AccountType accountType = accounts.getAccountType();
 
         //get all accounts for customer
         List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
 
-        AllEnumConstantHelpers.Branch finalNewhomeBranch = newhomeBranch;
+        AllConstantHelpers.Branch finalNewhomeBranch = newhomeBranch;
         boolean isNotPermissible = listOfAccounts.stream().
                 anyMatch(account -> finalNewhomeBranch.equals(account.getHomeBranch())
                         && accountType.equals(account.getAccountType()));
@@ -39,6 +39,6 @@ public interface IValidationService {
         return true;
     }
 
-    Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AllEnumConstantHelpers.AccountsValidateType request) throws AccountsException, BadApiRequestException ;
-    void beneficiaryUpdateValidator(Accounts accounts, BeneficiaryDto beneficiaryDto, AllEnumConstantHelpers.validateBenType type) throws BeneficiaryException ;
+    Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AllConstantHelpers.AccountsValidateType request) throws AccountsException, BadApiRequestException ;
+    void beneficiaryUpdateValidator(Accounts accounts, BeneficiaryDto beneficiaryDto, AllConstantHelpers.validateBenType type) throws BeneficiaryException ;
 }

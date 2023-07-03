@@ -3,13 +3,12 @@ package com.example.accountsservices.service;
 import com.example.accountsservices.exception.*;
 import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.repository.ICustomerRepository;
-import com.example.accountsservices.service.impl.AccountsServiceImpl;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
-
 import java.util.Optional;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.STATUS_BLOCKED;
+import static com.example.accountsservices.helpers.AllConstantHelpers.REQUEST_TO_BLOCK;
+import static com.example.accountsservices.helpers.AllConstantHelpers.STATUS_BLOCKED;
 
 
 public abstract class AbstractAccountsService {
@@ -30,7 +29,7 @@ public abstract class AbstractAccountsService {
             throw new AccountsException(AccountsException.class,String.format("No such accounts exist with id %s", accountNumber),methodName);
 
         boolean checkAccountIsBlocked=STATUS_BLOCKED.equals(fetchedAccounts.get().getAccountStatus());
-        if(request.length>0 && request[0].equalsIgnoreCase(AccountsServiceImpl.REQUEST_TO_BLOCK) && checkAccountIsBlocked) throw new AccountsException(AccountsException.class,String.format("Account of id %s is already blocked",accountNumber),methodName);
+        if(request.length>0 && request[0].equalsIgnoreCase(REQUEST_TO_BLOCK) && checkAccountIsBlocked) throw new AccountsException(AccountsException.class,String.format("Account of id %s is already blocked",accountNumber),methodName);
         else if(checkAccountIsBlocked) throw new AccountsException(AccountsException.class,String.format("Account of id %s is in %s status",accountNumber,STATUS_BLOCKED),methodName);
         return fetchedAccounts.get();
     }

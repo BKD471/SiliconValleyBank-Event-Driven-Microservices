@@ -12,7 +12,7 @@ import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.CustomerException;
 import com.example.accountsservices.exception.RolesException;
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.model.Role;
@@ -41,8 +41,8 @@ import java.time.Period;
 import java.util.*;
 import java.util.List;
 
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.*;
-import static com.example.accountsservices.helpers.AllEnumConstantHelpers.DIRECTION.asc;
+import static com.example.accountsservices.helpers.AllConstantHelpers.*;
+import static com.example.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
@@ -71,7 +71,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public static final String REQUEST_TO_BLOCK = "BLOCK";
+
     private final String INIT = "INIT";
     private final String UPDATE = "UPDATE";
 
@@ -253,8 +253,8 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     private Accounts updateHomeBranch(AccountsDto accountsDto, Accounts accounts) throws AccountsException {
         log.debug("<-------------updateHomeBranch(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
-        AllEnumConstantHelpers.Branch oldHomeBranch = accounts.getHomeBranch();
-        AllEnumConstantHelpers.Branch newHomeBranch = accountsDto.getHomeBranch();
+        AllConstantHelpers.Branch oldHomeBranch = accounts.getHomeBranch();
+        AllConstantHelpers.Branch newHomeBranch = accountsDto.getHomeBranch();
         Accounts savedUpdatedAccount = accounts;
 
         if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
@@ -498,7 +498,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        AllEnumConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case LEND_LOAN -> {
                 //to be done...
@@ -527,7 +527,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
 
         String sortBy = (null == getInputRequestDto.getSortBy()) ? "balance" : getInputRequestDto.getSortBy();
-        AllEnumConstantHelpers.DIRECTION sortDir = (null == getInputRequestDto.getSortDir()) ? asc : getInputRequestDto.getSortDir();
+        AllConstantHelpers.DIRECTION sortDir = (null == getInputRequestDto.getSortDir()) ? asc : getInputRequestDto.getSortDir();
 
 
         //map
@@ -545,7 +545,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        AllEnumConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case GET_CREDIT_SCORE -> {
                 getCreditScore(accountNumber);
@@ -611,7 +611,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        AllEnumConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case ADD_ACCOUNT -> {
                 return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);
@@ -691,7 +691,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        AllEnumConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case DELETE_ACC -> {
                 Long accountNumber = accountsDto.getAccountNumber();
@@ -718,7 +718,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         String methodName="deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
 
         Long customerId= deleteInputRequestDto.getCustomerId();
-        AllEnumConstantHelpers.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
+        AllConstantHelpers.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
         if(null==deleteRequest || null==customerId) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
 
         Customer foundCustomer=fetchCustomerByCustomerNumber(customerId);

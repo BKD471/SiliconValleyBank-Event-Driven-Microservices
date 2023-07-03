@@ -1,7 +1,7 @@
 package com.example.accountsservices.model;
 
 import com.example.accountsservices.exception.CustomerException;
-import com.example.accountsservices.repository.CustomerRepository;
+import com.example.accountsservices.repository.ICustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class CustomerUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private ICustomerRepository customerRepository;
 
     /**
      * @param username the username identifying the user whose data is required.

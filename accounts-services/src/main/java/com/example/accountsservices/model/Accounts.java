@@ -1,6 +1,6 @@
 package com.example.accountsservices.model;
 
-import com.example.accountsservices.helpers.AllEnumConstantHelpers;
+import com.example.accountsservices.helpers.AllConstantHelpers;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,14 +26,14 @@ public class Accounts extends Audit {
 
     @Column(name = "accnt_type",nullable = false)
     @Enumerated(EnumType.STRING)
-    private AllEnumConstantHelpers.AccountType accountType;
+    private AllConstantHelpers.AccountType accountType;
 
     @Column(name="branch_code")
     private String branchCode;
 
     @Column( name = "branch_addr",nullable = false)
     @Enumerated(EnumType.STRING)
-    private AllEnumConstantHelpers.Branch homeBranch;
+    private AllConstantHelpers.Branch homeBranch;
 
     @Column(name = "trnsfr_lmt_pr_d")
     private long transferLimitPerDay;
@@ -55,7 +55,7 @@ public class Accounts extends Audit {
 
     @Column(name="acc_stts")
     @Enumerated(EnumType.STRING)
-    private AllEnumConstantHelpers.AccountStatus accountStatus;
+    private AllConstantHelpers.AccountStatus accountStatus;
 
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL)
     private List<Beneficiary> listOfBeneficiary=new ArrayList<>();
@@ -66,5 +66,4 @@ public class Accounts extends Audit {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="customer_id",nullable = false)
     private Customer customer;
-
 }
