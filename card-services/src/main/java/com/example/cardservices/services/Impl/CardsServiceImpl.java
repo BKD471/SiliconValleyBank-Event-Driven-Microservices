@@ -2,16 +2,22 @@ package com.example.cardservices.services.Impl;
 
 import com.example.cardservices.exception.CardsException;
 import com.example.cardservices.dto.CardsDto;
+import com.example.cardservices.exception.TenureException;
+import com.example.cardservices.helpers.RateOfInterestHelper;
 import com.example.cardservices.mapper.CardsMapper;
 import com.example.cardservices.model.Cards;
 import com.example.cardservices.repository.ICardsRepository;
 import com.example.cardservices.services.ICardsService;
 import com.example.cardservices.services.IValidationService;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static com.example.cardservices.helpers.AllEnumConstantHelpers.*;
+import static com.example.cardservices.helpers.RateOfInterestHelper.getRateOfInterest;
 import static com.example.cardservices.mapper.CardsMapper.mapToCards;
 import static com.example.cardservices.mapper.CardsMapper.mapToCardsDto;
 
@@ -19,11 +25,35 @@ import static com.example.cardservices.mapper.CardsMapper.mapToCardsDto;
 public class CardsServiceImpl implements ICardsService {
     private final IValidationService validationService;
     private final ICardsRepository cardsRepository;
+    private int MONTHS_IN_YEAR=12;
     CardsServiceImpl(IValidationService validationService,ICardsRepository cardsRepository){
         this.validationService=validationService;
         this.cardsRepository=cardsRepository;
     }
 
+    private Cards processCardInformation(Cards cards){
+        double AVAILABLE_LIMIT=40000.0d;
+        long BILL_GENERATION_IN_DAYS=20;
+        long DUE_IN=10;
+        LocalDateTime ISSUED_DATE=cards.getIssuedDate();
+        LocalDate BILL_GEN_DATE=ISSUED_DATE.plusDays(BILL_GENERATION_IN_DAYS).toLocalDate();
+        LocalDate DUE_DATE=BILL_GEN_DATE.plusDays(DUE_IN);
+
+        return Cards.builder()
+                .cardNetwork(cards.getCardNetwork())
+                .cardType(cards.getCardType())
+                .availableLimit(AVAILABLE_LIMIT)
+                .billGenerationDate(BILL_GEN_DATE)
+                .dueDate(DUE_DATE)
+                .currentOutStanding(0.0d)
+                .minimumDue(0.0d)
+                .statementDue(0.0d)
+                .lastPaidDate(null)
+                .totalLimit(AVAILABLE_LIMIT)
+                .rewardPoints(0)
+                .amountPaid(0.0d)
+                .unBilledOutstanding(0.0d).build();
+    }
     /**
      * @param cardsDto
      * @return
@@ -32,9 +62,11 @@ public class CardsServiceImpl implements ICardsService {
     public CardsDto issueCard(CardsDto cardsDto) {
         //validating the unhappy path
         validationService.cardsValidator(cardsDto,null,ISSUE_CARD);
-        Cards card= mapToCards(cardsDto);
+        Cards card=mapToCards(cardsDto);
         Cards savedCards=cardsRepository.save(card);
-        return mapToCardsDto(savedCards);
+        Cards processedCardsInfo=processCardInformation(savedCards);
+        Cards savedAndProcessedCardInfo=cardsRepository.save(processedCardsInfo);
+        return mapToCardsDto(savedAndProcessedCardInfo);
     }
 
     /**
@@ -73,7 +105,7 @@ public class CardsServiceImpl implements ICardsService {
      * @return
      */
     @Override
-    public boolean requestForRevisedCreditLimitForACard(String cardNumber) {
+    public Cards requestForRevisedCreditLimitForACard(String cardNumber) {
         String methodName="requestForRevisedCreditLimitForACard(String) CardsServiceImpl";
         Optional<Cards> loadCard=cardsRepository.findByCardNumber(cardNumber);
         if(loadCard.isEmpty()) throw new CardsException(CardsException.class,
@@ -81,7 +113,25 @@ public class CardsServiceImpl implements ICardsService {
 
         validationService.cardsValidator(null,loadCard.get(),REQUEST_FOR_REVISED_CREDIT_LIMIT);
 
-        return false;
+        //to be done with loans
+        return loadCard.get();
+    }
+
+    private long calculateEmi(Long loanAmount, int tenure) throws TenureException {
+        String methodName="calculateEmi(Long,int) in LoanServiceImpl";
+        Double rate_of_interest = getRateOfInterest(tenure);
+        if(rate_of_interest==null) throw new TenureException(TenureException.class,
+                String.format("Tenure %s is not available",tenure),methodName);
+
+        int PERCENTAGE = 100;
+        Double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
+        long interest = (long) (loanAmount * magic_coeff);
+
+        double numerator = Math.pow(1 + magic_coeff, tenure * MONTHS_IN_YEAR);
+        double denominator = numerator - 1;
+        double emi_coeff = (numerator / denominator);
+
+        return (long) (interest * emi_coeff);
     }
 
     /**

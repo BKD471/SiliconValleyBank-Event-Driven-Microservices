@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
+import static com.example.loansservices.utils.RateOfInterestHelper.getRateOfInterest;
 
 
 /**
@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LoanServiceImpl implements LoansService {
     private final int MONTHS_IN_YEAR = 12;
-    private final int PERCENTAGE = 100;
     private final LoansRepository loansRepository;
 
     /**
@@ -55,9 +54,10 @@ public class LoanServiceImpl implements LoansService {
      */
     private Long calculateEmi(Long loanAmount, int tenure) throws TenureException {
         String methodName="calculateEmi(Long,int) in LoanServiceImpl";
-        Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
+        Double rate_of_interest = getRateOfInterest(tenure);
         if(rate_of_interest==null) throw new TenureException(String.format("Tenure %s is not available",tenure),methodName);
 
+        int PERCENTAGE = 100;
         Double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
         long interest = (long) (loanAmount * magic_coeff);
 
@@ -87,7 +87,7 @@ public class LoanServiceImpl implements LoansService {
         loan.setEmiAmount(emiAmount);
 
         //initializing the initial value for outstanding amount,amount paid,rate of interest
-        Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
+        Double rate_of_interest = getRateOfInterest(tenure);
         loan.setRate_Of_Interest(rate_of_interest);
         loan.setOutstandingAmount(loan.getTotalLoan());
         loan.setAmountPaid(0L);

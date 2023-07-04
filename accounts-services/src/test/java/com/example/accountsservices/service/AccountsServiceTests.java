@@ -12,8 +12,10 @@ import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
+import com.example.accountsservices.model.Role;
 import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.repository.ICustomerRepository;
+import com.example.accountsservices.repository.IRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +52,9 @@ public class AccountsServiceTests {
     private IFileService fileService;
 
     @MockBean
+    private IRoleRepository roleRepositoryMock;
+
+    @MockBean
     private ICustomerRepository customerRepositoryMock;
 
     @MockBean
@@ -58,14 +63,19 @@ public class AccountsServiceTests {
     private Customer customer;
     private Accounts accounts;
 
+    private Role normalRole;
+
     @Value("${customer.profile.images.path}")
     private String IMAGE_PATH;
+
+    @Value("${normal.role.id}")
+    private String NORMAL_ROLE_ID;
 
     @BeforeEach
     public  void init() {
         String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         accounts = Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber(1)
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -81,8 +91,10 @@ public class AccountsServiceTests {
 
         accounts.setCreatedDate(LocalDate.of(1990,12,01));
 
+        normalRole= Role.builder().roleId(NORMAL_ROLE_ID).roleName("NORMAL").build();
+
         customer = Customer.builder()
-                .customerId(1L)
+                .customerId(1)
                 .age(25)
                 .name("phoenix")
                 .email("phoenix@gmail.com")
@@ -95,20 +107,25 @@ public class AccountsServiceTests {
                 .imageName("img.png")
                 .DateOfBirth(LocalDate.of(1997, 12, 01))
                 .voterId("voter")
+                .roles(new HashSet<>(Collections.singleton(normalRole)))
                 .accounts(Collections.singletonList(accounts))
                 .build();
         accounts.setCustomer(customer);
+
     }
 
 
     @Test
     @DisplayName("Test the create accounts")
     public void createAccountTest() {
+        when(roleRepositoryMock.findById(anyString()))
+                .thenReturn(Optional.of(normalRole));
         when(customerRepositoryMock.findById(anyLong()))
                 .thenReturn(Optional.of(customer));
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
-        when(customerRepositoryMock.save(any())).thenReturn(customer);
+        when(customerRepositoryMock.save(any()))
+                .thenReturn(customer);
 
         String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         PostInputRequestDto postInputRequestDto = PostInputRequestDto.builder()
@@ -127,7 +144,7 @@ public class AccountsServiceTests {
                 .passportNumber("passport")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .branchCode(branchCode)
-                .transferLimitPerDay(25000L)
+                .transferLimitPerDay(25000)
                 .creditScore(750)
                 .age(25)
                 .build();
@@ -143,8 +160,8 @@ public class AccountsServiceTests {
         assertEquals(25, response.getCustomer().getAge(),"Customer age should have matched");
         assertEquals(LocalDate.of(1997, 12, 01), response.getCustomer().getDateOfBirth(),
                 "Customer dob should have matched");
-        assertEquals(60000L, response.getAccounts().getBalance(),"Customer balance should have matched");
-        assertEquals(25000L, response.getAccounts().getTransferLimitPerDay(),"Customer transferLimit should have matched");
+        assertEquals(60000, response.getAccounts().getBalance(),"Customer balance should have matched");
+        assertEquals(25000, response.getAccounts().getTransferLimitPerDay(),"Customer transferLimit should have matched");
         assertEquals(750, response.getAccounts().getCreditScore(),"Customer credit score should have matched");
     }
 
@@ -306,6 +323,8 @@ public class AccountsServiceTests {
     public void updateCustomerDataTest() throws IOException {
         when(customerRepositoryMock.findById(anyLong()))
                 .thenReturn(Optional.of(customer));
+        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+                .thenReturn(Optional.of(accounts));
         Customer updatedCustomer= Customer.builder()
                 .customerId(1L)
                 .name("Updated Name")
@@ -327,7 +346,7 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(allPagedAccounts));
 
         PutInputRequestDto request = PutInputRequestDto.builder()
-                .customerId(1L)
+                .customerId(1)
                 .updateRequest(AllConstantHelpers.UpdateRequest.UPDATE_CUSTOMER_DETAILS)
                 .name("Updated Name")
                 .email("updated@gmail.com")
@@ -486,10 +505,13 @@ public class AccountsServiceTests {
     @DisplayName("Test fetching the account information")
     public  void getAccountInfoTest() throws AccountsException,IOException{
         when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(roleRepositoryMock.findById(anyString())).thenReturn(Optional.of(normalRole));
+
         GetInputRequestDto request=GetInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber(1)
                 .updateRequest(AllConstantHelpers.UpdateRequest.GET_ACC_INFO)
                 .build();
+
         OutputDto response=accountsService.getRequestExecutor(request);
         assertNotNull(response.getAccounts(),"Accounts should nt be null");
         assertEquals(accounts.getAccountNumber(),response.getAccounts().getAccountNumber(),
@@ -603,7 +625,7 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(allPagedAccounts));
 
         GetInputRequestDto request= GetInputRequestDto.builder()
-                .customerId(1L)
+                .customerId(1)
                 .updateRequest(AllConstantHelpers.UpdateRequest.GET_ALL_ACC)
                 .build();
 
@@ -676,7 +698,7 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request=GetInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber(1)
                 .updateRequest(null)
                 .build();
 
@@ -692,7 +714,7 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(accounts));
 
         PutInputRequestDto request=PutInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber(1)
                 .updateRequest(null)
                 .build();
 
@@ -707,7 +729,7 @@ public class AccountsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
         PostInputRequestDto request=PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber(1)
                 .updateRequest(null)
                 .build();
 
@@ -723,7 +745,7 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request=DeleteInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber(1)
                 .updateRequest(null)
                 .build();
 
@@ -738,7 +760,7 @@ public class AccountsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyLong()))
                 .thenReturn(Optional.of(accounts));
         PutInputRequestDto request=PutInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber(1)
                 .pageSize(-69)
                 .build();
 

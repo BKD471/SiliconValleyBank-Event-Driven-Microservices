@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -42,6 +43,8 @@ public class Cards extends  Audit{
     private double statementDue;
     @Column(name = "mn_due")
     private double minimumDue;
+    @Column(name = "bill-gen_date")
+    private LocalDate billGenerationDate;
     @Column(name = "due_dt")
     private LocalDate dueDate;
 
@@ -62,7 +65,7 @@ public class Cards extends  Audit{
     private double availableLimit;
 
     @Column(name = "total_limit")
-    private Long totalLimit;
+    private double totalLimit;
 
     @Column(name="last_cred_limit_rfereshed")
     private LocalDate lastRefreshedCreditLimit;
