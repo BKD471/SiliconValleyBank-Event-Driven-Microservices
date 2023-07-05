@@ -22,12 +22,12 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 @AllArgsConstructor
 @Builder
 public class PostInputRequestDto {
-    private long customerId;
+    private String customerId;
 
     @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long")
     private String name;
     private int age;
-    private long accountNumber;
+    private String accountNumber;
 
     @Pattern(regexp = PATTERN_FOR_DOB,
             message = "Please provide DOB in YYYY-MM-DD format")
@@ -72,7 +72,7 @@ public class PostInputRequestDto {
     private String passportNumber;
 
     private AllConstantHelpers.BenUpdateRequest benRequest;
-    private long beneficiaryId;
+    private String beneficiaryId;
 
     @Size(min=3,max = 60,message = "Beneficiary Name must be at least 3 and at most 60 chars long")
     private String beneficiaryName;
@@ -80,7 +80,7 @@ public class PostInputRequestDto {
     @Size(min=10,max = 1000,message = "Please provide address")
     private String address;
     private String imageName;
-    private long beneficiaryAccountNumber;
+    private String beneficiaryAccountNumber;
     private AllConstantHelpers.RELATION bloodRelation;
     private int benAge;
     private AllConstantHelpers.BanksSupported benBank;

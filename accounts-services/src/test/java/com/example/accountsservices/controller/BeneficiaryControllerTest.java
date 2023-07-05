@@ -59,7 +59,7 @@ public class BeneficiaryControllerTest {
     public static void init(){
         String branchCode= CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         accounts = Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -76,7 +76,7 @@ public class BeneficiaryControllerTest {
         accounts.setCreatedDate(LocalDate.of(1990,12,01));
 
         customer = Customer.builder()
-                .customerId(1L)
+                .customerId("1L")
                 .age(25)
                 .name("phoenix")
                 .email("phoenix@gmail.com")
@@ -93,8 +93,8 @@ public class BeneficiaryControllerTest {
                 .build();
 
         beneficiary = Beneficiary.builder()
-                .beneficiaryId(1L)
-                .beneficiaryAccountNumber(1L)
+                .beneficiaryId("1L")
+                .beneficiaryAccountNumber("1L")
                 .beneficiaryName("ben 1")
                 .beneficiaryEmail("ben1@gmail.com")
                 .address("ben 123 street")

@@ -1,6 +1,5 @@
 package com.example.accountsservices.controller.Impl;
 
-import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.IBeneficiaryController;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
@@ -18,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class BeneficiaryControllerImpl extends AbstractParentController implements IBeneficiaryController {
+public class BeneficiaryControllerImpl implements IBeneficiaryController {
     private final IBeneficiaryService beneficiaryService;
 
     BeneficiaryControllerImpl(@Qualifier("beneficiaryServicePrimary") IBeneficiaryService beneficiaryService) {

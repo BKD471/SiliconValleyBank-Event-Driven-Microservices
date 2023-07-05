@@ -13,9 +13,8 @@ import lombok.*;
 public class Transactions extends AuditTransactions{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="trans_id")
-    private long transactionId;
+    private String transactionId;
 
     @Column(name="trans-amnt",nullable = false)
     private long transactionAmount;

@@ -7,8 +7,8 @@ import java.util.*;
 
 public interface ICardsService {
     CardsDto issueCard(CardsDto cardsDto);
-    List<CardsDto> getAllCardsByCustomerId(Long customerId);
-    int generateCreditScore(Long customerId);
-    Cards requestForRevisedCreditLimitForACard(String cardNumber);
-    CardsDto convertEmiToFlexiPay(Long customerId);
+    List<CardsDto> getAllCardsByCustomerId(String customerId);
+    int generateCreditScore(String customerId);
+    CardsDto requestForRevisedCreditLimitForACard(String cardNumber);
+    CardsDto convertToFlexiPay(String cardNumber);
 }

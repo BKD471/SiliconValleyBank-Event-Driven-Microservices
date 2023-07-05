@@ -1,6 +1,5 @@
 package com.example.accountsservices.controller.Impl;
 
-import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.ITransactionsController;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.baseDtos.TransactionsDto;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 
 @RestController
-public class TransactionsControllerImpl extends AbstractParentController implements ITransactionsController {
+public class TransactionsControllerImpl implements ITransactionsController {
     private final ITransactionsService transactionsService;
 
     TransactionsControllerImpl(@Qualifier("transactionsServicePrimary") ITransactionsService transactionsService) {
@@ -38,7 +37,7 @@ public class TransactionsControllerImpl extends AbstractParentController impleme
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> getPastSixMonthsTransaction(Long accountNumber) throws AccountsException {
+    public ResponseEntity<OutputDto> getPastSixMonthsTransaction(String accountNumber) throws AccountsException {
         OutputDto responseDto = transactionsService.getPastSixMonthsTransactionsForAnAccount(accountNumber);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }

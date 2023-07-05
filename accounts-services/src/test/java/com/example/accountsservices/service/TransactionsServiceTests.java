@@ -27,8 +27,7 @@ import java.util.*;
 
 import static com.example.accountsservices.helpers.AllConstantHelpers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -53,7 +52,7 @@ public class TransactionsServiceTests {
         String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
 
         accounts = Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -67,7 +66,7 @@ public class TransactionsServiceTests {
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
         customer = Customer.builder()
-                .customerId(1L)
+                .customerId("1L")
                 .age(25)
                 .name("phoenix")
                 .email("phoenix@gmail.com")
@@ -88,7 +87,7 @@ public class TransactionsServiceTests {
     @Test
     public void pastSixMonthsTransactionsForAnAccountTest() {
         Transactions transactions1=Transactions.builder()
-                .transactionId(1L)
+                .transactionId("1L")
                 .transactedAccountNumber("1L")
                 .transactionType(AllConstantHelpers.TransactionType.DEBIT)
                 .description(ELECTRICITY)
@@ -97,7 +96,7 @@ public class TransactionsServiceTests {
                 .build();
         transactions1.setTransactionTimeStamp(LocalDateTime.now());
         Transactions transactions2=Transactions.builder()
-                .transactionId(2L)
+                .transactionId("2L")
                 .transactedAccountNumber("2L")
                 .transactionType(CREDIT)
                 .description(SALARY)
@@ -109,10 +108,10 @@ public class TransactionsServiceTests {
 
         List<Transactions> transactionsList = new ArrayList<>(Arrays.asList(transactions2, transactions1));
         accounts.setListOfTransactions(transactionsList);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        OutputDto response=transactionsService.getPastSixMonthsTransactionsForAnAccount(1L);
+        OutputDto response=transactionsService.getPastSixMonthsTransactionsForAnAccount("1L");
         assertNotNull(response.getAccounts().getListOfTransactions());
         assertEquals(2,response.getAccounts().getListOfTransactions().size());
     }
@@ -120,12 +119,12 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForCredit(){
         String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
-                .transactionId(1L)
-                .accountNumber(1L)
+                .transactionId("1L")
+                .accountNumber("1L")
                 .transactionAmount(100000L)
                 .transactionType(CREDIT)
                 .transactedAccountNumber("123")
@@ -135,7 +134,7 @@ public class TransactionsServiceTests {
 
         long finalBalance=accounts.getBalance()+transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -150,7 +149,7 @@ public class TransactionsServiceTests {
                 .build();
 
         Transactions transactionsState= Transactions.builder()
-                .transactionId(1L)
+                .transactionId("1L")
                 .transactionAmount(100000L)
                 .transactionType(CREDIT)
                 .transactedAccountNumber("123")
@@ -173,12 +172,12 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebit(){
         String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
-                .transactionId(1L)
-                .accountNumber(1L)
+                .transactionId("1L")
+                .accountNumber("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -188,7 +187,7 @@ public class TransactionsServiceTests {
 
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -203,7 +202,7 @@ public class TransactionsServiceTests {
                 .build();
 
         Transactions transactionsState= Transactions.builder()
-                .transactionId(1L)
+                .transactionId("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -225,12 +224,12 @@ public class TransactionsServiceTests {
 
     @Test
     public void payOrDepositMoneyTestFailedForDebitWhenAmountExceedsBalance(){
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
-                .transactionId(1L)
-                .accountNumber(1L)
+                .transactionId("1L")
+                .accountNumber("1L")
                 .transactionAmount(800000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -246,12 +245,12 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebitFORRent(){
         String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
-                .transactionId(1L)
-                .accountNumber(1L)
+                .transactionId("1L")
+                .accountNumber("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -261,7 +260,7 @@ public class TransactionsServiceTests {
 
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -276,7 +275,7 @@ public class TransactionsServiceTests {
                 .build();
 
         Transactions transactionsState= Transactions.builder()
-                .transactionId(1L)
+                .transactionId("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -299,12 +298,12 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebitForFamilyEXPENSE(){
         String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
-                .transactionId(1L)
-                .accountNumber(1L)
+                .transactionId("1L")
+                .accountNumber("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -314,7 +313,7 @@ public class TransactionsServiceTests {
 
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -329,7 +328,7 @@ public class TransactionsServiceTests {
                 .build();
 
         Transactions transactionsState= Transactions.builder()
-                .transactionId(1L)
+                .transactionId("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -352,12 +351,12 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebitForInvestMent(){
         String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
-                .transactionId(1L)
-                .accountNumber(1L)
+                .transactionId("1L")
+                .accountNumber("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -367,7 +366,7 @@ public class TransactionsServiceTests {
 
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -382,7 +381,7 @@ public class TransactionsServiceTests {
                 .build();
 
         Transactions transactionsState= Transactions.builder()
-                .transactionId(1L)
+                .transactionId("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -405,12 +404,12 @@ public class TransactionsServiceTests {
     @Test
     public void payOrDepositMoneyTestForDebitForEShopping(){
         String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         TransactionsDto transactionsDto=TransactionsDto.builder()
-                .transactionId(1L)
-                .accountNumber(1L)
+                .transactionId("1L")
+                .accountNumber("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
@@ -420,7 +419,7 @@ public class TransactionsServiceTests {
 
         long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
         Accounts accountStateAfterTransaction=Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -435,7 +434,7 @@ public class TransactionsServiceTests {
                 .build();
 
         Transactions transactionsState= Transactions.builder()
-                .transactionId(1L)
+                .transactionId("1L")
                 .transactionAmount(100000L)
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")

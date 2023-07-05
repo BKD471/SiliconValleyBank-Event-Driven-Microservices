@@ -16,5 +16,5 @@ public interface ITransactionsController {
     ResponseEntity<OutputDto> executeTransactions(@Valid @RequestBody TransactionsDto transactionsDto) throws TransactionException, AccountsException;
 
     @GetMapping("/{num}")
-    ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") Long accountNumber) throws AccountsException;
+    ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") String accountNumber) throws AccountsException;
 }

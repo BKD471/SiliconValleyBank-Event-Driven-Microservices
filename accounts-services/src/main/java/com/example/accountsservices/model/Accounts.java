@@ -17,9 +17,8 @@ import java.util.List;
 @Entity
 public class Accounts extends Audit {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true, name = "accnt_num")
-    private long accountNumber;
+    private String accountNumber;
 
     @Column(name = "cust_balnc")
     private long balance;

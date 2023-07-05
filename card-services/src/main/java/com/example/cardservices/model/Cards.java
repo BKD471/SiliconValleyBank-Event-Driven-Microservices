@@ -19,7 +19,7 @@ public class Cards extends  Audit{
     private String cardNumber;
 
     @Column(name = "customer_id")
-    private Long customerId;
+    private String customerId;
 
     @Column(name = "card_type")
     @Enumerated(EnumType.STRING)
@@ -47,6 +47,10 @@ public class Cards extends  Audit{
     private LocalDate billGenerationDate;
     @Column(name = "due_dt")
     private LocalDate dueDate;
+
+    //last transaction
+    @Column(name = "last_trn_amnt")
+    private double lastTransactionAmount;
 
     //last pmt dtls
     @Column(name = "amnt_paid")

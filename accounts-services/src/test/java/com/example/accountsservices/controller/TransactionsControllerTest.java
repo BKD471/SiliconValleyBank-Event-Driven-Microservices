@@ -65,7 +65,7 @@ public class TransactionsControllerTest {
         String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
 
         accounts = Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -79,7 +79,7 @@ public class TransactionsControllerTest {
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
         customer = Customer.builder()
-                .customerId(1L)
+                .customerId("1L")
                 .age(25)
                 .name("phoenix")
                 .email("phoenix@gmail.com")
@@ -97,7 +97,7 @@ public class TransactionsControllerTest {
         customer.setAccounts(Collections.singletonList(accounts));
 
         Transactions transactions1=Transactions.builder()
-                .transactionId(1L)
+                .transactionId("1L")
                 .transactedAccountNumber("1L")
                 .transactionType(AllConstantHelpers.TransactionType.DEBIT)
                 .description(AllConstantHelpers.DescriptionType.ELECTRICITY)
@@ -106,7 +106,7 @@ public class TransactionsControllerTest {
                 .build();
         transactions1.setTransactionTimeStamp(LocalDateTime.now());
         Transactions transactions2=Transactions.builder()
-                .transactionId(2L)
+                .transactionId("2L")
                 .transactedAccountNumber("2L")
                 .transactionType(AllConstantHelpers.TransactionType.CREDIT)
                 .description(AllConstantHelpers.DescriptionType.SALARY)

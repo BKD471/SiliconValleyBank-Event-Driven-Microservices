@@ -60,7 +60,7 @@ public class BeneficiaryServiceTests {
         String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
 
         accounts = Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -74,7 +74,7 @@ public class BeneficiaryServiceTests {
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
         customer = Customer.builder()
-                .customerId(1L)
+                .customerId("1L")
                 .age(25)
                 .name("phoenix")
                 .email("phoenix@gmail.com")
@@ -90,8 +90,8 @@ public class BeneficiaryServiceTests {
                 .build();
 
         beneficiary = Beneficiary.builder()
-                .beneficiaryId(1L)
-                .beneficiaryAccountNumber(1L)
+                .beneficiaryId("1L")
+                .beneficiaryAccountNumber("1L")
                 .beneficiaryName("ben 1")
                 .beneficiaryEmail("ben1@gmail.com")
                 .address("ben 123 street")
@@ -122,16 +122,16 @@ public class BeneficiaryServiceTests {
         int age = Period.between(dob, LocalDate.now()).getYears();
 
 
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
         when(accountsRepositoryMock.save(any())).thenReturn(accounts);
 
         PostInputRequestDto request = PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .name("ben 2")
                 .email("ben2@gmail.com")
-                .beneficiaryAccountNumber(3L)
+                .beneficiaryAccountNumber("3L")
                 .bloodRelation(SON)
                 .dateOfBirthInYYYYMMDD(String.valueOf(dob))
                 .benBank(AllConstantHelpers.BanksSupported.AXIS)
@@ -158,16 +158,16 @@ public class BeneficiaryServiceTests {
         for(int i=0;i<MAX_PERMISSIBLE_BENEFICIARIES;i++) beneficiaryList.add(new Beneficiary());
         accounts.setListOfBeneficiary(beneficiaryList);
 
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
         when(accountsRepositoryMock.save(any())).thenReturn(accounts);
 
         PostInputRequestDto request = PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .name("ben 2")
                 .email("ben2@gmail.com")
-                .beneficiaryAccountNumber(3L)
+                .beneficiaryAccountNumber("3L")
                 .bloodRelation(SON)
                 .dateOfBirthInYYYYMMDD(String.valueOf(dob))
                 .benBank(AllConstantHelpers.BanksSupported.AXIS)
@@ -187,11 +187,11 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void addBeneficiaryFailedForConflictingAdharNumberTest() {
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .adharNumber("1234-5678-9999")
                 .build();
@@ -203,11 +203,11 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void addBeneficiaryFailedForConflictingAdharNumberWhenSamePersonIsAddingHimselfAsBeneficiaryTest() {
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .email("phoenix@gmail.com")
                 .adharNumber("1234-5678-9999")
@@ -221,11 +221,11 @@ public class BeneficiaryServiceTests {
     @Test
     public void addBeneficiaryFailedForConflictingRelationForFatherTest() {
         beneficiary.setRelation(FATHER);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .bloodRelation(FATHER)
                 .adharNumber("1234-5678-1234")
@@ -239,11 +239,11 @@ public class BeneficiaryServiceTests {
     @Test
     public void addBeneficiaryFailedForConflictingRelationForMotherTest() {
         beneficiary.setRelation(MOTHER);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .bloodRelation(MOTHER)
                 .adharNumber("1234-5678-1234")
@@ -257,11 +257,11 @@ public class BeneficiaryServiceTests {
     @Test
     public void addBeneficiaryFailedForConflictingRelationForSpouseTest() {
         beneficiary.setRelation(SPOUSE);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request = PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .email("phoenix@gmail.com")
                 .bloodRelation(SPOUSE)
@@ -275,12 +275,12 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void getBeneficiaryByIdTest() {
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
-                .accountNumber(1L)
-                .beneficiaryId(1L)
+                .accountNumber("1L")
+                .beneficiaryId("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.GET_BEN)
                 .build();
 
@@ -294,12 +294,12 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void getBeneficiaryByIdFailedForInvalidBenIdTest() {
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
-                .accountNumber(1L)
-                .beneficiaryId(69L)
+                .accountNumber("1L")
+                .beneficiaryId("69L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.GET_BEN)
                 .build();
 
@@ -314,7 +314,7 @@ public class BeneficiaryServiceTests {
         List<Beneficiary> accountsList = new ArrayList<>();
 
         Accounts accountWithNoBeneficiary = Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -329,12 +329,12 @@ public class BeneficiaryServiceTests {
                 .homeBranch(AllConstantHelpers.Branch.BANGALORE).build();
 
 
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accountWithNoBeneficiary));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
-                .accountNumber(1L)
-                .beneficiaryId(1L)
+                .accountNumber("1L")
+                .beneficiaryId("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.GET_BEN)
                 .build();
 
@@ -349,12 +349,12 @@ public class BeneficiaryServiceTests {
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
         Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
-        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class)))
+        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyString(), any(Pageable.class)))
                 .thenReturn(Optional.of(allPagedBeneficiary));
-        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyString())).thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                 .build();
 
@@ -369,12 +369,12 @@ public class BeneficiaryServiceTests {
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
         Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
-        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class)))
+        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyString(), any(Pageable.class)))
                 .thenReturn(Optional.of(allPagedBeneficiary));
-        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyString())).thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                 .sortBy("INVALID FIELD")
                 .build();
@@ -389,16 +389,15 @@ public class BeneficiaryServiceTests {
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) beneficiaryList.add(new Beneficiary());
         Page<Beneficiary> allPagedBeneficiary = new PageImpl<>(beneficiaryList);
-        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class)))
+        when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyString(), any(Pageable.class)))
                 .thenReturn(Optional.of(allPagedBeneficiary));
-        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyString())).thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request = GetInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                 .sortBy("INVALID FIELD")
                 .build();
-
 
         assertThrows(BadApiRequestException.class, ()->{
             beneficiaryService.getRequestBenExecutor(request);
@@ -407,12 +406,12 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void noBeneficiariesPresentForAccountTest(){
-            when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyLong(), any(Pageable.class)))
+            when(beneficiaryRepositoryMock.findAllByAccounts_AccountNumber(anyString(), any(Pageable.class)))
                     .thenReturn(Optional.empty());
-            when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+            when(accountsRepositoryMock.findByAccountNumber(anyString())).thenReturn(Optional.of(accounts));
 
             GetInputRequestDto request = GetInputRequestDto.builder()
-                    .accountNumber(1L)
+                    .accountNumber("1L")
                     .benRequest(AllConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                     .build();
 
@@ -425,10 +424,10 @@ public class BeneficiaryServiceTests {
     @Test
     public void updateBeneficiaryTest() {
         String bankCode = CodeRetrieverHelper.getBankCode(AllConstantHelpers.BanksSupported.ICICI);
-        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyString())).thenReturn(Optional.of(accounts));
         Beneficiary processedAccount = Beneficiary.builder()
-                .beneficiaryAccountNumber(3L)
-                .beneficiaryId(1L)
+                .beneficiaryAccountNumber("3L")
+                .beneficiaryId("1L")
                 .beneficiaryName("Updated Beneficiary Name")
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
                 .relation(DAUGHTER)
@@ -446,11 +445,11 @@ public class BeneficiaryServiceTests {
         when(beneficiaryRepositoryMock.save(any())).thenReturn(processedAccount);
 
         PutInputRequestDto request = PutInputRequestDto.builder()
-                .accountNumber(1L)
-                .beneficiaryId(1L)
+                .accountNumber("1L")
+                .beneficiaryId("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.UPDATE_BEN)
                 .beneficiaryName("Updated Beneficiary Name")
-                .beneficiaryAccountNumber(3L)
+                .beneficiaryAccountNumber("3L")
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
                 .bloodRelation(DAUGHTER)
                 .ben_date_of_birthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 02)))
@@ -484,15 +483,15 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void updateBeneficiaryAccountFailedForInvalidIdTest() {
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         PutInputRequestDto request = PutInputRequestDto.builder()
-                .accountNumber(1L)
-                .beneficiaryId(69L)
+                .accountNumber("1L")
+                .beneficiaryId("69L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.UPDATE_BEN)
                 .beneficiaryName("Updated Beneficiary Name")
-                .beneficiaryAccountNumber(3L)
+                .beneficiaryAccountNumber("3L")
                 .beneficiaryEmail("UpdatedEmail@gmail.com")
                 .bloodRelation(DAUGHTER)
                 .ben_date_of_birthInYYYYMMDD(String.valueOf(LocalDate.of(1997, 12, 02)))
@@ -512,26 +511,27 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void deleteBeneficiariesForAnAccount() {
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request = DeleteInputRequestDto.builder()
-                .accountNumber(1L)
-                .beneficiaryId(1L).benRequest(AllConstantHelpers.BenUpdateRequest.DELETE_BEN)
+                .accountNumber("1L")
+                .beneficiaryId("1L").benRequest(AllConstantHelpers.BenUpdateRequest.DELETE_BEN)
                 .build();
 
         beneficiaryService.deleteRequestBenExecutor(request);
-        verify(beneficiaryRepositoryMock, times(1)).deleteByBeneficiaryId(anyLong());
+        verify(beneficiaryRepositoryMock, times(1))
+                .deleteByBeneficiaryId(anyString());
     }
 
     @Test
     public void deleteBeneficiariesForAnAccountFailedForInvalidBeneficiaryIdTest() {
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request = DeleteInputRequestDto.builder()
-                .accountNumber(1L)
-                .beneficiaryId(0).
+                .accountNumber("1L")
+                .beneficiaryId(null).
                 benRequest(AllConstantHelpers.BenUpdateRequest.DELETE_BEN)
                 .build();
 
@@ -542,24 +542,26 @@ public class BeneficiaryServiceTests {
 
     @Test
     public  void deleteAllBeneficiariesForAnAccount(){
-        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
+                .thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request= DeleteInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.DELETE_ALL_BEN)
                 .build();
 
         beneficiaryService.deleteRequestBenExecutor(request);
         verify(beneficiaryRepositoryMock,times(1))
-                .deleteAllByAccounts_AccountNumber(anyLong());
+                .deleteAllByAccounts_AccountNumber(anyString());
     }
 
     @Test
     public void invalidRequestForPostRequestFailedTest(){
-        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
+                .thenReturn(Optional.of(accounts));
 
         PostInputRequestDto request= PostInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.GET_ALL_BEN)
                 .build();
 
@@ -570,11 +572,11 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void invalidRequestForGetRequestFailedTest(){
-        when(accountsRepositoryMock.findByAccountNumber(anyLong()))
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
         GetInputRequestDto request= GetInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .build();
 
@@ -585,10 +587,11 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void invalidRequestForPutRequestFailedTest(){
-        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
+                .thenReturn(Optional.of(accounts));
 
         PutInputRequestDto request= PutInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.DELETE_BEN)
                 .build();
 
@@ -599,10 +602,11 @@ public class BeneficiaryServiceTests {
 
     @Test
     public void invalidRequestForDeleteRequestFailedTest(){
-        when(accountsRepositoryMock.findByAccountNumber(anyLong())).thenReturn(Optional.of(accounts));
+        when(accountsRepositoryMock.findByAccountNumber(anyString()))
+                .thenReturn(Optional.of(accounts));
 
         DeleteInputRequestDto request= DeleteInputRequestDto.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .benRequest(AllConstantHelpers.BenUpdateRequest.ADD_BEN)
                 .build();
 

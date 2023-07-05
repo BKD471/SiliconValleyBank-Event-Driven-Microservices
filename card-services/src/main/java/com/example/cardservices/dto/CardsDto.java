@@ -15,9 +15,12 @@ import java.time.LocalDate;
 @Builder
 public class CardsDto {
     private String cardNumber;
-    private Long customerId;
+    private String customerId;
     private Cards.CARD_TYPE cardType;
     private Cards.CARD_NETWORK cardNetwork;
+
+    //last transaction amount
+    private double lastTransactionAmount;
 
     //last billed summary
     private double statementDue;

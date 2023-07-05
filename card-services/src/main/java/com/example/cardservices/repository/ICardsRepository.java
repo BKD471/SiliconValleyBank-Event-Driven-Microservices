@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ICardsRepository extends JpaRepository<Cards,Long> {
-    Optional<List<Cards>> findAllByCustomerId(Long customerId);
-    boolean findByCustomerIdExists(Long customerId);
+public interface ICardsRepository extends JpaRepository<Cards,String> {
+    Optional<List<Cards>> findAllByCustomerId(String customerId);
+    boolean findByCustomerIdExists(String customerId);
     Optional<Cards> findByCardNumber(String cardNumber);
 }

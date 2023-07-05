@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class CustomerOutPutDto {
-    private long customerId;
+    private String customerId;
     private String customerName;
     private String email;
     private LocalDate DateOfBirth;

@@ -3,7 +3,6 @@ package com.example.cardservices.services.Impl;
 import com.example.cardservices.exception.CardsException;
 import com.example.cardservices.dto.CardsDto;
 import com.example.cardservices.exception.TenureException;
-import com.example.cardservices.helpers.RateOfInterestHelper;
 import com.example.cardservices.mapper.CardsMapper;
 import com.example.cardservices.model.Cards;
 import com.example.cardservices.repository.ICardsRepository;
@@ -15,17 +14,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-import static com.example.cardservices.helpers.AllEnumConstantHelpers.*;
+
+import static com.example.cardservices.helpers.AllConstantHelpers.*;
 import static com.example.cardservices.helpers.RateOfInterestHelper.getRateOfInterest;
 import static com.example.cardservices.mapper.CardsMapper.mapToCards;
 import static com.example.cardservices.mapper.CardsMapper.mapToCardsDto;
 
-@Service("acardsServicePrimary")
+@Service("cardsServicePrimary")
 public class CardsServiceImpl implements ICardsService {
+
     private final IValidationService validationService;
     private final ICardsRepository cardsRepository;
-    private int MONTHS_IN_YEAR=12;
+    private final int MONTHS_IN_YEAR=12;
     CardsServiceImpl(IValidationService validationService,ICardsRepository cardsRepository){
         this.validationService=validationService;
         this.cardsRepository=cardsRepository;
@@ -38,8 +40,10 @@ public class CardsServiceImpl implements ICardsService {
         LocalDateTime ISSUED_DATE=cards.getIssuedDate();
         LocalDate BILL_GEN_DATE=ISSUED_DATE.plusDays(BILL_GENERATION_IN_DAYS).toLocalDate();
         LocalDate DUE_DATE=BILL_GEN_DATE.plusDays(DUE_IN);
+        String cardNumber= UUID.randomUUID().toString();
 
         return Cards.builder()
+                .cardNumber(cardNumber)
                 .cardNetwork(cards.getCardNetwork())
                 .cardType(cards.getCardType())
                 .availableLimit(AVAILABLE_LIMIT)
@@ -74,7 +78,7 @@ public class CardsServiceImpl implements ICardsService {
      * @return
      */
     @Override
-    public List<CardsDto> getAllCardsByCustomerId(Long customerId) {
+    public List<CardsDto> getAllCardsByCustomerId(String customerId) {
         String methodName="getAllCardsByCustomerId(Long) in CardsServiceImpl";
         CardsDto cardsDto=CardsDto.builder().customerId(customerId).build();
         validationService.cardsValidator(cardsDto,null,GET_ALL_CARDS);
@@ -91,7 +95,7 @@ public class CardsServiceImpl implements ICardsService {
      * @return
      */
     @Override
-    public int generateCreditScore(Long customerId) {
+    public int generateCreditScore(String customerId) {
         Optional<List<Cards>> listOfAllCards=cardsRepository.findAllByCustomerId(customerId);
         validationService.cardsValidator(null,null,GENERATE_CREDIT_SCORE);
 
@@ -105,7 +109,7 @@ public class CardsServiceImpl implements ICardsService {
      * @return
      */
     @Override
-    public Cards requestForRevisedCreditLimitForACard(String cardNumber) {
+    public CardsDto requestForRevisedCreditLimitForACard(String cardNumber) {
         String methodName="requestForRevisedCreditLimitForACard(String) CardsServiceImpl";
         Optional<Cards> loadCard=cardsRepository.findByCardNumber(cardNumber);
         if(loadCard.isEmpty()) throw new CardsException(CardsException.class,
@@ -114,7 +118,7 @@ public class CardsServiceImpl implements ICardsService {
         validationService.cardsValidator(null,loadCard.get(),REQUEST_FOR_REVISED_CREDIT_LIMIT);
 
         //to be done with loans
-        return loadCard.get();
+        return mapToCardsDto(loadCard.get()) ;
     }
 
     private long calculateEmi(Long loanAmount, int tenure) throws TenureException {
@@ -135,12 +139,15 @@ public class CardsServiceImpl implements ICardsService {
     }
 
     /**
-     * @param customerId
+     * @param cardNumber
      * @return
      */
     @Override
-    public CardsDto convertEmiToFlexiPay(Long customerId) {
+    public CardsDto convertToFlexiPay(String cardNumber) {
+        Optional<Cards> loadCard=cardsRepository.findByCardNumber(cardNumber);
+        validationService.cardsValidator(null,loadCard.get(),FLEXI_PAY);
 
+        //to be
         return null;
     }
 }

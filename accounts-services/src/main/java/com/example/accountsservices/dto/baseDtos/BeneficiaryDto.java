@@ -14,9 +14,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class BeneficiaryDto {
-    private long beneficiaryId;
+    private String beneficiaryId;
     private String beneficiaryName;
-    private long beneficiaryAccountNumber;
+    private String beneficiaryAccountNumber;
 
     @JsonIgnore
     @JsonProperty(value = "benUpdateRequest")

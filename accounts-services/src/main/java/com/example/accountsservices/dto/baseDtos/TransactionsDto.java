@@ -18,9 +18,9 @@ import static com.example.accountsservices.helpers.RegexMatchersHelper.PATTERN_F
 @Builder
 public class TransactionsDto {
     @Min(value =1, message = "Please provide an account Number")
-    private Long accountNumber;
+    private String accountNumber;
     private LocalDateTime transactionTimeStamp;
-    private Long transactionId;
+    private String transactionId;
 
     @Min(value =100,message = "transaction Amount should not be less than 100")
     private Long transactionAmount;

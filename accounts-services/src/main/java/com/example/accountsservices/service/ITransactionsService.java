@@ -7,5 +7,5 @@ import com.example.accountsservices.exception.TransactionException;
 
 public interface ITransactionsService {
     OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException, AccountsException;
-    OutputDto getPastSixMonthsTransactionsForAnAccount(Long accountNumber) throws AccountsException;
+    OutputDto getPastSixMonthsTransactionsForAnAccount(String accountNumber) throws AccountsException;
 }

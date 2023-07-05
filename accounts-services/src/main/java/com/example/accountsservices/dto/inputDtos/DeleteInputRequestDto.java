@@ -16,10 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class DeleteInputRequestDto {
-    private long customerId;
+    private String customerId;
     private String name;
     private int age;
-    private long accountNumber;
+    private String accountNumber;
     private String dateOfBirthInYYYYMMDD;
     private AllConstantHelpers.AccountType accountType;
     private AllConstantHelpers.Branch homeBranch;
@@ -33,9 +33,9 @@ public class DeleteInputRequestDto {
     private String passportNumber;
     private AllConstantHelpers.DeleteRequest deleteRequest;
     private AllConstantHelpers.BenUpdateRequest benRequest;
-    private long beneficiaryId;
+    private String beneficiaryId;
     private String beneficiaryName;
-    private long beneficiaryAccountNumber;
+    private String beneficiaryAccountNumber;
     private AllConstantHelpers.RELATION bloodRelation;
     private String ben_date_of_birthINYYYYMMDD;
     private int benAge;

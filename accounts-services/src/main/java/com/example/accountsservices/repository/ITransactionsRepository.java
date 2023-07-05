@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ITransactionsRepository extends JpaRepository<Transactions,Long> {
-    void deleteByTransactionId(Long transactionsId);
+public interface ITransactionsRepository extends JpaRepository<Transactions,String> {
+    void deleteByTransactionId(String transactionsId);
 }

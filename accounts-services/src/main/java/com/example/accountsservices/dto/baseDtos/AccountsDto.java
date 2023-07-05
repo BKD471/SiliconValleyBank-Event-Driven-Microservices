@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AccountsDto {
-    private long accountNumber;
+    private String accountNumber;
     private long balance;
     private AllConstantHelpers.AccountType accountType;
     private AllConstantHelpers.AccountStatus accountStatus;

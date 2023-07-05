@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.example.accountsservices.helpers.AllConstantHelpers.*;
@@ -72,7 +73,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl started -----------------------" +
                 "-------------------------------------------------------------------------------------------------------------------------->");
         //fetch account
-        Long accountNumber = transactionsDto.getAccountNumber();
+        String accountNumber = transactionsDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         //converting to entity object
@@ -107,9 +108,13 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
     public OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         String methodName="transactionsExecutor(TransactionsDto) in TransactionsServiceImpl";
 
-        Long accountNumber=transactionsDto.getAccountNumber();
+        String accountNumber=transactionsDto.getAccountNumber();
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
         Customer fetchedCustomer=fetchedAccount.getCustomer();
+
+        //set transactionId
+        String transactionId= UUID.randomUUID().toString();
+        transactionsDto.setTransactionId(transactionId);
 
         if(null==transactionsDto.getTransactionType()) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
@@ -138,7 +143,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
     }
 
     @Override
-    public OutputDto getPastSixMonthsTransactionsForAnAccount(Long accountNumber) throws  AccountsException{
+    public OutputDto getPastSixMonthsTransactionsForAnAccount(String accountNumber) throws  AccountsException{
         //fetch account
         Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
         Customer loadedCustomer=fetchedAccount.getCustomer();

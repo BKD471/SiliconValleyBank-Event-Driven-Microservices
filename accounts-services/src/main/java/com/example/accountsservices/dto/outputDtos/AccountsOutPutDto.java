@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AccountsOutPutDto {
-    private long accountNumber;
+    private String accountNumber;
     private long balance;
     private AllConstantHelpers.Branch homeBranch;
     private AllConstantHelpers.AccountType accountType;

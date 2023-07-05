@@ -76,7 +76,7 @@ public class AccountsControllerTest {
 
         String branchCode=CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         accounts = Accounts.builder()
-                .accountNumber(1L)
+                .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
@@ -93,7 +93,7 @@ public class AccountsControllerTest {
         accounts.setCreatedDate(LocalDate.of(1990,12,01));
 
         customer = Customer.builder()
-                .customerId(1L)
+                .customerId("1L")
                 .age(25)
                 .name("phoenix")
                 .email("phoenix@gmail.com")

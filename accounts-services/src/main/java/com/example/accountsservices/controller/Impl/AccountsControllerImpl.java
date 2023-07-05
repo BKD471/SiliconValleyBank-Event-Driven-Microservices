@@ -1,6 +1,5 @@
 package com.example.accountsservices.controller.Impl;
 
-import com.example.accountsservices.controller.AbstractParentController;
 import com.example.accountsservices.controller.IAccountsController;
 import com.example.accountsservices.dto.outputDtos.OutputDto;
 import com.example.accountsservices.dto.inputDtos.DeleteInputRequestDto;
@@ -31,7 +30,7 @@ import java.io.InputStream;
 import java.util.Optional;
 
 @RestController
-public class AccountsControllerImpl extends AbstractParentController implements IAccountsController {
+public class AccountsControllerImpl implements IAccountsController {
     private final IAccountsService accountsService;
     private final ICustomerRepository customerRepository;
     private final IFileService fIleService;
@@ -64,7 +63,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @return
      */
     @Override
-    public void serveUserImage(Long customerId, HttpServletResponse response) throws IOException {
+    public void serveUserImage(String customerId, HttpServletResponse response) throws IOException {
         String methodName = "serveUserImage(Long,HttpServlet) in AccountsControllerImpl";
         Optional<Customer> fetchedCustomer = customerRepository.findById(customerId);
         if (fetchedCustomer.isEmpty())
@@ -116,7 +115,7 @@ public class AccountsControllerImpl extends AbstractParentController implements 
      * @return
      */
     @Override
-    public ResponseEntity<ImageResponseMessages> uploadCustomerImage(MultipartFile image, Long customerId) throws IOException {
+    public ResponseEntity<ImageResponseMessages> uploadCustomerImage(MultipartFile image, String customerId) throws IOException {
         PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerId(customerId)

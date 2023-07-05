@@ -25,7 +25,7 @@ public interface IAccountsController {
     ResponseEntity<OutputDto> getRequestForChange(@Valid @RequestBody GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException;
 
     @GetMapping("/serve/image/{customerId}")
-    void serveUserImage(@PathVariable Long customerId, HttpServletResponse response) throws IOException;
+    void serveUserImage(@PathVariable String customerId, HttpServletResponse response) throws IOException;
 
     @PostMapping("/post")
     ResponseEntity<OutputDto> postRequestForChange(@Valid @RequestBody PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException;
@@ -39,7 +39,7 @@ public interface IAccountsController {
 
     @PutMapping("/upload/image/{customerId}")
     ResponseEntity<ImageResponseMessages> uploadCustomerImage(@RequestParam("customerImage")MultipartFile image,
-                                                              @PathVariable Long customerId) throws IOException;
+                                                              @PathVariable String customerId) throws IOException;
     @DeleteMapping("/delete")
     ResponseEntity<OutputDto> deleteRequestForChange(@Valid @RequestBody DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException;
 

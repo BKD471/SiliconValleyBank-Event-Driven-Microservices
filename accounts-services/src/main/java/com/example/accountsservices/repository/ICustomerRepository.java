@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ICustomerRepository extends JpaRepository<Customer,Long>{
-   Optional<Customer> findById(Long id);
+public interface ICustomerRepository extends JpaRepository<Customer,String>{
+   Optional<Customer> findById(String id);
    Optional<Customer> findByEmail(String email);
 }

@@ -22,7 +22,7 @@ public abstract class AbstractAccountsService {
     }
 
 
-    protected Accounts fetchAccountByAccountNumber(Long accountNumber, String ...request) throws AccountsException {
+    protected Accounts fetchAccountByAccountNumber(String accountNumber, String ...request) throws AccountsException {
         String methodName="fetchAccountByAccountNumber(Long,String vararg) in AbstractAccountsService";
         Optional<Accounts> fetchedAccounts = accountsRepository.findByAccountNumber(accountNumber);
         if (fetchedAccounts.isEmpty())
@@ -34,7 +34,7 @@ public abstract class AbstractAccountsService {
         return fetchedAccounts.get();
     }
 
-    protected Customer fetchCustomerByCustomerNumber(Long customerId) throws CustomerException{
+    protected Customer fetchCustomerByCustomerNumber(String customerId) throws CustomerException{
         String methodName="fetchCustomerByCustomerNumber(Long)";
         Optional<Customer> loadCustomer=customerRepository.findById(customerId);
         if(loadCustomer.isEmpty()) throw  new CustomerException(CustomerException.class,String.format("No such customer with id %s exist",customerId),

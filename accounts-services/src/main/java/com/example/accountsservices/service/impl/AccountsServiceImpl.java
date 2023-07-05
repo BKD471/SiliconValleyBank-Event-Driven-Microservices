@@ -107,6 +107,10 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
             validationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
         }
 
+        //set account Id
+        String accountNumber=UUID.randomUUID().toString();
+        accounts.setAccountNumber(accountNumber);
+
         //initialize customer account opening balance
         accounts.setBalance(0L);
         //initialize branchCode
@@ -136,6 +140,10 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         LocalDate dob = customer.getDateOfBirth();
         int age = Period.between(dob, LocalDate.now()).getYears();
         customer.setAge(age);
+
+        //set customerId
+        String customerId=UUID.randomUUID().toString();
+        customer.setCustomerId(customerId);
 
         //set role
         Optional<Role> roles=roleRepository.findById(NORMAL_ROLE_ID);
@@ -172,7 +180,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         Customer savedCustomer = customerRepository.save(processedCustomer);
 
         //fetch the corresponding account of saved customer
-        long accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
+        String accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
         log.debug("<------------createAccount(PostInputRequestDto) AccountsServiceImpl ended --------------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
 
@@ -184,7 +192,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     }
 
 
-    private OutputDto createAccountForAlreadyCreatedUser(long customerId, Accounts loadAccount, AccountsDto accountsDto) throws AccountsException {
+    private OutputDto createAccountForAlreadyCreatedUser(String customerId, Accounts loadAccount, AccountsDto accountsDto) throws AccountsException {
         log.debug("<-------------- createAccountForAlreadyCreatedUser(long,Accounts,AccountsDto) AccountsServiceImpl started -----------------------------" +
                 "------------------------------------------------------------------------------------------------------>--->");
         String methodName = "createAccountForAlreadyCreatedUser(long,InoutDto) in AccountsServiceImpl";
@@ -220,7 +228,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
      * @paramType long
      * @returnType AccountsDto
      */
-    private OutputDto getAccountInfo(long accountNumber) throws AccountsException {
+    private OutputDto getAccountInfo(String accountNumber) throws AccountsException {
         log.debug("<-----------getAccountInfo(long) AccountsServiceImpl started --------------------------------------------------------------------------" +
                 "--------------------------------------------------------------------------------------------------------------------->");
         Accounts foundAccount = fetchAccountByAccountNumber(accountNumber);
@@ -235,7 +243,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
                 .build();
     }
 
-    private PageableResponseDto<AccountsDto> getAllActiveAccountsByCustomerId(long customerId, Pageable pageable) throws AccountsException {
+    private PageableResponseDto<AccountsDto> getAllActiveAccountsByCustomerId(String customerId, Pageable pageable) throws AccountsException {
         log.debug("<-----------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl started -----------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
         String methodName = "getAllAccountsByCustomerId(long) in AccountsServiceImpl";
@@ -331,7 +339,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
                 "--------------------------------------------------------------------------------------------------------------------->");
     }
 
-    private void deleteAccount(long accountNumber) throws AccountsException {
+    private void deleteAccount(String accountNumber) throws AccountsException {
         log.debug("<-----------deleteAccount(long) AccountsServiceImpl started -------------------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------>");
         //checking whether account exist or not
@@ -342,7 +350,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
                 "------------------------------------------------------------------------------------------------------------------->");
     }
 
-    private void deleteAllAccountsByCustomer(long customerId) throws AccountsException {
+    private void deleteAllAccountsByCustomer(String customerId) throws AccountsException {
         log.debug("<-----------deleteAllAccountsByCustomer(long) AccountsServiceImpl started-----------------------------------------------------------------------" +
                 "---------------------------------------------------------------------------------------------------------------->");
         String methodName = "deleteAllAccountsByCustomer(long ) in AccountsServiceImpl";
@@ -418,7 +426,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
                 "------------------------------------------------------------------------------------------------------------------------>");
         return customerRepository.save(updatedCustomer);
     }
-    private int getCreditScore(Long accountNumber) {
+    private int getCreditScore(String accountNumber) {
         log.debug("<----------getCreditScore(Long ) AccountsServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------>");
         ///to be done
@@ -437,7 +445,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         return 0;
     }
 
-    private PageableResponseDto<AccountsDto> accountsPagination(DIRECTION sortDir, String sortBy, int pageNumber, int pageSize, long customerId) {
+    private PageableResponseDto<AccountsDto> accountsPagination(DIRECTION sortDir, String sortBy, int pageNumber, int pageSize, String customerId) {
         log.debug("<---------accountsPagination(DIRECTION,String ,int,int long) AccountsServiceImpl started ------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
 
@@ -488,13 +496,13 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         CustomerDto customerDto = inputToCustomerDto(postInputRequestDto);
 
         //Get the accountNumber & account & customer
-        long accountNumber = accountsDto.getAccountNumber();
+        String accountNumber = accountsDto.getAccountNumber();
         Accounts foundAccount;
-        if (accountNumber!=0) foundAccount = fetchAccountByAccountNumber(accountNumber);
+        if (null!=accountNumber) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
-        long customerId = customerDto.getCustomerId();
+        String customerId = customerDto.getCustomerId();
         Customer foundCustomer;
-        if (customerId!=0) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+        if (null!=customerId) foundCustomer = fetchCustomerByCustomerNumber(customerId);
         //check the request type
         if (null == accountsDto.getUpdateRequest())
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
@@ -533,13 +541,13 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         AccountsDto accountsDto = getInputToAccountsDto(getInputRequestDto);
         CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);
         //load accounts & customer
-        long accountNumber = accountsDto.getAccountNumber();
+        String accountNumber = accountsDto.getAccountNumber();
         Accounts foundAccount = null;
-        if (accountNumber!=0) foundAccount = fetchAccountByAccountNumber(accountNumber);
+        if (null!=accountNumber) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
-        long customerId = customerDto.getCustomerId();
+        String customerId = customerDto.getCustomerId();
         Customer foundCustomer = null;
-        if (customerId!=0) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+        if (null!=customerId) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
         if (null == accountsDto.getUpdateRequest())
@@ -599,13 +607,13 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
 
 
         //Get the accountNumber & account & customer
-        long accountNumber = accountsDto.getAccountNumber();
+        String accountNumber = accountsDto.getAccountNumber();
         Accounts foundAccount = null;
-        if (accountNumber!=0) foundAccount = fetchAccountByAccountNumber(accountNumber);
+        if (null!=accountNumber) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
-        long customerId = customerDto.getCustomerId();
+        String customerId = customerDto.getCustomerId();
         Customer foundCustomer = null;
-        if (customerId!=0) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+        if (null!=customerId) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
         if (null == accountsDto.getUpdateRequest())
@@ -693,7 +701,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
             case DELETE_ACC -> {
-                long accountNumber = accountsDto.getAccountNumber();
+                String accountNumber = accountsDto.getAccountNumber();
                 deleteAccount(accountNumber);
                 return OutputDto.builder().defaultMessage(String.format("Account with id %s is successfully deleted", accountNumber)).build();
             }
@@ -716,9 +724,9 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     public OutputDto deleteCustomer(DeleteInputRequestDto deleteInputRequestDto) {
         String methodName="deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
 
-        long customerId= deleteInputRequestDto.getCustomerId();
+        String customerId= deleteInputRequestDto.getCustomerId();
         AllConstantHelpers.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
-        if(null==deleteRequest || 0==customerId) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
+        if(null==deleteRequest || null==customerId) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
 
         Customer foundCustomer=fetchCustomerByCustomerNumber(customerId);
         customerRepository.delete(foundCustomer);

@@ -15,12 +15,11 @@ import static com.example.accountsservices.helpers.AllConstantHelpers.DIRECTION;
 import static com.example.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
 
 public class PagingHelper {
-    private static final Set<String> setOfAccountFieldNames = new HashSet<>();
-    private static final Set<String> setOfBeneficiaryFieldNames = new HashSet<>();
     public static final int DEFAULT_PAGE_SIZE = 5;
     public static final DIRECTION PAGE_SORT_DIRECTION_ASCENDING = asc;
 
-    static {
+    private static Set<String> getSetsOfAccountFieldNames(){
+        Set<String> setOfAccountFieldNames=new HashSet<>();
         //fetching the attribs of Accounts
         Field[] accFields = Accounts.class.getDeclaredFields();
         for (Field field : accFields) {
@@ -29,19 +28,24 @@ public class PagingHelper {
         setOfAccountFieldNames.remove("listOfBeneficiary");
         setOfAccountFieldNames.remove("listOfTransactions");
         setOfAccountFieldNames.remove("customer");
+        return  setOfAccountFieldNames;
+    }
 
+    private static Set<String> getSetsOfBeneficiaryFieldNames(){
+        Set<String> setOfBeneficiaryFieldNames=new HashSet<>();
         //fetching the attribs of Beneficiary
         Field[] benFields=Beneficiary.class.getDeclaredFields();
         for(Field field:benFields){
             setOfBeneficiaryFieldNames.add(field.getName());
         }
         setOfBeneficiaryFieldNames.remove("accounts");
+        return setOfBeneficiaryFieldNames;
     }
 
     public static Set<String> getAllPageableFieldsOfAccounts() {
-        return setOfAccountFieldNames;
+        return getSetsOfAccountFieldNames();
     }
-    public static Set<String> getAllPageableFieldsOfBeneficiary(){return setOfBeneficiaryFieldNames;}
+    public static Set<String> getAllPageableFieldsOfBeneficiary(){return getSetsOfBeneficiaryFieldNames();}
 
     public static <e,d> PageableResponseDto<d> getPageableResponse(Page<e> page, Class<d> type){
         List<e> entity=page.getContent();

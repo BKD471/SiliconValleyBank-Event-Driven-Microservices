@@ -3,7 +3,7 @@ package com.example.cardservices.services.Impl;
 import com.example.cardservices.exception.BadApiRequestException;
 import com.example.cardservices.exception.CardsException;
 import com.example.cardservices.dto.CardsDto;
-import com.example.cardservices.helpers.AllEnumConstantHelpers;
+import com.example.cardservices.helpers.AllConstantHelpers;
 import com.example.cardservices.helpers.SortCardsByTime;
 import com.example.cardservices.model.Cards;
 import com.example.cardservices.repository.ICardsRepository;
@@ -14,7 +14,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +22,7 @@ public class ValidationServiceImpl implements IValidationService {
    private final ICardsRepository cardsRepository;
    private final int MAX_PERMISSIBLE_CARDS=5;
    private final int MAX_TIME_LIMIT_FOR_ANY_NEW_CREDIT_ACTIVITY_IN_MONTHS=6;
+   private final double MIN_PERCENTAGE_FRACTION_TO_QUALIFY_FOR_FLEXI_PAY=0.02d;
 
    ValidationServiceImpl(ICardsRepository cardsRepository){
        this.cardsRepository=cardsRepository;
@@ -34,9 +34,9 @@ public class ValidationServiceImpl implements IValidationService {
      * @param cards
      */
     @Override
-    public void cardsValidator(CardsDto cardsDto, Cards cards, AllEnumConstantHelpers.CardsValidationType cardsValidationType) {
+    public void cardsValidator(CardsDto cardsDto, Cards cards, AllConstantHelpers.CardsValidationType cardsValidationType) {
         String methodName="cardsValidator(CardsDto,Cards)";
-        Long customerId=cardsDto.getCustomerId();
+        String customerId=cardsDto.getCustomerId();
 
         //doing all primary checks for obvious unhappy paths
         //if(null==cardsDto.getCardNumber()) throw new CardsException(CardsException.class,"Please specify non null cardNumber",methodName);
@@ -84,7 +84,12 @@ public class ValidationServiceImpl implements IValidationService {
                 if(months<MAX_TIME_LIMIT_FOR_ANY_NEW_CREDIT_ACTIVITY_IN_MONTHS) throw new CardsException(CardsException.class,String.format("You can't request for credit limit before %s",nextCreditLimitRevisedDate),methodName);
             }
             case FLEXI_PAY -> {
+                 double lastTransaction= cards.getLastTransactionAmount();
+                 double creditLimit=cards.getTotalLimit();
 
+                 double threshHold=creditLimit*MIN_PERCENTAGE_FRACTION_TO_QUALIFY_FOR_FLEXI_PAY;
+                 if(lastTransaction<threshHold) throw new CardsException(CardsException.class,
+                         String.format("Your transaction at least need to be minimum %s",threshHold),methodName);
             }
             default -> throw  new CardsException(CardsException.class,"Wrong request for validation",methodName);
         }

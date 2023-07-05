@@ -32,10 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.example.accountsservices.helpers.AllConstantHelpers.validateBenType.ADD_BEN;
 import static com.example.accountsservices.helpers.AllConstantHelpers.validateBenType.UPDATE_BEN;
@@ -95,6 +92,9 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         beneficiaryList.add(processedBeneficiaryAccount);
         fetchedAccount.setListOfBeneficiary(beneficiaryList);
         processedBeneficiaryAccount.setAccounts(fetchedAccount);
+        //set beneficiary id
+        String beneficiaryId= UUID.randomUUID().toString();
+        processedBeneficiaryAccount.setBeneficiaryId(beneficiaryId);
         //sav & return
         Accounts savedAccounts=accountsRepository.save(fetchedAccount);
         Optional<Beneficiary> createdBeneficiary=savedAccounts.getListOfBeneficiary().stream().
@@ -107,7 +107,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         return createdBeneficiary.get();
     }
 
-    private Optional<Beneficiary> getBeneficiaryById(Accounts fetchedAccount, long benId) throws BeneficiaryException {
+    private Optional<Beneficiary> getBeneficiaryById(Accounts fetchedAccount, String benId) throws BeneficiaryException {
         log.debug("<-----------------getBeneficiaryById(Accounts, Long ) BeneficiaryServiceImpl started ----------------------------------" +
                 "---------------------------------------------------------------------------------------------->");
         String methodName = "getBeneficiaryById(Accounts,Long";
@@ -117,7 +117,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         log.debug("<-------------------------getBeneficiaryById(Accounts, Long) BeneficiaryServiceImpl ended --------------------------------" +
                 "--------------------------------------------------------------------------------------------->");
         return fetchedAccount.getListOfBeneficiary().stream().
-                filter(ben -> ben.getBeneficiaryId()==benId).findFirst();
+                filter(ben -> ben.getBeneficiaryId().equalsIgnoreCase(benId)).findFirst();
     }
 
     private PageableResponseDto<BeneficiaryDto> getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount, Pageable pageable) throws AccountsException, BeneficiaryException {
@@ -137,7 +137,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         log.debug("<--------------processedBeneficiaryAccount(Beneficiary, Beneficiary) BeneficiaryServiceImpl started ----------------------------" +
                 "-------------------------------------------------------------------------------------------------------->");
         String newBeneficiaryName = newBeneficiaryData.getBeneficiaryName();
-        Long newBeneficiaryNumber = newBeneficiaryData.getBeneficiaryAccountNumber();
+        String newBeneficiaryNumber = newBeneficiaryData.getBeneficiaryAccountNumber();
         LocalDate newBeneficiaryDOB = newBeneficiaryData.getBenDate_Of_Birth();
         String newBeneficiaryAdharNumber = newBeneficiaryData.getBenAdharNumber();
         AllConstantHelpers.RELATION newBeneficaryRelation = newBeneficiaryData.getRelation();
@@ -150,7 +150,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         String newBenDrivingLicense=newBeneficiaryData.getBenDrivingLicense();
 
         String oldBeneficiaryName = oldBeneficiaryData.getBeneficiaryName();
-        Long oldBeneficiaryNumber = oldBeneficiaryData.getBeneficiaryAccountNumber();
+        String oldBeneficiaryNumber = oldBeneficiaryData.getBeneficiaryAccountNumber();
         LocalDate oldBeneficiaryDOB = oldBeneficiaryData.getBenDate_Of_Birth();
         String oldBeneficiaryAdharNumber = oldBeneficiaryData.getBenAdharNumber();
         AllConstantHelpers.RELATION oldBeneficiaryRelation = oldBeneficiaryData.getRelation();
@@ -227,11 +227,11 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         validationService.beneficiaryUpdateValidator(fetchedAccounts, beneficiaryDto, UPDATE_BEN);
 
         //fetch the beneficiary from beneficiaryList
-        Long BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
+        String BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
         if (null == BENEFICIARY_ID) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please enter a valid beneficiary id", methodName);
         Optional<Beneficiary> beneficiaryAccount = fetchedAccounts.getListOfBeneficiary().stream().
-                filter(beneficiary -> BENEFICIARY_ID.equals(beneficiary.getBeneficiaryId())).
+                filter(beneficiary -> BENEFICIARY_ID.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
                 findFirst();
         if (beneficiaryAccount.isEmpty())
             throw new BeneficiaryException(BeneficiaryException.class,
@@ -246,7 +246,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         return beneficiaryRepository.save(processedAccount);
     }
 
-    private void deleteBeneficiariesForAnAccount(Accounts fetchedAccounts, Long beneficiaryId) throws AccountsException, BeneficiaryException {
+    private void deleteBeneficiariesForAnAccount(Accounts fetchedAccounts, String beneficiaryId) throws AccountsException, BeneficiaryException {
         log.debug("<---------------deleteBeneficiariesForAnAccount(Accounts, Long) BeneficiaryServiceImpl started ----------------------" +
                 "------------------------------------------------------------------------------------------------>");
         String methodName = " deleteBeneficiariesForAnAccount(Long , Long )  in BeneficiaryServiceImpl";
@@ -256,7 +256,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         //filter out the beneficiary list of that account
         List<Beneficiary> filteredListOfBeneficiaries = fetchedAccounts.getListOfBeneficiary().
                 stream().
-                filter(beneficiary -> !beneficiaryId.equals(beneficiary.getBeneficiaryId())).
+                filter(beneficiary -> !beneficiaryId.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
                 toList();
         //set the final filtered resultant list to that account
         fetchedAccounts.setListOfBeneficiary(filteredListOfBeneficiaries);
@@ -300,8 +300,8 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         BeneficiaryDto beneficiaryDto = mapInputDtoToBenDto(postInputDto);
 
         //get the account
-        Long accountNUmber = postInputDto.getAccountNumber();
-        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
+        String accountNumber = postInputDto.getAccountNumber();
+        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
         AccountsDto accountsDto = mapToAccountsDto(fetchedAccount);
 
         //get the customer
@@ -333,7 +333,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         BeneficiaryDto beneficiaryDto = mapPutInputRequestDtoToBenDto(putInputRequestDto);
 
         //get the account
-        Long accountNumber = putInputRequestDto.getAccountNumber();
+        String accountNumber = putInputRequestDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         //get customer
@@ -378,7 +378,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
 
 
         //get the account
-        Long accountNumber = getInputRequestDto.getAccountNumber();
+        String accountNumber = getInputRequestDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         AllConstantHelpers.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
@@ -430,7 +430,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         BeneficiaryDto beneficiaryDto = mapDeleteInputRequestDtoToBenDto(deleteInputRequestDto);
 
         //get the account
-        Long accountNUmber = deleteInputRequestDto.getAccountNumber();
+        String accountNUmber = deleteInputRequestDto.getAccountNumber();
         Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
 
         AllConstantHelpers.BenUpdateRequest requestType = deleteInputRequestDto.getBenRequest();

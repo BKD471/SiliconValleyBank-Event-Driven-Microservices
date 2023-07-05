@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CustomerDto {
-    private long customerId;
+    private String customerId;
     private LocalDate DateOfBirth;
     private String customerName;
     private int age;

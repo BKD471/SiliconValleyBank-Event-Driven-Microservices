@@ -14,9 +14,8 @@ import java.time.LocalDate;
 @Builder
 public class Beneficiary extends Audit{
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="ben_id")
-    private long beneficiaryId;
+    private String beneficiaryId;
 
     @Column(name = "ben_name",nullable = false)
     private String beneficiaryName;
@@ -28,7 +27,7 @@ public class Beneficiary extends Audit{
     private String bankCode;
 
     @Column(name = "ben_acnt_num",nullable = false)
-    private long beneficiaryAccountNumber;
+    private String beneficiaryAccountNumber;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
