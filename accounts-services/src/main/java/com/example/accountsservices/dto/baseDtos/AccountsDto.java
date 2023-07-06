@@ -8,26 +8,26 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
 public class AccountsDto {
-    private String accountNumber;
-    private long balance;
-    private AllConstantHelpers.AccountType accountType;
-    private AllConstantHelpers.AccountStatus accountStatus;
-    private String branchCode;
-    private AllConstantHelpers.Branch homeBranch;
-    private long transferLimitPerDay;
-    private int creditScore;
-    private long approvedLoanLimitBasedOnCreditScore;
-    private Boolean anyActiveLoans;
-    private long totalOutstandingAmountPayableToBank;
-    private long totLoanIssuedSoFar;
+    private final String accountNumber;
+    private final long balance;
+    private final AllConstantHelpers.AccountType accountType;
+    private final AllConstantHelpers.AccountStatus accountStatus;
+    private final String branchCode;
+    private final AllConstantHelpers.Branch homeBranch;
+    private final long transferLimitPerDay;
+    private final int creditScore;
+    private final long approvedLoanLimitBasedOnCreditScore;
+    private final Boolean anyActiveLoans;
+    private final long totalOutstandingAmountPayableToBank;
+    private final long totLoanIssuedSoFar;
     @JsonIgnore
     @JsonProperty(value = "updateRequest")
-    private AllConstantHelpers.UpdateRequest updateRequest;
+    private final AllConstantHelpers.UpdateRequest updateRequest;
 
-    private List<BeneficiaryDto> listOfBeneficiary;
-    private List<TransactionsDto> listOfTransactions;
+    private final List<BeneficiaryDto> listOfBeneficiary;
+    private final List<TransactionsDto> listOfTransactions;
 }

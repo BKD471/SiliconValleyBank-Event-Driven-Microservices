@@ -32,8 +32,8 @@ public class BeneficiaryControllerImpl implements IBeneficiaryController {
      * @throws CustomerException
      */
     @Override
-    public ResponseEntity<OutputDto> getRequestBenForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-        OutputDto responseBody = beneficiaryService.getRequestBenExecutor(getInputRequestDto);
+    public ResponseEntity<OutputDto> getRequestBenForChange(final GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
+        final OutputDto responseBody = beneficiaryService.getRequestBenExecutor(getInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
@@ -45,8 +45,8 @@ public class BeneficiaryControllerImpl implements IBeneficiaryController {
      * @throws CustomerException
      */
     @Override
-    public ResponseEntity<OutputDto> postRequestBenForChange(PostInputRequestDto postInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-        OutputDto responseBody = beneficiaryService.postRequestBenExecutor(postInputRequestDto);
+    public ResponseEntity<OutputDto> postRequestBenForChange(final PostInputRequestDto postInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
+        final OutputDto responseBody = beneficiaryService.postRequestBenExecutor(postInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
@@ -58,8 +58,8 @@ public class BeneficiaryControllerImpl implements IBeneficiaryController {
      * @throws CustomerException
      */
     @Override
-    public ResponseEntity<OutputDto> putRequestBenForChange(PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-        OutputDto responseBody = beneficiaryService.putRequestBenExecutor(putInputRequestDto);
+    public ResponseEntity<OutputDto> putRequestBenForChange(final PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
+        final OutputDto responseBody = beneficiaryService.putRequestBenExecutor(putInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
     }
 
@@ -71,8 +71,8 @@ public class BeneficiaryControllerImpl implements IBeneficiaryController {
      * @throws CustomerException
      */
     @Override
-    public ResponseEntity<OutputDto> deleteRequestBenForChange(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
-        OutputDto responseBody = beneficiaryService.deleteRequestBenExecutor(deleteInputRequestDto);
+    public ResponseEntity<OutputDto> deleteRequestBenForChange(final DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException {
+        final OutputDto responseBody = beneficiaryService.deleteRequestBenExecutor(deleteInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
     }
 }

@@ -11,7 +11,7 @@ public class ValidateNotNull implements ConstraintValidator<NotNullEnum, Enum<?>
     private Pattern pattern;
 
     @Override
-    public void initialize(NotNullEnum annotation) {
+    public void initialize(final NotNullEnum annotation) {
         try {
             pattern = Pattern.compile(annotation.regexp());
         } catch (PatternSyntaxException e) {
@@ -20,12 +20,12 @@ public class ValidateNotNull implements ConstraintValidator<NotNullEnum, Enum<?>
     }
 
     @Override
-    public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
+    public boolean isValid(final Enum<?> value,final ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         }
 
-        Matcher m = pattern.matcher(value.name());
+        final Matcher m = pattern.matcher(value.name());
         return m.matches();
     }
 }

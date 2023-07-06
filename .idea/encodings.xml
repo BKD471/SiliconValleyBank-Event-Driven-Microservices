@@ -10,5 +10,6 @@
     <file url="file://$PROJECT_DIR$/customerbase/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/loans-services/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/loans-services/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/schedulers/src/main/java" charset="UTF-8" />
   </component>
 </project>

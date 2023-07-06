@@ -42,11 +42,11 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
         this.accountsRepository = accountsRepository;
     }
 
-    private Transactions updateBalance(Accounts accounts, Transactions transactions, Long amount, AllConstantHelpers.TransactionType transactionType) throws TransactionException {
+    private Transactions updateBalance(final Accounts accounts,final Transactions transactions,final Long amount,final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
         log.debug("<--------------------updateBalance(Accounts, Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl started ----------" +
                 "--------------------------------------------------------------------------------------------------------->");
-        String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
-        Long previousBalance = accounts.getBalance();
+        final String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
+        final Long previousBalance = accounts.getBalance();
 
         if (CREDIT.equals(transactionType)) {
             accounts.setBalance(previousBalance + amount);
@@ -69,29 +69,30 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
      * @param transactionsDto
      * @returnType AccountsDto
      */
-    private TransactionsDto payOrDepositMoney(TransactionsDto transactionsDto, AllConstantHelpers.TransactionType transactionType) throws AccountsException, TransactionException {
+
+    private TransactionsDto payOrDepositMoney(final TransactionsDto transactionsDto,final AllConstantHelpers.TransactionType transactionType) throws AccountsException, TransactionException {
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl started -----------------------" +
                 "-------------------------------------------------------------------------------------------------------------------------->");
         //fetch account
-        String accountNumber = transactionsDto.getAccountNumber();
-        Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
+        final String accountNumber = transactionsDto.getAccountNumber();
+        final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         //converting to entity object
-        Transactions requestTransaction = mapToTransactions(transactionsDto);
+        final Transactions requestTransaction = mapToTransactions(transactionsDto);
 
         //get the money & update the balance
-        Long amountToBeCredited = requestTransaction.getTransactionAmount();
-        Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction,
+        final Long amountToBeCredited = requestTransaction.getTransactionAmount();
+        final Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction,
                 amountToBeCredited, transactionType);
 
         //some critical linkup before saving it to db
-        List<Transactions> listOfTransactions=new ArrayList<>();
+        final List<Transactions> listOfTransactions=new ArrayList<>();
         listOfTransactions.add(recentTransaction);
         fetchedAccount.setListOfTransactions(listOfTransactions);
         recentTransaction.setAccounts(fetchedAccount);
 
         //save in DB & return
-        Transactions savedTransactions = transactionsRepository.save(recentTransaction);
+        final Transactions savedTransactions = transactionsRepository.save(recentTransaction);
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl ended ------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
         return mapToTransactionsDto(savedTransactions);
@@ -105,22 +106,22 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
     //only SALARY is credit type, we only add money ,so it's simple need not to add too much complexity
     //so just call payOrDeposit method to process the transaction
     @Override
-    public OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
-        String methodName="transactionsExecutor(TransactionsDto) in TransactionsServiceImpl";
+    public OutputDto transactionsExecutor(final TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+        final String methodName="transactionsExecutor(TransactionsDto) in TransactionsServiceImpl";
 
-        String accountNumber=transactionsDto.getAccountNumber();
-        Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
-        Customer fetchedCustomer=fetchedAccount.getCustomer();
+        final String accountNumber=transactionsDto.getAccountNumber();
+        final Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
+        final Customer fetchedCustomer=fetchedAccount.getCustomer();
 
         //set transactionId
-        String transactionId= UUID.randomUUID().toString();
+        final String transactionId= UUID.randomUUID().toString();
         transactionsDto.setTransactionId(transactionId);
 
         if(null==transactionsDto.getTransactionType()) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
         switch (transactionsDto.getTransactionType()) {
             case CREDIT -> {
-                TransactionsDto transactionDetails=payOrDepositMoney(transactionsDto, CREDIT);
+                final TransactionsDto transactionDetails=payOrDepositMoney(transactionsDto, CREDIT);
                 return OutputDto.builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedCustomer)))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
@@ -129,7 +130,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
                         .build();
             }
             case DEBIT -> {
-                TransactionsDto transactionDetails=payBills(transactionsDto);
+                final TransactionsDto transactionDetails=payBills(transactionsDto);
                 return OutputDto.builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedCustomer)))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
@@ -143,21 +144,21 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
     }
 
     @Override
-    public OutputDto getPastSixMonthsTransactionsForAnAccount(String accountNumber) throws  AccountsException{
+    public OutputDto getPastSixMonthsTransactionsForAnAccount(final String accountNumber) throws  AccountsException{
         //fetch account
-        Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
-        Customer loadedCustomer=fetchedAccount.getCustomer();
+        final Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
+        final Customer loadedCustomer=fetchedAccount.getCustomer();
 
         //Calculate the  date six months before today's date
-        LocalDateTime today=LocalDateTime.now();
-        LocalDateTime pastSixMonthsDate=today.minusMonths(6);
+        final LocalDateTime today=LocalDateTime.now();
+        final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
-        List<Transactions> listOfTransactions= new ArrayList<>(fetchedAccount.getListOfTransactions().
+        final List<Transactions> listOfTransactions= new ArrayList<>(fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
                         .isAfter(pastSixMonthsDate)).toList());
 
         listOfTransactions.sort(new SortDateComparator());
-        ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream()
+        final ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream()
                 .map(MapperHelper::mapToTransactionsDto)
                 .collect(Collectors.toCollection(ArrayList::new));
 
@@ -169,10 +170,10 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
                 .build();
     }
 
-    private TransactionsDto payBills(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+    private TransactionsDto payBills(final TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         log.debug("<---------payBills(TransactionsDto transactionsDto) started --------------------------------------------------------------------" +
                 "--------------------------------------------------------------------------------->");
-        String methodName="payBills(TransactionDto) in TransactionsServiceImpl";
+        final String methodName="payBills(TransactionDto) in TransactionsServiceImpl";
 
         switch (transactionsDto.getDescription()) {
             // this will be built along with loan microservices

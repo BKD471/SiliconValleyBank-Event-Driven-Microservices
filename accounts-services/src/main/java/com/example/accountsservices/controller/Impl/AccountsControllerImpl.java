@@ -52,8 +52,8 @@ public class AccountsControllerImpl implements IAccountsController {
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> getRequestForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
-        OutputDto responseBody = accountsService.getRequestExecutor(getInputRequestDto);
+    public ResponseEntity<OutputDto> getRequestForChange(final GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
+        final OutputDto responseBody = accountsService.getRequestExecutor(getInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
@@ -63,12 +63,12 @@ public class AccountsControllerImpl implements IAccountsController {
      * @return
      */
     @Override
-    public void serveUserImage(String customerId, HttpServletResponse response) throws IOException {
-        String methodName = "serveUserImage(Long,HttpServlet) in AccountsControllerImpl";
-        Optional<Customer> fetchedCustomer = customerRepository.findById(customerId);
+    public void serveUserImage(final String customerId,final HttpServletResponse response) throws IOException {
+        final String methodName = "serveUserImage(Long,HttpServlet) in AccountsControllerImpl";
+        final Optional<Customer> fetchedCustomer = customerRepository.findById(customerId);
         if (fetchedCustomer.isEmpty())
             throw new CustomerException(CustomerException.class, String.format("No such customer with id:%s", customerId), methodName);
-        InputStream resource = fIleService.getResource(IMAGE_PATH, fetchedCustomer.get().getImageName());
+        final InputStream resource = fIleService.getResource(IMAGE_PATH, fetchedCustomer.get().getImageName());
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         StreamUtils.copy(resource, response.getOutputStream());
     }
@@ -79,8 +79,8 @@ public class AccountsControllerImpl implements IAccountsController {
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> postRequestForChange(PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
-        OutputDto responseBody = accountsService.postRequestExecutor(postInputDto);
+    public ResponseEntity<OutputDto> postRequestForChange(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
+        final OutputDto responseBody = accountsService.postRequestExecutor(postInputDto);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
@@ -93,8 +93,8 @@ public class AccountsControllerImpl implements IAccountsController {
      * @throws IOException
      */
     @Override
-    public ResponseEntity<OutputDto> createAccount(PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
-        OutputDto responseBody = accountsService.accountSetUp(postInputDto);
+    public ResponseEntity<OutputDto> createAccount(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
+        final OutputDto responseBody = accountsService.accountSetUp(postInputDto);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 
@@ -104,8 +104,8 @@ public class AccountsControllerImpl implements IAccountsController {
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> putRequestForChange(PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
-        OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
+    public ResponseEntity<OutputDto> putRequestForChange(final PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
+        final OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
     }
 
@@ -115,14 +115,14 @@ public class AccountsControllerImpl implements IAccountsController {
      * @return
      */
     @Override
-    public ResponseEntity<ImageResponseMessages> uploadCustomerImage(MultipartFile image, String customerId) throws IOException {
-        PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
+    public ResponseEntity<ImageResponseMessages> uploadCustomerImage(final MultipartFile image,final String customerId) throws IOException {
+        final PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerId(customerId)
                 .customerImage(image)
                 .build();
-        OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
-        ImageResponseMessages imgResponseMessages= ImageResponseMessages.builder()
+        final OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
+        final ImageResponseMessages imgResponseMessages= ImageResponseMessages.builder()
                 .message(responseBody.getDefaultMessage())
                 .imageName(responseBody.getCustomer().getImageName())
                 .status(HttpStatus.CREATED)
@@ -137,8 +137,8 @@ public class AccountsControllerImpl implements IAccountsController {
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> deleteRequestForChange(DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException {
-        OutputDto responseBody = accountsService.deleteRequestExecutor(deleteInputRequestDto);
+    public ResponseEntity<OutputDto> deleteRequestForChange(final DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException {
+        final OutputDto responseBody = accountsService.deleteRequestExecutor(deleteInputRequestDto);
         return new ResponseEntity<>(responseBody, HttpStatus.ACCEPTED);
     }
 
@@ -147,8 +147,8 @@ public class AccountsControllerImpl implements IAccountsController {
      * @return
      */
     @Override
-    public ResponseEntity<OutputDto> deleteCustomer(DeleteInputRequestDto deleteInputRequestDto) {
-        OutputDto responseBody=accountsService.deleteCustomer(deleteInputRequestDto);
+    public ResponseEntity<OutputDto> deleteCustomer(final DeleteInputRequestDto deleteInputRequestDto) {
+        final OutputDto responseBody=accountsService.deleteCustomer(deleteInputRequestDto);
         return new ResponseEntity<>(responseBody,HttpStatus.ACCEPTED);
     }
 }

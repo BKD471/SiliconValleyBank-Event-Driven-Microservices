@@ -20,15 +20,15 @@ public class FIleServiceImpl extends AbstractAccountsService implements IFileSer
     }
 
     @Override
-    public String uploadFile(MultipartFile file, String path) throws ResponseException, IOException {
-        String methodName="uploadFile(MultipartFile,String) in FileServiceImpl";
+    public String uploadFile(final MultipartFile file,final String path) throws ResponseException, IOException {
+        final String methodName="uploadFile(MultipartFile,String) in FileServiceImpl";
 
-        String originalFileName = file.getOriginalFilename();
-        String fileName = UUID.randomUUID().toString();
-        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        final String originalFileName = file.getOriginalFilename();
+        final String fileName = UUID.randomUUID().toString();
+        final String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
 
-        String fileNameWithExtension = fileName + extension;
-        String fullPathWithFileName = path + File.separator + fileNameWithExtension;
+        final String fileNameWithExtension = fileName + extension;
+        final String fullPathWithFileName = path + File.separator + fileNameWithExtension;
         if(extension.equalsIgnoreCase(".jpg") ||
            extension.equalsIgnoreCase(".jpeg") ||
            extension.equalsIgnoreCase(".png") ||
@@ -46,8 +46,8 @@ public class FIleServiceImpl extends AbstractAccountsService implements IFileSer
     }
 
     @Override
-    public InputStream getResource(String path, String name) throws FileNotFoundException {
-        String fullPath=path+File.separator+name;
+    public InputStream getResource(final String path,final String name) throws FileNotFoundException {
+        final String fullPath=path+File.separator+name;
         return new FileInputStream(fullPath);
     }
 }

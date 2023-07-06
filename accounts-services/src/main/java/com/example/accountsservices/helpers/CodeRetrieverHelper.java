@@ -34,8 +34,8 @@ public class CodeRetrieverHelper {
     private static final String KERALA_UID = "KER01121997";
     private static final String DELHI_UID = "DEL01121997";
 
-    private static Map<AllConstantHelpers.BanksSupported,String> getBankCode(){
-        Map<AllConstantHelpers.BanksSupported,String> hashedBankCode=new HashMap<>();
+    private static  Map<AllConstantHelpers.BanksSupported,String> getBankCode(){
+        final Map<AllConstantHelpers.BanksSupported,String> hashedBankCode=new HashMap<>();
         hashedBankCode.put(SBI, SBI_UID);
         hashedBankCode.put(AXIS, AXIS_UID);
         hashedBankCode.put(HDFC, HDFC_UID);
@@ -51,7 +51,7 @@ public class CodeRetrieverHelper {
     }
 
     private static Map<AllConstantHelpers.Branch,String> getBranchCode(){
-        Map<AllConstantHelpers.Branch,String> hashedBranchCode=new HashMap<>();
+        final Map<AllConstantHelpers.Branch,String> hashedBranchCode=new HashMap<>();
         hashedBranchCode.put(KOLKATA, KOLKATA_UID);
         hashedBranchCode.put(BANGALORE, BANGALORE_UID);
         hashedBranchCode.put(MUMBAI, MUMBAI_UID);
@@ -67,15 +67,15 @@ public class CodeRetrieverHelper {
 
 
 
-    public static String getBankCode(AllConstantHelpers.BanksSupported banksSupported) throws AccountsException {
-        String methodName = "getBankCode(Account.Branch) in BankCodeRetrieverHelper";
+    public static String getBankCode(final AllConstantHelpers.BanksSupported banksSupported) throws AccountsException {
+        final String methodName = "getBankCode(Account.Branch) in BankCodeRetrieverHelper";
         if (getBankCode().containsKey(banksSupported)) return getBankCode().get(banksSupported);
         throw new AccountsException(AccountsException.class, String.format("No such" +
                 "banks exist with name %s", banksSupported), methodName);
     }
 
-    public static String getBranchCode(AllConstantHelpers.Branch homeBranch) throws AccountsException {
-        String methodName = "getBranchCode(Account.Branch) in BranchCodeHelper";
+    public static String getBranchCode(final AllConstantHelpers.Branch homeBranch) throws AccountsException {
+        final String methodName = "getBranchCode(Account.Branch) in BranchCodeHelper";
         if (getBranchCode().containsKey(homeBranch)) return getBranchCode().get(homeBranch);
         throw new AccountsException(AccountsException.class, String.format("No such" +
                 " branches exist with name %s", homeBranch), methodName);

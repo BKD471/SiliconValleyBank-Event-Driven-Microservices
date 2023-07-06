@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class ObjectToJsonStringConverterHelper {
-    public static String convertObjToJsonString(Object dto) {
+    public static String convertObjToJsonString(final Object dto) {
         try{
-            ObjectWriter ow=new ObjectMapper().writer().withDefaultPrettyPrinter();
+            final ObjectWriter ow=new ObjectMapper().writer().withDefaultPrettyPrinter();
             return ow.writeValueAsString(ow);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

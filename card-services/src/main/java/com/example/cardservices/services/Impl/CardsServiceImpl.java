@@ -144,7 +144,9 @@ public class CardsServiceImpl implements ICardsService {
      */
     @Override
     public CardsDto convertToFlexiPay(String cardNumber) {
+        String methodName="convertToFlexiPay(String) CardsServiceImpl";
         Optional<Cards> loadCard=cardsRepository.findByCardNumber(cardNumber);
+        if(loadCard.isEmpty()) throw new CardsException(CardsException.class,"Invalid cardNumber",methodName);
         validationService.cardsValidator(null,loadCard.get(),FLEXI_PAY);
 
         //to be

@@ -19,7 +19,7 @@ public class PagingHelper {
     public static final DIRECTION PAGE_SORT_DIRECTION_ASCENDING = asc;
 
     private static Set<String> getSetsOfAccountFieldNames(){
-        Set<String> setOfAccountFieldNames=new HashSet<>();
+        final Set<String> setOfAccountFieldNames=new HashSet<>();
         //fetching the attribs of Accounts
         Field[] accFields = Accounts.class.getDeclaredFields();
         for (Field field : accFields) {
@@ -32,7 +32,7 @@ public class PagingHelper {
     }
 
     private static Set<String> getSetsOfBeneficiaryFieldNames(){
-        Set<String> setOfBeneficiaryFieldNames=new HashSet<>();
+        final Set<String> setOfBeneficiaryFieldNames=new HashSet<>();
         //fetching the attribs of Beneficiary
         Field[] benFields=Beneficiary.class.getDeclaredFields();
         for(Field field:benFields){
@@ -51,7 +51,7 @@ public class PagingHelper {
         List<e> entity=page.getContent();
         List<d> userDtoList=entity.stream().map( Object->new ModelMapper().map(Object,type)).toList();
 
-        PageableResponseDto<d> responseDto=new PageableResponseDto<>();
+        final PageableResponseDto<d> responseDto=new PageableResponseDto<>();
         responseDto.setContent(userDtoList);
         responseDto.setPageNumber(page.getNumber());
         responseDto.setPageSize(page.getSize());

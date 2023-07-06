@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/transactions")
 public interface ITransactionsController {
-
     @PostMapping("/exe")
-    ResponseEntity<OutputDto> executeTransactions(@Valid @RequestBody TransactionsDto transactionsDto) throws TransactionException, AccountsException;
+    ResponseEntity<OutputDto> executeTransactions(@Valid @RequestBody final TransactionsDto transactionsDto) throws TransactionException, AccountsException;
 
     @GetMapping("/{num}")
-    ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") String accountNumber) throws AccountsException;
+    ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") final String accountNumber) throws AccountsException;
 }

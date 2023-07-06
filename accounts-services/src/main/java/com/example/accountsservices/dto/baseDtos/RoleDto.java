@@ -4,10 +4,10 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
 public class RoleDto {
-    private String roleId;
-    private String roleName;
+    private final String roleId;
+    private final String roleName;
 }

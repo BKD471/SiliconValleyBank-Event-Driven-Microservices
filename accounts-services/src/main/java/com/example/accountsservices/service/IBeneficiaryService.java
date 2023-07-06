@@ -10,8 +10,8 @@ import com.example.accountsservices.exception.BadApiRequestException;
 import com.example.accountsservices.exception.BeneficiaryException;
 
 public interface IBeneficiaryService {
-    OutputDto postRequestBenExecutor(PostInputRequestDto postInputRequestDto) throws BeneficiaryException, AccountsException;
-    OutputDto putRequestBenExecutor(PutInputRequestDto putInputRequestDto) throws BeneficiaryException, AccountsException;
-    OutputDto getRequestBenExecutor(GetInputRequestDto getInputRequestDto) throws AccountsException, BeneficiaryException, BadApiRequestException;
-    OutputDto deleteRequestBenExecutor(DeleteInputRequestDto deleteInputRequestDto) throws BeneficiaryException, AccountsException;
+    OutputDto postRequestBenExecutor(final PostInputRequestDto postInputRequestDto) throws BeneficiaryException, AccountsException;
+    OutputDto putRequestBenExecutor(final PutInputRequestDto putInputRequestDto) throws BeneficiaryException, AccountsException;
+    OutputDto getRequestBenExecutor(final GetInputRequestDto getInputRequestDto) throws AccountsException, BeneficiaryException, BadApiRequestException;
+    OutputDto deleteRequestBenExecutor(final DeleteInputRequestDto deleteInputRequestDto) throws BeneficiaryException, AccountsException;
 }

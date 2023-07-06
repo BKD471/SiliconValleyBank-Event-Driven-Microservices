@@ -1,11 +1,12 @@
 package com.example.accountsservices.dto.responseDtos;
 
 import lombok.*;
+
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
 public class PageableResponseDto<T> {

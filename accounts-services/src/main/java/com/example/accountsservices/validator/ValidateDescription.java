@@ -17,9 +17,9 @@ public class ValidateDescription implements ConstraintValidator<ValidDescription
      * @return
      */
     @Override
-    public boolean isValid(AllConstantHelpers.DescriptionType value, ConstraintValidatorContext context) {
+    public boolean isValid(final AllConstantHelpers.DescriptionType value,final ConstraintValidatorContext context) {
         if(null==value) return false;
-        Set<AllConstantHelpers.DescriptionType> validFields=new HashSet<>();
+        final Set<AllConstantHelpers.DescriptionType> validFields=new HashSet<>();
         validFields.add(ELECTRICITY);
         validFields.add(SALARY);
         validFields.add(DEPOSIT);

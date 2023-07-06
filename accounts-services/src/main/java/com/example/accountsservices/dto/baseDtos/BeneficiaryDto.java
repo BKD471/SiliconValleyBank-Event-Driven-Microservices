@@ -10,29 +10,29 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
 public class BeneficiaryDto {
-    private String beneficiaryId;
-    private String beneficiaryName;
-    private String beneficiaryAccountNumber;
+    private final String beneficiaryId;
+    private final String beneficiaryName;
+    private final String beneficiaryAccountNumber;
 
     @JsonIgnore
     @JsonProperty(value = "benUpdateRequest")
-    private AllConstantHelpers.BenUpdateRequest benUpdateRequest;
-    private AllConstantHelpers.RELATION relation;
-    private LocalDate BenDate_Of_Birth;
-    private int benAge;
-    private AllConstantHelpers.BanksSupported benBank;
-    private String bankCode;
-    private String benAdharNumber;
-    private String benPhoneNumber;
-    private String benPanNumber;
-    private String beneficiaryEmail;
-    private String benVoterId;
-    private String benDrivingLicense;
-    private String benPassportNumber;
-    private String address;
-    private String imageName;
+    private final AllConstantHelpers.BenUpdateRequest benUpdateRequest;
+    private final AllConstantHelpers.RELATION relation;
+    private final LocalDate BenDate_Of_Birth;
+    private final int benAge;
+    private final AllConstantHelpers.BanksSupported benBank;
+    private final String bankCode;
+    private final String benAdharNumber;
+    private final String benPhoneNumber;
+    private final String benPanNumber;
+    private final String beneficiaryEmail;
+    private final String benVoterId;
+    private final String benDrivingLicense;
+    private final String benPassportNumber;
+    private final String address;
+    private final String imageName;
 }

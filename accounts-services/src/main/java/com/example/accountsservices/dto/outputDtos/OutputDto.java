@@ -10,18 +10,18 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
 public class OutputDto {
-    private String defaultMessage;
-    private CustomerOutPutDto customer;
-    private AccountsOutPutDto accounts;
-    private BeneficiaryDto beneficiary;
-    private TransactionsDto transactions;
-    private PageableResponseDto<AccountsDto> accountsListPages;
-    private PageableResponseDto<BeneficiaryDto> beneficiaryListPages;
-    private List<AccountsDto> listOfAccounts;
-    private List<BeneficiaryDto> beneficiaryList;
-    private List<TransactionsDto> transactionsList;
+    private final String defaultMessage;
+    private final CustomerOutPutDto customer;
+    private final AccountsOutPutDto accounts;
+    private final BeneficiaryDto beneficiary;
+    private final TransactionsDto transactions;
+    private final PageableResponseDto<AccountsDto> accountsListPages;
+    private final PageableResponseDto<BeneficiaryDto> beneficiaryListPages;
+    private final List<AccountsDto> listOfAccounts;
+    private final List<BeneficiaryDto> beneficiaryList;
+    private final List<TransactionsDto> transactionsList;
 }

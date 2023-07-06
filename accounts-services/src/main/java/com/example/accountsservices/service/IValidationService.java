@@ -12,20 +12,18 @@ import java.util.List;
 
 public interface IValidationService {
     org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(IValidationService.class);
-    default Boolean checkConflictingAccountUpdateConditionForBranch(Accounts accounts, AccountsDto accountsDto, String locality) throws AccountsException {
+    default Boolean checkConflictingAccountUpdateConditionForBranch(final Accounts accounts,final AccountsDto accountsDto,final String locality) throws AccountsException {
         log.debug("<----------------------------" +
                 "checkConflictingAccountUpdateConditionForBranch(Accounts,AccountsDto,String) AccountsServiceImpl started---------------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------------->");
-        String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
+        final String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
                 "coming from %s", locality);
-        AllConstantHelpers.Branch newhomeBranch ;
-        newhomeBranch = (null == accountsDto) ? accounts.getHomeBranch() : accountsDto.getHomeBranch();
-        AllConstantHelpers.AccountType accountType = accounts.getAccountType();
+        final AllConstantHelpers.Branch newhomeBranch =(null == accountsDto) ? accounts.getHomeBranch() : accountsDto.getHomeBranch();
+        final AllConstantHelpers.AccountType accountType = accounts.getAccountType();
 
         //get all accounts for customer
-        List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
-
-        AllConstantHelpers.Branch finalNewhomeBranch = newhomeBranch;
+        final List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
+        final AllConstantHelpers.Branch finalNewhomeBranch = newhomeBranch;
         boolean isNotPermissible = listOfAccounts.stream().
                 anyMatch(account -> finalNewhomeBranch.equals(account.getHomeBranch())
                         && accountType.equals(account.getAccountType()));
@@ -39,6 +37,6 @@ public interface IValidationService {
         return true;
     }
 
-    Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AllConstantHelpers.AccountsValidateType request) throws AccountsException, BadApiRequestException ;
-    void beneficiaryUpdateValidator(Accounts accounts, BeneficiaryDto beneficiaryDto, AllConstantHelpers.validateBenType type) throws BeneficiaryException ;
+    Boolean accountsUpdateValidator(final Accounts accounts,final AccountsDto accountsDto,final CustomerDto customerDto,final AllConstantHelpers.AccountsValidateType request) throws AccountsException, BadApiRequestException ;
+    void beneficiaryUpdateValidator(final Accounts accounts,final BeneficiaryDto beneficiaryDto,final AllConstantHelpers.validateBenType type) throws BeneficiaryException ;
 }

@@ -26,8 +26,8 @@ public class TransactionsControllerImpl implements ITransactionsController {
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> executeTransactions(TransactionsDto transactionsDto) throws TransactionException, AccountsException {
-        OutputDto responseDto = transactionsService.transactionsExecutor(transactionsDto);
+    public ResponseEntity<OutputDto> executeTransactions(final TransactionsDto transactionsDto) throws TransactionException, AccountsException {
+        final OutputDto responseDto = transactionsService.transactionsExecutor(transactionsDto);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
@@ -37,8 +37,8 @@ public class TransactionsControllerImpl implements ITransactionsController {
      * @throws AccountsException
      */
     @Override
-    public ResponseEntity<OutputDto> getPastSixMonthsTransaction(String accountNumber) throws AccountsException {
-        OutputDto responseDto = transactionsService.getPastSixMonthsTransactionsForAnAccount(accountNumber);
+    public ResponseEntity<OutputDto> getPastSixMonthsTransaction(final String accountNumber) throws AccountsException {
+        final OutputDto responseDto = transactionsService.getPastSixMonthsTransactionsForAnAccount(accountNumber);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }

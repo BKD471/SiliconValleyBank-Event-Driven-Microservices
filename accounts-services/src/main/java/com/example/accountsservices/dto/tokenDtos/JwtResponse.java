@@ -5,10 +5,10 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
 public class JwtResponse {
-  private String jwtToken;
-  private CustomerDto customer;
+  private final String jwtToken;
+  private final CustomerDto customer;
 }

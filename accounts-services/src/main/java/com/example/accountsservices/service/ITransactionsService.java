@@ -6,6 +6,6 @@ import com.example.accountsservices.exception.AccountsException;
 import com.example.accountsservices.exception.TransactionException;
 
 public interface ITransactionsService {
-    OutputDto transactionsExecutor(TransactionsDto transactionsDto) throws TransactionException, AccountsException;
-    OutputDto getPastSixMonthsTransactionsForAnAccount(String accountNumber) throws AccountsException;
+    OutputDto transactionsExecutor(final TransactionsDto transactionsDto) throws TransactionException, AccountsException;
+    OutputDto getPastSixMonthsTransactionsForAnAccount(final String accountNumber) throws AccountsException;
 }

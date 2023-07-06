@@ -9,24 +9,24 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder
 public class CustomerDto {
-    private String customerId;
-    private LocalDate DateOfBirth;
-    private String customerName;
-    private int age;
-    private String email;
+    private final String customerId;
+    private final LocalDate DateOfBirth;
+    private final String customerName;
+    private final int age;
+    private final String email;
     //private String password;
-    private String phoneNumber;
-    private String adharNumber;
-    private String panNumber;
-    private String voterId;
-    private String drivingLicense;
-    private String passportNumber;
-    private String address;
-    private String imageName;
-    private MultipartFile customerImage;
-    private List<AccountsDto> accounts;
+    private final String phoneNumber;
+    private final String adharNumber;
+    private final String panNumber;
+    private final String voterId;
+    private final String drivingLicense;
+    private final String passportNumber;
+    private final String address;
+    private final String imageName;
+    private final MultipartFile customerImage;
+    private final List<AccountsDto> accounts;
  }

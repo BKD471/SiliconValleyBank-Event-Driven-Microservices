@@ -34,30 +34,30 @@ public class ValidationServiceImpl implements IValidationService {
     }
 
     @Override
-    public Boolean accountsUpdateValidator(Accounts accounts, AccountsDto accountsDto, CustomerDto customerDto, AccountsValidateType request) throws AccountsException, BadApiRequestException {
+    public Boolean accountsUpdateValidator(final Accounts accounts,final AccountsDto accountsDto,final CustomerDto customerDto,final AccountsValidateType request) throws AccountsException, BadApiRequestException {
         log.debug("<---------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
-        String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
-        String location = "";
+        final String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
+        StringBuilder location=new StringBuilder();
         switch (request) {
             case CREATE_ACC -> {
-                location = "Inside CREATE_ACC";
+                location =new StringBuilder("Inside CREATE_ACC");
                 //check whether such account owner is already present
-                List<Accounts> accountsList = accountsRepository.findAll();
+                final List<Accounts> accountsList = accountsRepository.findAll();
                 //if no accounts by far then certainly we can add
                 if (accountsList.isEmpty()) return true;
 
-                String adharNumber = accounts.getCustomer().getAdharNumber();
-                boolean isNotPossible = accountsList.stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
+                final String adharNumber = accounts.getCustomer().getAdharNumber();
+                final boolean isNotPossible = accountsList.stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
                 if (isNotPossible)
                     throw new AccountsException(AccountsException.class, String.format("You already have an account with adhar:%s", adharNumber),
                             String.format("%s of %s", location, methodName));
             }
             case ADD_ACC -> {
-                location = "Inside ADD_ACC";
+                location=new StringBuilder("Inside ADD_ACC");
                 final int MAX_PERMISSIBLE_ACCOUNT = 5;
                 //prevent a customer to create more than 10 accounts
-                Customer customer = accounts.getCustomer();
+                final Customer customer = accounts.getCustomer();
                 if (customer.getAccounts().size() >= MAX_PERMISSIBLE_ACCOUNT)
                     throw new AccountsException(AccountsException.class,
                             "You can;t have more than 10 accounts",
@@ -67,50 +67,50 @@ public class ValidationServiceImpl implements IValidationService {
                 return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
             }
             case UPLOAD_PROFILE_IMAGE -> {
-                location = "Inside UPLOAD_PROFILE_IMAGE";
+                location =new StringBuilder("Inside UPLOAD_PROFILE_IMAGE");
                 if (null == customerDto.getCustomerImage())
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Please provide image", String.format("%s of %s", methodName, location));
-                double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
+                final double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
                 if (customerDto.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Your file is either corrupted or you are exceeding the max size of 100mb",
                             String.format("%s of %s", methodName, location));
             }
             case UPDATE_HOME_BRANCH -> {
-                location = "Inside UPDATE_HOME_BRANCH";
+                location=new StringBuilder("Inside UPDATE_HOME_BRANCH");
                 return checkConflictingAccountUpdateConditionForBranch(accounts,
                         accountsDto, String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
-                AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
+                final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED ->
-                            throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), location);
+                            throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), location.toString());
                     case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location);
+                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location.toString());
                     case OPEN -> {
                         return accounts.getAnyActiveLoans();
                     }
                 }
             }
             case RE_OPEN_ACCOUNT -> {
-                AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
+                final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED -> {
                         return true;
                     }
                     case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location);
+                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location.toString());
                     case OPEN ->
-                            throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), location);
+                            throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), location.toString());
                 }
             }
             case BLOCK_ACCOUNT -> {
                 if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
                     throw new AccountsException(AccountsException.class,
                             String.format("Status of Account: %s is already Blocked",
-                                    accounts.getAccountStatus()), location);
+                                    accounts.getAccountStatus()), location.toString());
                 return true;
             }
         }
@@ -122,40 +122,40 @@ public class ValidationServiceImpl implements IValidationService {
     }
 
     @Override
-    public void beneficiaryUpdateValidator(Accounts accounts, BeneficiaryDto beneficiaryDto, validateBenType type) throws BeneficiaryException {
+    public void beneficiaryUpdateValidator(final Accounts accounts,final BeneficiaryDto beneficiaryDto,final validateBenType type) throws BeneficiaryException {
         log.debug("<----validate(Accounts,BeneficiaryDto, validateBenType) BeneficiaryServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
-        String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
-        String location;
+        final String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
+        StringBuilder location;
         switch (type) {
             case ADD_BEN -> {
-                location = "Inside ADD_BEN";
+                location = new StringBuilder("Inside ADD_BEN");
                 boolean notPossible;
-                List<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
+                final List<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
                 if (listOfBeneficiaries.size() >= 5) throw new BeneficiaryException(BeneficiaryException.class,
                         "You can't add more than 5 beneficiaries", String.format("%s of %s", location, methodName));
 
                 //mandatory fields
-                String email = accounts.getCustomer().getEmail();
-                String adharNumber = accounts.getCustomer().getAdharNumber();
-                String panNumber = accounts.getCustomer().getPanNumber();
-                String phoneNumber = accounts.getCustomer().getPhoneNumber();
+                final String email = accounts.getCustomer().getEmail();
+                final String adharNumber = accounts.getCustomer().getAdharNumber();
+                final String panNumber = accounts.getCustomer().getPanNumber();
+                final String phoneNumber = accounts.getCustomer().getPhoneNumber();
 
                 //not  mandatory  fields
-                String voterId = accounts.getCustomer().getVoterId();
-                String drivingLicense = accounts.getCustomer().getDrivingLicense();
-                String passport = accounts.getCustomer().getPassportNumber();
+                final String voterId = accounts.getCustomer().getVoterId();
+                final String drivingLicense = accounts.getCustomer().getDrivingLicense();
+                final String passport = accounts.getCustomer().getPassportNumber();
 
 
                 //new incoming fields
-                String newEmail = beneficiaryDto.getBeneficiaryEmail();
-                String newAdharNumber = beneficiaryDto.getBenAdharNumber();
-                String newPanNumber = beneficiaryDto.getBenPanNumber();
-                String newPhoneNumber = beneficiaryDto.getBenPhoneNumber();
+                final String newEmail = beneficiaryDto.getBeneficiaryEmail();
+                final String newAdharNumber = beneficiaryDto.getBenAdharNumber();
+                final String newPanNumber = beneficiaryDto.getBenPanNumber();
+                final String newPhoneNumber = beneficiaryDto.getBenPhoneNumber();
 
-                String newVoterId = beneficiaryDto.getBenVoterId();
-                String newDrivingLicense = beneficiaryDto.getBenDrivingLicense();
-                String newPassportNumber = beneficiaryDto.getBenPassportNumber();
+                final String newVoterId = beneficiaryDto.getBenVoterId();
+                final String newDrivingLicense = beneficiaryDto.getBenDrivingLicense();
+                final String newPassportNumber = beneficiaryDto.getBenPassportNumber();
 
                 //you can't add yourself as your beneficiary  ,
                 // check by mandatory as well as optional fields
@@ -205,7 +205,7 @@ public class ValidationServiceImpl implements IValidationService {
 
             }
             case UPDATE_BEN -> {
-                location = "Inside UPDATE_BEN";
+                location = new StringBuilder("Inside UPDATE_BEN");
                 boolean isTrue;
                 if (null != beneficiaryDto.getBenDate_Of_Birth()) {
                     isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.getBenDate_Of_Birth().toString());

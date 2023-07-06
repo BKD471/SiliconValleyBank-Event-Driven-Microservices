@@ -37,12 +37,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest jwtRequest) {
+    public ResponseEntity<JwtResponse> login(@RequestBody final JwtRequest jwtRequest) {
         this.doAuthenticate(jwtRequest.getEmail(), jwtRequest.getPassword());
-        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
-        String token = jwtHelper.generateToken(userDetails);
-        CustomerDto customerDto = modelMapper.map(userDetails, CustomerDto.class);
-        JwtResponse jwtResponse = JwtResponse.builder()
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
+        final String token = jwtHelper.generateToken(userDetails);
+        final CustomerDto customerDto = modelMapper.map(userDetails, CustomerDto.class);
+        final JwtResponse jwtResponse = JwtResponse.builder()
                 .jwtToken(token)
                 .customer(customerDto).build();
 
@@ -50,16 +50,16 @@ public class AuthController {
     }
 
     @GetMapping("/current")
-    public ResponseEntity<CustomerDto> getCurrentUser(Principal principal) {
-        String userName = principal.getName();
+    public ResponseEntity<CustomerDto> getCurrentUser(final Principal principal) {
+        final String userName = principal.getName();
         return new ResponseEntity<>(modelMapper.map(userDetailsService.loadUserByUsername(userName)
                 , CustomerDto.class)
                 , HttpStatus.OK);
     }
 
-    private void doAuthenticate(String email, String password) {
-        String methodName = "doAuthenticate(String,String) in AuthController";
-        UsernamePasswordAuthenticationToken auth =
+    private void doAuthenticate(final String email,final String password) {
+        final String methodName = "doAuthenticate(String,String) in AuthController";
+        final UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(email, password);
         try {
             manager.authenticate(auth);

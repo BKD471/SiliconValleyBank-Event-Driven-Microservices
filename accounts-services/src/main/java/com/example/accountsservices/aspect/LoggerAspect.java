@@ -17,7 +17,7 @@ import java.time.Instant;
 public class LoggerAspect {
     //for intercepting public methods only, for pruvate methods we have individual logs
     @Around(value = "execution(com.example.accountsservices.dto.outputDtos.OutputDto  com.example.accountsservices.service.*.*(..))")
-    public OutputDto log(ProceedingJoinPoint joinPoint) throws Throwable {
+    public OutputDto log(final ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("<---------------------------------->"+joinPoint.
                 getSignature().
                 toString() + " method executions starts---------------------------------------------------------------->");
