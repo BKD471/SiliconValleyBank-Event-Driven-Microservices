@@ -6,7 +6,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class PageableResponseDto<T> {

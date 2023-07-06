@@ -9,22 +9,22 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AccountsOutPutDto {
-    private final String accountNumber;
-    private final long balance;
-    private final AllConstantHelpers.Branch homeBranch;
-    private final AllConstantHelpers.AccountType accountType;
-    private final AllConstantHelpers.AccountStatus accountStatus;
-    private final String branchCode;
-    private final long transferLimitPerDay;
-    private final int creditScore;
-    private final long approvedLoanLimitBasedOnCreditScore;
-    private final Boolean anyActiveLoans;
-    private final long totalOutstandingAmountPayableToBank;
-    private final long totLoanIssuedSoFar;
-    private final List<BeneficiaryDto> listOfBeneficiary;
-    private final List<TransactionsDto> listOfTransactions;
+    private String accountNumber;
+    private long balance;
+    private AllConstantHelpers.Branch homeBranch;
+    private AllConstantHelpers.AccountType accountType;
+    private AllConstantHelpers.AccountStatus accountStatus;
+    private String branchCode;
+    private long transferLimitPerDay;
+    private int creditScore;
+    private long approvedLoanLimitBasedOnCreditScore;
+    private Boolean anyActiveLoans;
+    private long totalOutstandingAmountPayableToBank;
+    private long totLoanIssuedSoFar;
+    private List<BeneficiaryDto> listOfBeneficiary;
+    private List<TransactionsDto> listOfTransactions;
 }

@@ -5,11 +5,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ApiResponseMessages {
-    private final String message;
-    private final boolean success;
-    private final HttpStatus status;
+    private String message;
+    private boolean success;
+    private HttpStatus status;
 }

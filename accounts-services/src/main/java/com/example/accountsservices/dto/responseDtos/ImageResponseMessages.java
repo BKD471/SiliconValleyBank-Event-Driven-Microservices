@@ -5,12 +5,12 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ImageResponseMessages {
-    private final String imageName;
-    private final String message;
-    private final boolean success;
-    private final HttpStatus status;
+    private String imageName;
+    private String message;
+    private boolean success;
+    private HttpStatus status;
 }

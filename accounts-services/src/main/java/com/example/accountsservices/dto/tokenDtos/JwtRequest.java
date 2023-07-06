@@ -4,10 +4,10 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class JwtRequest {
-    private final String email;
-    private final String password;
+    private String email;
+    private String password;
 }

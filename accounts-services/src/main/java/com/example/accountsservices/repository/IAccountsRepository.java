@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface IAccountsRepository extends JpaRepository<Accounts, String> {
-    Optional<Accounts> findByAccountNumber(String accountNumber);
-    void deleteAllByCustomer_CustomerId(String customerId);
-    void deleteByAccountNumber(String accountNumber);
-    Optional<Page<Accounts>> findAllByCustomer_CustomerId(String customerId, Pageable pageable);
+    Optional<Accounts> findByAccountNumber(final String accountNumber);
+    void deleteAllByCustomer_CustomerId(final String customerId);
+    void deleteByAccountNumber(final String accountNumber);
+    Optional<Page<Accounts>> findAllByCustomer_CustomerId(final String customerId,final Pageable pageable);
 }

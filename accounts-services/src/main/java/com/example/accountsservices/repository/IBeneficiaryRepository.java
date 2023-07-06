@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface IBeneficiaryRepository extends JpaRepository<Beneficiary,String> {
-    void deleteByBeneficiaryId(String beneficiaryId);
-    void deleteAllByAccounts_AccountNumber(String accountNUmber);
-    Optional<Page<Beneficiary>> findAllByAccounts_AccountNumber(String AccountNumber, Pageable pageable);
+    void deleteByBeneficiaryId(final String beneficiaryId);
+    void deleteAllByAccounts_AccountNumber(final String accountNUmber);
+    Optional<Page<Beneficiary>> findAllByAccounts_AccountNumber(final String AccountNumber,final Pageable pageable);
 }
