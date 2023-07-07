@@ -8,14 +8,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.time.LocalDateTime;
 
 @Getter
-@ResponseStatus(value= HttpStatus.BAD_REQUEST)
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 public class TenureException extends Exception {
-    private String reason;
-    private String methodName;
+    private final String reason;
+    private final String methodName;
+    private final Object className;
 
-
-    public TenureException(String reason, String methodName) {
-        super(String.format("exception occurred in %s for %s", methodName, reason));
+    public TenureException(Object className,String reason, String methodName) {
+        super(String.format("%s has occurred  for %s in %s",className,reason,methodName));
+        this.className=className;
         this.reason = reason;
         this.methodName = methodName;
 

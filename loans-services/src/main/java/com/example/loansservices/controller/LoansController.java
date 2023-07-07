@@ -33,14 +33,14 @@ public class LoansController {
 
     @GetMapping("/{id}")
     public ResponseEntity<List<LoansDto>> getAllLoansByCustomerId
-            (@PathVariable(name="id") Long customerId) throws  LoansException{
+            (@PathVariable(name="id") String customerId) throws  LoansException{
        List<LoansDto> allLoans=loanService.getAllLoansForCustomerById(customerId);
        return new ResponseEntity(allLoans,HttpStatus.OK);
     }
 
     @GetMapping("/{id}/{num}")
     public  ResponseEntity<LoansDto> getInfoAboutLoanByCustomerIdAndLoanNumber
-            (@PathVariable(name ="id") Long customerId, @PathVariable(name="num") Long loanNumber) throws LoansException{
+            (@PathVariable(name ="id") String customerId, @PathVariable(name="num") String loanNumber) throws LoansException{
         LoansDto loan=loanService.getInfoAboutLoanByCustomerIdAndLoanNumber(customerId, loanNumber);
         return new ResponseEntity(loan,HttpStatus.OK);
     }

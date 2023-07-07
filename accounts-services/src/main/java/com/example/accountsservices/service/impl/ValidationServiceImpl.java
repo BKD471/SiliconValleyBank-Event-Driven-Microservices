@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 
 import static com.example.accountsservices.helpers.AllConstantHelpers.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
+import static java.util.Objects.isNull;
+import  org.apache.commons.lang3.StringUtils;
 
 @Service
 @Primary
@@ -68,7 +70,7 @@ public class ValidationServiceImpl implements IValidationService {
             }
             case UPLOAD_PROFILE_IMAGE -> {
                 location =new StringBuilder("Inside UPLOAD_PROFILE_IMAGE");
-                if (null == customerDto.getCustomerImage())
+                if (isNull(customerDto.getCustomerImage()))
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Please provide image", String.format("%s of %s", methodName, location));
                 final double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
@@ -165,9 +167,9 @@ public class ValidationServiceImpl implements IValidationService {
                         email.equalsIgnoreCase(newEmail) ||
                         panNumber.equalsIgnoreCase(newPanNumber) ||
                         phoneNumber.equalsIgnoreCase(newPhoneNumber) ||
-                        (null != voterId && voterId.equalsIgnoreCase(newVoterId))
-                        || (null != drivingLicense && drivingLicense.equalsIgnoreCase(newDrivingLicense))
-                        || (null != passport && passport.equalsIgnoreCase(newPassportNumber))
+                        (StringUtils.isNotBlank(voterId) && voterId.equalsIgnoreCase(newVoterId))
+                        || (StringUtils.isNotBlank(drivingLicense) && drivingLicense.equalsIgnoreCase(newDrivingLicense))
+                        || (StringUtils.isNotBlank(passport) && passport.equalsIgnoreCase(newPassportNumber))
                 )
                     throw new BeneficiaryException(BeneficiaryException.class, "You can't add yourself as beneficiary",
                             String.format("%s of %s", location, methodName));
@@ -179,9 +181,9 @@ public class ValidationServiceImpl implements IValidationService {
                                 || ben.getBeneficiaryEmail().equalsIgnoreCase(newEmail)
                                 || ben.getBenPanNumber().equalsIgnoreCase(newPanNumber)
                                 || ben.getBenPhoneNumber().equalsIgnoreCase(newPhoneNumber)
-                                || (null != newVoterId && ben.getBenVoterId().equalsIgnoreCase(newVoterId))
-                                || (null != newDrivingLicense && ben.getBenDrivingLicense().equalsIgnoreCase(newDrivingLicense))
-                                || (null != newPassportNumber && ben.getBenPassportNumber().equalsIgnoreCase(newPassportNumber)));
+                                || (StringUtils.isNotBlank(newVoterId) && ben.getBenVoterId().equalsIgnoreCase(newVoterId))
+                                || (StringUtils.isNotBlank(newDrivingLicense) && ben.getBenDrivingLicense().equalsIgnoreCase(newDrivingLicense))
+                                || (StringUtils.isNotBlank(newPassportNumber) && ben.getBenPassportNumber().equalsIgnoreCase(newPassportNumber)));
                 if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
                         "This person is already added as a beneficiary", String.format("%s of %s", location, methodName));
 
@@ -207,51 +209,51 @@ public class ValidationServiceImpl implements IValidationService {
             case UPDATE_BEN -> {
                 location = new StringBuilder("Inside UPDATE_BEN");
                 boolean isTrue;
-                if (null != beneficiaryDto.getBenDate_Of_Birth()) {
+                if (StringUtils.isNotBlank(beneficiaryDto.getBenDate_Of_Birth().toString())) {
                     isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.getBenDate_Of_Birth().toString());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give DOB in YYYY-mm-dd format",
                                 String.format("%s of %s", location, methodName));
                 }
 
-                if (null != beneficiaryDto.getBeneficiaryEmail()) {
+                if (StringUtils.isNotBlank(beneficiaryDto.getBeneficiaryEmail())) {
                     isTrue = Pattern.matches(PATTERN_FOR_EMAIL, beneficiaryDto.getBeneficiaryEmail());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give email in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
 
-                if (null != beneficiaryDto.getBenPhoneNumber()) {
+                if (StringUtils.isNotBlank(beneficiaryDto.getBenPhoneNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PHONE_NUMBER, beneficiaryDto.getBenPhoneNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give phone Number in valid format e.g +xx-xxxxxxxxxx",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (null != beneficiaryDto.getBenAdharNumber()) {
+                if (StringUtils.isNotBlank(beneficiaryDto.getBenAdharNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_ADHAR, beneficiaryDto.getBenAdharNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give adhar number in valid xxxx-xxxx-xxxx format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (null != beneficiaryDto.getBenPanNumber()) {
+                if (StringUtils.isNotBlank(beneficiaryDto.getBenPanNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PAN_NUMBER, beneficiaryDto.getBenPanNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give pan number in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (null != beneficiaryDto.getBenPassportNumber()) {
+                if (StringUtils.isNotBlank(beneficiaryDto.getBenPassportNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PASSPORT, beneficiaryDto.getBenPassportNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give passport number in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (null != beneficiaryDto.getBenVoterId()) {
+                if (StringUtils.isNotBlank(beneficiaryDto.getBenVoterId())) {
                     isTrue = Pattern.matches(PATTERN_FOR_VOTER, beneficiaryDto.getBenVoterId());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give voter in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (null != beneficiaryDto.getBenDrivingLicense()) {
+                if (StringUtils.isNotBlank(beneficiaryDto.getBenDrivingLicense())) {
                     isTrue = Pattern.matches(PATTERN_FOR_DRIVING_LICENSE, beneficiaryDto.getBenDrivingLicense());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give driving license in valid format",

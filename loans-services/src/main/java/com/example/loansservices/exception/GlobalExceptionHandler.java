@@ -15,30 +15,10 @@ import java.time.LocalTime;
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(InstallmentsException.class)
-    public ResponseEntity<ErrorDetails> handleInstallmentsException(InstallmentsException exception,
+    @ExceptionHandler( {InstallmentsException.class, PaymentException.class,
+            TenureException.class, LoansException.class})
+    public ResponseEntity<ErrorDetails> handleUncheckedCustomExceptions(Exception exception,
                                                                     WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(LocalTime.now(), exception.getMessage(), webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(PaymentException.class)
-    public ResponseEntity<ErrorDetails> handlePaymentException(PaymentException exception,
-                                                                    WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(LocalTime.now(), exception.getMessage(), webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(TenureException.class)
-    public ResponseEntity<ErrorDetails> handleTenureException(TenureException exception,
-                                                               WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(LocalTime.now(), exception.getMessage(), webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(LoansException.class)
-    public ResponseEntity<ErrorDetails> handlePaymentException(LoansException exception,
-                                                               WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(LocalTime.now(), exception.getMessage(), webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }

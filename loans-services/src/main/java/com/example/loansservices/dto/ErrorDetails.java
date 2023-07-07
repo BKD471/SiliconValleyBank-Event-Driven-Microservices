@@ -1,15 +1,18 @@
 package com.example.loansservices.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ErrorDetails {
-        private LocalTime timeStamp;
-        private String message;
-        private String details;
+    private LocalTime timeStamp;
+    private String message;
+    private String details;
 }

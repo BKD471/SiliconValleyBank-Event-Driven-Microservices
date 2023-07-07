@@ -1,10 +1,7 @@
 package com.example.loansservices.dto;
 
 import com.example.loansservices.model.Loans;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,9 +10,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PaymentDto implements Dto {
-    private Long loanNumber;
-    private Long customerId;
+    private String loanNumber;
+    private String customerId;
     private Loans.LoanType loanType;
     private Long totalLoan;
     private Long paymentAmount;

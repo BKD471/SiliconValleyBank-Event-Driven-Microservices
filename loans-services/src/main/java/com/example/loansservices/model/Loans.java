@@ -1,10 +1,7 @@
 package com.example.loansservices.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,13 +11,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class Loans extends Audit{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long loanNumber;
+    private String loanNumber;
 
     @Column(name = "customer_id")
-    private Long customerId;
+    private String customerId;
 
     @Column(name="end_dt")
     private LocalDate endDt;

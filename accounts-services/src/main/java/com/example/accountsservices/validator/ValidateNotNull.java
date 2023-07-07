@@ -2,10 +2,13 @@ package com.example.accountsservices.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class ValidateNotNull implements ConstraintValidator<NotNullEnum, Enum<?>> {
     private Pattern pattern;
@@ -21,10 +24,7 @@ public class ValidateNotNull implements ConstraintValidator<NotNullEnum, Enum<?>
 
     @Override
     public boolean isValid(final Enum<?> value,final ConstraintValidatorContext context) {
-        if (value == null) {
-            return true;
-        }
-
+        if (isBlank(value.toString())) return true;
         final Matcher m = pattern.matcher(value.name());
         return m.matches();
     }

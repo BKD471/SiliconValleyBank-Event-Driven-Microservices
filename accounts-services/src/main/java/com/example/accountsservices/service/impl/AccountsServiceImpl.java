@@ -24,6 +24,7 @@ import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.IFileService;
 import com.example.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,7 @@ import static com.example.accountsservices.helpers.AllConstantHelpers.DIRECTION.
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
+import static java.util.Objects.isNull;
 
 
 /**
@@ -265,7 +267,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         Accounts savedUpdatedAccount = accounts;
 
         if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
-                && null != newHomeBranch && !newHomeBranch.equals(oldHomeBranch)) {
+                && StringUtils.isNotBlank(newHomeBranch.toString()) && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             accounts.setBranchCode(getBranchCode(newHomeBranch));
             savedUpdatedAccount = accountsRepository.save(accounts);
@@ -396,25 +398,25 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         final String oldPassportNumber = oldCustomerRecord.getPassportNumber();
         final String newPassportNumber = newCustomerRecord.getPassportNumber();
 
-        if (null != newName && !oldName.equalsIgnoreCase(newName))
+        if (StringUtils.isNotBlank(newName) && !oldName.equalsIgnoreCase(newName))
             newCustomerRecord.setCustomerName(newName);
-        if (null != newDateOfBirth && !oldDateOfBirth.equals(newDateOfBirth)) {
+        if (StringUtils.isNotBlank( newDateOfBirth.toString()) && !oldDateOfBirth.equals(newDateOfBirth)) {
             newCustomerRecord.setDateOfBirth(newDateOfBirth);
             newCustomerRecord.setAge(newAge);
         }
-        if (null != newEmail && !oldEmail.equalsIgnoreCase(newEmail))
+        if (StringUtils.isNotBlank(newEmail) && !oldEmail.equalsIgnoreCase(newEmail))
             newCustomerRecord.setEmail(newEmail);
-        if (null != newPhoneNumber && !oldPhoneNumber.equalsIgnoreCase(newPhoneNumber))
+        if (StringUtils.isNotBlank(newPhoneNumber) && !oldPhoneNumber.equalsIgnoreCase(newPhoneNumber))
             newCustomerRecord.setCustomerName(newPhoneNumber);
-        if (null != newAdharNumber && !oldAdharNumber.equalsIgnoreCase(newAdharNumber))
+        if (StringUtils.isNotBlank(newAdharNumber) && !oldAdharNumber.equalsIgnoreCase(newAdharNumber))
             newCustomerRecord.setCustomerName(newAdharNumber);
-        if (null != newPassportNumber && !oldPassportNumber.equalsIgnoreCase(newPassportNumber))
+        if (StringUtils.isNotBlank(newPassportNumber) && !oldPassportNumber.equalsIgnoreCase(newPassportNumber))
             newCustomerRecord.setCustomerName(newPassportNumber);
-        if (null != newPanNumber && !oldPanNumber.equalsIgnoreCase(newPanNumber))
+        if (StringUtils.isNotBlank(newPanNumber) && !oldPanNumber.equalsIgnoreCase(newPanNumber))
             newCustomerRecord.setCustomerName(newPanNumber);
-        if (null != newVoterId && !voterId.equalsIgnoreCase(newVoterId))
+        if (StringUtils.isNotBlank(newVoterId) && !voterId.equalsIgnoreCase(newVoterId))
             newCustomerRecord.setCustomerName(newVoterId);
-        if (null != newDrivingLicense && !oldDrivingLicense.equalsIgnoreCase(newDrivingLicense))
+        if (StringUtils.isNotBlank(newDrivingLicense) && !oldDrivingLicense.equalsIgnoreCase(newDrivingLicense))
             newCustomerRecord.setDrivingLicense(newDrivingLicense);
 
         final Customer updatedCustomer = mapToCustomer(newCustomerRecord);
@@ -497,13 +499,13 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //Get the accountNumber & account & customer
         final String accountNumber = accountsDto.getAccountNumber();
         Accounts foundAccount;
-        if (null!=accountNumber) foundAccount = fetchAccountByAccountNumber(accountNumber);
+        if (StringUtils.isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
         final String customerId = customerDto.getCustomerId();
         Customer foundCustomer;
-        if (null!=customerId) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+        if (StringUtils.isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
         //check the request type
-        if (null == accountsDto.getUpdateRequest())
+        if (StringUtils.isBlank(accountsDto.getUpdateRequest().toString()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
@@ -531,8 +533,8 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
             throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
         final int pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
 
-        final String sortBy = (null == getInputRequestDto.getSortBy()) ? "balance" : getInputRequestDto.getSortBy();
-        final AllConstantHelpers.DIRECTION sortDir = (null == getInputRequestDto.getSortDir()) ? asc : getInputRequestDto.getSortDir();
+        final String sortBy = (StringUtils.isBlank(getInputRequestDto.getSortBy())) ? "balance" : getInputRequestDto.getSortBy();
+        final AllConstantHelpers.DIRECTION sortDir = (StringUtils.isBlank(getInputRequestDto.getSortDir().toString())) ? asc : getInputRequestDto.getSortDir();
 
 
         //map
@@ -541,14 +543,14 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         //load accounts & customer
         final String accountNumber = accountsDto.getAccountNumber();
         Accounts foundAccount = null;
-        if (null!=accountNumber) foundAccount = fetchAccountByAccountNumber(accountNumber);
+        if (StringUtils.isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
         final String customerId = customerDto.getCustomerId();
         Customer foundCustomer = null;
-        if (null!=customerId) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+        if (StringUtils.isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
-        if (null == accountsDto.getUpdateRequest())
+        if (StringUtils.isBlank(accountsDto.getUpdateRequest().toString()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
@@ -562,7 +564,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
             }
             case GET_ALL_ACC -> {
                 final String locality = String.format("Inside switch ,for GET_ALL_ACC case under method %s", methodName);
-                if (null == foundCustomer) throw new CustomerException(CustomerException.class, locality, methodName);
+                if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class, locality, methodName);
 
                 //validate the genuineness of sorting fields
                 final Set<String> allPageableFieldsOfAccounts = getAllPageableFieldsOfAccounts();
@@ -599,7 +601,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
             throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
         final int pageSize = (putInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : putInputRequestDto.getPageSize();
 
-        final String sortBy = (null == putInputRequestDto.getSortBy()) ? "balance" : putInputRequestDto.getSortBy();
+        final String sortBy = (StringUtils.isBlank(putInputRequestDto.getSortBy())) ? "balance" : putInputRequestDto.getSortBy();
         final DIRECTION sortDir = (null == putInputRequestDto.getSortDir()) ? DIRECTION.asc : putInputRequestDto.getSortDir();
 
         //Get the accountNumber & account & customer
@@ -669,7 +671,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
             }
             case UPDATE_CUSTOMER_DETAILS -> {
                 final String location = String.format("Inside UPDATE_CUSTOMER_DETAILS in %s", methodName);
-                if (Objects.isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
+                if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
                         "Please specify a customer id to update details", location);
                 final CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
                 final PageableResponseDto<AccountsDto> pageableResponseDto=accountsPagination(sortDir,sortBy,pageNumber,pageSize,customerId);
@@ -692,7 +694,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         final AccountsDto accountsDto = deleteRequestInputToAccountsDto(deleteInputRequestDto);
         final CustomerDto customerDto = deleteInputRequestToCustomerDto(deleteInputRequestDto);
         //check the request type
-        if (null == accountsDto.getUpdateRequest())
+        if (StringUtils.isBlank(accountsDto.getUpdateRequest().toString()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
@@ -722,7 +724,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
 
         final String customerId= deleteInputRequestDto.getCustomerId();
         final AllConstantHelpers.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
-        if(null==deleteRequest || null==customerId) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
+        if(StringUtils.isBlank(deleteRequest.toString()) || StringUtils.isBlank(customerId)) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
 
         final Customer foundCustomer=fetchCustomerByCustomerNumber(customerId);
         customerRepository.delete(foundCustomer);

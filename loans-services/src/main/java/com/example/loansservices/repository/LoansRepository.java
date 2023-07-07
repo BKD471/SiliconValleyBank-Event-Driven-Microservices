@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LoansRepository extends JpaRepository<Loans,Long> {
-    Loans findByCustomerIdAndLoanNumber(Long customerId,Long loanNumber);
-    List<Loans> findAllByCustomerId(Long customerId);
+public interface LoansRepository extends JpaRepository<Loans,String> {
+    Loans findByCustomerIdAndLoanNumber(final String customerId,final String loanNumber);
+    List<Loans> findAllByCustomerId(final String customerId);
 }

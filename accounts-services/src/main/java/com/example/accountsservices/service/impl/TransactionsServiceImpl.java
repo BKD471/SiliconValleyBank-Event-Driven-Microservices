@@ -17,6 +17,7 @@ import com.example.accountsservices.service.AbstractAccountsService;
 import com.example.accountsservices.helpers.SortDateComparator;
 import com.example.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -117,7 +118,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
         final String transactionId= UUID.randomUUID().toString();
         transactionsDto.setTransactionId(transactionId);
 
-        if(null==transactionsDto.getTransactionType()) throw new TransactionException(TransactionException.class,
+        if(StringUtils.isBlank(transactionsDto.getTransactionType().toString())) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
         switch (transactionsDto.getTransactionType()) {
             case CREDIT -> {

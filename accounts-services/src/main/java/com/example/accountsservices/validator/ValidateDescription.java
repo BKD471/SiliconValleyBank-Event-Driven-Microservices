@@ -3,12 +3,14 @@ package com.example.accountsservices.validator;
 import com.example.accountsservices.helpers.AllConstantHelpers;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static com.example.accountsservices.helpers.AllConstantHelpers.*;
 import static com.example.accountsservices.helpers.AllConstantHelpers.DescriptionType.EMI;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class ValidateDescription implements ConstraintValidator<ValidDescription, DescriptionType> {
     /**
@@ -18,7 +20,7 @@ public class ValidateDescription implements ConstraintValidator<ValidDescription
      */
     @Override
     public boolean isValid(final AllConstantHelpers.DescriptionType value,final ConstraintValidatorContext context) {
-        if(null==value) return false;
+        if(isBlank(value.toString())) return false;
         final Set<AllConstantHelpers.DescriptionType> validFields=new HashSet<>();
         validFields.add(ELECTRICITY);
         validFields.add(SALARY);

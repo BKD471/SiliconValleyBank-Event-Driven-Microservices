@@ -4,52 +4,48 @@ import com.example.loansservices.dto.LoansDto;
 import com.example.loansservices.dto.PaymentDto;
 import com.example.loansservices.model.Loans;
 
-public class LoansMapper{
-    public static Loans mapToLoans(LoansDto loansDto){
-        Loans loans=new Loans();
-        loans.setCustomerId(loansDto.getCustomerId());
-        loans.setLoanType(loansDto.getLoanType());
-        loans.setTotalLoan(loansDto.getTotalLoan());
-        loans.setLoanTenureInYears(loansDto.getLoanTenureInYears());
-        return loans;
+public class LoansMapper {
+    public static Loans mapToLoans(final LoansDto loansDto) {
+        return Loans.builder()
+                .customerId(loansDto.getCustomerId())
+                .loanType(loansDto.getLoanType())
+                .totalLoan(loansDto.getTotalLoan())
+                .loanTenureInYears(loansDto.getLoanTenureInYears())
+                .build();
     }
 
-    public static LoansDto mapToLoansDto(Loans loans){
-        LoansDto loansDto=new LoansDto();
-        loansDto.setLoanNumber(loans.getLoanNumber());
-        loansDto.setCustomerId(loans.getCustomerId());
-        loansDto.setLoanType(loans.getLoanType());
-
-        loansDto.setTotalLoan(loans.getTotalLoan());
-        loansDto.setAmountPaid(loans.getAmountPaid());
-        loansDto.setOutstandingAmount(loans.getOutstandingAmount());
-
-        loansDto.setLoanTenureInYears(loans.getLoanTenureInYears());
-        loansDto.setEndDt(loans.getEndDt());
-        loansDto.setStartDt(loans.getStartDate());
-
-        loansDto.setEmiAmount(loans.getEmiAmount());
-        loansDto.setRate_of_Interest(loans.getRate_Of_Interest());
-        loansDto.setTotalInstallmentsInNumber(loans.getTotalInstallmentsInNumber());
-        loansDto.setInstallmentsPaidInNumber(loans.getInstallmentsPaidInNumber());
-        loansDto.setInstallmentsRemainingInNumber(loans.getInstallmentsRemainingInNumber());
-        return loansDto;
+    public static LoansDto mapToLoansDto(final Loans loans) {
+        return LoansDto.builder()
+                .loanNumber(loans.getLoanNumber())
+                .customerId(loans.getCustomerId())
+                .loanType(loans.getLoanType())
+                .amountPaid(loans.getAmountPaid())
+                .outstandingAmount(loans.getOutstandingAmount())
+                .loanTenureInYears(loans.getLoanTenureInYears())
+                .endDt(loans.getEndDt())
+                .startDt(loans.getStartDate())
+                .emiAmount(loans.getEmiAmount())
+                .Rate_of_Interest(loans.getRate_Of_Interest())
+                .totalInstallmentsInNumber(loans.getTotalInstallmentsInNumber())
+                .installmentsPaidInNumber(loans.getInstallmentsPaidInNumber())
+                .installmentsRemainingInNumber(loans.getInstallmentsRemainingInNumber())
+                .build();
     }
 
-    public static PaymentDto mapToPaymentDto(Loans loans,Long payment){
-        PaymentDto paymentDto=new PaymentDto();
-        paymentDto.setLoanNumber(loans.getLoanNumber());
-        paymentDto.setCustomerId(loans.getCustomerId());
-        paymentDto.setLoanType(loans.getLoanType());
-        paymentDto.setTotalLoan(loans.getTotalLoan());
-        paymentDto.setPaymentAmount(payment);
-        paymentDto.setLoanTenureInYears(loans.getLoanTenureInYears());
-        paymentDto.setRate_Of_Interest(loans.getRate_Of_Interest());
-        paymentDto.setAmountPaid(loans.getAmountPaid());
-        paymentDto.setTotalInstallmentsInNumber(loans.getTotalInstallmentsInNumber());
-        paymentDto.setInstallmentsPaidInNumber(loans.getInstallmentsPaidInNumber());
-        paymentDto.setInstallmentsRemainingInNumber(loans.getInstallmentsRemainingInNumber());
-        paymentDto.setOutstandingAmount(loans.getOutstandingAmount());
-        return paymentDto;
+    public static PaymentDto mapToPaymentDto(final Loans loans, final Long payment) {
+        return PaymentDto.builder()
+                .loanNumber(loans.getLoanNumber())
+                .customerId(loans.getCustomerId())
+                .loanType(loans.getLoanType())
+                .totalLoan(loans.getTotalLoan())
+                .paymentAmount(payment)
+                .loanTenureInYears(loans.getLoanTenureInYears())
+                .Rate_Of_Interest(loans.getRate_Of_Interest())
+                .amountPaid(loans.getAmountPaid())
+                .totalInstallmentsInNumber(loans.getTotalInstallmentsInNumber())
+                .installmentsPaidInNumber(loans.getInstallmentsPaidInNumber())
+                .installmentsRemainingInNumber(loans.getInstallmentsRemainingInNumber())
+                .outstandingAmount(loans.getOutstandingAmount())
+                .build();
     }
 }
