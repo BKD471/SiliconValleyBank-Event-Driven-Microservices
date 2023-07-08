@@ -19,12 +19,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static com.example.accountsservices.helpers.AllConstantHelpers.*;
 import static com.example.accountsservices.helpers.RegexMatchersHelper.*;
 import static java.util.Objects.isNull;
 import  org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Primary
@@ -261,6 +263,22 @@ public class ValidationServiceImpl implements IValidationService {
                 }
             }
             case DELETE_BEN -> {
+                location=new StringBuilder("Inside Delete Ben");
+                String beneficiaryId= beneficiaryDto.getBeneficiaryId();
+                if(CollectionUtils.isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
+                        "Account has no beneficiaries to delete",String.format("%s of %s",location,methodName));
+
+                //filter out the beneficiary to be deleted for that account
+                final Optional<Beneficiary> filteredBeneficiary= accounts.getListOfBeneficiary().
+                        stream().filter(beneficiary -> !beneficiaryId.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
+                        findFirst();
+                if(filteredBeneficiary.isEmpty()) throw new BeneficiaryException(BeneficiaryException.class,
+                        String.format("No such beneficiaries with id %s exist for this account",beneficiaryId)
+                        ,String.format("%s of %s",location,methodName));
+
+                //your account must need to have at least one  beneficiary
+                if(accounts.getListOfBeneficiary().size()==1) throw new BeneficiaryException(BeneficiaryException.class,
+                        "Your account must have at least one beneficiary",String.format("%s of %s",location,methodName));
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class,
                     "Invalid type of request", methodName);

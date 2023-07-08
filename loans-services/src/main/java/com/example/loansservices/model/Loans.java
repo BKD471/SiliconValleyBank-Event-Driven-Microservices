@@ -30,19 +30,19 @@ public class Loans extends Audit{
         HOUSE_LOAN,CAR_LOAN,EDUCATION_LOAN,BUSINESS_LOAN
     }
     @Column(name = "total_loan")
-    private Long totalLoan;
+    private long totalLoan;
 
     @Column(name = "loan_tenure")
     private int loanTenureInYears;
 
     @Column(name = "amount_paid")
-    private Long amountPaid;
+    private long amountPaid;
 
     @Column(name="rate_of_interest")
-    private Double Rate_Of_Interest;
+    private double Rate_Of_Interest;
 
     @Column(name = "emi_amnt")
-    private Long emiAmount;
+    private long emiAmount;
 
     @Column(name = "tot_inst")
     private int totalInstallmentsInNumber;
@@ -53,5 +53,5 @@ public class Loans extends Audit{
     private int installmentsRemainingInNumber;
 
     @Column(name = "outstanding_amount")
-    private Long outstandingAmount;
+    private long outstandingAmount;
 }

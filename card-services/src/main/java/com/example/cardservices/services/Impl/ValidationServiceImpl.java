@@ -85,7 +85,7 @@ public class ValidationServiceImpl implements IValidationService {
             }
             case FLEXI_PAY -> {
                  double lastTransaction= cards.getLastTransactionAmount();
-                 double creditLimit=cards.getTotalLimit();
+                 double creditLimit=cards.getSanctionedCreditLimit();
 
                  double threshHold=creditLimit*MIN_PERCENTAGE_FRACTION_TO_QUALIFY_FOR_FLEXI_PAY;
                  if(lastTransaction<threshHold) throw new CardsException(CardsException.class,

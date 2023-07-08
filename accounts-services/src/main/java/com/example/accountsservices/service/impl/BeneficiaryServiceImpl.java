@@ -20,7 +20,7 @@ import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.repository.IBeneficiaryRepository;
 import com.example.accountsservices.repository.ICustomerRepository;
-import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.service.AbstractService;
 import com.example.accountsservices.service.IBeneficiaryService;
 import com.example.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,21 +30,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 
-import static com.example.accountsservices.helpers.AllConstantHelpers.validateBenType.ADD_BEN;
-import static com.example.accountsservices.helpers.AllConstantHelpers.validateBenType.UPDATE_BEN;
 import static com.example.accountsservices.helpers.AllConstantHelpers.DIRECTION;
+import static com.example.accountsservices.helpers.AllConstantHelpers.validateBenType.*;
 import static com.example.accountsservices.helpers.CodeRetrieverHelper.getBankCode;
 import static com.example.accountsservices.helpers.MapperHelper.*;
 import static com.example.accountsservices.helpers.PagingHelper.*;
 
 @Slf4j
 @Service("beneficiaryServicePrimary")
-public class BeneficiaryServiceImpl extends AbstractAccountsService implements IBeneficiaryService {
+public class BeneficiaryServiceImpl extends AbstractService implements IBeneficiaryService {
     private final IBeneficiaryRepository beneficiaryRepository;
     private final IAccountsRepository accountsRepository;
     private final IValidationService validationService;
@@ -109,7 +109,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         log.debug("<-----------------getBeneficiaryById(Accounts, Long ) BeneficiaryServiceImpl started ----------------------------------" +
                 "---------------------------------------------------------------------------------------------->");
         final String methodName = "getBeneficiaryById(Accounts,Long";
-        if (fetchedAccount.getListOfBeneficiary().size() == 0)
+        if (CollectionUtils.isEmpty(fetchedAccount.getListOfBeneficiary()))
             throw new BeneficiaryException(BeneficiaryException.class,
                     "No beneficiaries found for this account", methodName);
         log.debug("<-------------------------getBeneficiaryById(Accounts, Long) BeneficiaryServiceImpl ended --------------------------------" +
@@ -166,7 +166,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         if (StringUtils.isNotBlank(newBeneficiaryNumber) && !newBeneficiaryNumber.equals(oldBeneficiaryNumber))
             oldBeneficiaryData.setBeneficiaryAccountNumber(newBeneficiaryNumber);
 
-        if (StringUtils.isNotBlank(newBeneficiaryDOB.toString()) && !newBeneficiaryDOB.equals(oldBeneficiaryDOB)) {
+        if (!Objects.isNull(newBeneficiaryDOB) && !newBeneficiaryDOB.equals(oldBeneficiaryDOB)) {
             oldBeneficiaryData.setBenDate_Of_Birth(newBeneficiaryDOB);
             //calculating & setting the new age
             LocalDate now=LocalDate.now();
@@ -177,7 +177,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         if (StringUtils.isNotBlank(newBeneficiaryAdharNumber) && !newBeneficiaryAdharNumber.equalsIgnoreCase(oldBeneficiaryAdharNumber))
             oldBeneficiaryData.setBenAdharNumber(newBeneficiaryAdharNumber);
 
-        if (StringUtils.isNotBlank(newBeneficaryRelation.toString())&& !newBeneficaryRelation.equals(oldBeneficiaryRelation))
+        if (!Objects.isNull(newBeneficaryRelation)&& !newBeneficaryRelation.equals(oldBeneficiaryRelation))
             oldBeneficiaryData.setRelation(newBeneficaryRelation);
 
         if (StringUtils.isNotBlank(newBeneficiaryPanNumber) && !newBeneficiaryPanNumber.equalsIgnoreCase(oldBeneficiaryPanNumber))
@@ -195,7 +195,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         if(StringUtils.isNotBlank(newBeneficiaryEmail) && !newBeneficiaryEmail.equalsIgnoreCase(oldBeneficiaryEmail))
             oldBeneficiaryData.setBeneficiaryEmail(newBeneficiaryEmail);
 
-        if(StringUtils.isNotBlank(newBenBank.toString()) && !newBenBank.equals(oldBenBank)) {
+        if(!Objects.isNull(newBenBank) && !newBenBank.equals(oldBenBank)) {
             oldBeneficiaryData.setBenBank(newBenBank);
             oldBeneficiaryData.setBankCode(getBankCode(newBenBank));
         }
@@ -249,13 +249,9 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         if (StringUtils.isBlank(beneficiaryId))
             throw new BeneficiaryException(BeneficiaryException.class, "Please provide a valid beneficiary id", methodName);
 
-        //filter out the beneficiary list of that account
-        final List<Beneficiary> filteredListOfBeneficiaries = fetchedAccounts.getListOfBeneficiary().
-                stream().
-                filter(beneficiary -> !beneficiaryId.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
-                toList();
-        //set the final filtered resultant list to that account
-        fetchedAccounts.setListOfBeneficiary(filteredListOfBeneficiaries);
+        BeneficiaryDto beneficiaryDto=BeneficiaryDto.builder().beneficiaryId(beneficiaryId).build();
+        validationService.beneficiaryUpdateValidator(fetchedAccounts,beneficiaryDto,DELETE_BEN);
+
         //delete that beneficiary
         beneficiaryRepository.deleteByBeneficiaryId(beneficiaryId);
         log.debug("<-------------deleteBeneficiariesForAnAccount(Accounts, Long ) BeneficiaryServiceImpl ended ------------------------" +
@@ -280,7 +276,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<BeneficiaryDto> pageableResponseDto = getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount,pageable);
 
-        if (pageableResponseDto.getContent().size() == 0)
+        if (CollectionUtils.isEmpty(pageableResponseDto.getContent()))
             throw new BadApiRequestException(BadApiRequestException.class,
                     String.format("Account with id %s have no beneficiary present", fetchedAccount.getAccountNumber()),
                     methodName);
@@ -305,7 +301,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         final CustomerDto customerDto = mapToCustomerDto(customer);
 
         final AllConstantHelpers.BenUpdateRequest requestType = postInputDto.getBenRequest();
-        if (StringUtils.isBlank(requestType.toString())) throw new BeneficiaryException(BeneficiaryException.class,
+        if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
             case ADD_BEN -> {
@@ -334,7 +330,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         //get customer
         final Customer loadCustomer = fetchedAccount.getCustomer();
         final AllConstantHelpers.BenUpdateRequest requestType = putInputRequestDto.getBenRequest();
-        if (StringUtils.isBlank(requestType.toString())) throw new BeneficiaryException(BeneficiaryException.class,
+        if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
             case UPDATE_BEN -> {
@@ -366,7 +362,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         final int pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
 
         final String sortBy = (StringUtils.isBlank(getInputRequestDto.getSortBy())) ? "beneficiaryName" : getInputRequestDto.getSortBy();
-        final DIRECTION sortDir = (StringUtils.isBlank(getInputRequestDto.getSortDir().toString())) ? DIRECTION.asc : getInputRequestDto.getSortDir();
+        final DIRECTION sortDir = (Objects.isNull(getInputRequestDto.getSortDir())) ? DIRECTION.asc : getInputRequestDto.getSortDir();
 
 
         //get the account
@@ -374,7 +370,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         final AllConstantHelpers.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
-        if (StringUtils.isBlank(requestType.toString())) throw new BeneficiaryException(BeneficiaryException.class,
+        if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
 
         StringBuilder location;
@@ -425,7 +421,7 @@ public class BeneficiaryServiceImpl extends AbstractAccountsService implements I
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
 
         final AllConstantHelpers.BenUpdateRequest requestType = deleteInputRequestDto.getBenRequest();
-        if (StringUtils.isBlank(requestType.toString())) throw new BeneficiaryException(BeneficiaryException.class,
+        if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
             case DELETE_BEN -> {

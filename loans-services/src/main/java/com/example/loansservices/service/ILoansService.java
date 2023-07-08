@@ -9,7 +9,7 @@ import com.example.loansservices.exception.TenureException;
 
 import java.util.List;
 
-public interface LoansService {
+public interface ILoansService {
     LoansDto borrowLoan(final LoansDto loansDto) throws TenureException;
     LoansDto getInfoAboutLoanByCustomerIdAndLoanNumber(final String customerId,final String LoanNumber) throws  LoansException;
     PaymentDto payInstallments(final PaymentDto paymentDto) throws TenureException, PaymentException, InstallmentsException, LoansException;

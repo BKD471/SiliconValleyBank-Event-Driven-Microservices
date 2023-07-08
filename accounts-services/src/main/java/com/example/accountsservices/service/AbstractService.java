@@ -11,12 +11,12 @@ import static com.example.accountsservices.helpers.AllConstantHelpers.REQUEST_TO
 import static com.example.accountsservices.helpers.AllConstantHelpers.STATUS_BLOCKED;
 
 
-public abstract class AbstractAccountsService {
+public abstract class AbstractService {
     private  final IAccountsRepository accountsRepository;
     private  final ICustomerRepository customerRepository;
 
-    protected AbstractAccountsService(IAccountsRepository accountsRepository,
-                                      ICustomerRepository customerRepository){
+    protected AbstractService(IAccountsRepository accountsRepository,
+                              ICustomerRepository customerRepository){
         this.accountsRepository=accountsRepository;
         this.customerRepository=customerRepository;
     }

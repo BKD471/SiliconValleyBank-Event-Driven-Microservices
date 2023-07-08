@@ -3,7 +3,7 @@ package com.example.accountsservices.service.impl;
 import com.example.accountsservices.exception.ResponseException;
 import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.repository.ICustomerRepository;
-import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.service.AbstractService;
 import com.example.accountsservices.service.IFileService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service("fileServicePrimary")
-public class FIleServiceImpl extends AbstractAccountsService implements IFileService {
+public class FIleServiceImpl extends AbstractService implements IFileService {
     protected FIleServiceImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
     }

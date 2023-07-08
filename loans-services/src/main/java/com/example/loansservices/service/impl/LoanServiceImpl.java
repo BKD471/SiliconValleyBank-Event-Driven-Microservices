@@ -9,7 +9,7 @@ import com.example.loansservices.exception.TenureException;
 import com.example.loansservices.mapper.LoansMapper;
 import com.example.loansservices.model.Loans;
 import com.example.loansservices.repository.LoansRepository;
-import com.example.loansservices.service.LoansService;
+import com.example.loansservices.service.ILoansService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.example.loansservices.mapper.LoansMapper.mapToLoansDto;
 import static com.example.loansservices.utils.RateOfInterestHelper.getRateOfInterest;
 
 
@@ -34,7 +35,7 @@ import static com.example.loansservices.utils.RateOfInterestHelper.getRateOfInte
  * */
 @Service
 @Slf4j
-public class LoanServiceImpl implements LoansService {
+public class LoanServiceImpl implements ILoansService{
     private final int MONTHS_IN_YEAR = 12;
     private final LoansRepository loansRepository;
 
@@ -50,14 +51,14 @@ public class LoanServiceImpl implements LoansService {
     /**
      * Method to calculate monthly emi
      */
-    private Long calculateEmi(final Long loanAmount,final int tenure) throws TenureException {
-        String methodName="calculateEmi(Long,int) in LoanServiceImpl";
-        Double rate_of_interest = getRateOfInterest(tenure);
+    private long calculateEmi(final long loanAmount,final int tenure) throws TenureException {
+        final String methodName="calculateEmi(Long,int) in LoanServiceImpl";
+        final Double rate_of_interest = getRateOfInterest(tenure);
         if(rate_of_interest==null) throw new TenureException(TenureException.class,
                 String.format("Tenure %s is not available",tenure),methodName);
 
         int PERCENTAGE = 100;
-        Double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
+        double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
         long interest = (long) (loanAmount * magic_coeff);
 
         double numerator = Math.pow(1 + magic_coeff, tenure * MONTHS_IN_YEAR);
@@ -72,25 +73,25 @@ public class LoanServiceImpl implements LoansService {
      * Maturity Date ,emi amount
      */
     private Loans processLoanInformationAndCreateLoan(final Loans loans) throws TenureException {
-        Loans loan = loansRepository.save(loans);
+        final Loans loan = loansRepository.save(loans);
 
         //set id
-        String loanNumber= UUID.randomUUID().toString();
+        final String loanNumber= UUID.randomUUID().toString();
         loan.setLoanNumber(loanNumber);
 
         //setting maturity date & loan tenure
-        int tenure = loan.getLoanTenureInYears();
+        final int tenure = loan.getLoanTenureInYears();
         loan.setLoanTenureInYears(tenure);
         LocalDate endDate = loan.getStartDate().plusYears(tenure);
         loan.setEndDt(endDate);
 
         //Calculating emi
-        Long loanAmount = loan.getTotalLoan();
-        Long emiAmount = calculateEmi(loanAmount, tenure);
+        final Long loanAmount = loan.getTotalLoan();
+        final Long emiAmount = calculateEmi(loanAmount, tenure);
         loan.setEmiAmount(emiAmount);
 
         //initializing the initial value for outstanding amount,amount paid,rate of interest
-        Double rate_of_interest = getRateOfInterest(tenure);
+        double rate_of_interest = getRateOfInterest(tenure);
         loan.setRate_Of_Interest(rate_of_interest);
         loan.setOutstandingAmount(loan.getTotalLoan());
         loan.setAmountPaid(0L);
@@ -111,10 +112,10 @@ public class LoanServiceImpl implements LoansService {
      */
     @Override
     public LoansDto borrowLoan(final LoansDto loansDto) throws TenureException {
-        Loans loan = LoansMapper.mapToLoans(loansDto);
-        Loans processedLoan = processLoanInformationAndCreateLoan(loan);
-        Loans savedLoan = loansRepository.save(processedLoan);
-        return LoansMapper.mapToLoansDto(savedLoan);
+        final Loans loan = LoansMapper.mapToLoans(loansDto);
+        final Loans processedLoan = processLoanInformationAndCreateLoan(loan);
+        final Loans savedLoan = loansRepository.save(processedLoan);
+        return mapToLoansDto(savedLoan);
     }
 
     /**
@@ -124,24 +125,23 @@ public class LoanServiceImpl implements LoansService {
      */
     @Override
     public PaymentDto payInstallments(final PaymentDto paymentDto) throws PaymentException, InstallmentsException, LoansException {
-        String methodName = "payInstallments(PaymentDto) in LoanServiceImpl";
-        Optional<Loans> loan = Optional.ofNullable(loansRepository.findByCustomerIdAndLoanNumber
-                (paymentDto.getCustomerId(), paymentDto.getLoanNumber()));
+        final String methodName = "payInstallments(PaymentDto) in LoanServiceImpl";
+        final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber
+                (paymentDto.getCustomerId(), paymentDto.getLoanNumber());
 
         if(loan.isEmpty()) throw  new LoansException(LoansException.class,String.format("No such loans exist with Loan id %s",
                 paymentDto.getLoanNumber()),methodName);
 
-        Loans currentLoan=loan.get();
-        Long emi = currentLoan.getEmiAmount();
+        final Loans currentLoan=loan.get();
+        long emi = currentLoan.getEmiAmount();
         int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
         int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
         if (remainingInstallments <= 0)
             throw new InstallmentsException(InstallmentsException.class,String.format("Yr loan with id %s is already closed",paymentDto.getLoanNumber()), methodName);
 
 
-        Long payment = paymentDto.getPaymentAmount();
-        int paymentCastedToInt=payment.intValue();
-        if (payment < emi || (( paymentCastedToInt % emi) != 0))
+        long payment = paymentDto.getPaymentAmount();
+        if (payment < emi || (( payment % emi) != 0))
             throw new PaymentException(PaymentException.class,String.format("yr payment %s should be greater equal to or multiple of yr emi %s", payment, emi), methodName);
 
         //updating the installments data
@@ -151,8 +151,8 @@ public class LoanServiceImpl implements LoansService {
 
 
         //updating the outstanding amount,amount paid
-        Long outstandingAmount = currentLoan.getOutstandingAmount();
-        Long amountPaid = currentLoan.getAmountPaid();
+        long outstandingAmount = currentLoan.getOutstandingAmount();
+        long amountPaid = currentLoan.getAmountPaid();
         currentLoan.setOutstandingAmount(outstandingAmount - payment);
         currentLoan.setAmountPaid(amountPaid + payment);
 
@@ -166,8 +166,8 @@ public class LoanServiceImpl implements LoansService {
      * @returnType List<LoansDto>
      */
     public List<LoansDto> getAllLoansForCustomerById(final String customerId) throws  LoansException{
-        String methodName=" getAllLoansForCustomerById(Long) in LoanServiceImpl";
-        Optional<List<Loans>> allLoans = Optional.ofNullable(loansRepository.findAllByCustomerId(customerId));
+        final String methodName=" getAllLoansForCustomerById(Long) in LoanServiceImpl";
+        final Optional<List<Loans>> allLoans = loansRepository.findAllByCustomerId(customerId);
 
         if(allLoans.isEmpty()) throw  new LoansException(LoansException.class,
                 String.format("There is no loan found for customer with Id %s",customerId),
@@ -183,9 +183,9 @@ public class LoanServiceImpl implements LoansService {
      */
     @Override
     public LoansDto getInfoAboutLoanByCustomerIdAndLoanNumber(final String customerId,final String loanNumber) throws  LoansException{
-        String methodName="getInfoAboutLoanByCustomerIdAndLoanNUmber(Long,Long) in LoanServiceImpl";
-        Optional<Loans> loan = Optional.ofNullable(loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber));
+        final String methodName="getInfoAboutLoanByCustomerIdAndLoanNUmber(Long,Long) in LoanServiceImpl";
+        final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber);
         if(loan.isEmpty()) throw  new LoansException(LoansException.class,String.format("No such loan exist with id %s",loanNumber),methodName);
-        return LoansMapper.mapToLoansDto(loan.get());
+        return mapToLoansDto(loan.get());
     }
 }

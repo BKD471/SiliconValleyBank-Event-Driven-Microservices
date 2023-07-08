@@ -38,6 +38,10 @@ public class Cards extends  Audit{
         VISA,MASTERCARD,RU_PAY
     }
 
+    //net income
+    @Column(name = "net_income_pa")
+    private long netIncomePA;
+
     //last blld summary
     @Column(name = "stmt_due")
     private double statementDue;
@@ -69,7 +73,7 @@ public class Cards extends  Audit{
     private double availableLimit;
 
     @Column(name = "total_limit")
-    private double totalLimit;
+    private double sanctionedCreditLimit;
 
     @Column(name="last_cred_limit_rfereshed")
     private LocalDate lastRefreshedCreditLimit;
@@ -79,6 +83,4 @@ public class Cards extends  Audit{
 
     @Column(name = "reward_pts")
     private int rewardPoints;
-
-
 }

@@ -19,7 +19,7 @@ import com.example.accountsservices.model.Role;
 import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.repository.IRoleRepository;
-import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.service.AbstractService;
 import com.example.accountsservices.service.IAccountsService;
 import com.example.accountsservices.service.IFileService;
 import com.example.accountsservices.service.IValidationService;
@@ -34,6 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ import static java.util.Objects.isNull;
  */
 @Slf4j
 @Service("accountsServicePrimary")
-public class AccountsServiceImpl extends AbstractAccountsService implements IAccountsService {
+public class AccountsServiceImpl extends AbstractService implements IAccountsService {
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;
@@ -454,7 +455,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         final Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<AccountsDto> pageableResponseDto = getAllActiveAccountsByCustomerId(customerId, pageable);
-        if (pageableResponseDto.getContent().size() == 0)
+        if (CollectionUtils.isEmpty(pageableResponseDto.getContent()))
             throw new BadApiRequestException(BadApiRequestException.class,
                     String.format("Customer with id %s have no accounts present", customerId),
                     methodName);
@@ -505,7 +506,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         Customer foundCustomer;
         if (StringUtils.isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
         //check the request type
-        if (StringUtils.isBlank(accountsDto.getUpdateRequest().toString()))
+        if (Objects.isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
@@ -534,7 +535,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         final int pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
 
         final String sortBy = (StringUtils.isBlank(getInputRequestDto.getSortBy())) ? "balance" : getInputRequestDto.getSortBy();
-        final AllConstantHelpers.DIRECTION sortDir = (StringUtils.isBlank(getInputRequestDto.getSortDir().toString())) ? asc : getInputRequestDto.getSortDir();
+        final AllConstantHelpers.DIRECTION sortDir = (Objects.isNull(getInputRequestDto.getSortDir())) ? asc : getInputRequestDto.getSortDir();
 
 
         //map
@@ -550,7 +551,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         if (StringUtils.isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
-        if (StringUtils.isBlank(accountsDto.getUpdateRequest().toString()))
+        if (Objects.isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
@@ -602,19 +603,19 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         final int pageSize = (putInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : putInputRequestDto.getPageSize();
 
         final String sortBy = (StringUtils.isBlank(putInputRequestDto.getSortBy())) ? "balance" : putInputRequestDto.getSortBy();
-        final DIRECTION sortDir = (null == putInputRequestDto.getSortDir()) ? DIRECTION.asc : putInputRequestDto.getSortDir();
+        final DIRECTION sortDir = (Objects.isNull(putInputRequestDto.getSortDir())) ? DIRECTION.asc : putInputRequestDto.getSortDir();
 
         //Get the accountNumber & account & customer
         final String accountNumber = accountsDto.getAccountNumber();
         Accounts foundAccount = null;
-        if (null!=accountNumber) foundAccount = fetchAccountByAccountNumber(accountNumber);
+        if (StringUtils.isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
         final String customerId = customerDto.getCustomerId();
         Customer foundCustomer = null;
-        if (null!=customerId) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+        if (StringUtils.isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
-        if (null == accountsDto.getUpdateRequest())
+        if (Objects.isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
@@ -676,7 +677,6 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
                 final CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
                 final PageableResponseDto<AccountsDto> pageableResponseDto=accountsPagination(sortDir,sortBy,pageNumber,pageSize,customerId);
 
-
                 return OutputDto.builder()
                         .customer(mapToCustomerOutputDto(updatedCustomerDto))
                         .accountsListPages(pageableResponseDto)
@@ -694,7 +694,7 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
         final AccountsDto accountsDto = deleteRequestInputToAccountsDto(deleteInputRequestDto);
         final CustomerDto customerDto = deleteInputRequestToCustomerDto(deleteInputRequestDto);
         //check the request type
-        if (StringUtils.isBlank(accountsDto.getUpdateRequest().toString()))
+        if (Objects.isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
@@ -722,9 +722,9 @@ public class AccountsServiceImpl extends AbstractAccountsService implements IAcc
     public OutputDto deleteCustomer(final DeleteInputRequestDto deleteInputRequestDto) {
         final String methodName="deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
 
-        final String customerId= deleteInputRequestDto.getCustomerId();
+        final String customerId=deleteInputRequestDto.getCustomerId();
         final AllConstantHelpers.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
-        if(StringUtils.isBlank(deleteRequest.toString()) || StringUtils.isBlank(customerId)) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
+        if(Objects.isNull(deleteRequest) || StringUtils.isBlank(customerId)) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
 
         final Customer foundCustomer=fetchCustomerByCustomerNumber(customerId);
         customerRepository.delete(foundCustomer);

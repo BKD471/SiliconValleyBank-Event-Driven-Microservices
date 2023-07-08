@@ -13,16 +13,13 @@ import com.example.accountsservices.model.Transactions;
 import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.repository.ITransactionsRepository;
-import com.example.accountsservices.service.AbstractAccountsService;
+import com.example.accountsservices.service.AbstractService;
 import com.example.accountsservices.helpers.SortDateComparator;
 import com.example.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.accountsservices.helpers.AllConstantHelpers.*;
@@ -30,7 +27,7 @@ import static com.example.accountsservices.helpers.MapperHelper.*;
 
 @Slf4j
 @Service("transactionsServicePrimary")
-public class TransactionsServiceImpl extends AbstractAccountsService implements ITransactionsService {
+public class TransactionsServiceImpl extends AbstractService implements ITransactionsService {
 
     private final ITransactionsRepository transactionsRepository;
     private final IAccountsRepository accountsRepository;
@@ -118,7 +115,7 @@ public class TransactionsServiceImpl extends AbstractAccountsService implements 
         final String transactionId= UUID.randomUUID().toString();
         transactionsDto.setTransactionId(transactionId);
 
-        if(StringUtils.isBlank(transactionsDto.getTransactionType().toString())) throw new TransactionException(TransactionException.class,
+        if(Objects.isNull(transactionsDto.getTransactionType())) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
         switch (transactionsDto.getTransactionType()) {
             case CREDIT -> {
