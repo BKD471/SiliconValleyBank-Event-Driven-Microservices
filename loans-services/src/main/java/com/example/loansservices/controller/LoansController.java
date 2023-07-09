@@ -2,10 +2,7 @@ package com.example.loansservices.controller;
 
 import com.example.loansservices.dto.LoansDto;
 import com.example.loansservices.dto.PaymentDto;
-import com.example.loansservices.exception.InstallmentsException;
-import com.example.loansservices.exception.LoansException;
-import com.example.loansservices.exception.PaymentException;
-import com.example.loansservices.exception.TenureException;
+import com.example.loansservices.exception.*;
 import com.example.loansservices.service.ILoansService;
 import com.example.loansservices.service.impl.LoanServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -19,7 +16,7 @@ public class LoansController {
     private final ILoansService loanService;
     LoansController(ILoansService loanService){this.loanService=loanService;}
     @PostMapping
-    public ResponseEntity<LoansDto> borrowLoan(@RequestBody LoansDto loansDto) throws TenureException {
+    public ResponseEntity<LoansDto> borrowLoan(@RequestBody LoansDto loansDto) throws TenureException, ValidationException {
         LoansDto processedLoansDto=loanService.borrowLoan(loansDto);
         return new ResponseEntity<>(processedLoansDto, HttpStatus.CREATED);
     }
@@ -33,14 +30,14 @@ public class LoansController {
     @GetMapping("/{id}")
     public ResponseEntity<List<LoansDto>> getAllLoansByCustomerId
             (@PathVariable(name="id") String customerId) throws  LoansException{
-       List<LoansDto> allLoans=loanService.getAllLoansForCustomerById(customerId);
+       List<LoansDto> allLoans=loanService.getAllLoansForACustomer(customerId);
        return new ResponseEntity<>(allLoans,HttpStatus.OK);
     }
 
     @GetMapping("/{id}/{num}")
     public  ResponseEntity<LoansDto> getInfoAboutLoanByCustomerIdAndLoanNumber
             (@PathVariable(name ="id") String customerId, @PathVariable(name="num") String loanNumber) throws LoansException{
-        LoansDto loan=loanService.getInfoAboutLoanByCustomerIdAndLoanNumber(customerId, loanNumber);
+        LoansDto loan=loanService.getInfoAboutAParticularLoan(customerId, loanNumber);
         return new ResponseEntity<>(loan,HttpStatus.OK);
     }
 }

@@ -2,14 +2,13 @@ package com.example.loansservices.service.impl;
 
 import com.example.loansservices.dto.LoansDto;
 import com.example.loansservices.dto.PaymentDto;
-import com.example.loansservices.exception.InstallmentsException;
-import com.example.loansservices.exception.LoansException;
-import com.example.loansservices.exception.PaymentException;
-import com.example.loansservices.exception.TenureException;
+import com.example.loansservices.exception.*;
 import com.example.loansservices.mapper.LoansMapper;
 import com.example.loansservices.model.Loans;
-import com.example.loansservices.repository.LoansRepository;
+import com.example.loansservices.repository.ILoansRepository;
 import com.example.loansservices.service.ILoansService;
+import com.example.loansservices.service.IValidationService;
+import com.example.loansservices.utils.AllConstantsHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.example.loansservices.mapper.LoansMapper.mapToLoansDto;
+import static com.example.loansservices.utils.AllConstantsHelper.ISSUE_LOAN;
 import static com.example.loansservices.utils.RateOfInterestHelper.getRateOfInterest;
 
 
@@ -37,15 +37,18 @@ import static com.example.loansservices.utils.RateOfInterestHelper.getRateOfInte
 @Slf4j
 public class LoanServiceImpl implements ILoansService{
     private final int MONTHS_IN_YEAR = 12;
-    private final LoansRepository loansRepository;
+    private final IValidationService validationService;
+    private final ILoansRepository loansRepository;
+
 
     /**
      * @param: loansRepository
      * @paramType: LoansRepository
      * @returnType: NA
      * **/
-    LoanServiceImpl(LoansRepository loansRepository) {
+    LoanServiceImpl(ILoansRepository loansRepository,IValidationService validationService) {
         this.loansRepository = loansRepository;
+        this.validationService=validationService;
     }
 
     /**
@@ -86,8 +89,8 @@ public class LoanServiceImpl implements ILoansService{
         loan.setEndDt(endDate);
 
         //Calculating emi
-        final Long loanAmount = loan.getTotalLoan();
-        final Long emiAmount = calculateEmi(loanAmount, tenure);
+        final long loanAmount = loan.getTotalLoan();
+        final long emiAmount = calculateEmi(loanAmount, tenure);
         loan.setEmiAmount(emiAmount);
 
         //initializing the initial value for outstanding amount,amount paid,rate of interest
@@ -111,8 +114,9 @@ public class LoanServiceImpl implements ILoansService{
      * @returnType LoansDto
      */
     @Override
-    public LoansDto borrowLoan(final LoansDto loansDto) throws TenureException {
+    public LoansDto borrowLoan(final LoansDto loansDto) throws TenureException , ValidationException {
         final Loans loan = LoansMapper.mapToLoans(loansDto);
+        validationService.validator(loan,null, ISSUE_LOAN);
         final Loans processedLoan = processLoanInformationAndCreateLoan(loan);
         final Loans savedLoan = loansRepository.save(processedLoan);
         return mapToLoansDto(savedLoan);
@@ -163,9 +167,24 @@ public class LoanServiceImpl implements ILoansService{
     /**
      * @param customerId
      * @paramType Long
+     * @returnType LoansDto
+     */
+    @Override
+    public LoansDto getInfoAboutAParticularLoan(final String customerId,final String loanNumber) throws  LoansException{
+        final String methodName="getInfoAboutLoanByCustomerIdAndLoanNUmber(Long,Long) in LoanServiceImpl";
+        final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber);
+        if(loan.isEmpty()) throw  new LoansException(LoansException.class,String.format("No such loan exist with id %s",loanNumber),methodName);
+        return mapToLoansDto(loan.get());
+    }
+
+
+    /**
+     * @param customerId
+     * @paramType Long
      * @returnType List<LoansDto>
      */
-    public List<LoansDto> getAllLoansForCustomerById(final String customerId) throws  LoansException{
+    @Override
+    public List<LoansDto> getAllLoansForACustomer(final String customerId) throws  LoansException{
         final String methodName=" getAllLoansForCustomerById(Long) in LoanServiceImpl";
         final Optional<List<Loans>> allLoans = loansRepository.findAllByCustomerId(customerId);
 
@@ -174,18 +193,5 @@ public class LoanServiceImpl implements ILoansService{
                 methodName);
         return allLoans.get().stream().map(LoansMapper::mapToLoansDto).
                 collect(Collectors.toList());
-    }
-
-    /**
-     * @param customerId
-     * @paramType Long
-     * @returnType LoansDto
-     */
-    @Override
-    public LoansDto getInfoAboutLoanByCustomerIdAndLoanNumber(final String customerId,final String loanNumber) throws  LoansException{
-        final String methodName="getInfoAboutLoanByCustomerIdAndLoanNUmber(Long,Long) in LoanServiceImpl";
-        final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber);
-        if(loan.isEmpty()) throw  new LoansException(LoansException.class,String.format("No such loan exist with id %s",loanNumber),methodName);
-        return mapToLoansDto(loan.get());
     }
 }

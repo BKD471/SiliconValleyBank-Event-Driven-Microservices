@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface LoansRepository extends JpaRepository<Loans,String> {
+public interface ILoansRepository extends JpaRepository<Loans,String> {
     Optional<Loans> findByCustomerIdAndLoanNumber(final String customerId, final String loanNumber);
     Optional<List<Loans>> findAllByCustomerId(final String customerId);
 }
