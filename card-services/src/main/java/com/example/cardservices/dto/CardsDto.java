@@ -33,7 +33,7 @@ public class CardsDto {
     private double currentOutStanding;
     private double unBilledOutstanding;
     private double availableLimit;
-    private double totalLimit;
+    private double sanctionedCreditLimit;
     private int creditScore;
     private int rewardPoints;
 }
