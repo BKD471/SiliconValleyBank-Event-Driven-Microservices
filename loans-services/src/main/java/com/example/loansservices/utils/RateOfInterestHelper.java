@@ -18,7 +18,7 @@ public class RateOfInterestHelper {
         Cash_Karo_hash_karo.put(40,15.5d);
         return Cash_Karo_hash_karo;
     }
-    public  static  double getRateOfInterest(int tenure) throws TenureException {
+    public  static  Double getRateOfInterest(int tenure) throws TenureException {
         String methodName="getRateOfInterest() in RateOfInterestHelper";
         if(getHash().containsKey(tenure)) return getHash().get(tenure);
         throw  new TenureException(TenureException.class,"No tenure exist",methodName);

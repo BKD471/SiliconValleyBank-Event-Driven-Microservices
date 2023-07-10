@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface ILoansRepository extends JpaRepository<Loans,String> {
     Optional<Loans> findByCustomerIdAndLoanNumber(final String customerId, final String loanNumber);
     Optional<List<Loans>> findAllByCustomerId(final String customerId);
+    Optional<List<Loans>> getAllByCustomerIdAndLoanActiveIs(final String loanNumber,final boolean isActive);
 }

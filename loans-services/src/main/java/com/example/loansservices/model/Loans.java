@@ -54,4 +54,7 @@ public class Loans extends Audit{
 
     @Column(name = "outstanding_amount")
     private long outstandingAmount;
+
+    @Column(name="is_loan_active")
+    private boolean isLoanActive;
 }
