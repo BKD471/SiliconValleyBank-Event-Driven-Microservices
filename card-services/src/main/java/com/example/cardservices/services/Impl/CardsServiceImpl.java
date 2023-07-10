@@ -98,6 +98,25 @@ public class CardsServiceImpl implements ICardsService {
     }
 
     /**
+     * @param cardsDto
+     * @return
+     */
+    @Override
+    public CardsDto payBills(CardsDto cardsDto) {
+        return null;
+    }
+
+    /**
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @Override
+    public List<CardsDto> getPastTransactions(LocalDate startDate, LocalDate endDate) {
+        return null;
+    }
+
+    /**
      * @param customerId
      * @return
      */
