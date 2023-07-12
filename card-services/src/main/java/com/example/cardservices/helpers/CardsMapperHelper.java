@@ -1,10 +1,9 @@
-package com.example.cardservices.mapper;
-
+package com.example.cardservices.helpers;
 
 import com.example.cardservices.dto.CardsDto;
 import com.example.cardservices.model.Cards;
 
-public class CardsMapper {
+public class CardsMapperHelper {
 
    public static Cards mapToCards(CardsDto cardsDto){
        return Cards.builder()

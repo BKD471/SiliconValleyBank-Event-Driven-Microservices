@@ -3,7 +3,7 @@ package com.example.cardservices.services.Impl;
 import com.example.cardservices.exception.CardsException;
 import com.example.cardservices.dto.CardsDto;
 import com.example.cardservices.exception.TenureException;
-import com.example.cardservices.mapper.CardsMapper;
+import com.example.cardservices.helpers.CardsMapperHelper;
 import com.example.cardservices.model.Cards;
 import com.example.cardservices.repository.ICardsRepository;
 import com.example.cardservices.services.ICardsService;
@@ -19,8 +19,8 @@ import java.util.UUID;
 
 import static com.example.cardservices.helpers.AllConstantHelpers.*;
 import static com.example.cardservices.helpers.RateOfInterestHelper.getRateOfInterest;
-import static com.example.cardservices.mapper.CardsMapper.mapToCards;
-import static com.example.cardservices.mapper.CardsMapper.mapToCardsDto;
+import static com.example.cardservices.helpers.CardsMapperHelper.mapToCards;
+import static com.example.cardservices.helpers.CardsMapperHelper.mapToCardsDto;
 
 @Service("cardsServicePrimary")
 public class CardsServiceImpl implements ICardsService {
@@ -94,7 +94,7 @@ public class CardsServiceImpl implements ICardsService {
         if (listOfCards.isEmpty()) throw new CardsException(CardsException.class,
                 "No cards are linked to this account",
                 methodName);
-        return listOfCards.get().stream().map(CardsMapper::mapToCardsDto).toList();
+        return listOfCards.get().stream().map(CardsMapperHelper::mapToCardsDto).toList();
     }
 
     /**

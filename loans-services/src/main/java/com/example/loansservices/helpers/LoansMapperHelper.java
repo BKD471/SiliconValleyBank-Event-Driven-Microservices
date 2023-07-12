@@ -1,10 +1,10 @@
-package com.example.loansservices.mapper;
+package com.example.loansservices.helpers;
 
 import com.example.loansservices.dto.LoansDto;
 import com.example.loansservices.dto.PaymentDto;
 import com.example.loansservices.model.Loans;
 
-public class LoansMapper {
+public class LoansMapperHelper {
     public static Loans mapToLoans(final LoansDto loansDto) {
         return Loans.builder()
                 .customerId(loansDto.getCustomerId())

@@ -3,12 +3,11 @@ package com.example.loansservices.service.impl;
 import com.example.loansservices.dto.LoansDto;
 import com.example.loansservices.dto.PaymentDto;
 import com.example.loansservices.exception.*;
-import com.example.loansservices.mapper.LoansMapper;
+import com.example.loansservices.helpers.LoansMapperHelper;
 import com.example.loansservices.model.Loans;
 import com.example.loansservices.repository.ILoansRepository;
 import com.example.loansservices.service.ILoansService;
 import com.example.loansservices.service.IValidationService;
-import com.example.loansservices.utils.AllConstantsHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +16,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.loansservices.mapper.LoansMapper.mapToLoansDto;
-import static com.example.loansservices.mapper.LoansMapper.mapToPaymentDto;
-import static com.example.loansservices.utils.AllConstantsHelper.*;
-import static com.example.loansservices.utils.RateOfInterestHelper.getRateOfInterest;
+import static com.example.loansservices.helpers.AllConstantsHelper.*;
+import static com.example.loansservices.helpers.LoansMapperHelper.*;
+import static com.example.loansservices.helpers.RateOfInterestHelper.getRateOfInterest;
 
 
 /**
@@ -37,7 +35,6 @@ import static com.example.loansservices.utils.RateOfInterestHelper.getRateOfInte
 public class LoanServiceImpl implements ILoansService {
     private final IValidationService validationService;
     private final ILoansRepository loansRepository;
-
 
     /**
      * @param: loansRepository
@@ -102,8 +99,8 @@ public class LoanServiceImpl implements ILoansService {
      */
     @Override
     public LoansDto borrowLoan(final LoansDto loansDto) throws TenureException, ValidationException, PaymentException, InstallmentsException, LoansException {
-        final Loans loan = LoansMapper.mapToLoans(loansDto);
-        validationService.validator(loan, loansDto, ISSUE_LOAN, Optional.empty());
+        final Loans loan = mapToLoans(loansDto);
+        validationService.validator(loan, loansDto, ISSUE_LOAN, Optional.empty(),Optional.empty());
         final Loans processedLoan = processLoanInformationAndCreateLoan(loan);
         final Loans savedLoan = loansRepository.save(processedLoan);
         return mapToLoansDto(savedLoan);
@@ -118,8 +115,7 @@ public class LoanServiceImpl implements ILoansService {
     public PaymentDto payInstallments(final PaymentDto paymentDto) throws LoansException, PaymentException, InstallmentsException, ValidationException {
         final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber
                 (paymentDto.getCustomerId(), paymentDto.getLoanNumber());
-        validationService.validator(loan.get(), mapToLoansDto(loan.get()), PAY_EMI,Optional.of(List.of(loan.get())));
-
+        validationService.validator(loan.get(), mapToLoansDto(loan.get()), PAY_EMI,loan,Optional.empty());
         final Loans currentLoan = loan.get();
         long emi = currentLoan.getEmiAmount();
         int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
@@ -149,7 +145,7 @@ public class LoanServiceImpl implements ILoansService {
     @Override
     public LoansDto getInfoAboutAParticularLoan(final String customerId, final String loanNumber) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber);
-        validationService.validator(loan.get(),null,LoansValidateType.GET_INFO_LOAN, Optional.of(Arrays.asList(loan.get())));
+        validationService.validator(loan.get(),null,LoansValidateType.GET_INFO_LOAN,loan ,Optional.empty());
         return mapToLoansDto(loan.get());
     }
 
@@ -162,9 +158,8 @@ public class LoanServiceImpl implements ILoansService {
     @Override
     public List<LoansDto> getAllLoansForACustomer(final String customerId) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         final Optional<List<Loans>> allLoans = loansRepository.findAllByCustomerId(customerId);
-        LoansDto loansDto=LoansDto.builder().customerId(customerId).build();
-        validationService.validator(null, loansDto, GET_ALL_LOAN,allLoans);
-        return allLoans.get().stream().map(LoansMapper::mapToLoansDto).
+        validationService.validator(null,LoansDto.builder().customerId(customerId).build(), GET_ALL_LOAN,Optional.empty(),allLoans);
+        return allLoans.get().stream().map(LoansMapperHelper::mapToLoansDto).
                 collect(Collectors.toList());
     }
 }

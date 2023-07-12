@@ -1,4 +1,4 @@
-package com.example.loansservices.utils;
+package com.example.loansservices.helpers;
 
 public class AllConstantsHelper {
     public enum LoansValidateType{

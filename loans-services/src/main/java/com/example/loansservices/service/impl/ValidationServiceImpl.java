@@ -8,11 +8,10 @@ import com.example.loansservices.exception.ValidationException;
 import com.example.loansservices.model.Loans;
 import com.example.loansservices.repository.ILoansRepository;
 import com.example.loansservices.service.IValidationService;
-import com.example.loansservices.utils.AllConstantsHelper;
+import com.example.loansservices.helpers.AllConstantsHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import java.util.Objects;
@@ -33,7 +32,7 @@ public class ValidationServiceImpl implements IValidationService {
      */
     @Override
     public void validator(Loans loans, LoansDto loansDto,
-                          AllConstantsHelper.LoansValidateType loansValidateType, Optional<List<Loans>> optionalFields) throws ValidationException, PaymentException, InstallmentsException, LoansException {
+                          AllConstantsHelper.LoansValidateType loansValidateType,Optional<Loans> optionalFields,Optional<List<Loans>> listOptional) throws ValidationException, PaymentException, InstallmentsException, LoansException {
         final String methodName="validator(Loans,LoansDto,LoansValidateType) in ValidationServiceImpl";
 
         if(Objects.isNull(loansValidateType)) throw  new ValidationException(LoansException.class
@@ -56,6 +55,7 @@ public class ValidationServiceImpl implements IValidationService {
                 if (optionalFields.isEmpty())
                     throw new LoansException(LoansException.class, String.format("No such loans exist with Loan id %s",
                             loans.getLoanNumber()), methodName);
+
                 int payment=loansDto.getInstallmentsRemainingInNumber();
                 long emi=loans.getEmiAmount();
                 boolean isLoanClosed=!loans.isLoanActive();
@@ -66,7 +66,7 @@ public class ValidationServiceImpl implements IValidationService {
 
             }
             case GET_ALL_LOAN -> {
-                if(optionalFields.isEmpty()) throw  new LoansException(LoansException.class,
+                if(listOptional.isEmpty()) throw  new LoansException(LoansException.class,
                         String.format("There is no loan found for customer with Id %s",loansDto.getCustomerId()),
                         methodName);
             }

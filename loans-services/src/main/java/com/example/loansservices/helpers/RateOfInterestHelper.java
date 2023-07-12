@@ -1,8 +1,7 @@
-package com.example.loansservices.utils;
+package com.example.loansservices.helpers;
 
 import com.example.loansservices.exception.TenureException;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
