@@ -12,5 +12,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IValidationService {
-    void validator(Loans loans, LoansDto loansDto, AllConstantsHelper.LoansValidateType loansValidateType,Optional<Loans> optionalField,Optional<List<Loans>> listOptional) throws ValidationException, PaymentException, InstallmentsException, LoansException;
+    void validator(Loans loans, LoansDto loansDto, AllConstantsHelper.LoansValidateType loansValidateType,Optional<List<Loans>> optionalField) throws ValidationException, PaymentException, InstallmentsException, LoansException;
 }
