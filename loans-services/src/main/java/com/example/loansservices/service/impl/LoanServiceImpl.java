@@ -145,7 +145,7 @@ public class LoanServiceImpl implements ILoansService {
     @Override
     public LoansDto getInfoAboutAParticularLoan(final String customerId, final String loanNumber) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber);
-        validationService.validator(loan.get(),null,LoansValidateType.GET_INFO_LOAN,Optional.of(List.of(loan.get())));
+        validationService.validator(loan.get(),null,LoansValidateType.GET_INFO_LOAN ,Optional.of(List.of(loan.get())));
         return mapToLoansDto(loan.get());
     }
 
