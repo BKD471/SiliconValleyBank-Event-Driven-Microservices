@@ -32,7 +32,7 @@ public class ValidationServiceImpl implements IValidationService {
      */
     @Override
     public void validator(Loans loans, LoansDto loansDto,
-                          AllConstantsHelper.LoansValidateType loansValidateType,Optional<Loans> optionalFields,Optional<List<Loans>> listOptional) throws ValidationException, PaymentException, InstallmentsException, LoansException {
+                          AllConstantsHelper.LoansValidateType loansValidateType,Optional<List<Loans>> optionalFields) throws ValidationException, PaymentException, InstallmentsException, LoansException {
         final String methodName="validator(Loans,LoansDto,LoansValidateType) in ValidationServiceImpl";
 
         if(Objects.isNull(loansValidateType)) throw  new ValidationException(LoansException.class
@@ -66,7 +66,7 @@ public class ValidationServiceImpl implements IValidationService {
 
             }
             case GET_ALL_LOAN -> {
-                if(listOptional.isEmpty()) throw  new LoansException(LoansException.class,
+                if(optionalFields.isEmpty()) throw  new LoansException(LoansException.class,
                         String.format("There is no loan found for customer with Id %s",loansDto.getCustomerId()),
                         methodName);
             }
