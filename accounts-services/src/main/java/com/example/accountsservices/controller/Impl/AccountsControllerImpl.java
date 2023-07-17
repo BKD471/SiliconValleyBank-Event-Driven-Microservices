@@ -14,7 +14,7 @@ import com.example.accountsservices.helpers.AllConstantHelpers;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.service.IAccountsService;
-import com.example.accountsservices.service.IFileService;
+import com.example.accountsservices.service.IImageService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,14 +33,14 @@ import java.util.Optional;
 public class AccountsControllerImpl implements IAccountsController {
     private final IAccountsService accountsService;
     private final ICustomerRepository customerRepository;
-    private final IFileService fIleService;
+    private final IImageService fIleService;
 
     @Value("${customer.profile.images.path}")
     private String IMAGE_PATH;
 
     AccountsControllerImpl(@Qualifier("accountsServicePrimary") IAccountsService accountsService,
                            ICustomerRepository customerRepository,
-                           @Qualifier("fileServicePrimary") IFileService fIleService) {
+                           @Qualifier("fileServicePrimary") IImageService fIleService) {
         this.accountsService = accountsService;
         this.customerRepository = customerRepository;
         this.fIleService = fIleService;

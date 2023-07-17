@@ -49,7 +49,7 @@ public class AccountsServiceTests {
 
     @Qualifier("fileServicePrimary")
     @Autowired
-    private IFileService fileService;
+    private IImageService fileService;
 
     @MockBean
     private IRoleRepository roleRepositoryMock;

@@ -21,11 +21,10 @@ import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.repository.IRoleRepository;
 import com.example.accountsservices.service.AbstractService;
 import com.example.accountsservices.service.IAccountsService;
-import com.example.accountsservices.service.IFileService;
+import com.example.accountsservices.service.IImageService;
 import com.example.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -66,27 +65,22 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;
-    private final IFileService fIleService;
+    private final IImageService fIleService;
     private final IValidationService validationService;
-
-    @Value("${normal.role.id}")
-    private String NORMAL_ROLE_ID;
-    @Autowired
+    private final String NORMAL_ROLE_ID;
     private final PasswordEncoder passwordEncoder;
-
-
-    private final String INIT = "INIT";
+    private final String IMAGE_PATH;
     private final String UPDATE = "UPDATE";
-
-    @Value("${customer.profile.images.path}")
-    private String IMAGE_PATH;
 
     /**
      * @paramType AccountsRepository
      * @returnType NA
      */
     public AccountsServiceImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository,
-                               IRoleRepository roleRepository, IValidationService validationService, @Qualifier("fileServicePrimary") IFileService fIleService, PasswordEncoder passwordEncoder) {
+                               IRoleRepository roleRepository, IValidationService validationService,
+                               @Qualifier("fileServicePrimary") IImageService fIleService, PasswordEncoder passwordEncoder,
+                               @Value("${customer.profile.images.path}") String IMAGE_PATH,
+                               @Value("${normal.role.id}") String NORMAL_ROLE_ID) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
@@ -94,6 +88,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         this.fIleService = fIleService;
         this.validationService=validationService;
         this.passwordEncoder = passwordEncoder;
+        this.IMAGE_PATH=IMAGE_PATH;
+        this.NORMAL_ROLE_ID=NORMAL_ROLE_ID;
     }
 
 
@@ -168,6 +164,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         validationService.accountsUpdateValidator(account, mapToAccountsDto(account), null, CREATE_ACCOUNT);
 
+        String INIT = "INIT";
         final Accounts processedAccount = processAccountInit(account, INIT);
         final Customer processedCustomer = processCustomerInformation(customer);
 
