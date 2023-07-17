@@ -8,7 +8,7 @@ import com.example.accountsservices.helpers.CodeRetrieverHelper;
 import com.example.accountsservices.model.Accounts;
 import com.example.accountsservices.model.Customer;
 import com.example.accountsservices.service.IAccountsService;
-import com.example.accountsservices.service.IFileService;
+import com.example.accountsservices.service.IImageService;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +52,7 @@ public class AccountsControllerTest {
 
     @MockBean
     @Qualifier("fileServicePrimary")
-    private IFileService fileServiceMock;
+    private IImageService fileServiceMock;
 
     private InputStream is;
 
