@@ -24,7 +24,7 @@ public class FileServiceTests {
 
     @Autowired
     @Qualifier("fileServicePrimary")
-    private IFileService fileService;
+    private IImageService fileService;
 
     @Value("${customer.profile.images.path}")
     private String IMAGE_PATH;
