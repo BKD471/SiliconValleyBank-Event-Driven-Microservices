@@ -4,7 +4,7 @@ import com.example.accountsservices.exception.ResponseException;
 import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.service.AbstractService;
-import com.example.accountsservices.service.IFileService;
+import com.example.accountsservices.service.IImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,8 +14,8 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service("fileServicePrimary")
-public class FIleServiceImpl extends AbstractService implements IFileService {
-    protected FIleServiceImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
+public class ImageServiceImpl extends AbstractService implements IImageService {
+    protected ImageServiceImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
     }
 
@@ -40,9 +40,7 @@ public class FIleServiceImpl extends AbstractService implements IFileService {
             }
             Files.copy(file.getInputStream(), Paths.get(fullPathWithFileName));
             return fileNameWithExtension;
-        }else{
-            throw  new ResponseException(ResponseException.class,String.format("%s type not supported yet",extension),methodName);
-        }
+        }else throw  new ResponseException(ResponseException.class,String.format("%s type not supported yet",extension),methodName);
     }
 
     @Override

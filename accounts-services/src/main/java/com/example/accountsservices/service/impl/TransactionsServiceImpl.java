@@ -14,7 +14,6 @@ import com.example.accountsservices.repository.IAccountsRepository;
 import com.example.accountsservices.repository.ICustomerRepository;
 import com.example.accountsservices.repository.ITransactionsRepository;
 import com.example.accountsservices.service.AbstractService;
-import com.example.accountsservices.helpers.SortDateComparator;
 import com.example.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -155,7 +154,9 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
                         .isAfter(pastSixMonthsDate)).toList());
 
-        listOfTransactions.sort(new SortDateComparator());
+        listOfTransactions.sort((o1,o2)->(o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp()))? -1:
+                (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp()))? 1:0);
+
         final ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream()
                 .map(MapperHelper::mapToTransactionsDto)
                 .collect(Collectors.toCollection(ArrayList::new));
