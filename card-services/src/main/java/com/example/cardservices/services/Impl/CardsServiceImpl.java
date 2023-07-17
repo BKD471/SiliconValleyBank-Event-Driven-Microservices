@@ -27,7 +27,6 @@ public class CardsServiceImpl implements ICardsService {
 
     private final IValidationService validationService;
     private final ICardsRepository cardsRepository;
-    private final int MONTHS_IN_YEAR = 12;
 
     CardsServiceImpl(IValidationService validationService, ICardsRepository cardsRepository) {
         this.validationService = validationService;
@@ -154,14 +153,13 @@ public class CardsServiceImpl implements ICardsService {
                 String.format("Tenure %s is not available", tenure), methodName);
 
         int PERCENTAGE = 100;
-        double magic_coeff = ((rate_of_interest / PERCENTAGE) / MONTHS_IN_YEAR);
-        long interest = (long) (loanAmount * magic_coeff);
+        double magic_co_eff = ((rate_of_interest / PERCENTAGE) / 12);
+        long interest = (long) (loanAmount * magic_co_eff);
 
-        double numerator = Math.pow(1 + magic_coeff, tenure * MONTHS_IN_YEAR);
+        double numerator = Math.pow(1 + magic_co_eff, tenure * 12);
         double denominator = numerator - 1;
-        double emi_coeff = (numerator / denominator);
-
-        return (long) (interest * emi_coeff);
+        double emi_co_eff = (numerator / denominator);
+        return (long) (interest * emi_co_eff);
     }
 
     /**
