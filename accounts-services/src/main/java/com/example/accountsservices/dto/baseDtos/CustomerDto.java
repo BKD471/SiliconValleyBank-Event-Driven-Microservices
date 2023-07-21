@@ -1,11 +1,14 @@
 package com.example.accountsservices.dto.baseDtos;
 
 
+import com.example.accountsservices.model.Role;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,7 +21,7 @@ public class CustomerDto {
     private String customerName;
     private int age;
     private String email;
-    //private String password;
+    private String password;
     private String phoneNumber;
     private String adharNumber;
     private String panNumber;
@@ -29,4 +32,5 @@ public class CustomerDto {
     private String imageName;
     private MultipartFile customerImage;
     private List<AccountsDto> accounts;
+    private Set<RoleDto> roles=new HashSet<>();
 }

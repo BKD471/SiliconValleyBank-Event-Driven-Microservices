@@ -34,16 +34,16 @@ public class AccountsControllerImpl implements IAccountsController {
     private final IAccountsService accountsService;
     private final ICustomerRepository customerRepository;
     private final IImageService fIleService;
-
-    @Value("${customer.profile.images.path}")
-    private String IMAGE_PATH;
+    private final String IMAGE_PATH;
 
     AccountsControllerImpl(@Qualifier("accountsServicePrimary") IAccountsService accountsService,
                            ICustomerRepository customerRepository,
-                           @Qualifier("fileServicePrimary") IImageService fIleService) {
+                           @Qualifier("fileServicePrimary") IImageService fIleService,
+                           @Value("${customer.profile.images.path}") String IMAGE_PATH) {
         this.accountsService = accountsService;
         this.customerRepository = customerRepository;
         this.fIleService = fIleService;
+        this.IMAGE_PATH=IMAGE_PATH;
     }
 
     /**
