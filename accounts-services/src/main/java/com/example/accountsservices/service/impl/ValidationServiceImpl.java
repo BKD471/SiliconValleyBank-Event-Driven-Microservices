@@ -83,7 +83,7 @@ public class ValidationServiceImpl implements IValidationService {
             }
             case UPDATE_HOME_BRANCH -> {
                 location=new StringBuilder("Inside UPDATE_HOME_BRANCH");
-                return checkConflictingAccountUpdateConditionForBranch(accounts,
+                return IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts,
                         accountsDto, String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {

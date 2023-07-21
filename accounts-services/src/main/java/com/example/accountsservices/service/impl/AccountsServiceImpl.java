@@ -102,7 +102,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         //If request is adding another accounts for a customer already have an account
         //there should not be two accounts with  same accountType in same homeBranch
         if (req.equalsIgnoreCase(UPDATE)) {
-            validationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
+            IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
         }
 
         //set account Id
