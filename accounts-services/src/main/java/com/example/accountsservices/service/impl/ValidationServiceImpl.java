@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
 @Slf4j
 public class ValidationServiceImpl implements IValidationService {
     private final IAccountsRepository accountsRepository;
-    ValidationServiceImpl(IAccountsRepository accountsRepository) {
+    ValidationServiceImpl(final IAccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
     }
 

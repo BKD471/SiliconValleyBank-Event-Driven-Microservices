@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -24,7 +25,7 @@ public class ValidateNotNull implements ConstraintValidator<NotNullEnum, Enum<?>
 
     @Override
     public boolean isValid(final Enum<?> value,final ConstraintValidatorContext context) {
-        if (isBlank(value.toString())) return true;
+        if (Objects.isNull(value)) return true;
         final Matcher m = pattern.matcher(value.name());
         return m.matches();
     }

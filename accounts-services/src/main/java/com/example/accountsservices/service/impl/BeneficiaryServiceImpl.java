@@ -49,10 +49,10 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
     private final IAccountsRepository accountsRepository;
     private final IValidationService validationService;
 
-    BeneficiaryServiceImpl(IAccountsRepository accountsRepository,
-                           ICustomerRepository customerRepository,
-                           IBeneficiaryRepository beneficiaryRepository,
-                           IValidationService validationService) {
+    BeneficiaryServiceImpl(final IAccountsRepository accountsRepository,
+                           final ICustomerRepository customerRepository,
+                           final IBeneficiaryRepository beneficiaryRepository,
+                           final IValidationService validationService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.beneficiaryRepository = beneficiaryRepository;
@@ -62,7 +62,6 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
     private Beneficiary setBeneficiaryAgeFromDOB(final Beneficiary beneficiary) {
         log.debug("<-------------------setBeneficiaryAgeFromDOB(Beneficiary) BeneficiaryServiceImpl started ---------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
-        //initialize the age of beneficiaries
         final LocalDate dob = beneficiary.getBenDate_Of_Birth();
         final LocalDate now=LocalDate.now();
         final int age=Period.between(dob,now).getYears();
@@ -79,21 +78,19 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
                 "---------------------------------------------------------------------------------------------->");
         final String methodName="addBeneficiary(Accounts,BeneficiaryDto) in BeneficiaryServiceImpl";
 
-        //validate
         validationService.beneficiaryUpdateValidator(fetchedAccount, beneficiaryDto, ADD_BEN);
-        //Updating the beneficiary info & saving it
         final Beneficiary beneficiaryAccount = mapToBeneficiary(beneficiaryDto);
         beneficiaryAccount.setBankCode(getBankCode(beneficiaryAccount.getBenBank()));
         final Beneficiary processedBeneficiaryAccount = setBeneficiaryAgeFromDOB(beneficiaryAccount);
-        //establishing the beneficiary as child of Account and vice versa
+
         final List<Beneficiary> beneficiaryList = new ArrayList<>();
         beneficiaryList.add(processedBeneficiaryAccount);
         fetchedAccount.setListOfBeneficiary(beneficiaryList);
         processedBeneficiaryAccount.setAccounts(fetchedAccount);
-        //set beneficiary id
+
         final String beneficiaryId= UUID.randomUUID().toString();
         processedBeneficiaryAccount.setBeneficiaryId(beneficiaryId);
-        //sav & return
+
         final Accounts savedAccounts=accountsRepository.save(fetchedAccount);
         final Optional<Beneficiary> createdBeneficiary=savedAccounts.getListOfBeneficiary().stream().
                 filter(ben->ben.getBeneficiaryEmail().
@@ -171,8 +168,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
             //calculating & setting the new age
             LocalDate now=LocalDate.now();
             int age= Period.between(newBeneficiaryDOB,now).getYears();
-            oldBeneficiaryData.setBenAge(age);
-        }
+            oldBeneficiaryData.setBenAge(age);}
 
         if (StringUtils.isNotBlank(newBeneficiaryAdharNumber) && !newBeneficiaryAdharNumber.equalsIgnoreCase(oldBeneficiaryAdharNumber))
             oldBeneficiaryData.setBenAdharNumber(newBeneficiaryAdharNumber);
@@ -197,12 +193,10 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
 
         if(!Objects.isNull(newBenBank) && !newBenBank.equals(oldBenBank)) {
             oldBeneficiaryData.setBenBank(newBenBank);
-            oldBeneficiaryData.setBankCode(getBankCode(newBenBank));
-        }
+            oldBeneficiaryData.setBankCode(getBankCode(newBenBank));}
 
         if(StringUtils.isNotBlank(newBenDrivingLicense) && !newBenDrivingLicense.equalsIgnoreCase(oldDrivingLicense))
             oldBeneficiaryData.setBenDrivingLicense(newBenDrivingLicense);
-
 
         log.debug("<----------processedBeneficiaryAccount(Beneficiary, Beneficiary) BeneficiaryServiceImpl ended -----------------------------" +
                 "---------------------------------------------------------------------------------------------------->");
@@ -219,10 +213,8 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
                 "--------------------------------------------------------------------------------------------------------->");
         final String methodName = "updateBeneficiaryDetailsOfAnAccount(Long , BeneficiaryDto ) in BeneficiaryServiceImpl";
 
-        //validate
         validationService.beneficiaryUpdateValidator(fetchedAccounts, beneficiaryDto, UPDATE_BEN);
 
-        //fetch the beneficiary from beneficiaryList
         final String BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
         if (StringUtils.isBlank(BENEFICIARY_ID)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please enter a valid beneficiary id", methodName);
@@ -234,7 +226,6 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
                     String.format("No such beneficiary accounts exist with beneficiary id %s",
                             BENEFICIARY_ID), methodName);
 
-        //update
         final Beneficiary newBeneficiaryData = mapToBeneficiary(beneficiaryDto);
         final Beneficiary processedAccount = processedBeneficiaryAccount(beneficiaryAccount.get(), newBeneficiaryData);
         log.debug("<---------------updateBeneficiaryDetailsOfAnAccount(Accounts, BeneficiaryDto) BeneficiaryServiceImpl ended ----------------" +
@@ -291,12 +282,10 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "postRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapInputDtoToBenDto(postInputDto);
 
-        //get the account
         final String accountNumber = postInputDto.getAccountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
         final AccountsDto accountsDto = mapToAccountsDto(fetchedAccount);
 
-        //get the customer
         final Customer customer = fetchedAccount.getCustomer();
         final CustomerDto customerDto = mapToCustomerDto(customer);
 
@@ -323,11 +312,9 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "putRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapPutInputRequestDtoToBenDto(putInputRequestDto);
 
-        //get the account
         final String accountNumber = putInputRequestDto.getAccountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
-        //get customer
         final Customer loadCustomer = fetchedAccount.getCustomer();
         final AllConstantHelpers.BenUpdateRequest requestType = putInputRequestDto.getBenRequest();
         if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
@@ -352,7 +339,6 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "getRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapGetRequestInputDtoToBenDto(getInputRequestDto);
 
-        //get paging details
         final int pageNumber = getInputRequestDto.getPageNumber();
         if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
@@ -364,8 +350,6 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String sortBy = (StringUtils.isBlank(getInputRequestDto.getSortBy())) ? "beneficiaryName" : getInputRequestDto.getSortBy();
         final DIRECTION sortDir = (Objects.isNull(getInputRequestDto.getSortDir())) ? DIRECTION.asc : getInputRequestDto.getSortDir();
 
-
-        //get the account
         final String accountNumber = getInputRequestDto.getAccountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
@@ -418,7 +402,6 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "deleteRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapDeleteInputRequestDtoToBenDto(deleteInputRequestDto);
 
-        //get the account
         final String accountNUmber = deleteInputRequestDto.getAccountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
 

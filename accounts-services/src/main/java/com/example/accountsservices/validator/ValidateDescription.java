@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.example.accountsservices.helpers.AllConstantHelpers.*;
@@ -20,7 +21,7 @@ public class ValidateDescription implements ConstraintValidator<ValidDescription
      */
     @Override
     public boolean isValid(final AllConstantHelpers.DescriptionType value,final ConstraintValidatorContext context) {
-        if(isBlank(value.toString())) return false;
+        if(Objects.isNull(value)) return false;
         final Set<AllConstantHelpers.DescriptionType> validFields=new HashSet<>();
         validFields.add(ELECTRICITY);
         validFields.add(SALARY);

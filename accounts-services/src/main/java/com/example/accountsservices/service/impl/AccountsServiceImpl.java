@@ -76,11 +76,14 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
      * @paramType AccountsRepository
      * @returnType NA
      */
-    public AccountsServiceImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository,
-                               IRoleRepository roleRepository, IValidationService validationService,
-                               @Qualifier("fileServicePrimary") IImageService fIleService, PasswordEncoder passwordEncoder,
-                               @Value("${customer.profile.images.path}") String IMAGE_PATH,
-                               @Value("${normal.role.id}") String NORMAL_ROLE_ID) {
+    public AccountsServiceImpl(final IAccountsRepository accountsRepository,
+                               final ICustomerRepository customerRepository,
+                               final IRoleRepository roleRepository,
+                               final IValidationService validationService,
+                               final PasswordEncoder passwordEncoder,
+                               @Qualifier("fileServicePrimary") final IImageService fIleService,
+                               @Value("${customer.profile.images.path}") final String IMAGE_PATH,
+                               @Value("${normal.role.id}") final String NORMAL_ROLE_ID) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
@@ -101,28 +104,19 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String methodName = "processAccountInit(Accounts,String) in AccountsServiceImpl";
         //If request is adding another accounts for a customer already have an account
         //there should not be two accounts with  same accountType in same homeBranch
-        if (req.equalsIgnoreCase(UPDATE)) {
-            IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
-        }
+        if (req.equalsIgnoreCase(UPDATE)) IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
 
-        //set account Id
         final String accountNumber=UUID.randomUUID().toString();
         accounts.setAccountNumber(accountNumber);
 
-        //initialize customer account opening balance
         accounts.setBalance(0L);
-        //initialize branchCode
         accounts.setBranchCode(getBranchCode(accounts.getHomeBranch()));
-        //initialize account status OPEN
         accounts.setAccountStatus(STATUS_OPENED);
-        //initialize cash limit
         accounts.setTransferLimitPerDay(100000L);
 
-        //initialize loan fields
         accounts.setTotLoanIssuedSoFar(0L);
         accounts.setTotalOutStandingAmountPayableToBank(0L);
         accounts.setAnyActiveLoans(false);
-        //credit score is 0 so approved limit should also be zero
         accounts.setApprovedLoanLimitBasedOnCreditScore(0L);
         log.debug("<------processAccountInit(Accounts, String) AccountsServiceImpl ended -------------------------------------------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
@@ -130,16 +124,13 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     }
 
     private Customer processCustomerInformation(final Customer customer) {
-        final String methodName="processCustomerInformation(Customer)";
-
         log.debug("<-------processCustomerInformation(Customer) AccountsServiceImpl started--------------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------->");
-        //set customer age from dob
-        LocalDate dob = customer.getDateOfBirth();
-        int age = Period.between(dob, LocalDate.now()).getYears();
+        final String methodName="processCustomerInformation(Customer)";
+        final LocalDate dob = customer.getDateOfBirth();
+        final int age = Period.between(dob, LocalDate.now()).getYears();
         customer.setAge(age);
 
-        //set customerId
         final String customerId=UUID.randomUUID().toString();
         customer.setCustomerId(customerId);
 
@@ -148,7 +139,6 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         if(roles.isEmpty()) throw new RolesException(RolesException.class,"No roles found",methodName);
         customer.setRoles(new HashSet<>(Collections.singletonList(roles.get())));
 
-        //encode passwd
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         log.debug("<----------------processCustomerInformation(Customer) AccountsServiceImpl ended ------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------->");
@@ -161,28 +151,20 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final Accounts account = inputToAccounts(postInputRequestDto);
         final Customer customer = inputToCustomer(postInputRequestDto);
         account.setCustomer(customer);
-
         validationService.accountsUpdateValidator(account, mapToAccountsDto(account), null, CREATE_ACCOUNT);
 
-        String INIT = "INIT";
-        final Accounts processedAccount = processAccountInit(account, INIT);
+        final Accounts processedAccount = processAccountInit(account, "INIT");
         final Customer processedCustomer = processCustomerInformation(customer);
 
-        //add account to listOfAccounts of Customer & register customer as the owner of this account
         final List<Accounts> listOfAccounts = new ArrayList<>();
         listOfAccounts.add(processedAccount);
         processedCustomer.setAccounts(listOfAccounts);
         processedAccount.setCustomer(processedCustomer);
 
-        //save customer(parent) only , no need to save accounts(child) its auto saved due to cascadeType.All
-        //thus reducing call to db
         final Customer savedCustomer = customerRepository.save(processedCustomer);
-
-        //fetch the corresponding account of saved customer
         final String accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
         log.debug("<------------createAccount(PostInputRequestDto) AccountsServiceImpl ended --------------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
-
         return OutputDto.builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(savedCustomer)))
                 .accounts(mapToAccountsOutputDto(mapToAccountsDto(savedCustomer.getAccounts().get(0))))
@@ -195,22 +177,16 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-------------- createAccountForAlreadyCreatedUser(long,Accounts,AccountsDto) AccountsServiceImpl started -----------------------------" +
                 "------------------------------------------------------------------------------------------------------>--->");
         final String methodName = "createAccountForAlreadyCreatedUser(long,InoutDto) in AccountsServiceImpl";
-
         final Optional<Customer> customer = customerRepository.findById(customerId);
-        if (customer.isEmpty()) {
-            throw new AccountsException(AccountsException.class,
+        if (customer.isEmpty()) throw new AccountsException(AccountsException.class,
                     String.format("No such customers with id %s found", customerId),
                     methodName);
-        }
+
         loadAccount.setCustomer(customer.get());
-        //validate
         validationService.accountsUpdateValidator(loadAccount, accountsDto, null, ADD_ACCOUNT);
-        //some critical processing
         final Accounts accounts = mapToAccounts(accountsDto);
-        //register this customer as the owner of this account
         accounts.setCustomer(customer.get());
         Accounts processedAccount = processAccountInit(accounts, UPDATE);
-        //save it bebe
         final Accounts savedAccount = accountsRepository.save(processedAccount);
         log.debug("<-------createAccountForAlreadyCreatedUser(long,Accounts,AccountsDto) AccountsServiceImpl ended -----------------------------------" +
                 "--------------------------------------------------------------------------------------------------------------------->");
@@ -343,7 +319,6 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 "------------------------------------------------------------------------------------------------------------------>");
         //checking whether account exist or not
         fetchAccountByAccountNumber(accountNumber);
-        //deleting it
         accountsRepository.deleteByAccountNumber(accountNumber);
         log.debug("<-------------deleteAccount(long) AccountsServiceImpl ended -------------------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------->");
@@ -369,30 +344,21 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 "--------------------------------------------------------------------------------------------------------------------->");
         final String oldName = oldCustomerRecord.getName();
         final String newName = newCustomerRecord.getCustomerName();
-
         final LocalDate oldDateOfBirth = oldCustomerRecord.getDateOfBirth();
         final LocalDate newDateOfBirth = newCustomerRecord.getDateOfBirth();
-
         final int newAge = Period.between(newDateOfBirth, LocalDate.now()).getYears();
-
         final String oldEmail = oldCustomerRecord.getEmail();
         final String newEmail = newCustomerRecord.getEmail();
-
         final String oldPhoneNumber = oldCustomerRecord.getPhoneNumber();
         final String newPhoneNumber = newCustomerRecord.getPhoneNumber();
-
         final String oldAdharNumber = oldCustomerRecord.getAdharNumber();
         final String newAdharNumber = newCustomerRecord.getAdharNumber();
-
         final String oldPanNumber = oldCustomerRecord.getPanNumber();
         final String newPanNumber = newCustomerRecord.getPanNumber();
-
         final String voterId = oldCustomerRecord.getVoterId();
         final String newVoterId = newCustomerRecord.getVoterId();
-
         final String oldDrivingLicense = oldCustomerRecord.getDrivingLicense();
         final String newDrivingLicense = newCustomerRecord.getDrivingLicense();
-
         final String oldPassportNumber = oldCustomerRecord.getPassportNumber();
         final String newPassportNumber = newCustomerRecord.getPassportNumber();
 
@@ -400,8 +366,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             newCustomerRecord.setCustomerName(newName);
         if (StringUtils.isNotBlank( newDateOfBirth.toString()) && !oldDateOfBirth.equals(newDateOfBirth)) {
             newCustomerRecord.setDateOfBirth(newDateOfBirth);
-            newCustomerRecord.setAge(newAge);
-        }
+            newCustomerRecord.setAge(newAge);}
         if (StringUtils.isNotBlank(newEmail) && !oldEmail.equalsIgnoreCase(newEmail))
             newCustomerRecord.setEmail(newEmail);
         if (StringUtils.isNotBlank(newPhoneNumber) && !oldPhoneNumber.equalsIgnoreCase(newPhoneNumber))
@@ -447,7 +412,6 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private PageableResponseDto<AccountsDto> accountsPagination(final DIRECTION sortDir,final String sortBy,final int pageNumber,final int pageSize,final String customerId) {
         log.debug("<---------accountsPagination(DIRECTION,String ,int,int long) AccountsServiceImpl started ------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
-
         final String methodName="accountsPagination(DIRECTION,String,int,int,long) in AccountsServiceImpl";
         final Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -511,7 +475,6 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 //to be done...
                 return OutputDto.builder().defaultMessage("Baad main karenge").build();
             }
-
             default -> throw new AccountsException(AccountsException.class,
                     String.format("Invalid request type %s for POST requests", request),
                     methodName);
@@ -522,7 +485,6 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     public OutputDto getRequestExecutor(final GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException {
         final String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
 
-        //get paging details
         final int pageNumber = getInputRequestDto.getPageNumber();
         if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
@@ -530,12 +492,9 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         if (getInputRequestDto.getPageSize() < 0)
             throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
         final int pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
-
         final String sortBy = (StringUtils.isBlank(getInputRequestDto.getSortBy())) ? "balance" : getInputRequestDto.getSortBy();
         final AllConstantHelpers.DIRECTION sortDir = (Objects.isNull(getInputRequestDto.getSortDir())) ? asc : getInputRequestDto.getSortDir();
 
-
-        //map
         final AccountsDto accountsDto = getInputToAccountsDto(getInputRequestDto);
         final CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);
         //load accounts & customer
@@ -571,7 +530,6 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 if (!allPageableFieldsOfAccounts.contains(sortBy))
                     throw new BadApiRequestException(BadApiRequestException.class,
                             String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", location, methodName));
-                //paging & sorting
                 final PageableResponseDto<AccountsDto> pageableResponseDto=accountsPagination(sortDir,sortBy,pageNumber,pageSize,customerId);
 
                 return OutputDto.builder()
@@ -588,11 +546,9 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     @Override
     public OutputDto putRequestExecutor(final PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException {
         final String methodName = "putRequestExecutor(InputDto) in AccountsServiceImpl";
-        //map
         final AccountsDto accountsDto = putInputRequestToAccountsDto(putInputRequestDto);
         final CustomerDto customerDto = putInputRequestToCustomerDto(putInputRequestDto);
 
-        //get paging details
         final int pageNumber = putInputRequestDto.getPageNumber();
         if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
@@ -620,9 +576,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         final StringBuffer location=new StringBuffer(500);
         switch (request) {
-            case ADD_ACCOUNT -> {
-                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);
-            }
+            case ADD_ACCOUNT -> {return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);}
             case UPDATE_HOME_BRANCH -> {
                 final Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
 
@@ -634,7 +588,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                         .build();
             }
             case UPDATE_CREDIT_SCORE -> {
-                //updateCreditScore(accountsDto);
+                updateCreditScore(accountsDto);
                 return OutputDto.builder().defaultMessage("Baad main karenge").build();
             }
             case UPLOAD_CUSTOMER_IMAGE -> {
@@ -669,7 +623,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             }
             case INC_APPROVED_LOAN_LIMIT -> {
                 //to be done.....
-                return OutputDto.builder().defaultMessage("BAAD MAIN KARNGE BSDK").build();
+                return OutputDto.builder().defaultMessage("BAAD MAIN KARNGE").build();
             }
             case UPDATE_CUSTOMER_DETAILS -> {
                 location.append("Inside UPDATE_CUSTOMER_DETAILS");

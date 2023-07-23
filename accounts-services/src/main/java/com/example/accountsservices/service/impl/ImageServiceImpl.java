@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Service("fileServicePrimary")
 public class ImageServiceImpl extends AbstractService implements IImageService {
-    protected ImageServiceImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
+    protected ImageServiceImpl(final IAccountsRepository accountsRepository,final ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
     }
 

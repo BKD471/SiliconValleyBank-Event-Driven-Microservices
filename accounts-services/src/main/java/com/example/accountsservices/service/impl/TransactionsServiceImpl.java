@@ -31,9 +31,9 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
     private final ITransactionsRepository transactionsRepository;
     private final IAccountsRepository accountsRepository;
 
-    TransactionsServiceImpl(ITransactionsRepository transactionsRepository,
-                            IAccountsRepository accountsRepository,
-                            ICustomerRepository customerRepository) {
+    TransactionsServiceImpl(final ITransactionsRepository transactionsRepository,
+                            final IAccountsRepository accountsRepository,
+                            final ICustomerRepository customerRepository) {
         super(accountsRepository,customerRepository);
         this.transactionsRepository = transactionsRepository;
         this.accountsRepository = accountsRepository;
