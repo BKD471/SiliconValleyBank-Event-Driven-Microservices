@@ -6,6 +6,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -20,20 +21,23 @@ public class CardsDto {
     private Cards.CARD_NETWORK cardNetwork;
 
     //last transaction amount
-    private double lastTransactionAmount;
+    private BigDecimal lastTransactionAmount;
 
     //last billed summary
-    private double statementDue;
-    private double minimumDue;
+    private BigDecimal statementDue;
+    private BigDecimal minimumDue;
     private LocalDate dueDate;
 
     //last payment details
-    private double amountPaid;
+    private BigDecimal amountPaid;
     private LocalDate lastPaidDate;
-    private double currentOutStanding;
-    private double unBilledOutstanding;
-    private double availableLimit;
-    private double sanctionedCreditLimit;
+    private BigDecimal currentOutStanding;
+    private BigDecimal unBilledOutstanding;
+    private BigDecimal availableLimit;
+    private BigDecimal sanctionedCreditLimit;
+    private LocalDate lastRefreshedCreditLimit;
     private int creditScore;
     private int rewardPoints;
+    private BigDecimal netIncomePA;
+    private LocalDate billGenerationDate;
 }

@@ -5,5 +5,5 @@ import com.example.cardservices.helpers.AllConstantHelpers;
 import com.example.cardservices.model.Cards;
 
 public interface IValidationService {
-    void cardsValidator(CardsDto cardsDto, Cards cards, AllConstantHelpers.CardsValidationType cardsValidationType);
+    void cardsValidator(final CardsDto cardsDto,final Cards cards,final AllConstantHelpers.CardsValidationType cardsValidationType);
 }

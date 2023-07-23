@@ -77,7 +77,7 @@ public class Cards extends  Audit{
     private BigDecimal sanctionedCreditLimit;
 
     @Column(name="last_cred_limit_rfereshed")
-    private BigDecimal lastRefreshedCreditLimit;
+    private LocalDate lastRefreshedCreditLimit;
 
     @Column(name = "crdt_score")
     private int creditScore;
