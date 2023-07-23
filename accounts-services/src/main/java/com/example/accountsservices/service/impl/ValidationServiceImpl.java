@@ -42,10 +42,11 @@ public class ValidationServiceImpl implements IValidationService {
         log.debug("<---------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
         final String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
-        final StringBuilder location ;
+        final StringBuffer location=new StringBuffer(500) ;
         switch (request) {
             case CREATE_ACC -> {
-                location =new StringBuilder("Inside CREATE_ACC");
+                location.append("Inside CREATE_ACC");
+                location.trimToSize();
                 //check whether such account owner is already present
                 final List<Accounts> accountsList = accountsRepository.findAll();
                 //if no accounts by far then certainly we can add
@@ -58,7 +59,8 @@ public class ValidationServiceImpl implements IValidationService {
                             String.format("%s of %s", location, methodName));
             }
             case ADD_ACC -> {
-                location=new StringBuilder("Inside ADD_ACC");
+                location.append("Inside ADD_ACC");
+                location.trimToSize();
                 final int MAX_PERMISSIBLE_ACCOUNT = 5;
                 //prevent a customer to create more than 10 accounts
                 final Customer customer = accounts.getCustomer();
@@ -71,7 +73,8 @@ public class ValidationServiceImpl implements IValidationService {
                 return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
             }
             case UPLOAD_PROFILE_IMAGE -> {
-                location =new StringBuilder("Inside UPLOAD_PROFILE_IMAGE");
+                location.append("Inside UPLOAD_PROFILE_IMAGE");
+                location.trimToSize();
                 if (isNull(customerDto.getCustomerImage()))
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Please provide image", String.format("%s of %s", methodName, location));
@@ -82,12 +85,14 @@ public class ValidationServiceImpl implements IValidationService {
                             String.format("%s of %s", methodName, location));
             }
             case UPDATE_HOME_BRANCH -> {
-                location=new StringBuilder("Inside UPDATE_HOME_BRANCH");
+                location.append("Inside UPDATE_HOME_BRANCH");
+                location.trimToSize();
                 return IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts,
                         accountsDto, String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
-                location=new StringBuilder("Inside CLOSE_ACCOUNT");
+                location.append("Inside CLOSE_ACCOUNT");
+                location.trimToSize();
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED ->
@@ -100,20 +105,18 @@ public class ValidationServiceImpl implements IValidationService {
                 }
             }
             case RE_OPEN_ACCOUNT -> {
-                location=new StringBuilder("Inside RE_OPEN_ACCOUNT");
+                location.append("Inside RE_OPEN_ACCOUNT");
+                location.trimToSize();
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
-                    case CLOSED -> {
-                        return true;
-                    }
-                    case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
-                    case OPEN ->
-                            throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
+                    case CLOSED -> {return true;}
+                    case BLOCKED -> throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
+                    case OPEN -> throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
                 }
             }
             case BLOCK_ACCOUNT -> {
-                location=new StringBuilder("Inside BLOCK_ACCOUNT");
+                location.append("Inside BLOCK_ACCOUNT");
+                location.trimToSize();
                 if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
                     throw new AccountsException(AccountsException.class,
                             String.format("Status of Account: %s is already Blocked",
@@ -133,10 +136,11 @@ public class ValidationServiceImpl implements IValidationService {
         log.debug("<----validate(Accounts,BeneficiaryDto, validateBenType) BeneficiaryServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
         final String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
-        final StringBuilder location;
+        final StringBuffer location=new StringBuffer(500);
         switch (type) {
             case ADD_BEN -> {
-                location = new StringBuilder("Inside ADD_BEN");
+                location.append("Inside ADD_BEN");
+                location.trimToSize();
                 boolean notPossible;
                 final List<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
                 if (listOfBeneficiaries.size() >= 5) throw new BeneficiaryException(BeneficiaryException.class,
@@ -212,7 +216,8 @@ public class ValidationServiceImpl implements IValidationService {
 
             }
             case UPDATE_BEN -> {
-                location = new StringBuilder("Inside UPDATE_BEN");
+                location.append("Inside UPDATE_BEN");
+                location.trimToSize();
                 boolean isTrue;
                 if (StringUtils.isNotBlank(beneficiaryDto.getBenDate_Of_Birth().toString())) {
                     isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.getBenDate_Of_Birth().toString());
@@ -266,7 +271,8 @@ public class ValidationServiceImpl implements IValidationService {
                 }
             }
             case DELETE_BEN -> {
-                location=new StringBuilder("Inside Delete Ben");
+                location.append("Inside Delete Ben");
+                location.trimToSize();
                 String beneficiaryId= beneficiaryDto.getBeneficiaryId();
                 if(CollectionUtils.isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
                         "Account has no beneficiaries to delete",String.format("%s of %s",location,methodName));

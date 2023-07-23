@@ -373,10 +373,11 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
 
-        final StringBuilder location;
+        final StringBuffer location=new StringBuffer(500);
         switch (requestType) {
             case GET_BEN -> {
-                location=new StringBuilder("Inside GET_BEN");
+                location.append("Inside GET_BEN");
+                location.trimToSize();
                 final Optional<Beneficiary> beneficiary = getBeneficiaryById(fetchedAccount, beneficiaryDto.getBeneficiaryId());
                 if (beneficiary.isEmpty())
                     throw new BeneficiaryException(BeneficiaryException.class, String.format("No such beneficiaries present with id:%s",
@@ -390,7 +391,8 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
                         .build();
             }
             case GET_ALL_BEN -> {
-                location =new StringBuilder("Inside GET_ALL_BEN");
+                location.append("Inside GET_ALL_BEN");
+                location.trimToSize();
                 //validate the genuineness of sorting fields
                 final Set<String> allPageableFieldsOfAccounts = getAllPageableFieldsOfBeneficiary();
                 if (!allPageableFieldsOfAccounts.contains(sortBy))

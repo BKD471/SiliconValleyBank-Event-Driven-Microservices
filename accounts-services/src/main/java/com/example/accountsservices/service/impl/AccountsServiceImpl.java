@@ -551,7 +551,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         if (Objects.isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
-        final StringBuilder location;
+        final StringBuffer location=new StringBuffer(500);
         switch (request) {
             case GET_CREDIT_SCORE -> {
                 getCreditScore(accountNumber);
@@ -562,7 +562,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 return getAccountInfo(accountNumber);
             }
             case GET_ALL_ACC -> {
-                location = new StringBuilder("Inside GET_ALL_ACC");
+                location.append("Inside GET_ALL_ACC");
+                location.trimToSize();
                 if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class, "No customer found", String.format("%s of %s", location, methodName));
 
                 //validate the genuineness of sorting fields
@@ -617,7 +618,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
 
-        final StringBuilder location;
+        final StringBuffer location=new StringBuffer(500);
         switch (request) {
             case ADD_ACCOUNT -> {
                 return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);
@@ -671,7 +672,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 return OutputDto.builder().defaultMessage("BAAD MAIN KARNGE BSDK").build();
             }
             case UPDATE_CUSTOMER_DETAILS -> {
-                location = new StringBuilder("Inside UPDATE_CUSTOMER_DETAILS in %s");
+                location.append("Inside UPDATE_CUSTOMER_DETAILS");
+                location.trimToSize();
                 if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
                         "Please specify a customer id to update details", String.format("%s of %s", location, methodName));
                 final CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
