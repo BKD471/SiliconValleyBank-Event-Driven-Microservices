@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface IValidationService {
     org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(IValidationService.class);
-    default Boolean checkConflictingAccountUpdateConditionForBranch(final Accounts accounts,final AccountsDto accountsDto,final String locality) throws AccountsException {
+    static Boolean checkConflictingAccountUpdateConditionForBranch(final Accounts accounts,final AccountsDto accountsDto,final String locality) throws AccountsException {
         log.debug("<----------------------------" +
                 "checkConflictingAccountUpdateConditionForBranch(Accounts,AccountsDto,String) AccountsServiceImpl started---------------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------------->");

@@ -10,6 +10,7 @@ import com.example.cardservices.services.ICardsService;
 import com.example.cardservices.services.IValidationService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +25,6 @@ import static com.example.cardservices.helpers.CardsMapperHelper.mapToCardsDto;
 
 @Service("cardsServicePrimary")
 public class CardsServiceImpl implements ICardsService {
-
     private final IValidationService validationService;
     private final ICardsRepository cardsRepository;
 
@@ -33,13 +33,13 @@ public class CardsServiceImpl implements ICardsService {
         this.cardsRepository = cardsRepository;
     }
 
-    private double issuedCreditLimit(Cards cards) {
-        final double CREDIT_LIMIT_FRACTION = 0.1192;
-        return cards.getNetIncomePA() * CREDIT_LIMIT_FRACTION;
+    private BigDecimal issuedCreditLimit(Cards cards) {
+        final BigDecimal CREDIT_LIMIT_FRACTION = BigDecimal.valueOf(0.1192);
+        return new BigDecimal(String.valueOf(cards.getNetIncomePA())).multiply(CREDIT_LIMIT_FRACTION);
     }
 
     private Cards processCardInformation(Cards cards) {
-        final double ISSUED_CREDIT_LIMIT = issuedCreditLimit(cards);
+        final BigDecimal ISSUED_CREDIT_LIMIT = issuedCreditLimit(cards);
         final long BILL_GENERATION_IN_DAYS = 20;
         final long DUE_IN = 10;
         LocalDateTime ISSUED_DATE = cards.getIssuedDate();
@@ -54,14 +54,14 @@ public class CardsServiceImpl implements ICardsService {
                 .availableLimit(ISSUED_CREDIT_LIMIT)
                 .billGenerationDate(BILL_GEN_DATE)
                 .dueDate(DUE_DATE)
-                .currentOutStanding(0.0d)
-                .minimumDue(0.0d)
-                .statementDue(0.0d)
+                .currentOutStanding(BigDecimal.valueOf(0.0d))
+                .minimumDue(BigDecimal.valueOf(0.0d))
+                .statementDue(BigDecimal.valueOf(0.0d))
                 .lastPaidDate(null)
                 .sanctionedCreditLimit(ISSUED_CREDIT_LIMIT)
                 .rewardPoints(0)
-                .amountPaid(0.0d)
-                .unBilledOutstanding(0.0d).build();
+                .amountPaid(BigDecimal.valueOf(0.0d))
+                .unBilledOutstanding(BigDecimal.valueOf(0.0d)).build();
     }
 
     /**
@@ -152,10 +152,8 @@ public class CardsServiceImpl implements ICardsService {
         if (rate_of_interest == null) throw new TenureException(TenureException.class,
                 String.format("Tenure %s is not available", tenure), methodName);
 
-        int PERCENTAGE = 100;
-        double magic_co_eff = ((rate_of_interest / PERCENTAGE) / 12);
+        double magic_co_eff = ((rate_of_interest / 100) / 12);
         long interest = (long) (loanAmount * magic_co_eff);
-
         double numerator = Math.pow(1 + magic_co_eff, tenure * 12);
         double denominator = numerator - 1;
         double emi_co_eff = (numerator / denominator);
