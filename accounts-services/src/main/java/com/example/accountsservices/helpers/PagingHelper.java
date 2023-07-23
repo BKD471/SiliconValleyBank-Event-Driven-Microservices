@@ -48,8 +48,8 @@ public class PagingHelper {
     public static Set<String> getAllPageableFieldsOfBeneficiary(){return getSetsOfBeneficiaryFieldNames();}
 
     public static <e,d> PageableResponseDto<d> getPageableResponse(Page<e> page, Class<d> type){
-        List<e> entity=page.getContent();
-        List<d> userDtoList=entity.stream().map( Object->new ModelMapper().map(Object,type)).toList();
+        final List<e> entity=page.getContent();
+        final List<d> userDtoList=entity.stream().map( Object->new ModelMapper().map(Object,type)).toList();
 
         final PageableResponseDto<d> responseDto=new PageableResponseDto<>();
         responseDto.setContent(userDtoList);

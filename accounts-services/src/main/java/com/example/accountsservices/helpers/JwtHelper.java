@@ -18,10 +18,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtHelper {
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    private final String SECRET;
 
-    @Value("${jwt.secret}")
-    private String secret;
-
+    JwtHelper(final @Value("${jwt.secret}") String SECRET){
+        this.SECRET=SECRET;}
 
     //retrieve username from jwt token
     public String getUsernameFromToken(final String token) {
@@ -40,7 +40,7 @@ public class JwtHelper {
 
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(final String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
     }
 
     //check if the token has expired
@@ -64,7 +64,7 @@ public class JwtHelper {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+                .signWith(SignatureAlgorithm.HS512, SECRET).compact();
     }
 
     //validate token

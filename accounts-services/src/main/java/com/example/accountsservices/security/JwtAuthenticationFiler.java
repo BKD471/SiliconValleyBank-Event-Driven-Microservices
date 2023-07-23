@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,15 +19,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 @Slf4j
 public class JwtAuthenticationFiler extends OncePerRequestFilter {
+    private final JwtHelper jwtHelper;
+    private final UserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtHelper jwtHelper;
-    @Autowired
-    private UserDetailsService userDetailsService;
+    JwtAuthenticationFiler(final JwtHelper jwtHelper,
+                           final UserDetailsService userDetailsService){
+        this.jwtHelper=jwtHelper;
+        this.userDetailsService=userDetailsService;
+    }
 
     /**
      * @param request
@@ -37,7 +42,6 @@ public class JwtAuthenticationFiler extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(final HttpServletRequest request,final HttpServletResponse response,final FilterChain filterChain) throws ServletException, IOException {
-
         final String requestHeader = request.getHeader("Authorization");
         String userName = null;
         String jwtToken = null;
@@ -56,7 +60,8 @@ public class JwtAuthenticationFiler extends OncePerRequestFilter {
             log.warn("Invalid Jwt Token");
         }
 
-        if (null != userName && null == SecurityContextHolder.getContext().getAuthentication()) {
+        if (StringUtils.isNotEmpty(userName) &&
+                Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
             //fetch user details from token
             UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
             final Boolean validateToken = jwtHelper.validateToken(jwtToken, userDetails);

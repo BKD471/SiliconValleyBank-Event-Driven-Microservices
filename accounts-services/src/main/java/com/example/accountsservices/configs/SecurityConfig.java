@@ -20,12 +20,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    @Autowired
-    private JwtAuthenticationFiler jwtAuthenticationFiler;
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationFiler jwtAuthenticationFiler;
+    private final UserDetailsService userDetailsService;
+
+    SecurityConfig(final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                   final JwtAuthenticationFiler jwtAuthenticationFiler,
+                   final UserDetailsService userDetailsService){
+        this.jwtAuthenticationEntryPoint=jwtAuthenticationEntryPoint;
+        this.jwtAuthenticationFiler=jwtAuthenticationFiler;
+        this.userDetailsService=userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity httpSecurity) throws Exception {
