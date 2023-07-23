@@ -1,7 +1,7 @@
 package com.example.cardservices.helpers;
 
 public class AllConstantHelpers {
-    public  enum CardsValidationType{
+    public enum CardsValidationType{
         ISSUE_CARD,GENERATE_CREDIT_SCORE,REQUEST_FOR_REVISED_CREDIT_LIMIT,FLEXI_PAY,GET_ALL_CARDS
     }
 

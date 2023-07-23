@@ -5,7 +5,7 @@ import com.example.cardservices.model.Cards;
 
 public class CardsMapperHelper {
 
-   public static Cards mapToCards(CardsDto cardsDto){
+   public static Cards mapToCards(final CardsDto cardsDto){
        return Cards.builder()
                .customerId(cardsDto.getCustomerId())
                .cardNumber(cardsDto.getCardNumber())
@@ -19,6 +19,9 @@ public class CardsMapperHelper {
                .lastTransactionAmount(cardsDto.getLastTransactionAmount())
                .statementDue(cardsDto.getStatementDue())
                .lastPaidDate(cardsDto.getLastPaidDate())
+               .lastRefreshedCreditLimit(cardsDto.getLastRefreshedCreditLimit())
+               .netIncomePA(cardsDto.getNetIncomePA())
+               .billGenerationDate(cardsDto.getBillGenerationDate())
                .sanctionedCreditLimit(cardsDto.getSanctionedCreditLimit())
                .rewardPoints(cardsDto.getRewardPoints())
                .amountPaid(cardsDto.getAmountPaid())
@@ -26,7 +29,7 @@ public class CardsMapperHelper {
                .build();
    }
 
-    public static CardsDto mapToCardsDto(Cards cards){
+    public static CardsDto mapToCardsDto(final Cards cards){
         return CardsDto.builder()
                 .customerId(cards.getCustomerId())
                 .cardNumber(cards.getCardNumber())
@@ -40,7 +43,10 @@ public class CardsMapperHelper {
                 .statementDue(cards.getStatementDue())
                 .lastPaidDate(cards.getLastPaidDate())
                 .lastTransactionAmount(cards.getLastTransactionAmount())
+                .lastRefreshedCreditLimit(cards.getLastRefreshedCreditLimit())
                 .sanctionedCreditLimit(cards.getSanctionedCreditLimit())
+                .netIncomePA(cards.getNetIncomePA())
+                .billGenerationDate(cards.getBillGenerationDate())
                 .rewardPoints(cards.getRewardPoints())
                 .amountPaid(cards.getAmountPaid())
                 .unBilledOutstanding(cards.getUnBilledOutstanding())
