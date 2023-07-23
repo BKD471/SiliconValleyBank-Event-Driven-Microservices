@@ -551,6 +551,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         if (Objects.isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        final StringBuilder location;
         switch (request) {
             case GET_CREDIT_SCORE -> {
                 getCreditScore(accountNumber);
@@ -561,14 +562,14 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 return getAccountInfo(accountNumber);
             }
             case GET_ALL_ACC -> {
-                final String locality = String.format("Inside switch ,for GET_ALL_ACC case under method %s", methodName);
-                if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class, locality, methodName);
+                location = new StringBuilder("Inside GET_ALL_ACC");
+                if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class, "No customer found", String.format("%s of %s", location, methodName));
 
                 //validate the genuineness of sorting fields
                 final Set<String> allPageableFieldsOfAccounts = getAllPageableFieldsOfAccounts();
                 if (!allPageableFieldsOfAccounts.contains(sortBy))
                     throw new BadApiRequestException(BadApiRequestException.class,
-                            String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", locality, methodName));
+                            String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", location, methodName));
                 //paging & sorting
                 final PageableResponseDto<AccountsDto> pageableResponseDto=accountsPagination(sortDir,sortBy,pageNumber,pageSize,customerId);
 
@@ -615,6 +616,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         if (Objects.isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+
+        final StringBuilder location;
         switch (request) {
             case ADD_ACCOUNT -> {
                 return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);
@@ -668,9 +671,9 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 return OutputDto.builder().defaultMessage("BAAD MAIN KARNGE BSDK").build();
             }
             case UPDATE_CUSTOMER_DETAILS -> {
-                final String location = String.format("Inside UPDATE_CUSTOMER_DETAILS in %s", methodName);
+                location = new StringBuilder("Inside UPDATE_CUSTOMER_DETAILS in %s");
                 if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
-                        "Please specify a customer id to update details", location);
+                        "Please specify a customer id to update details", String.format("%s of %s", location, methodName));
                 final CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
                 final PageableResponseDto<AccountsDto> pageableResponseDto=accountsPagination(sortDir,sortBy,pageNumber,pageSize,customerId);
 

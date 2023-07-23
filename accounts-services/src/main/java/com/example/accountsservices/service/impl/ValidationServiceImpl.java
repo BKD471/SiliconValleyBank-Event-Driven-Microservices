@@ -42,7 +42,7 @@ public class ValidationServiceImpl implements IValidationService {
         log.debug("<---------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
         final String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
-        StringBuilder location=new StringBuilder();
+        final StringBuilder location ;
         switch (request) {
             case CREATE_ACC -> {
                 location =new StringBuilder("Inside CREATE_ACC");
@@ -87,34 +87,37 @@ public class ValidationServiceImpl implements IValidationService {
                         accountsDto, String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
+                location=new StringBuilder("Inside CLOSE_ACCOUNT");
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED ->
-                            throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), location.toString());
+                            throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()),String.format("%s of %s", location, methodName));
                     case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location.toString());
+                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()),String.format("%s of %s", location, methodName));
                     case OPEN -> {
                         return accounts.getAnyActiveLoans();
                     }
                 }
             }
             case RE_OPEN_ACCOUNT -> {
+                location=new StringBuilder("Inside RE_OPEN_ACCOUNT");
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED -> {
                         return true;
                     }
                     case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), location.toString());
+                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
                     case OPEN ->
-                            throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), location.toString());
+                            throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
                 }
             }
             case BLOCK_ACCOUNT -> {
+                location=new StringBuilder("Inside BLOCK_ACCOUNT");
                 if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
                     throw new AccountsException(AccountsException.class,
                             String.format("Status of Account: %s is already Blocked",
-                                    accounts.getAccountStatus()), location.toString());
+                                    accounts.getAccountStatus()),String.format("%s of %s", location, methodName));
                 return true;
             }
         }
@@ -130,7 +133,7 @@ public class ValidationServiceImpl implements IValidationService {
         log.debug("<----validate(Accounts,BeneficiaryDto, validateBenType) BeneficiaryServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
         final String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
-        StringBuilder location;
+        final StringBuilder location;
         switch (type) {
             case ADD_BEN -> {
                 location = new StringBuilder("Inside ADD_BEN");
@@ -281,7 +284,7 @@ public class ValidationServiceImpl implements IValidationService {
                         "Your account must have at least one beneficiary",String.format("%s of %s",location,methodName));
             }
             default -> throw new BeneficiaryException(BeneficiaryException.class,
-                    "Invalid type of request", methodName);
+                    "Invalid type of Validation request", methodName);
         }
         log.debug("<-------------------validate(Accounts, BeneficiaryDto, validateBenType) BeneficiaryServiceImpl ended ---------------------" +
                 "--------------------------------------------------------------------------------------------------->");

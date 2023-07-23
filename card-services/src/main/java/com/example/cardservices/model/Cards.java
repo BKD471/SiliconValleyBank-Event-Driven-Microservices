@@ -3,6 +3,7 @@ package com.example.cardservices.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -40,13 +41,13 @@ public class Cards extends  Audit{
 
     //net income
     @Column(name = "net_income_pa")
-    private long netIncomePA;
+    private BigDecimal netIncomePA;
 
     //last blld summary
     @Column(name = "stmt_due")
-    private double statementDue;
+    private BigDecimal statementDue;
     @Column(name = "mn_due")
-    private double minimumDue;
+    private BigDecimal minimumDue;
     @Column(name = "bill-gen_date")
     private LocalDate billGenerationDate;
     @Column(name = "due_dt")
@@ -54,29 +55,29 @@ public class Cards extends  Audit{
 
     //last transaction
     @Column(name = "last_trn_amnt")
-    private double lastTransactionAmount;
+    private BigDecimal lastTransactionAmount;
 
     //last pmt dtls
     @Column(name = "amnt_paid")
-    private double amountPaid;
+    private BigDecimal amountPaid;
 
     @Column(name = "lst_pd_dt")
     private LocalDate lastPaidDate;
 
     @Column(name = "curr_out_standing")
-    private double currentOutStanding;
+    private BigDecimal currentOutStanding;
 
     @Column(name = "un_bld_out_standing")
-    private double unBilledOutstanding;
+    private BigDecimal unBilledOutstanding;
 
     @Column(name = "avail_lmt")
-    private double availableLimit;
+    private BigDecimal availableLimit;
 
     @Column(name = "total_limit")
-    private double sanctionedCreditLimit;
+    private BigDecimal sanctionedCreditLimit;
 
     @Column(name="last_cred_limit_rfereshed")
-    private LocalDate lastRefreshedCreditLimit;
+    private BigDecimal lastRefreshedCreditLimit;
 
     @Column(name = "crdt_score")
     private int creditScore;

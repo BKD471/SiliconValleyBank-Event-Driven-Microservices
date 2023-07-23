@@ -373,7 +373,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
 
-        StringBuilder location;
+        final StringBuilder location;
         switch (requestType) {
             case GET_BEN -> {
                 location=new StringBuilder("Inside GET_BEN");
