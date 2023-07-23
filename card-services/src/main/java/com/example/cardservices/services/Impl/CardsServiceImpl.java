@@ -87,6 +87,7 @@ public class CardsServiceImpl implements ICardsService {
     public List<CardsDto> getAllCardsByCustomerId(String customerId) {
         String methodName = "getAllCardsByCustomerId(Long) in CardsServiceImpl";
         CardsDto cardsDto = CardsDto.builder().customerId(customerId).build();
+
         validationService.cardsValidator(cardsDto, null, GET_ALL_CARDS);
 
         Optional<List<Cards>> listOfCards = cardsRepository.findAllByCustomerId(customerId);
