@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,7 +43,7 @@ public class LoanServiceImpl implements ILoansService {
      * @paramType: LoansRepository
      * @returnType: NA
      **/
-    LoanServiceImpl(ILoansRepository loansRepository, IValidationService validationService) {
+    LoanServiceImpl(final ILoansRepository loansRepository,final IValidationService validationService) {
         this.loansRepository = loansRepository;
         this.validationService = validationService;
     }
@@ -49,19 +51,19 @@ public class LoanServiceImpl implements ILoansService {
     /**
      * Method to calculate monthly emi
      */
-    private long calculateEmi(final long loanAmount, final int tenure) throws TenureException {
+    private BigDecimal calculateEmi(final BigDecimal loanAmount, final int tenure) throws TenureException {
         final String methodName = "calculateEmi(Long,int) in LoanServiceImpl";
         final Double rate_of_interest = getRateOfInterest(tenure);
         if (Objects.isNull(rate_of_interest)) throw new TenureException(TenureException.class,
                 String.format("Tenure %s is not available", tenure), methodName);
 
-        double magic_co_eff = ((rate_of_interest / 100) / 12);
-        long interest = (long) (loanAmount * magic_co_eff);
+        final BigDecimal magic_co_eff = BigDecimal.valueOf(((rate_of_interest / 100) / 12));
+        final BigDecimal interest =  new BigDecimal(String.valueOf(loanAmount)).multiply(magic_co_eff);
 
-        double numerator = Math.pow(1 + magic_co_eff, tenure * 12);
-        double denominator = numerator - 1;
-        double emi_co_eff = (numerator / denominator);
-        return (long) (interest * emi_co_eff);
+        final BigDecimal numerator = new BigDecimal(String.valueOf(new BigDecimal(String.valueOf(magic_co_eff)).add(BigDecimal.valueOf(1)))).pow(tenure*12);
+        final BigDecimal denominator = new BigDecimal(String.valueOf(numerator)).subtract(BigDecimal.valueOf(1));
+        final BigDecimal emi_co_eff = new BigDecimal(String.valueOf(numerator)).divide(denominator,RoundingMode.FLOOR);
+        return new BigDecimal(String.valueOf(interest)) .multiply( emi_co_eff);
     }
 
     /**
@@ -74,8 +76,8 @@ public class LoanServiceImpl implements ILoansService {
         final String loanNumber = UUID.randomUUID().toString();
         final int tenure = loan.getLoanTenureInYears();
         LocalDate endDate = loan.getStartDate().plusYears(tenure);
-        final long loanAmount = loan.getTotalLoan();
-        final long emiAmount = calculateEmi(loanAmount, tenure);
+        final BigDecimal loanAmount = loan.getTotalLoan();
+        final BigDecimal emiAmount = calculateEmi(loanAmount, tenure);
         final double rate_of_interest = getRateOfInterest(tenure);
 
         loan.setLoanNumber(loanNumber);
@@ -84,7 +86,7 @@ public class LoanServiceImpl implements ILoansService {
         loan.setEmiAmount(emiAmount);
         loan.setRate_Of_Interest(rate_of_interest);
         loan.setOutstandingAmount(loan.getTotalLoan());
-        loan.setAmountPaid(0L);
+        loan.setAmountPaid(BigDecimal.valueOf(0L));
         loan.setTotalInstallmentsInNumber(tenure * 12);
         loan.setInstallmentsPaidInNumber(0);
         loan.setInstallmentsRemainingInNumber(tenure * 12);
@@ -117,21 +119,24 @@ public class LoanServiceImpl implements ILoansService {
                 (paymentDto.getCustomerId(), paymentDto.getLoanNumber());
         validationService.validator(loan.get(), mapToLoansDto(loan.get()), PAY_EMI,Optional.of(List.of(loan.get())));
         final Loans currentLoan = loan.get();
-        long emi = currentLoan.getEmiAmount();
+        BigDecimal emi = currentLoan.getEmiAmount();
         int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
         int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
-        long payment = paymentDto.getPaymentAmount();
+        BigDecimal payment = paymentDto.getPaymentAmount();
 
         //updating the installments data
-        int NoOfInstallments = (int) (payment / emi);
+        int NoOfInstallments =new BigDecimal(String.valueOf(payment)).divide(emi, RoundingMode.CEILING).intValue();
         currentLoan.setInstallmentsPaidInNumber(NoOfInstallments + paidInstallments);
         currentLoan.setInstallmentsRemainingInNumber(remainingInstallments - NoOfInstallments);
         if(currentLoan.getInstallmentsRemainingInNumber()==0) currentLoan.setLoanActive(false);
+
         //updating the outstanding amount,amount paid
-        long outstandingAmount = currentLoan.getOutstandingAmount();
-        long amountPaid = currentLoan.getAmountPaid();
-        currentLoan.setOutstandingAmount(outstandingAmount - payment);
-        currentLoan.setAmountPaid(amountPaid + payment);
+        BigDecimal outstandingAmount = currentLoan.getOutstandingAmount();
+        BigDecimal amountPaid = currentLoan.getAmountPaid();
+        BigDecimal outStandingAmountToBePaid=new BigDecimal(String.valueOf(outstandingAmount)).subtract(payment);
+        currentLoan.setOutstandingAmount(outStandingAmountToBePaid);
+        BigDecimal amountToBePaid=new BigDecimal(String.valueOf(amountPaid)).add(payment);
+        currentLoan.setAmountPaid(amountToBePaid);
 
         Loans paidEmi = loansRepository.save(currentLoan);
         return mapToPaymentDto(paidEmi, payment);
