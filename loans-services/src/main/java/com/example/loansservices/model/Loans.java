@@ -3,6 +3,7 @@ package com.example.loansservices.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -30,19 +31,19 @@ public class Loans extends Audit{
         HOUSE_LOAN,CAR_LOAN,EDUCATION_LOAN,BUSINESS_LOAN
     }
     @Column(name = "total_loan")
-    private long totalLoan;
+    private BigDecimal totalLoan;
 
     @Column(name = "loan_tenure")
     private int loanTenureInYears;
 
     @Column(name = "amount_paid")
-    private long amountPaid;
+    private BigDecimal amountPaid;
 
     @Column(name="rate_of_interest")
     private double Rate_Of_Interest;
 
     @Column(name = "emi_amnt")
-    private long emiAmount;
+    private BigDecimal emiAmount;
 
     @Column(name = "tot_inst")
     private int totalInstallmentsInNumber;
@@ -53,7 +54,7 @@ public class Loans extends Audit{
     private int installmentsRemainingInNumber;
 
     @Column(name = "outstanding_amount")
-    private long outstandingAmount;
+    private BigDecimal outstandingAmount;
 
     @Column(name="is_loan_active")
     private boolean isLoanActive;

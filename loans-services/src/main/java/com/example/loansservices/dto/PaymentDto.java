@@ -3,6 +3,7 @@ package com.example.loansservices.dto;
 import com.example.loansservices.model.Loans;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -15,13 +16,13 @@ public class PaymentDto implements Dto {
     private String loanNumber;
     private String customerId;
     private Loans.LoanType loanType;
-    private Long totalLoan;
-    private Long paymentAmount;
+    private BigDecimal totalLoan;
+    private BigDecimal paymentAmount;
     private int loanTenureInYears;
-    private Long amountPaid;
+    private BigDecimal amountPaid;
     private Double Rate_Of_Interest;
     private int totalInstallmentsInNumber;
     private int installmentsPaidInNumber;
     private int installmentsRemainingInNumber;
-    private Long outstandingAmount;
+    private BigDecimal outstandingAmount;
 }

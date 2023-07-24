@@ -4,6 +4,8 @@ import com.example.loansservices.dto.LoansDto;
 import com.example.loansservices.dto.PaymentDto;
 import com.example.loansservices.model.Loans;
 
+import java.math.BigDecimal;
+
 public class LoansMapperHelper {
     public static Loans mapToLoans(final LoansDto loansDto) {
         return Loans.builder()
@@ -32,7 +34,7 @@ public class LoansMapperHelper {
                 .build();
     }
 
-    public static PaymentDto mapToPaymentDto(final Loans loans, final Long payment) {
+    public static PaymentDto mapToPaymentDto(final Loans loans, final BigDecimal payment) {
         return PaymentDto.builder()
                 .loanNumber(loans.getLoanNumber())
                 .customerId(loans.getCustomerId())
