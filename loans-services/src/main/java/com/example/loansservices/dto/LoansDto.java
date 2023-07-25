@@ -22,6 +22,7 @@ public class LoansDto implements   Dto{
     private Loans.LoanType loanType;
     private BigDecimal totalLoan;
     private int loanTenureInYears;
+    private BigDecimal paymentAmount;
     private BigDecimal amountPaid;
     private BigDecimal emiAmount;
     private Double Rate_of_Interest;

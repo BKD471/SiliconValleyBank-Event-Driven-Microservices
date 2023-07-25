@@ -52,6 +52,8 @@ public class LoanServiceImpl implements ILoansService {
      * Method to calculate monthly emi
      */
     private BigDecimal calculateEmi(final BigDecimal loanAmount, final int tenure) throws TenureException {
+        log.debug("<#####################calculateEmi(final BigDecimal, final int) in LoanServiceImpl started ###########################################################" +
+                "###");
         final String methodName = "calculateEmi(Long,int) in LoanServiceImpl";
         final Double rate_of_interest = getRateOfInterest(tenure);
         if (Objects.isNull(rate_of_interest)) throw new TenureException(TenureException.class,
@@ -63,6 +65,8 @@ public class LoanServiceImpl implements ILoansService {
         final BigDecimal numerator = new BigDecimal(String.valueOf(new BigDecimal(String.valueOf(magic_co_eff)).add(BigDecimal.valueOf(1)))).pow(tenure*12);
         final BigDecimal denominator = new BigDecimal(String.valueOf(numerator)).subtract(BigDecimal.valueOf(1));
         final BigDecimal emi_co_eff = new BigDecimal(String.valueOf(numerator)).divide(denominator,RoundingMode.FLOOR);
+        log.debug("<##################### calculateEmi(final BigDecimal, final int) in LoanServiceImpl ended ###########################################################" +
+                "###");
         return new BigDecimal(String.valueOf(interest)) .multiply( emi_co_eff);
     }
 
@@ -71,8 +75,9 @@ public class LoanServiceImpl implements ILoansService {
      * Maturity Date ,emi amount
      */
     private Loans processLoanInformationAndCreateLoan(final Loans loans) throws TenureException {
+        log.debug("<############ processLoanInformationAndCreateLoan(final Loans) started ###############" +
+                "#########################>");
         final Loans loan = loansRepository.save(loans);
-
         final String loanNumber = UUID.randomUUID().toString();
         final int tenure = loan.getLoanTenureInYears();
         LocalDate endDate = loan.getStartDate().plusYears(tenure);
@@ -91,6 +96,8 @@ public class LoanServiceImpl implements ILoansService {
         loan.setInstallmentsPaidInNumber(0);
         loan.setInstallmentsRemainingInNumber(tenure * 12);
         loan.setLoanActive(true);
+        log.debug("<############ processLoanInformationAndCreateLoan(final Loans) ended ###############" +
+                "#########################>");
         return loan;
     }
 
@@ -117,7 +124,11 @@ public class LoanServiceImpl implements ILoansService {
     public PaymentDto payInstallments(final PaymentDto paymentDto) throws LoansException, PaymentException, InstallmentsException, ValidationException {
         final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber
                 (paymentDto.getCustomerId(), paymentDto.getLoanNumber());
-        validationService.validator(loan.get(), mapToLoansDto(loan.get()), PAY_EMI,Optional.of(List.of(loan.get())));
+
+        LoansDto loansDto=mapToLoansDto(loan.get());
+        loansDto.setPaymentAmount(paymentDto.getPaymentAmount());
+        validationService.validator(loan.get(), loansDto, PAY_EMI,Optional.of(List.of(loan.get())));
+
         final Loans currentLoan = loan.get();
         BigDecimal emi = currentLoan.getEmiAmount();
         int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
