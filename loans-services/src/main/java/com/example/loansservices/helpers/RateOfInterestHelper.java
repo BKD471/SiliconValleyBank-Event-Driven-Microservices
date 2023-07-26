@@ -7,19 +7,20 @@ import java.util.Map;
 
 public class RateOfInterestHelper {
 
-    private static Map<Integer,Double> getHash(){
-         Map<Integer,Double> Cash_Karo_hash_karo=new HashMap<>();
-        Cash_Karo_hash_karo.put(5,5.5d);
-        Cash_Karo_hash_karo.put(10,6.5d);
-        Cash_Karo_hash_karo.put(15,8.2d);
-        Cash_Karo_hash_karo.put(20,9.5d);
-        Cash_Karo_hash_karo.put(35,12.5d);
-        Cash_Karo_hash_karo.put(40,15.5d);
-        return Cash_Karo_hash_karo;
+    private static final Map<Integer,Double> RateOfInterestHash=new HashMap<>();
+
+    static {
+        RateOfInterestHash.put(5,5.5d);
+        RateOfInterestHash.put(10,6.5d);
+        RateOfInterestHash.put(15,8.2d);
+        RateOfInterestHash.put(20,9.5d);
+        RateOfInterestHash.put(35,12.5d);
+        RateOfInterestHash.put(40,15.5d);
     }
+
     public  static  Double getRateOfInterest(int tenure) throws TenureException {
         String methodName="getRateOfInterest() in RateOfInterestHelper";
-        if(getHash().containsKey(tenure)) return getHash().get(tenure);
+        if(RateOfInterestHash.containsKey(tenure)) return RateOfInterestHash.get(tenure);
         throw  new TenureException(TenureException.class,"No tenure exist",methodName);
     }
 }
