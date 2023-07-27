@@ -41,6 +41,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
@@ -355,31 +357,34 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String newAdharNumber = newCustomerRecord.getAdharNumber();
         final String oldPanNumber = oldCustomerRecord.getPanNumber();
         final String newPanNumber = newCustomerRecord.getPanNumber();
-        final String voterId = oldCustomerRecord.getVoterId();
+        final String oldVoterId = oldCustomerRecord.getVoterId();
         final String newVoterId = newCustomerRecord.getVoterId();
         final String oldDrivingLicense = oldCustomerRecord.getDrivingLicense();
         final String newDrivingLicense = newCustomerRecord.getDrivingLicense();
         final String oldPassportNumber = oldCustomerRecord.getPassportNumber();
         final String newPassportNumber = newCustomerRecord.getPassportNumber();
 
-        if (StringUtils.isNotBlank(newName) && !oldName.equalsIgnoreCase(newName))
+        BiPredicate<String,String> isAllowedToUpdate=(newRecord,oldRecord)->StringUtils.isNotBlank(newRecord) && !oldRecord.equalsIgnoreCase(newRecord);
+        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForDate=(newDate,oldDate)->!Objects.isNull(newDate) && !oldDate.equals(newDate);
+
+        if (isAllowedToUpdate.test(newName,oldName))
             newCustomerRecord.setCustomerName(newName);
-        if (StringUtils.isNotBlank( newDateOfBirth.toString()) && !oldDateOfBirth.equals(newDateOfBirth)) {
+        if (isAllowedToUpdateForDate.test(newDateOfBirth,oldDateOfBirth)) {
             newCustomerRecord.setDateOfBirth(newDateOfBirth);
             newCustomerRecord.setAge(newAge);}
-        if (StringUtils.isNotBlank(newEmail) && !oldEmail.equalsIgnoreCase(newEmail))
+        if (isAllowedToUpdate.test(newEmail,oldEmail))
             newCustomerRecord.setEmail(newEmail);
-        if (StringUtils.isNotBlank(newPhoneNumber) && !oldPhoneNumber.equalsIgnoreCase(newPhoneNumber))
+        if (isAllowedToUpdate.test(newPhoneNumber,oldPhoneNumber))
             newCustomerRecord.setCustomerName(newPhoneNumber);
-        if (StringUtils.isNotBlank(newAdharNumber) && !oldAdharNumber.equalsIgnoreCase(newAdharNumber))
+        if (isAllowedToUpdate.test(newAdharNumber,oldAdharNumber))
             newCustomerRecord.setCustomerName(newAdharNumber);
-        if (StringUtils.isNotBlank(newPassportNumber) && !oldPassportNumber.equalsIgnoreCase(newPassportNumber))
+        if (isAllowedToUpdate.test(newPassportNumber,oldPassportNumber))
             newCustomerRecord.setCustomerName(newPassportNumber);
-        if (StringUtils.isNotBlank(newPanNumber) && !oldPanNumber.equalsIgnoreCase(newPanNumber))
+        if (isAllowedToUpdate.test(newPanNumber,oldPanNumber))
             newCustomerRecord.setCustomerName(newPanNumber);
-        if (StringUtils.isNotBlank(newVoterId) && !voterId.equalsIgnoreCase(newVoterId))
+        if (isAllowedToUpdate.test(newVoterId,oldVoterId))
             newCustomerRecord.setCustomerName(newVoterId);
-        if (StringUtils.isNotBlank(newDrivingLicense) && !oldDrivingLicense.equalsIgnoreCase(newDrivingLicense))
+        if (isAllowedToUpdate.test(newName,oldDrivingLicense))
             newCustomerRecord.setDrivingLicense(newDrivingLicense);
 
         final Customer updatedCustomer = mapToCustomer(newCustomerRecord);

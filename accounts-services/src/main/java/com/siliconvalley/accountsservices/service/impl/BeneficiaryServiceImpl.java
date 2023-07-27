@@ -35,6 +35,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
+import java.util.function.BiPredicate;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.validateBenType.*;
@@ -157,45 +158,50 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String oldBeneficiaryEmail=oldBeneficiaryData.getBeneficiaryEmail();
         final String oldDrivingLicense=oldBeneficiaryData.getBenDrivingLicense();
 
-        if (StringUtils.isNotBlank(newBeneficiaryName) && !newBeneficiaryName.equalsIgnoreCase(oldBeneficiaryName))
+
+        BiPredicate<String,String> isALLowedToUpdate=(newRecord,oldRecord)->StringUtils.isNotBlank(newRecord) && !newRecord.equalsIgnoreCase(oldRecord);
+        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForDate=(newDate,oldDate)->!Objects.isNull(newDate) && !newDate.equals(oldDate);
+        BiPredicate<Object,Object> isAllowedForToUpdateForObject=(newObject,oldObject)->!Objects.isNull(newObject) && !newObject.equals(oldObject);
+
+        if (isALLowedToUpdate.test(newBeneficiaryName,oldBeneficiaryName))
             oldBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
 
-        if (StringUtils.isNotBlank(newBeneficiaryNumber) && !newBeneficiaryNumber.equals(oldBeneficiaryNumber))
+        if (isALLowedToUpdate.test(newBeneficiaryNumber,oldBeneficiaryNumber))
             oldBeneficiaryData.setBeneficiaryAccountNumber(newBeneficiaryNumber);
 
-        if (!Objects.isNull(newBeneficiaryDOB) && !newBeneficiaryDOB.equals(oldBeneficiaryDOB)) {
+        if (isAllowedToUpdateForDate.test(newBeneficiaryDOB,oldBeneficiaryDOB)) {
             oldBeneficiaryData.setBenDate_Of_Birth(newBeneficiaryDOB);
-            //calculating & setting the new age
             LocalDate now=LocalDate.now();
-            int age= Period.between(newBeneficiaryDOB,now).getYears();
-            oldBeneficiaryData.setBenAge(age);}
+            final int age= Period.between(newBeneficiaryDOB,now).getYears();
+            oldBeneficiaryData.setBenAge(age);
+        }
 
-        if (StringUtils.isNotBlank(newBeneficiaryAdharNumber) && !newBeneficiaryAdharNumber.equalsIgnoreCase(oldBeneficiaryAdharNumber))
+        if (isALLowedToUpdate.test(newBeneficiaryAdharNumber,oldBeneficiaryAdharNumber))
             oldBeneficiaryData.setBenAdharNumber(newBeneficiaryAdharNumber);
 
-        if (!Objects.isNull(newBeneficaryRelation)&& !newBeneficaryRelation.equals(oldBeneficiaryRelation))
+        if (isAllowedForToUpdateForObject.test(newBeneficaryRelation,oldBeneficiaryRelation))
             oldBeneficiaryData.setRelation(newBeneficaryRelation);
 
-        if (StringUtils.isNotBlank(newBeneficiaryPanNumber) && !newBeneficiaryPanNumber.equalsIgnoreCase(oldBeneficiaryPanNumber))
+        if (isALLowedToUpdate.test(newBeneficiaryPanNumber,oldBeneficiaryPanNumber))
             oldBeneficiaryData.setBenPanNumber(newBeneficiaryPanNumber);
 
-        if (StringUtils.isNotBlank(newBeneficiaryPassport) && !newBeneficiaryPassport.equalsIgnoreCase(oldBeneficiaryPassport))
+        if (isALLowedToUpdate.test(newBeneficiaryPassport,oldBeneficiaryPassport))
             oldBeneficiaryData.setBenPassportNumber(newBeneficiaryPassport);
 
-        if (StringUtils.isNotBlank(newBeneficiaryVoterId) && !newBeneficiaryVoterId.equalsIgnoreCase(oldBeneficiaryVoterId))
+        if (isALLowedToUpdate.test(newBeneficiaryVoterId,oldBeneficiaryVoterId))
             oldBeneficiaryData.setBenVoterId(newBeneficiaryVoterId);
 
-        if(StringUtils.isNotBlank(newBeneficiaryPhoneNumber) && !newBeneficiaryPhoneNumber.equalsIgnoreCase(oldBeneficiaryPhoneNumber))
+        if(isALLowedToUpdate.test(newBeneficiaryPhoneNumber,oldBeneficiaryPhoneNumber))
             oldBeneficiaryData.setBenPhoneNumber(newBeneficiaryPhoneNumber);
 
-        if(StringUtils.isNotBlank(newBeneficiaryEmail) && !newBeneficiaryEmail.equalsIgnoreCase(oldBeneficiaryEmail))
+        if(isALLowedToUpdate.test(newBeneficiaryEmail,oldBeneficiaryEmail))
             oldBeneficiaryData.setBeneficiaryEmail(newBeneficiaryEmail);
 
-        if(!Objects.isNull(newBenBank) && !newBenBank.equals(oldBenBank)) {
+        if(isAllowedForToUpdateForObject.test(newBenBank,oldBenBank)) {
             oldBeneficiaryData.setBenBank(newBenBank);
             oldBeneficiaryData.setBankCode(getBankCode(newBenBank));}
 
-        if(StringUtils.isNotBlank(newBenDrivingLicense) && !newBenDrivingLicense.equalsIgnoreCase(oldDrivingLicense))
+        if(isALLowedToUpdate.test(newBenDrivingLicense,oldDrivingLicense))
             oldBeneficiaryData.setBenDrivingLicense(newBenDrivingLicense);
 
         log.debug("<----------processedBeneficiaryAccount(Beneficiary, Beneficiary) BeneficiaryServiceImpl ended -----------------------------" +
