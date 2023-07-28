@@ -63,7 +63,7 @@ import static java.util.Objects.isNull;
  */
 @Slf4j
 @Service("accountsServicePrimary")
-public class AccountsServiceImpl extends AbstractService implements IAccountsService {
+public final class AccountsServiceImpl extends AbstractService implements IAccountsService {
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;
@@ -243,7 +243,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         Accounts savedUpdatedAccount = accounts;
 
         if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
-                && StringUtils.isNotBlank(newHomeBranch.toString()) && !newHomeBranch.equals(oldHomeBranch)) {
+                && Objects.nonNull(newHomeBranch) && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             accounts.setBranchCode(getBranchCode(newHomeBranch));
             savedUpdatedAccount = accountsRepository.save(accounts);
@@ -365,11 +365,11 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String newPassportNumber = newCustomerRecord.getPassportNumber();
 
         BiPredicate<String,String> isAllowedToUpdate=(newRecord,oldRecord)->StringUtils.isNotBlank(newRecord) && !oldRecord.equalsIgnoreCase(newRecord);
-        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForDate=(newDate,oldDate)->!Objects.isNull(newDate) && !oldDate.equals(newDate);
+        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForObjects=(newObj,oldObj)->Objects.nonNull(newObj) && !oldObj.equals(newObj);
 
         if (isAllowedToUpdate.test(newName,oldName))
             newCustomerRecord.setCustomerName(newName);
-        if (isAllowedToUpdateForDate.test(newDateOfBirth,oldDateOfBirth)) {
+        if (isAllowedToUpdateForObjects.test(newDateOfBirth,oldDateOfBirth)) {
             newCustomerRecord.setDateOfBirth(newDateOfBirth);
             newCustomerRecord.setAge(newAge);}
         if (isAllowedToUpdate.test(newEmail,oldEmail))

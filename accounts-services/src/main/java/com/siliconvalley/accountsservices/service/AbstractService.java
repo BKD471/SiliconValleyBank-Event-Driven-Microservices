@@ -1,6 +1,5 @@
 package com.siliconvalley.accountsservices.service;
 
-import com.example.accountsservices.exception.*;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.model.Accounts;
@@ -9,6 +8,7 @@ import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.REQUEST_TO_BLOCK;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.STATUS_BLOCKED;
@@ -24,8 +24,7 @@ public abstract class AbstractService {
         this.customerRepository=customerRepository;
     }
 
-
-    protected Accounts fetchAccountByAccountNumber(final String accountNumber, final String ...request) throws AccountsException {
+    protected final Accounts fetchAccountByAccountNumber(final String accountNumber, final String ...request) throws AccountsException {
         final String methodName="fetchAccountByAccountNumber(Long,String vararg) in AbstractAccountsService";
         final Optional<Accounts> fetchedAccounts = accountsRepository.findByAccountNumber(accountNumber);
         if (fetchedAccounts.isEmpty())
@@ -37,7 +36,7 @@ public abstract class AbstractService {
         return fetchedAccounts.get();
     }
 
-    protected Customer fetchCustomerByCustomerNumber(final String customerId) throws CustomerException {
+    protected final Customer fetchCustomerByCustomerNumber(final String customerId) throws CustomerException {
         final String methodName="fetchCustomerByCustomerNumber(Long)";
         final Optional<Customer> loadCustomer=customerRepository.findById(customerId);
         if(loadCustomer.isEmpty()) throw  new CustomerException(CustomerException.class,String.format("No such customer with id %s exist",customerId),

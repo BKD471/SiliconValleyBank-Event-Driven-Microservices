@@ -14,8 +14,8 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service("fileServicePrimary")
-public class ImageServiceImpl extends AbstractService implements IImageService {
-    protected ImageServiceImpl(final IAccountsRepository accountsRepository,final ICustomerRepository customerRepository) {
+public final class ImageServiceImpl extends AbstractService implements IImageService {
+    private ImageServiceImpl(final IAccountsRepository accountsRepository, final ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
     }
 
