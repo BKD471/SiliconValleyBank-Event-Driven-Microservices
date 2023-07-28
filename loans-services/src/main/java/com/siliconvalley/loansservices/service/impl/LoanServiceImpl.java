@@ -2,7 +2,6 @@ package com.siliconvalley.loansservices.service.impl;
 
 import com.siliconvalley.loansservices.dto.LoansDto;
 import com.siliconvalley.loansservices.dto.PaymentDto;
-import com.example.loansservices.exception.*;
 import com.siliconvalley.loansservices.helpers.LoansMapperHelper;
 import com.siliconvalley.loansservices.model.Loans;
 import com.siliconvalley.loansservices.repository.ILoansRepository;

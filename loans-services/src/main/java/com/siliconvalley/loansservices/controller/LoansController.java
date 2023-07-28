@@ -2,7 +2,6 @@ package com.siliconvalley.loansservices.controller;
 
 import com.siliconvalley.loansservices.dto.LoansDto;
 import com.siliconvalley.loansservices.dto.PaymentDto;
-import com.example.loansservices.exception.*;
 import com.siliconvalley.loansservices.service.ILoansService;
 import com.siliconvalley.loansservices.exception.*;
 import org.springframework.http.HttpStatus;
