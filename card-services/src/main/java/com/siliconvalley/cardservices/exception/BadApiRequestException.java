@@ -1,6 +1,5 @@
 package com.siliconvalley.cardservices.exception;
 
-import metaconfig.Conf;
 
 public class BadApiRequestException extends RuntimeException{
 

@@ -45,7 +45,7 @@ import static com.siliconvalley.accountsservices.helpers.PagingHelper.*;
 
 @Slf4j
 @Service("beneficiaryServicePrimary")
-public class BeneficiaryServiceImpl extends AbstractService implements IBeneficiaryService {
+public final class BeneficiaryServiceImpl extends AbstractService implements IBeneficiaryService {
     private final IBeneficiaryRepository beneficiaryRepository;
     private final IAccountsRepository accountsRepository;
     private final IValidationService validationService;

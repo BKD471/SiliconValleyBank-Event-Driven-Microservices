@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service("validationServicePrimary")
-public class ValidationServiceImpl implements IValidationService {
+public final class ValidationServiceImpl implements IValidationService {
     private final ILoansRepository loansRepository;
 
     ValidationServiceImpl(ILoansRepository loansRepository) {

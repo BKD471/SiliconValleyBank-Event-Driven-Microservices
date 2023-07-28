@@ -7,11 +7,13 @@ import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.BeneficiaryException;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
+import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Beneficiary;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.service.IValidationService;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -19,19 +21,24 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToBeneficiaryDto;
 import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.*;
 import static java.util.Objects.isNull;
 import  org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
+import scala.tools.nsc.doc.html.HtmlTags;
 
 @Service
 @Primary
 @Slf4j
-public class ValidationServiceImpl implements IValidationService {
+public final class ValidationServiceImpl implements IValidationService {
     private final IAccountsRepository accountsRepository;
     ValidationServiceImpl(final IAccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
@@ -62,9 +69,10 @@ public class ValidationServiceImpl implements IValidationService {
                 location.append("Inside ADD_ACC");
                 location.trimToSize();
                 final int MAX_PERMISSIBLE_ACCOUNT = 5;
-                //prevent a customer to create more than 10 accounts
                 final Customer customer = accounts.getCustomer();
-                if (customer.getAccounts().size() >= MAX_PERMISSIBLE_ACCOUNT)
+
+                Predicate<Customer> checkUnhappyPathConditionForOpeningNewAccount=customers-> customers.getAccounts().size()>=MAX_PERMISSIBLE_ACCOUNT;
+                if (checkUnhappyPathConditionForOpeningNewAccount.test(customer))
                     throw new AccountsException(AccountsException.class,
                             "You can;t have more than 10 accounts",
                             String.format("%s of %s", location, methodName));
@@ -79,7 +87,9 @@ public class ValidationServiceImpl implements IValidationService {
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Please provide image", String.format("%s of %s", methodName, location));
                 final double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
-                if (customerDto.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customerDto.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0)
+
+                Predicate<CustomerDto> checkUnhappyPathConditionForUploadingProfileImage=customer->customer.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customer.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0;
+                if (checkUnhappyPathConditionForUploadingProfileImage.test(customerDto))
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Your file is either corrupted or you are exceeding the max size of 100mb",
                             String.format("%s of %s", methodName, location));
@@ -146,53 +156,35 @@ public class ValidationServiceImpl implements IValidationService {
                 if (listOfBeneficiaries.size() >= 5) throw new BeneficiaryException(BeneficiaryException.class,
                         "You can't add more than 5 beneficiaries", String.format("%s of %s", location, methodName));
 
-                //mandatory fields
-                final String email = accounts.getCustomer().getEmail();
-                final String adharNumber = accounts.getCustomer().getAdharNumber();
-                final String panNumber = accounts.getCustomer().getPanNumber();
-                final String phoneNumber = accounts.getCustomer().getPhoneNumber();
+                BiPredicate<Accounts,BeneficiaryDto> checkUnhappyConditionForAddingBeneficiaryCompulsoryFields=(acc,ben)-> ben.getBenAdharNumber().equalsIgnoreCase(acc.getCustomer().getAdharNumber()) ||
+                        ben.getBeneficiaryEmail().equalsIgnoreCase(acc.getCustomer().getEmail()) ||
+                        ben.getBenPanNumber().equalsIgnoreCase(acc.getCustomer().getPanNumber()) ||
+                        ben.getBenPhoneNumber().equalsIgnoreCase(acc.getCustomer().getPhoneNumber());
 
-                //not  mandatory  fields
-                final String voterId = accounts.getCustomer().getVoterId();
-                final String drivingLicense = accounts.getCustomer().getDrivingLicense();
-                final String passport = accounts.getCustomer().getPassportNumber();
+                BiPredicate<Accounts,BeneficiaryDto> checkUnhappyConditionForAddingBeneficiaryOptionalFields=(acc,ben)->{
+                    final String voterId = acc.getCustomer().getVoterId();
+                    final String drivingLicense = acc.getCustomer().getDrivingLicense();
+                    final String passport = acc.getCustomer().getPassportNumber();
 
+                    final String newVoterId = ben.getBenVoterId();
+                    final String newDrivingLicense = ben.getBenDrivingLicense();
+                    final String newPassportNumber = ben.getBenPassportNumber();
 
-                //new incoming fields
-                final String newEmail = beneficiaryDto.getBeneficiaryEmail();
-                final String newAdharNumber = beneficiaryDto.getBenAdharNumber();
-                final String newPanNumber = beneficiaryDto.getBenPanNumber();
-                final String newPhoneNumber = beneficiaryDto.getBenPhoneNumber();
-
-                final String newVoterId = beneficiaryDto.getBenVoterId();
-                final String newDrivingLicense = beneficiaryDto.getBenDrivingLicense();
-                final String newPassportNumber = beneficiaryDto.getBenPassportNumber();
-
+                    return (StringUtils.isNotBlank(voterId) && voterId.equalsIgnoreCase(newVoterId))
+                            || (StringUtils.isNotBlank(drivingLicense) && drivingLicense.equalsIgnoreCase(newDrivingLicense))
+                            || (StringUtils.isNotBlank(passport) && passport.equalsIgnoreCase(newPassportNumber));
+                };
                 //you can't add yourself as your beneficiary  ,
                 // check by mandatory as well as optional fields
                 // if any matches then either yr info is incorrect or
                 //you already have this as beneficiary
-                if (adharNumber.equalsIgnoreCase(newAdharNumber) ||
-                        email.equalsIgnoreCase(newEmail) ||
-                        panNumber.equalsIgnoreCase(newPanNumber) ||
-                        phoneNumber.equalsIgnoreCase(newPhoneNumber) ||
-                        (StringUtils.isNotBlank(voterId) && voterId.equalsIgnoreCase(newVoterId))
-                        || (StringUtils.isNotBlank(drivingLicense) && drivingLicense.equalsIgnoreCase(newDrivingLicense))
-                        || (StringUtils.isNotBlank(passport) && passport.equalsIgnoreCase(newPassportNumber))
-                )
+                if (checkUnhappyConditionForAddingBeneficiaryCompulsoryFields.and(checkUnhappyConditionForAddingBeneficiaryOptionalFields).test(accounts,beneficiaryDto))
                     throw new BeneficiaryException(BeneficiaryException.class, "You can't add yourself as beneficiary",
                             String.format("%s of %s", location, methodName));
 
 
                 //check if the same person already exist as a beneficiary
-                notPossible = listOfBeneficiaries.stream().anyMatch(ben ->
-                        ben.getBenAdharNumber().equalsIgnoreCase(newAdharNumber)
-                                || ben.getBeneficiaryEmail().equalsIgnoreCase(newEmail)
-                                || ben.getBenPanNumber().equalsIgnoreCase(newPanNumber)
-                                || ben.getBenPhoneNumber().equalsIgnoreCase(newPhoneNumber)
-                                || (StringUtils.isNotBlank(newVoterId) && ben.getBenVoterId().equalsIgnoreCase(newVoterId))
-                                || (StringUtils.isNotBlank(newDrivingLicense) && ben.getBenDrivingLicense().equalsIgnoreCase(newDrivingLicense))
-                                || (StringUtils.isNotBlank(newPassportNumber) && ben.getBenPassportNumber().equalsIgnoreCase(newPassportNumber)));
+                notPossible = listOfBeneficiaries.stream().anyMatch(ben ->checkUnhappyConditionForAddingBeneficiaryCompulsoryFields.and(checkUnhappyConditionForAddingBeneficiaryOptionalFields).test(accounts, mapToBeneficiaryDto(ben)));
                 if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
                         "This person is already added as a beneficiary", String.format("%s of %s", location, methodName));
 
@@ -219,51 +211,55 @@ public class ValidationServiceImpl implements IValidationService {
                 location.append("Inside UPDATE_BEN");
                 location.trimToSize();
                 boolean isTrue;
-                if (StringUtils.isNotBlank(beneficiaryDto.getBenDate_Of_Birth().toString())) {
+
+                Predicate<String> guardClauseForEmptyStringCheck= StringUtils::isNotBlank;
+                Predicate<Object> guardClauseForEmptyObjectCheck= Objects::nonNull;
+
+                if (guardClauseForEmptyObjectCheck.test(beneficiaryDto.getBenDate_Of_Birth())) {
                     isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.getBenDate_Of_Birth().toString());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give DOB in YYYY-mm-dd format",
                                 String.format("%s of %s", location, methodName));
                 }
 
-                if (StringUtils.isNotBlank(beneficiaryDto.getBeneficiaryEmail())) {
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBeneficiaryEmail())) {
                     isTrue = Pattern.matches(PATTERN_FOR_EMAIL, beneficiaryDto.getBeneficiaryEmail());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give email in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
 
-                if (StringUtils.isNotBlank(beneficiaryDto.getBenPhoneNumber())) {
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenPhoneNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PHONE_NUMBER, beneficiaryDto.getBenPhoneNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give phone Number in valid format e.g +xx-xxxxxxxxxx",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (StringUtils.isNotBlank(beneficiaryDto.getBenAdharNumber())) {
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenAdharNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_ADHAR, beneficiaryDto.getBenAdharNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give adhar number in valid xxxx-xxxx-xxxx format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (StringUtils.isNotBlank(beneficiaryDto.getBenPanNumber())) {
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenPanNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PAN_NUMBER, beneficiaryDto.getBenPanNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give pan number in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (StringUtils.isNotBlank(beneficiaryDto.getBenPassportNumber())) {
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenPassportNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PASSPORT, beneficiaryDto.getBenPassportNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give passport number in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (StringUtils.isNotBlank(beneficiaryDto.getBenVoterId())) {
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenVoterId())) {
                     isTrue = Pattern.matches(PATTERN_FOR_VOTER, beneficiaryDto.getBenVoterId());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give voter in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (StringUtils.isNotBlank(beneficiaryDto.getBenDrivingLicense())) {
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenDrivingLicense())) {
                     isTrue = Pattern.matches(PATTERN_FOR_DRIVING_LICENSE, beneficiaryDto.getBenDrivingLicense());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give driving license in valid format",

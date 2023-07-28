@@ -1,9 +1,9 @@
 package com.siliconvalley.cardservices.exception;
 
 public class CardsException extends RuntimeException{
-    private Object className;
-    private String reason;
-    private String methodName;
+    private final Object className;
+    private final String reason;
+    private final String methodName;
     public CardsException(Object className, String rsn, String methodName){
         this.className=className;
         this.reason=rsn;

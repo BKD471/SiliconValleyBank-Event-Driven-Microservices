@@ -26,7 +26,7 @@ import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 
 @Slf4j
 @Service("transactionsServicePrimary")
-public class TransactionsServiceImpl extends AbstractService implements ITransactionsService {
+public final class TransactionsServiceImpl extends AbstractService implements ITransactionsService {
 
     private final ITransactionsRepository transactionsRepository;
     private final IAccountsRepository accountsRepository;
