@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public final class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     /**
      * @param request       that resulted in an <code>AuthenticationException</code>
      * @param response      so that the user agent can begin authentication

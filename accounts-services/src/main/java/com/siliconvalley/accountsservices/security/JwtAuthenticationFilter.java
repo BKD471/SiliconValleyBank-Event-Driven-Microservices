@@ -22,11 +22,11 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-public class JwtAuthenticationFiler extends OncePerRequestFilter {
+public final class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtHelper jwtHelper;
     private final UserDetailsService userDetailsService;
 
-    JwtAuthenticationFiler(final JwtHelper jwtHelper,
+    JwtAuthenticationFilter(final JwtHelper jwtHelper,
                            final UserDetailsService userDetailsService){
         this.jwtHelper=jwtHelper;
         this.userDetailsService=userDetailsService;

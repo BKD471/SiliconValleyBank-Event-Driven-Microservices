@@ -1,4 +1,4 @@
 package com.siliconvalley.accountsservices.service.impl;
 
-public class CustomerAuthenticationValidators {
+public final class CustomerAuthenticationValidators {
 }

@@ -1,7 +1,7 @@
 package com.siliconvalley.accountsservices.configs;
 
 import com.siliconvalley.accountsservices.security.JwtAuthenticationEntryPoint;
-import com.siliconvalley.accountsservices.security.JwtAuthenticationFiler;
+import com.siliconvalley.accountsservices.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,11 +20,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAuthenticationFiler jwtAuthenticationFiler;
+    private final JwtAuthenticationFilter jwtAuthenticationFiler;
     private final UserDetailsService userDetailsService;
 
     SecurityConfig(final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                   final JwtAuthenticationFiler jwtAuthenticationFiler,
+                   final JwtAuthenticationFilter jwtAuthenticationFiler,
                    final UserDetailsService userDetailsService){
         this.jwtAuthenticationEntryPoint=jwtAuthenticationEntryPoint;
         this.jwtAuthenticationFiler=jwtAuthenticationFiler;

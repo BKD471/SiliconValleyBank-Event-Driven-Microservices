@@ -63,7 +63,7 @@ import static java.util.Objects.isNull;
  */
 @Slf4j
 @Service("accountsServicePrimary")
-public final class AccountsServiceImpl extends AbstractService implements IAccountsService {
+public class AccountsServiceImpl extends AbstractService implements IAccountsService {
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;
