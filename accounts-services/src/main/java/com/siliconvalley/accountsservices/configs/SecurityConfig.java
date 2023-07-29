@@ -1,7 +1,6 @@
 package com.siliconvalley.accountsservices.configs;
 
 import com.siliconvalley.accountsservices.security.JwtAuthenticationEntryPoint;
-import com.siliconvalley.accountsservices.security.JwtAuthenticationFiler;
 import com.siliconvalley.accountsservices.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
