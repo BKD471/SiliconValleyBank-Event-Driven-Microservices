@@ -21,7 +21,7 @@ import java.util.Optional;
 
 //settle unhappy paths for cards
 @Service("ValidationServicePrimary")
-public class ValidationServiceImpl implements IValidationService {
+public final class ValidationServiceImpl implements IValidationService {
     private final ICardsRepository cardsRepository;
     ValidationServiceImpl(final ICardsRepository cardsRepository) {
         this.cardsRepository = cardsRepository;
@@ -35,8 +35,6 @@ public class ValidationServiceImpl implements IValidationService {
     public void cardsValidator(final CardsDto cardsDto, final Cards cards, final AllConstantHelpers.CardsValidationType cardsValidationType) {
         final String methodName = "cardsValidator(CardsDto,Cards)";
         final String customerId = cardsDto.getCustomerId();
-
-        //doing all primary checks for obvious unhappy paths
         if (StringUtils.isEmpty(customerId))
             throw new CardsException(CardsException.class, "Please specify non null customerId", methodName);
 
