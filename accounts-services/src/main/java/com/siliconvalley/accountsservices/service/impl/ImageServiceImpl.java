@@ -1,10 +1,12 @@
 package com.siliconvalley.accountsservices.service.impl;
 
+import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.ResponseException;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.IImageService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,10 +22,13 @@ public final class ImageServiceImpl extends AbstractService implements IImageSer
     }
 
     @Override
-    public String uploadFile(final MultipartFile file,final String path) throws ResponseException, IOException {
+    public String uploadFile(final MultipartFile file, final String path) throws ResponseException, IOException {
         final String methodName="uploadFile(MultipartFile,String) in FileServiceImpl";
 
         final String originalFileName = file.getOriginalFilename();
+
+        if(StringUtils.isBlank(originalFileName)) throw new BadApiRequestException(BadApiRequestException.class,"Faced issue while fetching the image"
+                ,methodName);
         final String fileName = UUID.randomUUID().toString();
         final String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
 

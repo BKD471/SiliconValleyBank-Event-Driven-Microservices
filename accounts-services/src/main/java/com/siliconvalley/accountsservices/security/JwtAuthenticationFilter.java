@@ -22,11 +22,11 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-public class JwtAuthenticationFiler extends OncePerRequestFilter {
+public final class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtHelper jwtHelper;
     private final UserDetailsService userDetailsService;
 
-    JwtAuthenticationFiler(final JwtHelper jwtHelper,
+    JwtAuthenticationFilter(final JwtHelper jwtHelper,
                            final UserDetailsService userDetailsService){
         this.jwtHelper=jwtHelper;
         this.userDetailsService=userDetailsService;
@@ -40,7 +40,7 @@ public class JwtAuthenticationFiler extends OncePerRequestFilter {
      * @throws IOException
      */
     @Override
-    protected void doFilterInternal(final HttpServletRequest request,final HttpServletResponse response,final FilterChain filterChain) throws ServletException, IOException {
+    protected final void doFilterInternal(final HttpServletRequest request,final HttpServletResponse response,final FilterChain filterChain) throws ServletException, IOException {
         final String requestHeader = request.getHeader("Authorization");
         String userName = null;
         String jwtToken = null;
