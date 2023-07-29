@@ -19,6 +19,7 @@ import java.util.List;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 
 @Slf4j
 @Service("validationServicePrimary")
@@ -64,17 +65,14 @@ public class ValidationServiceImpl implements IValidationService {
                     throw new LoansException(LoansException.class, String.format("No such loans exist with Loan id %s",
                             loans.getLoanNumber()), methodName);
 
-                BigDecimal payment = loansDto.getPaymentAmount();
-                BigDecimal emi = loans.getEmiAmount();
                 boolean isLoanClosed = !loans.isLoanActive();
-
                 if (isLoanClosed)
                     throw new InstallmentsException(InstallmentsException.class, String.format("Yr loan with id %s is already closed", loansDto.getLoanNumber()), methodName);
 
-                boolean isInsufficientPayment=new BigDecimal(String.valueOf(payment)).compareTo(emi)<0;
-                boolean isPaymentMultiplipleOfEmi=new BigDecimal(String.valueOf(payment)).divide(emi, RoundingMode.FLOOR).intValue()!=0;
-                if (isInsufficientPayment || isPaymentMultiplipleOfEmi)
-                    throw new PaymentException(PaymentException.class, String.format("yr payment %s should be greater equal to or multiple of yr emi %s", payment, emi), methodName);
+                BiPredicate<LoansDto,Loans> guardClauseForPaymentAcceptanceCriteria=(dto, entity)-> new BigDecimal(String.valueOf(dto.getPaymentAmount())).compareTo(entity.getEmiAmount())<0
+                        || new BigDecimal(String.valueOf(dto.getPaymentAmount())).divide(entity.getEmiAmount(), RoundingMode.FLOOR).intValue()!=0;
+                if (guardClauseForPaymentAcceptanceCriteria.test(loansDto,loans))
+                    throw new PaymentException(PaymentException.class, String.format("yr payment %s should be greater equal to or multiple of yr emi %s", loansDto.getPaymentAmount(), loans.getEmiAmount()), methodName);
 
             }
             case GET_ALL_LOAN -> {
