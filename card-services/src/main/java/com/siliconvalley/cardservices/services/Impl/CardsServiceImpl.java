@@ -171,4 +171,14 @@ public class CardsServiceImpl implements ICardsService {
         //to be
         return null;
     }
+
+    /**
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @Override
+    public CardsDto downloadCreditCardStatementsAsCsv(LocalDate startDate, LocalDate endDate) {
+        return null;
+    }
 }

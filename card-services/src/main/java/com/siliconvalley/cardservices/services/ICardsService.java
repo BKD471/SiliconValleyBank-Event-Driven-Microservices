@@ -13,4 +13,5 @@ public interface ICardsService {
     int generateCreditScore(final String customerId);
     CardsDto requestForRevisedCreditLimitForACard(final String cardNumber);
     CardsDto convertToFlexiPay(final String cardNumber);
+    CardsDto downloadCreditCardStatementsAsCsv(LocalDate startDate,LocalDate endDate);
 }
