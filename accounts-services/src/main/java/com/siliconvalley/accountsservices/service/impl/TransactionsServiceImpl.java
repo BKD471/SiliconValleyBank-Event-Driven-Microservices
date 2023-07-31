@@ -17,6 +17,8 @@ import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -167,6 +169,16 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 .transactionsList(transactionsArrayList)
                 .defaultMessage(String.format("Last 6 months transaction details for account:%s",accountNumber))
                 .build();
+    }
+
+    /**
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @Override
+    public OutputDto downloadTransactionStatmentAsCsv(LocalDate startDate, LocalDate endDate) {
+        return null;
     }
 
     private TransactionsDto payBills(final TransactionsDto transactionsDto) throws TransactionException, AccountsException {
