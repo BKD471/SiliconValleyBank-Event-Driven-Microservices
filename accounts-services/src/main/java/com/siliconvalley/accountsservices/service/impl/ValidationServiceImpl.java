@@ -31,6 +31,9 @@ import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToBeneficiaryDto;
 import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.*;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import  org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 import scala.tools.nsc.doc.html.HtmlTags;
@@ -170,9 +173,9 @@ public final class ValidationServiceImpl implements IValidationService {
                     final String newDrivingLicense = ben.getBenDrivingLicense();
                     final String newPassportNumber = ben.getBenPassportNumber();
 
-                    return (StringUtils.isNotBlank(voterId) && voterId.equalsIgnoreCase(newVoterId))
-                            || (StringUtils.isNotBlank(drivingLicense) && drivingLicense.equalsIgnoreCase(newDrivingLicense))
-                            || (StringUtils.isNotBlank(passport) && passport.equalsIgnoreCase(newPassportNumber));
+                    return (isNotBlank(voterId) && voterId.equalsIgnoreCase(newVoterId))
+                            || (isNotBlank(drivingLicense) && drivingLicense.equalsIgnoreCase(newDrivingLicense))
+                            || (isNotBlank(passport) && passport.equalsIgnoreCase(newPassportNumber));
                 };
                 //you can't add yourself as your beneficiary  ,
                 // check by mandatory as well as optional fields
@@ -270,7 +273,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 location.append("Inside Delete Ben");
                 location.trimToSize();
                 String beneficiaryId= beneficiaryDto.getBeneficiaryId();
-                if(CollectionUtils.isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
+                if(isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
                         "Account has no beneficiaries to delete",String.format("%s of %s",location,methodName));
 
                 //filter out the beneficiary to be deleted for that account

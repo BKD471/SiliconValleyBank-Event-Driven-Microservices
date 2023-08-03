@@ -42,6 +42,8 @@ import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.vali
 import static com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper.getBankCode;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 import static com.siliconvalley.accountsservices.helpers.PagingHelper.*;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Service("beneficiaryServicePrimary")
@@ -160,8 +162,8 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
 
 
         BiPredicate<String,String> isALLowedToUpdate=(newRecord,oldRecord)->StringUtils.isNotBlank(newRecord) && !newRecord.equalsIgnoreCase(oldRecord);
-        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForDate=(newDate,oldDate)->!Objects.isNull(newDate) && !newDate.equals(oldDate);
-        BiPredicate<Object,Object> isAllowedForToUpdateForObject=(newObject,oldObject)->!Objects.isNull(newObject) && !newObject.equals(oldObject);
+        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForDate=(newDate,oldDate)->!isNull(newDate) && !newDate.equals(oldDate);
+        BiPredicate<Object,Object> isAllowedForToUpdateForObject=(newObject,oldObject)->!isNull(newObject) && !newObject.equals(oldObject);
 
         if (isALLowedToUpdate.test(newBeneficiaryName,oldBeneficiaryName))
             oldBeneficiaryData.setBeneficiaryName(newBeneficiaryName);
@@ -222,7 +224,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         validationService.beneficiaryUpdateValidator(fetchedAccounts, beneficiaryDto, UPDATE_BEN);
 
         final String BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
-        if (StringUtils.isBlank(BENEFICIARY_ID)) throw new BeneficiaryException(BeneficiaryException.class,
+        if (isBlank(BENEFICIARY_ID)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please enter a valid beneficiary id", methodName);
         final Optional<Beneficiary> beneficiaryAccount = fetchedAccounts.getListOfBeneficiary().stream().
                 filter(beneficiary -> BENEFICIARY_ID.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
@@ -243,7 +245,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         log.debug("<---------------deleteBeneficiariesForAnAccount(Accounts, Long) BeneficiaryServiceImpl started ----------------------" +
                 "------------------------------------------------------------------------------------------------>");
         final String methodName = " deleteBeneficiariesForAnAccount(Long , Long )  in BeneficiaryServiceImpl";
-        if (StringUtils.isBlank(beneficiaryId))
+        if (isBlank(beneficiaryId))
             throw new BeneficiaryException(BeneficiaryException.class, "Please provide a valid beneficiary id", methodName);
 
         BeneficiaryDto beneficiaryDto=BeneficiaryDto.builder().beneficiaryId(beneficiaryId).build();
@@ -296,7 +298,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final CustomerDto customerDto = mapToCustomerDto(customer);
 
         final AllConstantHelpers.BenUpdateRequest requestType = postInputDto.getBenRequest();
-        if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
+        if (isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
             case ADD_BEN -> {
@@ -323,7 +325,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
 
         final Customer loadCustomer = fetchedAccount.getCustomer();
         final AllConstantHelpers.BenUpdateRequest requestType = putInputRequestDto.getBenRequest();
-        if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
+        if (isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
             case UPDATE_BEN -> {
@@ -353,14 +355,14 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
             throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
         final int pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
 
-        final String sortBy = (StringUtils.isBlank(getInputRequestDto.getSortBy())) ? "beneficiaryName" : getInputRequestDto.getSortBy();
-        final DIRECTION sortDir = (Objects.isNull(getInputRequestDto.getSortDir())) ? DIRECTION.asc : getInputRequestDto.getSortDir();
+        final String sortBy = (isBlank(getInputRequestDto.getSortBy())) ? "beneficiaryName" : getInputRequestDto.getSortBy();
+        final DIRECTION sortDir = (isNull(getInputRequestDto.getSortDir())) ? DIRECTION.asc : getInputRequestDto.getSortDir();
 
         final String accountNumber = getInputRequestDto.getAccountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         final AllConstantHelpers.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
-        if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
+        if (isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
 
         final StringBuffer location=new StringBuffer(500);
@@ -412,7 +414,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
 
         final AllConstantHelpers.BenUpdateRequest requestType = deleteInputRequestDto.getBenRequest();
-        if (Objects.isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
+        if (isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
             case DELETE_BEN -> {

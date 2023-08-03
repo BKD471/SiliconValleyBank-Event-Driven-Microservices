@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Service("transactionsServicePrimary")
@@ -116,7 +117,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final String transactionId= UUID.randomUUID().toString();
         transactionsDto.setTransactionId(transactionId);
 
-        if(Objects.isNull(transactionsDto.getTransactionType())) throw new TransactionException(TransactionException.class,
+        if(isNull(transactionsDto.getTransactionType())) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
         switch (transactionsDto.getTransactionType()) {
             case CREDIT -> {

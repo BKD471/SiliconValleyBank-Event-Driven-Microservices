@@ -5,6 +5,7 @@ import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.TransactionException;
+import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
 import com.siliconvalley.accountsservices.service.impl.PdfService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ import java.time.LocalDate;
 public class TransactionsControllerImpl implements ITransactionsController {
     private final ITransactionsService transactionsService;
 
-    private final PdfService pdfService;
+    private final IPdfService pdfService;
 
-    TransactionsControllerImpl(@Qualifier("transactionsServicePrimary") ITransactionsService transactionsService,PdfService pdfService) {
+    TransactionsControllerImpl(@Qualifier("transactionsServicePrimary") ITransactionsService transactionsService,IPdfService pdfService) {
         this.transactionsService = transactionsService;
         this.pdfService=pdfService;
     }
