@@ -32,6 +32,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -80,12 +81,12 @@ public class AccountsServiceTests {
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
-                .balance(60000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
+                .balance(BigDecimal.valueOf(60000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
@@ -145,7 +146,7 @@ public class AccountsServiceTests {
                 .passportNumber("passport")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .branchCode(branchCode)
-                .transferLimitPerDay(25000)
+                .transferLimitPerDay(BigDecimal.valueOf(25000))
                 .creditScore(750)
                 .age(25)
                 .build();
@@ -179,12 +180,12 @@ public class AccountsServiceTests {
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(900000L)
-                .balance(90000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(900000L))
+                .balance(BigDecimal.valueOf(90000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(85000L)
-                .totLoanIssuedSoFar(550000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(85000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(550000L))
                 .creditScore(850)
                 .homeBranch(AllConstantHelpers.Branch.CHENNAI)
                 .build();
@@ -556,12 +557,12 @@ public class AccountsServiceTests {
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.INC_TRANSFER_LIMIT)
-                .transferLimitPerDay(125000L)
+                .transferLimitPerDay(BigDecimal.valueOf(125000L))
                 .build();
 
         Accounts savedAccount=Accounts.builder()
                 .accountNumber("1L")
-                .transferLimitPerDay(125000L)
+                .transferLimitPerDay(BigDecimal.valueOf(125000L))
                 .build();
         when(accountsRepositoryMock.save(any())).thenReturn(savedAccount);
         OutputDto response=accountsService.putRequestExecutor(request);
@@ -578,7 +579,7 @@ public class AccountsServiceTests {
         PutInputRequestDto request= PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.INC_TRANSFER_LIMIT)
-                .transferLimitPerDay(125000L)
+                .transferLimitPerDay(BigDecimal.valueOf(125000L))
                 .build();
 
         assertThrows(AccountsException.class,()->{

@@ -4,6 +4,8 @@ import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Entity
@@ -17,7 +19,7 @@ public class Transactions extends AuditTransactions{
     private String transactionId;
 
     @Column(name="trans-amnt",nullable = false)
-    private long transactionAmount;
+    private BigDecimal transactionAmount;
 
     @Column(name = "trans-acnt-num", nullable = false)
     private String transactedAccountNumber;

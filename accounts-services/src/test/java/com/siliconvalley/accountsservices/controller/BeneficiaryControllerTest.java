@@ -26,6 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 
@@ -62,12 +63,12 @@ public class BeneficiaryControllerTest {
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
-                .balance(60000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
+                .balance(BigDecimal.valueOf(60000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();

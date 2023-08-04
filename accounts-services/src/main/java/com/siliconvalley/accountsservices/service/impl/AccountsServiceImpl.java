@@ -36,6 +36,7 @@ import org.springframework.util.CollectionUtils;
 
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -48,6 +49,7 @@ import static com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper.get
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 import static com.siliconvalley.accountsservices.helpers.PagingHelper.*;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -111,15 +113,16 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String accountNumber=UUID.randomUUID().toString();
         accounts.setAccountNumber(accountNumber);
 
-        accounts.setBalance(0L);
+        accounts.setBalance(BigDecimal.valueOf(0L));
         accounts.setBranchCode(getBranchCode(accounts.getHomeBranch()));
         accounts.setAccountStatus(STATUS_OPENED);
-        accounts.setTransferLimitPerDay(100000L);
+        accounts.setTransferLimitPerDay(BigDecimal.valueOf(100000L));
+        accounts.setRateOfInterest(5.5);
 
-        accounts.setTotLoanIssuedSoFar(0L);
-        accounts.setTotalOutStandingAmountPayableToBank(0L);
+        accounts.setTotLoanIssuedSoFar(BigDecimal.valueOf(0L));
+        accounts.setTotalOutStandingAmountPayableToBank(BigDecimal.valueOf(0L));
         accounts.setAnyActiveLoans(false);
-        accounts.setApprovedLoanLimitBasedOnCreditScore(0L);
+        accounts.setApprovedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(0L));
         log.debug("<------processAccountInit(Accounts, String) AccountsServiceImpl ended -------------------------------------------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
         return accounts;
@@ -243,7 +246,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         Accounts savedUpdatedAccount = accounts;
 
         if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
-                && Objects.nonNull(newHomeBranch) && !newHomeBranch.equals(oldHomeBranch)) {
+                && nonNull(newHomeBranch) && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             accounts.setBranchCode(getBranchCode(newHomeBranch));
             savedUpdatedAccount = accountsRepository.save(accounts);
@@ -257,11 +260,15 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<------------increaseTransferLimit(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------->");
         final String methodName = "increaseTransferLimit(AccountsDto,Accounts) in AccountsServiceImpl";
-        final long oldCashLimit = accounts.getTransferLimitPerDay();
-        final long newCashLimit = accountsDto.getTransferLimitPerDay();
+        final BigDecimal oldCashLimit = accounts.getTransferLimitPerDay();
+        final BigDecimal newCashLimit = accountsDto.getTransferLimitPerDay();
 
         Accounts savedAccount = accounts;
-        if (newCashLimit!=0 && newCashLimit!=oldCashLimit) {
+
+        BiPredicate<BigDecimal,BigDecimal> checkForCashLimitRevision=(newLimit,oldLimit)-> newLimit.compareTo(BigDecimal.ZERO)==0
+                && newLimit.compareTo(oldLimit)!=0;
+
+        if ( checkForCashLimitRevision.test(newCashLimit,oldCashLimit) ) {
             if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_CASH_LIMIT))
                 accounts.setTransferLimitPerDay(newCashLimit);
             else
@@ -365,7 +372,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String newPassportNumber = newCustomerRecord.getPassportNumber();
 
         BiPredicate<String,String> isAllowedToUpdate=(newRecord,oldRecord)-> isNotBlank(newRecord) && !oldRecord.equalsIgnoreCase(newRecord);
-        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForObjects=(newObj,oldObj)->Objects.nonNull(newObj) && !oldObj.equals(newObj);
+        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForObjects=(newObj,oldObj)->nonNull(newObj) && !oldObj.equals(newObj);
 
         if (isAllowedToUpdate.test(newName,oldName))
             newCustomerRecord.setCustomerName(newName);

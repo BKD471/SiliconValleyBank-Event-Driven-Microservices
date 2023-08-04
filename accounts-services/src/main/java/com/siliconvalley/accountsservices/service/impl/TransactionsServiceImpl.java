@@ -18,6 +18,7 @@ import com.siliconvalley.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,23 +43,25 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         this.accountsRepository = accountsRepository;
     }
 
-    private Transactions updateBalance(final Accounts accounts, final Transactions transactions, final Long amount, final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
+    private Transactions updateBalance(final Accounts accounts, final Transactions transactions, final BigDecimal amount, final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
         log.debug("<--------------------updateBalance(Accounts, Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl started ----------" +
                 "--------------------------------------------------------------------------------------------------------->");
         final String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
-        final Long previousBalance = accounts.getBalance();
+        final BigDecimal previousBalance = accounts.getBalance();
 
+        BigDecimal updatedAmount;
         if (CREDIT.equals(transactionType)) {
-            accounts.setBalance(previousBalance + amount);
+            updatedAmount=new BigDecimal(String.valueOf(previousBalance)).add(amount);
+            accounts.setBalance(updatedAmount);
             transactions.setTransactionType(CREDIT);
         }
         if (DEBIT.equals(transactionType)) {
-            if (previousBalance >= amount) accounts.setBalance(previousBalance - amount);
+            updatedAmount=new BigDecimal(String.valueOf(previousBalance)).subtract(amount);
+            if (previousBalance.compareTo(amount)>=0) accounts.setBalance(updatedAmount);
             else throw new TransactionException(TransactionException.class,"Insufficient Balance",methodName);
             transactions.setTransactionType(DEBIT);
         }
 
-        //update the latest balance to accounts db
         accountsRepository.save(accounts);
         log.debug("<---------updateBalance(Accounts , Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl ended -----------------" +
                 "-------------------------------------------------------------------------------------------------------------->");
@@ -81,7 +84,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final Transactions requestTransaction = mapToTransactions(transactionsDto);
 
         //get the money & update the balance
-        final Long amountToBeCredited = requestTransaction.getTransactionAmount();
+        final BigDecimal amountToBeCredited = requestTransaction.getTransactionAmount();
         final Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction,
                 amountToBeCredited, transactionType);
 

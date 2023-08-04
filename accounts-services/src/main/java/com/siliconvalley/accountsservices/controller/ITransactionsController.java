@@ -1,5 +1,6 @@
 package com.siliconvalley.accountsservices.controller;
 
+import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
 import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
@@ -21,5 +22,5 @@ public interface ITransactionsController {
     ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") final String accountNumber) throws AccountsException;
 
     @GetMapping("/createPdf")
-    ResponseEntity<InputStreamResource> generateBankStatment(LocalDate startDate,LocalDate endDate);
+    ResponseEntity<InputStreamResource> generateBankStatement(@RequestBody BankStatementRequestDto bankStatementRequestDto);
 }

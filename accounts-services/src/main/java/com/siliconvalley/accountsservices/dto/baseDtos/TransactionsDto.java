@@ -6,6 +6,8 @@ import com.siliconvalley.accountsservices.validator.NotNullEnum;
 import com.siliconvalley.accountsservices.validator.ValidDescription;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.PATTERN_FOR_NOT_NULL_CHARS;
@@ -23,7 +25,7 @@ public class TransactionsDto {
     private String transactionId;
 
     @Min(value =100,message = "transaction Amount should not be less than 100")
-    private Long transactionAmount;
+    private BigDecimal transactionAmount;
     @Min(value =1, message = "Please provide a transacted Account Number")
     private String transactedAccountNumber;
     private AllConstantHelpers.TransactionType transactionType;

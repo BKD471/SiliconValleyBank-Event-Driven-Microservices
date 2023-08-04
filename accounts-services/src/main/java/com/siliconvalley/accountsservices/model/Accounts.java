@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Accounts extends Audit {
     private String accountNumber;
 
     @Column(name = "cust_balnc")
-    private long balance;
+    private BigDecimal balance;
 
     @Column(name = "accnt_type",nullable = false)
     @Enumerated(EnumType.STRING)
@@ -35,22 +36,25 @@ public class Accounts extends Audit {
     private AllConstantHelpers.Branch homeBranch;
 
     @Column(name = "trnsfr_lmt_pr_d")
-    private long transferLimitPerDay;
+    private BigDecimal transferLimitPerDay;
 
     @Column(name = "crdt_scr")
     private int creditScore;
 
     @Column(name="apprvd_loan_bso_crdt_scr")
-    private long approvedLoanLimitBasedOnCreditScore;
+    private BigDecimal approvedLoanLimitBasedOnCreditScore;
 
     @Column(name="is_ln_actv")
     private Boolean anyActiveLoans;
 
     @Column(name="tot_loan_issued_sf")
-    private long totLoanIssuedSoFar;
+    private BigDecimal totLoanIssuedSoFar;
 
     @Column(name="tot_out_amnt")
-    private long totalOutStandingAmountPayableToBank;
+    private BigDecimal totalOutStandingAmountPayableToBank;
+
+    @Column(name = "rate_Of_Interest")
+    private Double rateOfInterest;
 
     @Column(name="acc_stts")
     @Enumerated(EnumType.STRING)

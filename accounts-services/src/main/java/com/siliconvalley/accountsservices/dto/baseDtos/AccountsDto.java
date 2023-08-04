@@ -4,6 +4,8 @@ import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -13,17 +15,17 @@ import java.util.List;
 @Builder
 public class AccountsDto {
     private String accountNumber;
-    private long balance;
+    private BigDecimal balance;
     private AllConstantHelpers.AccountType accountType;
     private AllConstantHelpers.AccountStatus accountStatus;
     private String branchCode;
     private AllConstantHelpers.Branch homeBranch;
-    private long transferLimitPerDay;
+    private BigDecimal transferLimitPerDay;
     private int creditScore;
-    private long approvedLoanLimitBasedOnCreditScore;
+    private BigDecimal approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
-    private long totalOutstandingAmountPayableToBank;
-    private long totLoanIssuedSoFar;
+    private BigDecimal totalOutstandingAmountPayableToBank;
+    private BigDecimal totLoanIssuedSoFar;
     @JsonIgnore
     @JsonProperty(value = "updateRequest")
     private AllConstantHelpers.UpdateRequest updateRequest;

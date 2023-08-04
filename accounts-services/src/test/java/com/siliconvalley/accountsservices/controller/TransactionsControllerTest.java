@@ -26,6 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -68,12 +69,12 @@ public class TransactionsControllerTest {
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
-                .balance(500000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
+                .balance(BigDecimal.valueOf(500000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
@@ -101,7 +102,7 @@ public class TransactionsControllerTest {
                 .transactionType(AllConstantHelpers.TransactionType.DEBIT)
                 .description(AllConstantHelpers.DescriptionType.ELECTRICITY)
                 .accounts(accounts)
-                .transactionAmount(60000L)
+                .transactionAmount(BigDecimal.valueOf(60000L))
                 .build();
         transactions1.setTransactionTimeStamp(LocalDateTime.now());
         Transactions transactions2=Transactions.builder()
@@ -110,7 +111,7 @@ public class TransactionsControllerTest {
                 .transactionType(AllConstantHelpers.TransactionType.CREDIT)
                 .description(AllConstantHelpers.DescriptionType.SALARY)
                 .accounts(accounts)
-                .transactionAmount(160000L)
+                .transactionAmount(BigDecimal.valueOf(160000L))
                 .build();
         transactions2.setTransactionTimeStamp(LocalDateTime.of(2023,06,17,05,40));
 

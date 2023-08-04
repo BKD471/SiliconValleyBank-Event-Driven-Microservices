@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 public class MapperHelper {
     /**
      * @param accountsDto
@@ -34,6 +37,16 @@ public class MapperHelper {
                 .homeBranch(accountsDto.getHomeBranch()).build();
     }
 
+    public static LocalDate dateParserInYYYYMMDD(String dateInString){
+        LocalDate dob = null;
+        //converting date to its desired type
+        if (isNotBlank(dateInString)) {
+            final String[] date = dateInString.split("-");
+            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+        }
+        return dob;
+    }
+
     /**
      * @param accounts
      * @paramType Accounts
@@ -42,11 +55,11 @@ public class MapperHelper {
     public static AccountsDto mapToAccountsDto(final Accounts accounts) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(!CollectionUtils.isEmpty(accounts.getListOfBeneficiary())){
+        if(!isEmpty(accounts.getListOfBeneficiary())){
             beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                             .collect(Collectors.toList());
         }
-        if(!CollectionUtils.isEmpty(accounts.getListOfTransactions())){
+        if(!isEmpty(accounts.getListOfTransactions())){
             transactionsDtoList=accounts.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
@@ -71,7 +84,7 @@ public class MapperHelper {
 
     public static Customer mapToCustomer(final CustomerDto customerDto) {
         List<Accounts> listOfAccounts = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(customerDto.getAccounts())) {
+        if (!isEmpty(customerDto.getAccounts())) {
             listOfAccounts = customerDto.getAccounts().stream().
                     map(MapperHelper::mapToAccounts).collect(Collectors.toList());
         }
@@ -95,7 +108,7 @@ public class MapperHelper {
 
     public static CustomerDto mapToCustomerDto(final Customer customer) {
         List<AccountsDto> listOfAccounts = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(customer.getAccounts())) {
+        if (!isEmpty(customer.getAccounts())) {
             listOfAccounts = customer.getAccounts().stream().
                     map(MapperHelper::mapToAccountsDto).collect(Collectors.toList());
         }
@@ -183,11 +196,11 @@ public class MapperHelper {
     public static Accounts inputToAccounts(final PostInputRequestDto postInputRequestDto) {
         List<Beneficiary> beneficiaryList=new ArrayList<>();
         List<Transactions> transactionList=new ArrayList<>();
-        if(!CollectionUtils.isEmpty(postInputRequestDto.getListOfBeneficiary())){
+        if(!isEmpty(postInputRequestDto.getListOfBeneficiary())){
             beneficiaryList=postInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiary)
                     .collect(Collectors.toList());
         }
-        if(!CollectionUtils.isEmpty(postInputRequestDto.getListOfTransactions())){
+        if(!isEmpty(postInputRequestDto.getListOfTransactions())){
             transactionList=postInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactions)
                     .collect(Collectors.toList());
         }
@@ -234,11 +247,11 @@ public class MapperHelper {
     public static AccountsDto deleteRequestInputToAccountsDto(final DeleteInputRequestDto deleteInputRequestDto) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(!CollectionUtils.isEmpty(deleteInputRequestDto.getListOfBeneficiary())){
+        if(!isEmpty(deleteInputRequestDto.getListOfBeneficiary())){
             beneficiaryDtoList=deleteInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
-        if(!CollectionUtils.isEmpty(deleteInputRequestDto.getListOfTransactions())){
+        if(!isEmpty(deleteInputRequestDto.getListOfTransactions())){
             transactionsDtoList=deleteInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
@@ -265,11 +278,11 @@ public class MapperHelper {
     public static AccountsDto putInputRequestToAccountsDto(final PutInputRequestDto putInputRequestDto) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(!CollectionUtils.isEmpty(putInputRequestDto.getListOfBeneficiary())){
+        if(!isEmpty(putInputRequestDto.getListOfBeneficiary())){
             beneficiaryDtoList=putInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
-        if(!CollectionUtils.isEmpty(putInputRequestDto.getListOfTransactions())){
+        if(!isEmpty(putInputRequestDto.getListOfTransactions())){
             transactionsDtoList=putInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
@@ -296,11 +309,11 @@ public class MapperHelper {
     public static AccountsDto getInputToAccountsDto(final GetInputRequestDto getInputRequestDto) {
         List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
         List<TransactionsDto> transactionsDtoList=new ArrayList<>();
-        if(!CollectionUtils.isEmpty(getInputRequestDto.getListOfBeneficiary())){
+        if(!isEmpty(getInputRequestDto.getListOfBeneficiary())){
             beneficiaryDtoList=getInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toList());
         }
-        if(!CollectionUtils.isEmpty(getInputRequestDto.getListOfTransactions())){
+        if(!isEmpty(getInputRequestDto.getListOfTransactions())){
             transactionsDtoList=getInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toList());
         }
@@ -325,17 +338,10 @@ public class MapperHelper {
     }
 
     public static CustomerDto inputToCustomerDto(final PostInputRequestDto postInputRequestDto) {
-        LocalDate dob = null;
-        //converting date to its desired type
-        if (StringUtils.isNotBlank(postInputRequestDto.getDateOfBirthInYYYYMMDD())) {
-            final String[] date = postInputRequestDto.getDateOfBirthInYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
-
         return CustomerDto.builder()
                 .customerId(postInputRequestDto.getCustomerId())
                 .customerName(postInputRequestDto.getName())
-                .DateOfBirth(dob)
+                .DateOfBirth(dateParserInYYYYMMDD(postInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .age(postInputRequestDto.getAge())
                 .email(postInputRequestDto.getEmail())
                 //.password(postInputRequestDto.getPassword())
@@ -352,17 +358,10 @@ public class MapperHelper {
     }
 
     public static CustomerDto deleteInputRequestToCustomerDto(final DeleteInputRequestDto deleteInputRequestDto) {
-        LocalDate dob = null;
-        //converting date to its desired type
-        if (StringUtils.isNotBlank(deleteInputRequestDto.getDateOfBirthInYYYYMMDD())) {
-            final String[] date = deleteInputRequestDto.getDateOfBirthInYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
-
         return CustomerDto.builder()
                 .customerId(deleteInputRequestDto.getCustomerId())
                 .customerName(deleteInputRequestDto.getName())
-                .DateOfBirth(dob)
+                .DateOfBirth(dateParserInYYYYMMDD(deleteInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .age(deleteInputRequestDto.getAge())
                 .email(deleteInputRequestDto.getEmail())
                 .phoneNumber(deleteInputRequestDto.getPhoneNumber())
@@ -377,17 +376,10 @@ public class MapperHelper {
     }
 
     public static CustomerDto putInputRequestToCustomerDto(final PutInputRequestDto putInputRequestDto) {
-        LocalDate dob = null;
-        //converting date to its desired type
-        if (StringUtils.isNotBlank(putInputRequestDto.getDateOfBirthInYYYYMMDD())) {
-            final String[] date = putInputRequestDto.getDateOfBirthInYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
-
         return CustomerDto.builder()
                 .customerId(putInputRequestDto.getCustomerId())
                 .customerName(putInputRequestDto.getName())
-                .DateOfBirth(dob)
+                .DateOfBirth(dateParserInYYYYMMDD(putInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .age(putInputRequestDto.getAge())
                 .email(putInputRequestDto.getEmail())
                 .phoneNumber(putInputRequestDto.getPhoneNumber())
@@ -404,17 +396,10 @@ public class MapperHelper {
     }
 
     public static CustomerDto getInputToCustomerDto(final GetInputRequestDto getInputRequestDto) {
-        LocalDate dob = null;
-        //converting date to its desired type
-        if (StringUtils.isNotBlank(getInputRequestDto.getDateOfBirthInYYYYMMDD())) {
-            final String[] date = getInputRequestDto.getDateOfBirthInYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
-
         return CustomerDto.builder()
                 .customerId(getInputRequestDto.getCustomerId())
                 .customerName(getInputRequestDto.getName())
-                .DateOfBirth(dob)
+                .DateOfBirth(dateParserInYYYYMMDD(getInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .age(getInputRequestDto.getAge())
                 .email(getInputRequestDto.getEmail())
                 .phoneNumber(getInputRequestDto.getPhoneNumber())
@@ -429,16 +414,9 @@ public class MapperHelper {
     }
 
     public static Customer inputToCustomer(final PostInputRequestDto postInputRequestDto) {
-        //converting date to its desired type
-        LocalDate dob = null;
-        if (StringUtils.isNotBlank(postInputRequestDto.getDateOfBirthInYYYYMMDD())) {
-            final String[] date = postInputRequestDto.getDateOfBirthInYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
-
         return Customer.builder()
                 .name(postInputRequestDto.getName())
-                .DateOfBirth(dob)
+                .DateOfBirth(dateParserInYYYYMMDD(postInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .email(postInputRequestDto.getEmail())
                 .password(postInputRequestDto.getPassword())
                 .phoneNumber(postInputRequestDto.getPhoneNumber())
@@ -453,12 +431,6 @@ public class MapperHelper {
     }
 
     public static BeneficiaryDto mapInputDtoToBenDto(final PostInputRequestDto postInputRequestDto) {
-        //converting date to its desired type
-        LocalDate dob = null;
-        if (StringUtils.isNotBlank(postInputRequestDto.getDateOfBirthInYYYYMMDD())) {
-            final String[] date = postInputRequestDto.getDateOfBirthInYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
         return BeneficiaryDto.builder()
                 .beneficiaryAccountNumber(postInputRequestDto.getBeneficiaryAccountNumber())
                 .beneficiaryName(postInputRequestDto.getBeneficiaryName())
@@ -471,7 +443,7 @@ public class MapperHelper {
                 .benPassportNumber(postInputRequestDto.getPassportNumber())
                 .benBank(postInputRequestDto.getBenBank())
                 .benVoterId(postInputRequestDto.getVoterId())
-                .BenDate_Of_Birth(dob)
+                .BenDate_Of_Birth(dateParserInYYYYMMDD(postInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .benDrivingLicense(postInputRequestDto.getDrivingLicense())
                 .benUpdateRequest(postInputRequestDto.getBenRequest())
                 .relation(postInputRequestDto.getBloodRelation())
@@ -482,12 +454,6 @@ public class MapperHelper {
 
 
     public static BeneficiaryDto mapDeleteInputRequestDtoToBenDto(final DeleteInputRequestDto deleteInputRequestDto) {
-        //converting date to its desired type
-        LocalDate dob = null;
-        if (StringUtils.isNotBlank(deleteInputRequestDto.getBen_date_of_birthINYYYYMMDD())) {
-            final String[] date = deleteInputRequestDto.getBen_date_of_birthINYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
         return BeneficiaryDto.builder()
                 .beneficiaryAccountNumber(deleteInputRequestDto.getBeneficiaryAccountNumber())
                 .beneficiaryName(deleteInputRequestDto.getBeneficiaryName())
@@ -500,7 +466,7 @@ public class MapperHelper {
                 .benPassportNumber(deleteInputRequestDto.getBenPassportNumber())
                 .benBank(deleteInputRequestDto.getBenBank())
                 .benVoterId(deleteInputRequestDto.getBenVoterId())
-                .BenDate_Of_Birth(dob)
+                .BenDate_Of_Birth(dateParserInYYYYMMDD(deleteInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .benDrivingLicense(deleteInputRequestDto.getBenDrivingLicense())
                 .benUpdateRequest(deleteInputRequestDto.getBenRequest())
                 .relation(deleteInputRequestDto.getBloodRelation())
@@ -510,12 +476,6 @@ public class MapperHelper {
     }
 
     public static BeneficiaryDto mapPutInputRequestDtoToBenDto(final PutInputRequestDto putInputRequestDto) {
-        //converting date to its desired type
-        LocalDate dob = null;
-        if (StringUtils.isNotBlank(putInputRequestDto.getBen_date_of_birthInYYYYMMDD())) {
-            final String[] date = putInputRequestDto.getBen_date_of_birthInYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
         return BeneficiaryDto.builder()
                 .beneficiaryAccountNumber(putInputRequestDto.getBeneficiaryAccountNumber())
                 .beneficiaryName(putInputRequestDto.getBeneficiaryName())
@@ -528,7 +488,7 @@ public class MapperHelper {
                 .benPassportNumber(putInputRequestDto.getBenPassportNumber())
                 .benBank(putInputRequestDto.getBenBank())
                 .benVoterId(putInputRequestDto.getBenVoterId())
-                .BenDate_Of_Birth(dob)
+                .BenDate_Of_Birth(dateParserInYYYYMMDD(putInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .benDrivingLicense(putInputRequestDto.getBenDrivingLicense())
                 .benUpdateRequest(putInputRequestDto.getBenRequest())
                 .address(putInputRequestDto.getAddress())
@@ -538,12 +498,6 @@ public class MapperHelper {
     }
 
     public static BeneficiaryDto mapGetRequestInputDtoToBenDto(final GetInputRequestDto getInputRequestDto) {
-        //converting date to its desired type
-        LocalDate dob = null;
-        if (StringUtils.isNotBlank(getInputRequestDto.getBen_date_of_birthINYYYYMMDD())) {
-            final String[] date = getInputRequestDto.getBen_date_of_birthINYYYYMMDD().split("-");
-            dob = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-        }
         return BeneficiaryDto.builder()
                 .beneficiaryAccountNumber(getInputRequestDto.getBeneficiaryAccountNumber())
                 .beneficiaryName(getInputRequestDto.getBeneficiaryName())
@@ -556,7 +510,7 @@ public class MapperHelper {
                 .benPassportNumber(getInputRequestDto.getBenPassportNumber())
                 .benBank(getInputRequestDto.getBenBank())
                 .benVoterId(getInputRequestDto.getBenVoterId())
-                .BenDate_Of_Birth(dob)
+                .BenDate_Of_Birth(dateParserInYYYYMMDD(getInputRequestDto.getDateOfBirthInYYYYMMDD()))
                 .address(getInputRequestDto.getAddress())
                 .imageName(getInputRequestDto.getImageName())
                 .benDrivingLicense(getInputRequestDto.getBenDrivingLicense())

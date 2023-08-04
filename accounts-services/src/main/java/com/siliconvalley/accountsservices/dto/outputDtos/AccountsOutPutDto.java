@@ -5,6 +5,7 @@ import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -14,17 +15,17 @@ import java.util.List;
 @Builder
 public class AccountsOutPutDto {
     private String accountNumber;
-    private long balance;
+    private BigDecimal balance;
     private AllConstantHelpers.Branch homeBranch;
     private AllConstantHelpers.AccountType accountType;
     private AllConstantHelpers.AccountStatus accountStatus;
     private String branchCode;
-    private long transferLimitPerDay;
+    private BigDecimal transferLimitPerDay;
     private int creditScore;
-    private long approvedLoanLimitBasedOnCreditScore;
+    private BigDecimal approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
-    private long totalOutstandingAmountPayableToBank;
-    private long totLoanIssuedSoFar;
+    private BigDecimal totalOutstandingAmountPayableToBank;
+    private BigDecimal totLoanIssuedSoFar;
     private List<BeneficiaryDto> listOfBeneficiary;
     private List<TransactionsDto> listOfTransactions;
 }

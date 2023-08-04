@@ -8,6 +8,7 @@ import com.siliconvalley.accountsservices.model.Transactions;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,16 +48,16 @@ public class GetInputRequestDto {
   private String beneficiaryEmail;
   private String benVoterId;
   private String benDrivingLicense;
-  private long balance;
+  private BigDecimal balance;
   private AllConstantHelpers.UpdateRequest updateRequest;
   private String branchCode;
-  private long transferLimitPerDay;
+  private BigDecimal transferLimitPerDay;
   private int creditScore;
   private AllConstantHelpers.AccountStatus accountStatus;
-  private long approvedLoanLimitBasedOnCreditScore;
+  private BigDecimal approvedLoanLimitBasedOnCreditScore;
   private Boolean anyActiveLoans;
-  private long totLoanIssuedSoFar;
-  private long totalOutStandingAmountPayableToBank;
+  private BigDecimal totLoanIssuedSoFar;
+  private BigDecimal totalOutStandingAmountPayableToBank;
   private String address;
   private String imageName;
 
