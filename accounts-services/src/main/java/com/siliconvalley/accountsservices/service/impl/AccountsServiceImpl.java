@@ -52,6 +52,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 
 /**
@@ -108,7 +109,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String methodName = "processAccountInit(Accounts,String) in AccountsServiceImpl";
         //If request is adding another accounts for a customer already have an account
         //there should not be two accounts with  same accountType in same homeBranch
-        if (req.equalsIgnoreCase(UPDATE)) IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
+        if (UPDATE.equalsIgnoreCase(req)) IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
 
         final String accountNumber=UUID.randomUUID().toString();
         accounts.setAccountNumber(accountNumber);
@@ -428,7 +429,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<AccountsDto> pageableResponseDto = getAllActiveAccountsByCustomerId(customerId, pageable);
-        if (CollectionUtils.isEmpty(pageableResponseDto.getContent()))
+        if (isEmpty(pageableResponseDto.getContent()))
             throw new BadApiRequestException(BadApiRequestException.class,
                     String.format("Customer with id %s have no accounts present", customerId),
                     methodName);
@@ -479,7 +480,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         Customer foundCustomer;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
         //check the request type
-        if (Objects.isNull(accountsDto.getUpdateRequest()))
+        if (isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
         switch (request) {
@@ -511,11 +512,11 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);
         //load accounts & customer
         final String accountNumber = accountsDto.getAccountNumber();
-        Accounts foundAccount = null;
+        Accounts foundAccount=null;
         if (isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
         final String customerId = customerDto.getCustomerId();
-        Customer foundCustomer = null;
+        Customer foundCustomer=null;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type

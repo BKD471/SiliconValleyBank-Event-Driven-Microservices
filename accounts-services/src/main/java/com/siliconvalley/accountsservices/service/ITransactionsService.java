@@ -6,9 +6,9 @@ import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.TransactionException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface ITransactionsService {
     OutputDto transactionsExecutor(final TransactionsDto transactionsDto) throws TransactionException, AccountsException;
     OutputDto getPastSixMonthsTransactionsForAnAccount(final String accountNumber) throws AccountsException;
-    OutputDto downloadTransactionStatmentAsCsv(LocalDate startDate,LocalDate endDate);
 }

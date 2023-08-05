@@ -17,11 +17,16 @@ import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import scala.tools.nsc.doc.html.HtmlTags;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
@@ -156,9 +161,9 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final LocalDateTime today=LocalDateTime.now();
         final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
-        final List<Transactions> listOfTransactions= new ArrayList<>(fetchedAccount.getListOfTransactions().
+        final List<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
-                        .isAfter(pastSixMonthsDate)).toList());
+                        .isAfter(pastSixMonthsDate)).toList();
 
         listOfTransactions.sort((o1,o2)->(o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp()))? -1:
                 (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp()))? 1:0);
@@ -175,15 +180,8 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 .build();
     }
 
-    /**
-     * @param startDate
-     * @param endDate
-     * @return
-     */
-    @Override
-    public OutputDto downloadTransactionStatmentAsCsv(LocalDate startDate, LocalDate endDate) {
-        return null;
-    }
+
+
 
     private TransactionsDto payBills(final TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         log.debug("<---------payBills(TransactionsDto transactionsDto) started --------------------------------------------------------------------" +

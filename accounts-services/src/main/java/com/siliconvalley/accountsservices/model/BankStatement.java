@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,11 +18,12 @@ public final class BankStatement {
     private AllConstantHelpers.AccountType accountType;
     private Double RateOfInterest;
     private BigDecimal balance;
+    private List<Transactions> listOfTransaction;
 
     @Override
     public String toString() {
        return String.format("<-------------------------------------------------------------------------------------------------> \n" +
                 "accountName= %s \n accountNumber= %s \n branch= %s \n accountType= %s " +
-               "\n RateOfInterest= %s \n balance= %s",accountName,accountNumber,branch,accountType,RateOfInterest,balance);
+               "\n RateOfInterest= %s \n balance= %s \n transactionList= %s",accountName,accountNumber,branch,accountType,RateOfInterest,balance,listOfTransaction);
     }
 }

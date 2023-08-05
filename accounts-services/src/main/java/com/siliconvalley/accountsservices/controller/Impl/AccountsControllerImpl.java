@@ -46,21 +46,24 @@ public class AccountsControllerImpl implements IAccountsController {
         this.IMAGE_PATH=IMAGE_PATH;
     }
 
+
     /**
      * @param getInputRequestDto
      * @return
      * @throws AccountsException
+     * @throws ResponseException
+     * @throws CustomerException
+     * @throws IOException
      */
     @Override
-    public ResponseEntity<OutputDto> getRequestForChange(final GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
-        final OutputDto responseBody = accountsService.getRequestExecutor(getInputRequestDto);
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    public ResponseEntity<OutputDto> getRequestForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
+            final OutputDto responseBody = accountsService.getRequestExecutor(getInputRequestDto);
+            return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
     /**
      * @param customerId
      * @param response
-     * @return
      */
     @Override
     public void serveUserImage(final String customerId,final HttpServletResponse response) throws IOException {
@@ -93,7 +96,7 @@ public class AccountsControllerImpl implements IAccountsController {
      * @throws IOException
      */
     @Override
-    public ResponseEntity<OutputDto> createAccount(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
+    public ResponseEntity<OutputDto> createAccount(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException {
         final OutputDto responseBody = accountsService.accountSetUp(postInputDto);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }

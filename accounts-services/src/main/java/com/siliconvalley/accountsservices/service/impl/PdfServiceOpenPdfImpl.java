@@ -4,6 +4,7 @@ import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.BankStatement;
+import com.siliconvalley.accountsservices.model.Transactions;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
@@ -14,6 +15,10 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.function.Predicate;
 
 @Slf4j
 @Service("OpenPdfImplementation")
@@ -22,13 +27,15 @@ public class PdfServiceOpenPdfImpl extends AbstractService implements IPdfServic
         super(accountsRepository, customerRepository);
     }
 
+
     @Override
     public ByteArrayInputStream generateBankStatement(LocalDate startDate,LocalDate endDate,String accountNumber){
         log.info("################# Pdf Creation Service started ###################################");
 
         String title="Silicon Valley Corporation Pvt Ltd Account Statement";
-
+        List<Transactions> transactionsListBetweenDate=prepareTransactionsListBetweenDate(startDate,endDate,accountNumber);
         Accounts loadAccount=fetchAccountByAccountNumber(accountNumber);
+
         BankStatement bankStatement=BankStatement.builder()
                 .accountName(loadAccount.getCustomer().getName())
                 .accountNumber(loadAccount.getAccountNumber())
@@ -36,6 +43,7 @@ public class PdfServiceOpenPdfImpl extends AbstractService implements IPdfServic
                 .branch(loadAccount.getHomeBranch())
                 .RateOfInterest(loadAccount.getRateOfInterest())
                 .balance(loadAccount.getBalance())
+                .listOfTransaction(transactionsListBetweenDate)
                 .build();
 
         ByteArrayOutputStream out=new ByteArrayOutputStream();

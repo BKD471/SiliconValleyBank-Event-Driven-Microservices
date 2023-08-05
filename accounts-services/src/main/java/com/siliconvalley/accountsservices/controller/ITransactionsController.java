@@ -10,8 +10,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
 
 @RequestMapping("/api/v1/transactions")
 public interface ITransactionsController {
