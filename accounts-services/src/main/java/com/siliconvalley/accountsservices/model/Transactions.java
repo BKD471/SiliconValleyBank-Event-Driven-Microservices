@@ -32,6 +32,10 @@ public class Transactions extends AuditTransactions{
     @Enumerated(EnumType.STRING)
     private AllConstantHelpers.DescriptionType description;
 
+    @Column(name="balance")
+    private BigDecimal balance;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     private Accounts accounts;

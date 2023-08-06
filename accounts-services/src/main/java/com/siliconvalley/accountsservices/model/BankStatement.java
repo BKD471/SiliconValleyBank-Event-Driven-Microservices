@@ -12,6 +12,15 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public final class BankStatement {
+
+    private final String companyName="SiliconValley Corporation Pvt Ltd";
+    private final String city="Seattle";
+    private final String street="562 1ST Ave S Ste 400";
+    private final String ZipCode="98104-3816";
+    private final String faxNumber="+1-907-555-1234";
+    private final String State="Washington";
+    private final String country="United States";
+
     private String accountName;
     private String accountNumber;
     private AllConstantHelpers.Branch branch;
