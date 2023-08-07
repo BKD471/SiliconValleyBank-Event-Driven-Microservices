@@ -161,9 +161,9 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final LocalDateTime today=LocalDateTime.now();
         final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
-        final List<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
+        final List<Transactions> listOfTransactions= new ArrayList<>(fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
-                        .isAfter(pastSixMonthsDate)).toList();
+                        .isAfter(pastSixMonthsDate)).toList());
 
         listOfTransactions.sort((o1,o2)->(o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp()))? -1:
                 (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp()))? 1:0);

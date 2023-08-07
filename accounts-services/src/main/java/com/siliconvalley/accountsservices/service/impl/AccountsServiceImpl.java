@@ -32,7 +32,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 
 import java.io.IOException;
@@ -42,8 +41,11 @@ import java.time.Period;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.AccountsValidateType.GET_ALL_ACC;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.AccountsValidateType.UPDATE_CUSTOMER_DETAILS;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
 import static com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
@@ -92,14 +94,13 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
-        this.roleRepository=roleRepository;
+        this.roleRepository = roleRepository;
         this.fIleService = fIleService;
-        this.validationService=validationService;
+        this.validationService = validationService;
         this.passwordEncoder = passwordEncoder;
-        this.IMAGE_PATH=IMAGE_PATH;
-        this.NORMAL_ROLE_ID=NORMAL_ROLE_ID;
+        this.IMAGE_PATH = IMAGE_PATH;
+        this.NORMAL_ROLE_ID = NORMAL_ROLE_ID;
     }
-
 
 
     private Accounts processAccountInit(final Accounts accounts, final String req) throws AccountsException {
@@ -109,9 +110,10 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String methodName = "processAccountInit(Accounts,String) in AccountsServiceImpl";
         //If request is adding another accounts for a customer already have an account
         //there should not be two accounts with  same accountType in same homeBranch
-        if (UPDATE.equalsIgnoreCase(req)) IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts, null, methodName);
+        if (UPDATE.equalsIgnoreCase(req))
+            IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts, methodName);
 
-        final String accountNumber=UUID.randomUUID().toString();
+        final String accountNumber = UUID.randomUUID().toString();
         accounts.setAccountNumber(accountNumber);
 
         accounts.setBalance(BigDecimal.valueOf(0L));
@@ -132,17 +134,17 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private Customer processCustomerInformation(final Customer customer) {
         log.debug("<-------processCustomerInformation(Customer) AccountsServiceImpl started--------------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------->");
-        final String methodName="processCustomerInformation(Customer)";
+        final String methodName = "processCustomerInformation(Customer)";
         final LocalDate dob = customer.getDateOfBirth();
         final int age = Period.between(dob, LocalDate.now()).getYears();
         customer.setAge(age);
 
-        final String customerId=UUID.randomUUID().toString();
+        final String customerId = UUID.randomUUID().toString();
         customer.setCustomerId(customerId);
 
         //set role
-        final Optional<Role> roles=roleRepository.findById(NORMAL_ROLE_ID);
-        if(roles.isEmpty()) throw new RolesException(RolesException.class,"No roles found",methodName);
+        final Optional<Role> roles = roleRepository.findById(NORMAL_ROLE_ID);
+        if (roles.isEmpty()) throw new RolesException(RolesException.class, "No roles found", methodName);
         customer.setRoles(new HashSet<>(Collections.singletonList(roles.get())));
 
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
@@ -157,7 +159,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final Accounts account = inputToAccounts(postInputRequestDto);
         final Customer customer = inputToCustomer(postInputRequestDto);
         account.setCustomer(customer);
-        validationService.accountsUpdateValidator(account, mapToAccountsDto(account), null, CREATE_ACCOUNT);
+        validationService.accountsUpdateValidator(account, null, CREATE_ACCOUNT);
 
         final Accounts processedAccount = processAccountInit(account, "INIT");
         final Customer processedCustomer = processCustomerInformation(customer);
@@ -179,17 +181,17 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     }
 
 
-    private OutputDto createAccountForAlreadyCreatedUser(final String customerId,final Accounts loadAccount,final AccountsDto accountsDto) throws AccountsException {
+    private OutputDto createAccountForAlreadyCreatedUser(final String customerId, final Accounts loadAccount, final AccountsDto accountsDto) throws AccountsException {
         log.debug("<-------------- createAccountForAlreadyCreatedUser(long,Accounts,AccountsDto) AccountsServiceImpl started -----------------------------" +
                 "------------------------------------------------------------------------------------------------------>--->");
         final String methodName = "createAccountForAlreadyCreatedUser(long,InoutDto) in AccountsServiceImpl";
         final Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isEmpty()) throw new AccountsException(AccountsException.class,
-                    String.format("No such customers with id %s found", customerId),
-                    methodName);
+                String.format("No such customers with id %s found", customerId),
+                methodName);
 
         loadAccount.setCustomer(customer.get());
-        validationService.accountsUpdateValidator(loadAccount, accountsDto, null, ADD_ACCOUNT);
+        validationService.accountsUpdateValidator(loadAccount, null, ADD_ACCOUNT);
         final Accounts accounts = mapToAccounts(accountsDto);
         accounts.setCustomer(customer.get());
         Accounts processedAccount = processAccountInit(accounts, UPDATE);
@@ -224,7 +226,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 .build();
     }
 
-    private PageableResponseDto<AccountsDto> getAllActiveAccountsByCustomerId(final String customerId,final Pageable pageable) throws AccountsException {
+    private PageableResponseDto<AccountsDto> getAllActiveAccountsByCustomerId(final String customerId, final Pageable pageable) throws AccountsException {
         log.debug("<-----------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl started -----------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
         final String methodName = "getAllAccountsByCustomerId(long) in AccountsServiceImpl";
@@ -238,16 +240,15 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     }
 
 
-
-    private Accounts updateHomeBranch(final AccountsDto accountsDto,final Accounts accounts) throws AccountsException {
+    private Accounts updateHomeBranch(final AccountsDto accountsDto, final Accounts accounts) throws AccountsException {
         log.debug("<-------------updateHomeBranch(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
         final AllConstantHelpers.Branch oldHomeBranch = accounts.getHomeBranch();
         final AllConstantHelpers.Branch newHomeBranch = accountsDto.getHomeBranch();
         Accounts savedUpdatedAccount = accounts;
 
-        if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_HOME_BRANCH)
-                && nonNull(newHomeBranch) && !newHomeBranch.equals(oldHomeBranch)) {
+        validationService.accountsUpdateValidator(accounts, null, UPDATE_HOME_BRANCH);
+        if (nonNull(newHomeBranch) && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             accounts.setBranchCode(getBranchCode(newHomeBranch));
             savedUpdatedAccount = accountsRepository.save(accounts);
@@ -257,7 +258,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         return savedUpdatedAccount;
     }
 
-    private Accounts increaseTransferLimit(final AccountsDto accountsDto,final Accounts accounts) throws AccountsException {
+    private Accounts increaseTransferLimit(final AccountsDto accountsDto, final Accounts accounts) throws AccountsException {
         log.debug("<------------increaseTransferLimit(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------->");
         final String methodName = "increaseTransferLimit(AccountsDto,Accounts) in AccountsServiceImpl";
@@ -265,17 +266,12 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final BigDecimal newCashLimit = accountsDto.getTransferLimitPerDay();
 
         Accounts savedAccount = accounts;
+        BiPredicate<BigDecimal, BigDecimal> checkForCashLimitRevision = (newLimit, oldLimit) -> newLimit.compareTo(BigDecimal.ZERO) == 0
+                && newLimit.compareTo(oldLimit) != 0;
 
-        BiPredicate<BigDecimal,BigDecimal> checkForCashLimitRevision=(newLimit,oldLimit)-> newLimit.compareTo(BigDecimal.ZERO)==0
-                && newLimit.compareTo(oldLimit)!=0;
-
-        if ( checkForCashLimitRevision.test(newCashLimit,oldCashLimit) ) {
-            if (validationService.accountsUpdateValidator(accounts, accountsDto, null, UPDATE_CASH_LIMIT))
-                accounts.setTransferLimitPerDay(newCashLimit);
-            else
-                throw new AccountsException(AccountsException.class,
-                        String.format("Yr Account with id %s must be at least " +
-                                "six months old ", accounts.getAccountNumber()), methodName);
+        validationService.accountsUpdateValidator(accounts, null, UPDATE_CASH_LIMIT);
+        if (checkForCashLimitRevision.test(newCashLimit, oldCashLimit)) {
+            accounts.setTransferLimitPerDay(newCashLimit);
             savedAccount = accountsRepository.save(accounts);
         }
         log.debug("<----------increaseTransferLimit(AccountsDto,Accounts) AccountsServiceImpl ended ------------------------------------------------------" +
@@ -286,9 +282,9 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private void blockAccount(final Accounts foundAccount) throws AccountsException {
         //Note: block is very urgent so no prior validation is required  for ongoing loan
         //but authority reserves right to scrutiny any ongoing loan Emi
-         log.debug("<----------blockAccount(Accounts) AccountsServiceImpl started --------------------------------------------------------------------------" +
-                 "------------------------------------------------------------------------------------------------------------------->");
-        validationService.accountsUpdateValidator(foundAccount, mapToAccountsDto(foundAccount), null, BLOCK_ACCOUNT);
+        log.debug("<----------blockAccount(Accounts) AccountsServiceImpl started --------------------------------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------->");
+        validationService.accountsUpdateValidator(foundAccount, null, BLOCK_ACCOUNT);
         //Block it
         foundAccount.setAccountStatus(STATUS_BLOCKED);
         //save it
@@ -300,14 +296,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private void closeAccount(final Accounts foundAccount) throws AccountsException {
         log.debug("<--------closeAccount(Accounts) AccountsServiceImpl started ----------------------------------------------------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------------->");
-        final String methodName = "closeAccount(accountNUmber) in AccountsServiceImpl";
-        //check if he has pending loan
-        if (validationService.accountsUpdateValidator(foundAccount, mapToAccountsDto(foundAccount), null, CLOSE_ACCOUNT))
-            throw new AccountsException(AccountsException.class, String.format("This account with id %s still has " +
-                    "running loan. Please consider paying it before closing", foundAccount.getAccountNumber()), methodName);
-        //close it
+        validationService.accountsUpdateValidator(foundAccount,null, CLOSE_ACCOUNT);
         foundAccount.setAccountStatus(STATUS_CLOSED);
-        //save it
         accountsRepository.save(foundAccount);
         log.debug("<----------closeAccount(Accounts) AccountsServiceImpl ended ----------------------------------------------------------------------------" +
                 "---------------------------------------------------------------------------------------------------------------------->");
@@ -316,10 +306,9 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private void unCloseAccount(final Accounts account) throws AccountsException {
         log.debug("<-----------------unCloseAccount(Accounts) AccountsServiceImpl started ----------------------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------->");
-        if (validationService.accountsUpdateValidator(account, mapToAccountsDto(account), null, RE_OPEN_ACCOUNT)) {
-            account.setAccountStatus(STATUS_OPENED);
-            accountsRepository.save(account);
-        }
+        validationService.accountsUpdateValidator(account, null, RE_OPEN_ACCOUNT);
+        account.setAccountStatus(STATUS_OPENED);
+        accountsRepository.save(account);
         log.debug("<------------unCloseAccount(Accounts) AccountsServiceImpl ended -----------------------------------------------------------------------" +
                 "--------------------------------------------------------------------------------------------------------------------->");
     }
@@ -343,13 +332,12 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         if (foundCustomer.isEmpty())
             throw new AccountsException(AccountsException.class, String.format("No such customer exists with id %s", customerId), methodName);
-        //deleting it
         accountsRepository.deleteAllByCustomer_CustomerId(customerId);
         log.debug("<-----------deleteAllAccountsByCustomer(long) AccountsServiceImpl ended ----------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------->");
     }
 
-    private Customer updateCustomerDetails(final Customer oldCustomerRecord,final CustomerDto newCustomerRecord) {
+    private Customer updateCustomerDetails(final Customer oldCustomerRecord, final CustomerDto newCustomerRecord) {
         log.debug("<-----------updateCustomerDetails(Customer,CustomerDto ) AccountsServiceImpl started-----------------------" +
                 "--------------------------------------------------------------------------------------------------------------------->");
         final String oldName = oldCustomerRecord.getName();
@@ -372,27 +360,28 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String oldPassportNumber = oldCustomerRecord.getPassportNumber();
         final String newPassportNumber = newCustomerRecord.getPassportNumber();
 
-        BiPredicate<String,String> isAllowedToUpdate=(newRecord,oldRecord)-> isNotBlank(newRecord) && !oldRecord.equalsIgnoreCase(newRecord);
-        BiPredicate<LocalDate,LocalDate> isAllowedToUpdateForObjects=(newObj,oldObj)->nonNull(newObj) && !oldObj.equals(newObj);
+        BiPredicate<String, String> isAllowedToUpdate = (newRecord, oldRecord) -> isNotBlank(newRecord) && !oldRecord.equalsIgnoreCase(newRecord);
+        BiPredicate<LocalDate, LocalDate> isAllowedToUpdateForObjects = (newObj, oldObj) -> nonNull(newObj) && !oldObj.equals(newObj);
 
-        if (isAllowedToUpdate.test(newName,oldName))
+        if (isAllowedToUpdate.test(newName, oldName))
             newCustomerRecord.setCustomerName(newName);
-        if (isAllowedToUpdateForObjects.test(newDateOfBirth,oldDateOfBirth)) {
+        if (isAllowedToUpdateForObjects.test(newDateOfBirth, oldDateOfBirth)) {
             newCustomerRecord.setDateOfBirth(newDateOfBirth);
-            newCustomerRecord.setAge(newAge);}
-        if (isAllowedToUpdate.test(newEmail,oldEmail))
+            newCustomerRecord.setAge(newAge);
+        }
+        if (isAllowedToUpdate.test(newEmail, oldEmail))
             newCustomerRecord.setEmail(newEmail);
-        if (isAllowedToUpdate.test(newPhoneNumber,oldPhoneNumber))
+        if (isAllowedToUpdate.test(newPhoneNumber, oldPhoneNumber))
             newCustomerRecord.setCustomerName(newPhoneNumber);
-        if (isAllowedToUpdate.test(newAdharNumber,oldAdharNumber))
+        if (isAllowedToUpdate.test(newAdharNumber, oldAdharNumber))
             newCustomerRecord.setCustomerName(newAdharNumber);
-        if (isAllowedToUpdate.test(newPassportNumber,oldPassportNumber))
+        if (isAllowedToUpdate.test(newPassportNumber, oldPassportNumber))
             newCustomerRecord.setCustomerName(newPassportNumber);
-        if (isAllowedToUpdate.test(newPanNumber,oldPanNumber))
+        if (isAllowedToUpdate.test(newPanNumber, oldPanNumber))
             newCustomerRecord.setCustomerName(newPanNumber);
-        if (isAllowedToUpdate.test(newVoterId,oldVoterId))
+        if (isAllowedToUpdate.test(newVoterId, oldVoterId))
             newCustomerRecord.setCustomerName(newVoterId);
-        if (isAllowedToUpdate.test(newName,oldDrivingLicense))
+        if (isAllowedToUpdate.test(newName, oldDrivingLicense))
             newCustomerRecord.setDrivingLicense(newDrivingLicense);
 
         final Customer updatedCustomer = mapToCustomer(newCustomerRecord);
@@ -403,6 +392,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 "------------------------------------------------------------------------------------------------------------------------>");
         return customerRepository.save(updatedCustomer);
     }
+
     private int getCreditScore(final String accountNumber) {
         log.debug("<----------getCreditScore(Long ) AccountsServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------>");
@@ -422,10 +412,10 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         return 0;
     }
 
-    private PageableResponseDto<AccountsDto> accountsPagination(final DIRECTION sortDir,final String sortBy,final int pageNumber,final int pageSize,final String customerId) {
+    private PageableResponseDto<AccountsDto> accountsPagination(final DIRECTION sortDir, final String sortBy, final int pageNumber, final int pageSize, final String customerId) {
         log.debug("<---------accountsPagination(DIRECTION,String ,int,int long) AccountsServiceImpl started ------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
-        final String methodName="accountsPagination(DIRECTION,String,int,int,long) in AccountsServiceImpl";
+        final String methodName = "accountsPagination(DIRECTION,String,int,int,long) in AccountsServiceImpl";
         final Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<AccountsDto> pageableResponseDto = getAllActiveAccountsByCustomerId(customerId, pageable);
@@ -434,18 +424,21 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                     String.format("Customer with id %s have no accounts present", customerId),
                     methodName);
 
-        final List<AccountsDto> onlyActiveAccounts = pageableResponseDto.getContent().stream().filter(accounts -> !STATUS_BLOCKED.equals(accounts.getAccountStatus())
-                && !STATUS_CLOSED.equals(accounts.getAccountStatus())).toList();
+        Predicate<AccountsDto> checkForOnlyActiveAccounts=acc -> !STATUS_BLOCKED.equals(acc.getAccountStatus())
+                && !STATUS_CLOSED.equals(acc.getAccountStatus());
+
+        final List<AccountsDto> onlyActiveAccounts = pageableResponseDto.getContent()
+                .stream().filter(checkForOnlyActiveAccounts).toList();
 
         pageableResponseDto.setContent(onlyActiveAccounts);
         log.debug("<-----------------accountsPagination(DIRECTION,String,int,int,long) AccountsServiceImpl ended -------------------------------------------------------------------------------------------------------------->");
-        return  pageableResponseDto;
+        return pageableResponseDto;
     }
 
     private void uploadProfileImage(final CustomerDto customerDto) throws IOException {
         log.debug("<-------------uploadProfileImage(CustomerDto) AccountsServiceImpl started --------------------------------------------------------------" +
                 "---------------------------------------------------------------------------------------------------------------------->");
-        validationService.accountsUpdateValidator(null, null, customerDto, UPLOAD_PROFILE_IMAGE);
+        validationService.accountsUpdateValidator(null,  customerDto, UPLOAD_PROFILE_IMAGE);
         final String imageName = fIleService.uploadFile(customerDto.getCustomerImage(), IMAGE_PATH);
         final Customer customer = fetchCustomerByCustomerNumber(customerDto.getCustomerId());
         customer.setImageName(imageName);
@@ -512,18 +505,18 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);
         //load accounts & customer
         final String accountNumber = accountsDto.getAccountNumber();
-        Accounts foundAccount=null;
+        Accounts foundAccount = null;
         if (isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
         final String customerId = customerDto.getCustomerId();
-        Customer foundCustomer=null;
+        Customer foundCustomer = null;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
         if (Objects.isNull(accountsDto.getUpdateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
-        final StringBuffer location=new StringBuffer(500);
+        final StringBuffer location = new StringBuffer(500);
         switch (request) {
             case GET_CREDIT_SCORE -> {
                 getCreditScore(accountNumber);
@@ -536,14 +529,14 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             case GET_ALL_ACC -> {
                 location.append("Inside GET_ALL_ACC");
                 location.trimToSize();
-                if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class, "No customer found", String.format("%s of %s", location, methodName));
+                validationService.accountsUpdateValidator(foundAccount,mapToCustomerDto(foundCustomer),GET_ALL_ACC);
 
                 //validate the genuineness of sorting fields
                 final Set<String> allPageableFieldsOfAccounts = getAllPageableFieldsOfAccounts();
                 if (!allPageableFieldsOfAccounts.contains(sortBy))
                     throw new BadApiRequestException(BadApiRequestException.class,
                             String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", location, methodName));
-                final PageableResponseDto<AccountsDto> pageableResponseDto=accountsPagination(sortDir,sortBy,pageNumber,pageSize,customerId);
+                final PageableResponseDto<AccountsDto> pageableResponseDto = accountsPagination(sortDir, sortBy, pageNumber, pageSize, customerId);
 
                 return OutputDto.builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
@@ -587,9 +580,11 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
         final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
 
-        final StringBuffer location=new StringBuffer(500);
+        final StringBuffer location = new StringBuffer(500);
         switch (request) {
-            case ADD_ACCOUNT -> {return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);}
+            case ADD_ACCOUNT -> {
+                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);
+            }
             case UPDATE_HOME_BRANCH -> {
                 final Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
 
@@ -641,15 +636,14 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             case UPDATE_CUSTOMER_DETAILS -> {
                 location.append("Inside UPDATE_CUSTOMER_DETAILS");
                 location.trimToSize();
-                if (isNull(foundCustomer)) throw new CustomerException(CustomerException.class,
-                        "Please specify a customer id to update details", String.format("%s of %s", location, methodName));
+                validationService.accountsUpdateValidator(foundAccount,mapToCustomerDto(foundCustomer),UPDATE_CUSTOMER_DETAILS);
                 final CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
-                final PageableResponseDto<AccountsDto> pageableResponseDto=accountsPagination(sortDir,sortBy,pageNumber,pageSize,customerId);
+                final PageableResponseDto<AccountsDto> pageableResponseDto = accountsPagination(sortDir, sortBy, pageNumber, pageSize, customerId);
 
                 return OutputDto.builder()
                         .customer(mapToCustomerOutputDto(updatedCustomerDto))
                         .accountsListPages(pageableResponseDto)
-                        .defaultMessage(String.format("Customer with id %s has been updated",customerId)).build();
+                        .defaultMessage(String.format("Customer with id %s has been updated", customerId)).build();
             }
             default -> throw new AccountsException(AccountsException.class,
                     String.format("Invalid request type %s for PUT request", request), methodName);
@@ -689,16 +683,17 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
      */
     @Override
     public OutputDto deleteCustomer(final DeleteInputRequestDto deleteInputRequestDto) {
-        final String methodName="deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
+        final String methodName = "deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
 
-        final String customerId=deleteInputRequestDto.getCustomerId();
-        final AllConstantHelpers.DeleteRequest deleteRequest=deleteInputRequestDto.getDeleteRequest();
-        if(isNull(deleteRequest) || isBlank(customerId)) throw  new BadApiRequestException(BadApiRequestException.class,"Pls specify delete request type or customer id",methodName);
+        final String customerId = deleteInputRequestDto.getCustomerId();
+        final AllConstantHelpers.DeleteRequest deleteRequest = deleteInputRequestDto.getDeleteRequest();
+        if (isNull(deleteRequest) || isBlank(customerId))
+            throw new BadApiRequestException(BadApiRequestException.class, "Pls specify delete request type or customer id", methodName);
 
-        final Customer foundCustomer=fetchCustomerByCustomerNumber(customerId);
+        final Customer foundCustomer = fetchCustomerByCustomerNumber(customerId);
         customerRepository.delete(foundCustomer);
         return OutputDto.builder()
-                .defaultMessage(String.format("Customer with id %s is deleted",customerId))
+                .defaultMessage(String.format("Customer with id %s is deleted", customerId))
                 .build();
     }
 }

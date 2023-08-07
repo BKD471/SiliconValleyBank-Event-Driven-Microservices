@@ -6,6 +6,7 @@ import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.BeneficiaryException;
+import com.siliconvalley.accountsservices.exception.CustomerException;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
@@ -28,6 +29,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UpdateRequest.GET_ALL_ACC;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToBeneficiaryDto;
 import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.*;
 import static java.util.Objects.isNull;
@@ -48,7 +50,7 @@ public final class ValidationServiceImpl implements IValidationService {
     }
 
     @Override
-    public Boolean accountsUpdateValidator(final Accounts accounts, final AccountsDto accountsDto, final CustomerDto customerDto, final AccountsValidateType request) throws AccountsException, BadApiRequestException {
+    public void accountsUpdateValidator(final Accounts accounts, final CustomerDto customerDto, final AccountsValidateType request) throws AccountsException, BadApiRequestException {
         log.debug("<---------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
         final String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
@@ -60,7 +62,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 //check whether such account owner is already present
                 final List<Accounts> accountsList = accountsRepository.findAll();
                 //if no accounts by far then certainly we can add
-                if (accountsList.isEmpty()) return true;
+                if (accountsList.isEmpty()) return;
 
                 final String adharNumber = accounts.getCustomer().getAdharNumber();
                 final boolean isNotPossible = accountsList.stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
@@ -81,7 +83,11 @@ public final class ValidationServiceImpl implements IValidationService {
                             String.format("%s of %s", location, methodName));
             }
             case UPDATE_CASH_LIMIT -> {
-                return Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() >= 6;
+                location.append("Inside UPDATE_CASH_LIMIT");
+                location.trimToSize();
+                if(Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() < 6)
+                    throw  new AccountsException(AccountsException.class,"Your account must be at least 6 months old to update cash Limit",
+                            String.format("%s of %s",location,methodName));
             }
             case UPLOAD_PROFILE_IMAGE -> {
                 location.append("Inside UPLOAD_PROFILE_IMAGE");
@@ -100,21 +106,23 @@ public final class ValidationServiceImpl implements IValidationService {
             case UPDATE_HOME_BRANCH -> {
                 location.append("Inside UPDATE_HOME_BRANCH");
                 location.trimToSize();
-                return IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts,
-                        accountsDto, String.format("%s of %s", location, methodName));
+                IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts,
+                         String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
                 location.append("Inside CLOSE_ACCOUNT");
                 location.trimToSize();
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
+
+                if(accounts.getAnyActiveLoans()) throw new AccountsException(AccountsException.class, String.format("This account with id %s still has " +
+                            "running loan. Please consider paying it before closing", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
+
                 switch (status) {
                     case CLOSED ->
                             throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()),String.format("%s of %s", location, methodName));
                     case BLOCKED ->
                             throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()),String.format("%s of %s", location, methodName));
-                    case OPEN -> {
-                        return accounts.getAnyActiveLoans();
-                    }
+                    case OPEN -> {return ;}
                 }
             }
             case RE_OPEN_ACCOUNT -> {
@@ -122,8 +130,8 @@ public final class ValidationServiceImpl implements IValidationService {
                 location.trimToSize();
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
-                    case CLOSED -> {return true;}
-                    case BLOCKED -> throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
+                    case CLOSED -> {return ;}
+                    case BLOCKED -> throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s, Please contact the admin department", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
                     case OPEN -> throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
                 }
             }
@@ -134,14 +142,21 @@ public final class ValidationServiceImpl implements IValidationService {
                     throw new AccountsException(AccountsException.class,
                             String.format("Status of Account: %s is already Blocked",
                                     accounts.getAccountStatus()),String.format("%s of %s", location, methodName));
-                return true;
+            }
+            case GET_ALL_ACC -> {
+                if (isNull(customerDto))
+                    throw new CustomerException(CustomerException.class,
+                            "No customer found", String.format("%s of %s", location, methodName));
+            }
+            case UPDATE_CUSTOMER_DETAILS -> {
+                if (isNull(customerDto)) throw new CustomerException(CustomerException.class,
+                        "Please specify a customer id to update details", String.format("%s of %s", location, methodName));
             }
         }
 
         log.debug("<-----------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl ended -----------------------" +
                 "----------" +
                 "-------------------------------------------------------------------------------------------------------------------------->");
-        return false;
     }
 
     @Override

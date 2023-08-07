@@ -43,6 +43,7 @@ import static com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper.get
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 import static com.siliconvalley.accountsservices.helpers.PagingHelper.*;
 import static java.util.Objects.isNull;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
@@ -109,7 +110,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         log.debug("<-----------------getBeneficiaryById(Accounts, Long ) BeneficiaryServiceImpl started ----------------------------------" +
                 "---------------------------------------------------------------------------------------------->");
         final String methodName = "getBeneficiaryById(Accounts,Long";
-        if (CollectionUtils.isEmpty(fetchedAccount.getListOfBeneficiary()))
+        if (isEmpty(fetchedAccount.getListOfBeneficiary()))
             throw new BeneficiaryException(BeneficiaryException.class,
                     "No beneficiaries found for this account", methodName);
         log.debug("<-------------------------getBeneficiaryById(Accounts, Long) BeneficiaryServiceImpl ended --------------------------------" +
@@ -275,7 +276,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<BeneficiaryDto> pageableResponseDto = getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount,pageable);
 
-        if (CollectionUtils.isEmpty(pageableResponseDto.getContent()))
+        if (isEmpty(pageableResponseDto.getContent()))
             throw new BadApiRequestException(BadApiRequestException.class,
                     String.format("Account with id %s have no beneficiary present", fetchedAccount.getAccountNumber()),
                     methodName);

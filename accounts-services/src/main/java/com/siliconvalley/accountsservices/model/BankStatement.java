@@ -23,8 +23,8 @@ public final class BankStatement {
 
     private String accountName;
     private String accountNumber;
-    private AllConstantHelpers.Branch branch;
-    private AllConstantHelpers.AccountType accountType;
+    private String branch;
+    private String accountType;
     private Double RateOfInterest;
     private BigDecimal balance;
     private List<Transactions> listOfTransaction;

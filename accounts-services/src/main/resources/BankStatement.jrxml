@@ -58,13 +58,13 @@
         <field name="transactionTimeStamp" class="java.sql.Timestamp">
 
         </field>
-        <field name="description" class="java.lang.Object">
+        <field name="description" class="java.lang.String">
 
         </field>
         <field name="transactedAccountNumber" class="java.lang.String">
 
         </field>
-        <field name="transactionType" class="java.lang.">
+        <field name="transactionType" class="java.lang.String">
 
         </field>
         <field name="transactionAmount" class="java.math.BigDecimal">
