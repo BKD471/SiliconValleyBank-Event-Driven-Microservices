@@ -42,36 +42,38 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         this.accountsRepository = accountsRepository;
     }
 
-    private Transactions updateBalance(final Accounts accounts, final Transactions transactions, final BigDecimal amount, final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
+    private synchronized Transactions updateBalance(final Accounts accounts, final Transactions transactions, final BigDecimal amount, final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
         log.debug("<--------------------updateBalance(Accounts, Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl started ----------" +
                 "--------------------------------------------------------------------------------------------------------->");
         final String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
         final BigDecimal previousBalance = accounts.getBalance();
 
-        BigDecimal updatedAmount=new BigDecimal(0);
-        if (CREDIT.equals(transactionType)) {
-            updatedAmount=new BigDecimal(String.valueOf(previousBalance)).add(amount);
-            accounts.setBalance(updatedAmount);
-            transactions.setTransactionType(CREDIT);
-        }
-        if (DEBIT.equals(transactionType)) {
-            updatedAmount=new BigDecimal(String.valueOf(previousBalance)).subtract(amount);
-            if (previousBalance.compareTo(amount)>=0) accounts.setBalance(updatedAmount);
-            else throw new TransactionException(TransactionException.class,"Insufficient Balance",methodName);
-            transactions.setTransactionType(DEBIT);
+            BigDecimal updatedAmount=new BigDecimal(0);
+            synchronized (this) {
+                if (CREDIT.equals(transactionType)) {
+                    updatedAmount = new BigDecimal(String.valueOf(previousBalance)).add(amount);
+                    accounts.setBalance(updatedAmount);
+                    transactions.setTransactionType(CREDIT);
+                }
+                if (DEBIT.equals(transactionType)) {
+                    updatedAmount = new BigDecimal(String.valueOf(previousBalance)).subtract(amount);
+                    if (previousBalance.compareTo(amount) >= 0) accounts.setBalance(updatedAmount);
+                    else throw new TransactionException(TransactionException.class, "Insufficient Balance", methodName);
+                    transactions.setTransactionType(DEBIT);
+                }
+                transactions.setBalance(updatedAmount);
+                accountsRepository.save(accounts);
+            }
+            log.debug("<---------updateBalance(Accounts , Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl ended -----------------" +
+                    "-------------------------------------------------------------------------------------------------------------->");
+            return transactions;
         }
 
-        transactions.setBalance(updatedAmount);
-        accountsRepository.save(accounts);
-        log.debug("<---------updateBalance(Accounts , Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl ended -----------------" +
-                "-------------------------------------------------------------------------------------------------------------->");
-        return transactions;
-    }
 
-    /**
-     * @param transactionsDto
-     * @returnType AccountsDto
-     */
+        /**
+         * @param transactionsDto
+         * @returnType AccountsDto
+         */
 
     private TransactionsDto payOrDepositMoney(final TransactionsDto transactionsDto, final AllConstantHelpers.TransactionType transactionType) throws AccountsException, TransactionException {
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl started -----------------------" +
@@ -160,10 +162,9 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
                         .isAfter(pastSixMonthsDate)).collect(Collectors.toSet());
 
-        listOfTransactions.stream().toList().sort((o1, o2) -> {
-            return (o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp())) ? -1 :
-                    (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp())) ? 1 : 0;
-        });
+        Comparator<Transactions> sortTransactions=(o1, o2) -> (o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp())) ? -1 :
+                (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp())) ? 1 : 0;
+        listOfTransactions.stream().toList().sort(sortTransactions);
 
         final Set<TransactionsDto> transactionsArrayList= listOfTransactions.stream().toList().stream()
                 .map(MapperHelper::mapToTransactionsDto)
