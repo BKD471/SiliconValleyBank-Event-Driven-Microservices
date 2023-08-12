@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.dateParserInYYYYMMDD;
@@ -57,7 +58,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
     }
 
     @Override
-    public ResponseEntity<InputStreamResource> generateBankStatement(final BankStatementRequestDto bankStatementRequestDto){
+    public ResponseEntity<InputStreamResource> generateBankStatement(final BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException {
         String accountNumber=bankStatementRequestDto.getAccountNumber();
         LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.getStartDate());
         LocalDate endDate=dateParserInYYYYMMDD(bankStatementRequestDto.getEndDate());

@@ -30,6 +30,6 @@ public class CustomerDto {
     private String address;
     private String imageName;
     private MultipartFile customerImage;
-    private List<AccountsDto> accounts;
+    private Set<AccountsDto> accounts;
     private Set<RoleDto> roles=new HashSet<>();
 }

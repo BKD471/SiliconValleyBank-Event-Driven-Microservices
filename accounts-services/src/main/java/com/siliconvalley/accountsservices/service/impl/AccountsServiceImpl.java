@@ -164,18 +164,18 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final Accounts processedAccount = processAccountInit(account, "INIT");
         final Customer processedCustomer = processCustomerInformation(customer);
 
-        final List<Accounts> listOfAccounts = new ArrayList<>();
+        final Set<Accounts> listOfAccounts = new LinkedHashSet<>();
         listOfAccounts.add(processedAccount);
         processedCustomer.setAccounts(listOfAccounts);
         processedAccount.setCustomer(processedCustomer);
 
         final Customer savedCustomer = customerRepository.save(processedCustomer);
-        final String accountNumber = savedCustomer.getAccounts().get(0).getAccountNumber();
+        final String accountNumber = savedCustomer.getAccounts().stream().toList().get(0).getAccountNumber();
         log.debug("<------------createAccount(PostInputRequestDto) AccountsServiceImpl ended --------------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
         return OutputDto.builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(savedCustomer)))
-                .accounts(mapToAccountsOutputDto(mapToAccountsDto(savedCustomer.getAccounts().get(0))))
+                .accounts(mapToAccountsOutputDto(mapToAccountsDto(savedCustomer.getAccounts().stream().toList().get(0))))
                 .defaultMessage(String.format("Account with id %s is created for customer %s", accountNumber, savedCustomer.getCustomerId()))
                 .build();
     }

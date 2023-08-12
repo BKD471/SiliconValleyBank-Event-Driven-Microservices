@@ -17,16 +17,10 @@ import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import scala.tools.nsc.doc.html.HtmlTags;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
@@ -54,7 +48,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
         final BigDecimal previousBalance = accounts.getBalance();
 
-        BigDecimal updatedAmount;
+        BigDecimal updatedAmount=new BigDecimal(0);
         if (CREDIT.equals(transactionType)) {
             updatedAmount=new BigDecimal(String.valueOf(previousBalance)).add(amount);
             accounts.setBalance(updatedAmount);
@@ -67,6 +61,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
             transactions.setTransactionType(DEBIT);
         }
 
+        transactions.setBalance(updatedAmount);
         accountsRepository.save(accounts);
         log.debug("<---------updateBalance(Accounts , Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl ended -----------------" +
                 "-------------------------------------------------------------------------------------------------------------->");
@@ -94,7 +89,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 amountToBeCredited, transactionType);
 
         //some critical linkup before saving it to db
-        final List<Transactions> listOfTransactions=new ArrayList<>();
+        final Set<Transactions> listOfTransactions=new LinkedHashSet<>();
         listOfTransactions.add(recentTransaction);
         fetchedAccount.setListOfTransactions(listOfTransactions);
         recentTransaction.setAccounts(fetchedAccount);
@@ -161,16 +156,18 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final LocalDateTime today=LocalDateTime.now();
         final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
-        final List<Transactions> listOfTransactions= new ArrayList<>(fetchedAccount.getListOfTransactions().
+        final Set<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
-                        .isAfter(pastSixMonthsDate)).toList());
+                        .isAfter(pastSixMonthsDate)).collect(Collectors.toSet());
 
-        listOfTransactions.sort((o1,o2)->(o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp()))? -1:
-                (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp()))? 1:0);
+        listOfTransactions.stream().toList().sort((o1, o2) -> {
+            return (o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp())) ? -1 :
+                    (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp())) ? 1 : 0;
+        });
 
-        final ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream()
+        final Set<TransactionsDto> transactionsArrayList= listOfTransactions.stream().toList().stream()
                 .map(MapperHelper::mapToTransactionsDto)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return OutputDto.builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(loadedCustomer)))

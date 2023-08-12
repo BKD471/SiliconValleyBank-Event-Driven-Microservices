@@ -7,6 +7,7 @@ import com.siliconvalley.accountsservices.dto.responseDtos.PageableResponseDto;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,7 +22,7 @@ public class OutputDto {
     private TransactionsDto transactions;
     private PageableResponseDto<AccountsDto> accountsListPages;
     private PageableResponseDto<BeneficiaryDto> beneficiaryListPages;
-    private List<AccountsDto> listOfAccounts;
-    private List<BeneficiaryDto> beneficiaryList;
-    private List<TransactionsDto> transactionsList;
+    private Set<AccountsDto> listOfAccounts;
+    private Set<BeneficiaryDto> beneficiaryList;
+    private Set<TransactionsDto> transactionsList;
 }

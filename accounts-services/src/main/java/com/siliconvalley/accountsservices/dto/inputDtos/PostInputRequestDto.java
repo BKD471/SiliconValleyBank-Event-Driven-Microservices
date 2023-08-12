@@ -11,6 +11,9 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,9 +98,9 @@ public class PostInputRequestDto {
     private BigDecimal totLoanIssuedSoFar;
     private BigDecimal totalOutStandingAmountPayableToBank;
     private MultipartFile customerImage;
-    private List<BeneficiaryDto> listOfBeneficiary = new ArrayList<>();
-    private List<TransactionsDto> listOfTransactions = new ArrayList<>();
+    private Set<BeneficiaryDto> listOfBeneficiary ;
+    private Set<TransactionsDto> listOfTransactions ;
     private Customer customer;
-    private List<Accounts> accounts;
+    private Set<Accounts> accounts;
     private Accounts account;
 }

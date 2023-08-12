@@ -61,7 +61,7 @@ public class Customer extends Audit implements UserDetails {
     private String address;
 
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Accounts> accounts=new ArrayList<>();
+    private Set<Accounts> accounts=new LinkedHashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Role> roles=new HashSet<>();

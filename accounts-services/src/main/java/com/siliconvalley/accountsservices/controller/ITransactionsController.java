@@ -10,6 +10,8 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+
 
 @RequestMapping("/api/v1/transactions")
 public interface ITransactionsController {
@@ -20,5 +22,5 @@ public interface ITransactionsController {
     ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") final String accountNumber) throws AccountsException;
 
     @GetMapping("/createPdf")
-    ResponseEntity<InputStreamResource> generateBankStatement(@RequestBody BankStatementRequestDto bankStatementRequestDto);
+    ResponseEntity<InputStreamResource> generateBankStatement(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException;
 }

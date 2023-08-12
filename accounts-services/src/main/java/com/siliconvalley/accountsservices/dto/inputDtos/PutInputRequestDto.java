@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -67,9 +69,9 @@ public class PutInputRequestDto {
     private BigDecimal totLoanIssuedSoFar;
     private BigDecimal totalOutStandingAmountPayableToBank;
     private MultipartFile customerImage;
-    private List<Beneficiary> listOfBeneficiary = new ArrayList<>();
-    private List<Transactions> listOfTransactions = new ArrayList<>();
+    private Set<Beneficiary> listOfBeneficiary;
+    private Set<Transactions> listOfTransactions;
     private Customer customer;
-    private List<Accounts> accounts;
+    private Set<Accounts> accounts;
     private Accounts account;
 }

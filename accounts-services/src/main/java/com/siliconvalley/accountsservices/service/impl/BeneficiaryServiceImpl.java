@@ -87,7 +87,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         beneficiaryAccount.setBankCode(getBankCode(beneficiaryAccount.getBenBank()));
         final Beneficiary processedBeneficiaryAccount = setBeneficiaryAgeFromDOB(beneficiaryAccount);
 
-        final List<Beneficiary> beneficiaryList = new ArrayList<>();
+        final Set<Beneficiary> beneficiaryList = new LinkedHashSet<>();
         beneficiaryList.add(processedBeneficiaryAccount);
         fetchedAccount.setListOfBeneficiary(beneficiaryList);
         processedBeneficiaryAccount.setAccounts(fetchedAccount);

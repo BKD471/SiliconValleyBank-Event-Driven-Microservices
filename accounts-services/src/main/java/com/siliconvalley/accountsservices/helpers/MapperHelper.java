@@ -18,8 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -53,15 +52,15 @@ public class MapperHelper {
      * @ReturnType AccountsDto
      */
     public static AccountsDto mapToAccountsDto(final Accounts accounts) {
-        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
-        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        Set<BeneficiaryDto> beneficiaryDtoList=new LinkedHashSet<>();
+        Set<TransactionsDto> transactionsDtoList=new LinkedHashSet<>();
         if(!isEmpty(accounts.getListOfBeneficiary())){
             beneficiaryDtoList=accounts.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toSet());
         }
         if(!isEmpty(accounts.getListOfTransactions())){
             transactionsDtoList=accounts.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
 
         return AccountsDto.builder()
@@ -83,10 +82,10 @@ public class MapperHelper {
     }
 
     public static Customer mapToCustomer(final CustomerDto customerDto) {
-        List<Accounts> listOfAccounts = new ArrayList<>();
+        Set<Accounts> listOfAccounts = new LinkedHashSet<>();
         if (!isEmpty(customerDto.getAccounts())) {
             listOfAccounts = customerDto.getAccounts().stream().
-                    map(MapperHelper::mapToAccounts).collect(Collectors.toList());
+                    map(MapperHelper::mapToAccounts).collect(Collectors.toSet());
         }
         return Customer.builder()
                 .customerId(customerDto.getCustomerId())
@@ -107,10 +106,10 @@ public class MapperHelper {
     }
 
     public static CustomerDto mapToCustomerDto(final Customer customer) {
-        List<AccountsDto> listOfAccounts = new ArrayList<>();
+        Set<AccountsDto> listOfAccounts = new LinkedHashSet<>();
         if (!isEmpty(customer.getAccounts())) {
             listOfAccounts = customer.getAccounts().stream().
-                    map(MapperHelper::mapToAccountsDto).collect(Collectors.toList());
+                    map(MapperHelper::mapToAccountsDto).collect(Collectors.toSet());
         }
         return CustomerDto.builder()
                 .customerId(customer.getCustomerId())
@@ -194,15 +193,15 @@ public class MapperHelper {
 
 
     public static Accounts inputToAccounts(final PostInputRequestDto postInputRequestDto) {
-        List<Beneficiary> beneficiaryList=new ArrayList<>();
-        List<Transactions> transactionList=new ArrayList<>();
+        Set<Beneficiary> beneficiaryList=new LinkedHashSet<>();
+        Set<Transactions> transactionList=new LinkedHashSet<>();
         if(!isEmpty(postInputRequestDto.getListOfBeneficiary())){
             beneficiaryList=postInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiary)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
         if(!isEmpty(postInputRequestDto.getListOfTransactions())){
             transactionList=postInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactions)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
         return Accounts.builder()
                 .accountNumber(postInputRequestDto.getAccountNumber())
@@ -224,7 +223,6 @@ public class MapperHelper {
     }
 
     public static AccountsDto inputToAccountsDto(final PostInputRequestDto postInputRequestDto) {
-
         return AccountsDto.builder()
                 .accountNumber(postInputRequestDto.getAccountNumber())
                 .balance(postInputRequestDto.getBalance())
@@ -245,15 +243,15 @@ public class MapperHelper {
     }
 
     public static AccountsDto deleteRequestInputToAccountsDto(final DeleteInputRequestDto deleteInputRequestDto) {
-        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
-        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        Set<BeneficiaryDto> beneficiaryDtoList=new LinkedHashSet<>();
+        Set<TransactionsDto> transactionsDtoList=new LinkedHashSet<>();
         if(!isEmpty(deleteInputRequestDto.getListOfBeneficiary())){
             beneficiaryDtoList=deleteInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
         if(!isEmpty(deleteInputRequestDto.getListOfTransactions())){
             transactionsDtoList=deleteInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
 
         return AccountsDto.builder()
@@ -276,15 +274,15 @@ public class MapperHelper {
     }
 
     public static AccountsDto putInputRequestToAccountsDto(final PutInputRequestDto putInputRequestDto) {
-        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
-        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        Set<BeneficiaryDto> beneficiaryDtoList=new LinkedHashSet<>();
+        Set<TransactionsDto> transactionsDtoList=new LinkedHashSet<>();
         if(!isEmpty(putInputRequestDto.getListOfBeneficiary())){
             beneficiaryDtoList=putInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
         if(!isEmpty(putInputRequestDto.getListOfTransactions())){
             transactionsDtoList=putInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
 
         return AccountsDto.builder()
@@ -307,15 +305,15 @@ public class MapperHelper {
     }
 
     public static AccountsDto getInputToAccountsDto(final GetInputRequestDto getInputRequestDto) {
-        List<BeneficiaryDto> beneficiaryDtoList=new ArrayList<>();
-        List<TransactionsDto> transactionsDtoList=new ArrayList<>();
+        Set<BeneficiaryDto> beneficiaryDtoList=new LinkedHashSet<>();
+        Set<TransactionsDto> transactionsDtoList=new LinkedHashSet<>();
         if(!isEmpty(getInputRequestDto.getListOfBeneficiary())){
             beneficiaryDtoList=getInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
         if(!isEmpty(getInputRequestDto.getListOfTransactions())){
             transactionsDtoList=getInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
 
         return AccountsDto.builder()

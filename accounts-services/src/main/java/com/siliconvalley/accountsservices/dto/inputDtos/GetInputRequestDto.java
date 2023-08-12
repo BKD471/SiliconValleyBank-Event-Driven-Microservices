@@ -9,8 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
@@ -66,10 +65,10 @@ public class GetInputRequestDto {
   private String sortBy;
   private AllConstantHelpers.DIRECTION sortDir;
 
-  private List<Beneficiary> listOfBeneficiary = new ArrayList<>();
-  private List<Transactions> listOfTransactions = new ArrayList<>();
+  private Set<Beneficiary> listOfBeneficiary ;
+  private Set<Transactions> listOfTransactions;
   private Customer customer;
   private HttpServletResponse response;
-  private List<Accounts> accounts;
+  private Set<Accounts> accounts;
   private Accounts account;
 }

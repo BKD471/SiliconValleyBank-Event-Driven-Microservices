@@ -24,6 +24,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -170,7 +171,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 location.append("Inside ADD_BEN");
                 location.trimToSize();
                 boolean notPossible;
-                final List<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
+                final Set<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
                 if (listOfBeneficiaries.size() >= 5) throw new BeneficiaryException(BeneficiaryException.class,
                         "You can't add more than 5 beneficiaries", String.format("%s of %s", location, methodName));
 

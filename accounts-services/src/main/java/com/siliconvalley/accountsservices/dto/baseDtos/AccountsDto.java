@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,6 +31,6 @@ public class AccountsDto {
     @JsonProperty(value = "updateRequest")
     private AllConstantHelpers.UpdateRequest updateRequest;
 
-    private List<BeneficiaryDto> listOfBeneficiary;
-    private List<TransactionsDto> listOfTransactions;
+    private Set<BeneficiaryDto> listOfBeneficiary;
+    private Set<TransactionsDto> listOfTransactions;
 }

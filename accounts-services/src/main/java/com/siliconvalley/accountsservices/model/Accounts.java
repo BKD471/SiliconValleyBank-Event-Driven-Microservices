@@ -6,8 +6,7 @@ import lombok.*;
 
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Getter
@@ -61,10 +60,10 @@ public class Accounts extends Audit {
     private AllConstantHelpers.AccountStatus accountStatus;
 
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL)
-    private List<Beneficiary> listOfBeneficiary=new ArrayList<>();
+    private Set<Beneficiary> listOfBeneficiary=new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL)
-    private List<Transactions> listOfTransactions=new ArrayList<>();
+    private Set<Transactions> listOfTransactions=new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="customer_id",nullable = false)

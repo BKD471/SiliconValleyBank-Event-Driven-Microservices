@@ -11,6 +11,7 @@ import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToAccountsDto;
@@ -28,7 +29,7 @@ public interface IValidationService {
         final AllConstantHelpers.AccountType accountType = accounts.getAccountType();
 
         //get all accounts for customer
-        final List<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
+        final Set<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
         final AllConstantHelpers.Branch finalNewhomeBranch = newhomeBranch;
 
         Predicate<Accounts> checkConflictingHomeBranch= acc->finalNewhomeBranch.equals(acc.getHomeBranch())
