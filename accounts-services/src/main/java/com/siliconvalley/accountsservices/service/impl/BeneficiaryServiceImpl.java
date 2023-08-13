@@ -36,6 +36,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.validateBenType.*;
@@ -253,7 +255,14 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         validationService.beneficiaryUpdateValidator(fetchedAccounts,beneficiaryDto,DELETE_BEN);
 
         //delete that beneficiary
-        beneficiaryRepository.deleteByBeneficiaryId(beneficiaryId);
+        Predicate<Beneficiary> removeDeletedBeneficiary=(beneficiary) -> beneficiary.getBeneficiaryId().equalsIgnoreCase(beneficiaryId);
+        Set<Beneficiary> beneficiaries=fetchedAccounts.getListOfBeneficiary()
+                .stream().toList().stream().filter(beneficiary -> removeDeletedBeneficiary.negate().test(beneficiary)).collect(Collectors.toSet());
+
+        beneficiaryRepository.deleteAllByIdInBatch(Collections.singleton(beneficiaryId));
+        fetchedAccounts.setListOfBeneficiary(beneficiaries);
+        accountsRepository.save(fetchedAccounts);
+
         log.debug("<-------------deleteBeneficiariesForAnAccount(Accounts, Long ) BeneficiaryServiceImpl ended ------------------------" +
                 "------------------------------------------------------------------------------------------------>");
     }
