@@ -68,7 +68,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 final String adharNumber = accounts.getCustomer().getAdharNumber();
                 final boolean isNotPossible = accountsList.stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
                 if (isNotPossible)
-                    throw new AccountsException(AccountsException.class, String.format("You already have an account with adhar:%s", adharNumber),
+                    throw new AccountsException(AccountsException.class, String.format("There is already an account with adhar:%s", adharNumber),
                             String.format("%s of %s", location, methodName));
             }
             case ADD_ACC -> {
@@ -165,11 +165,10 @@ public final class ValidationServiceImpl implements IValidationService {
         log.debug("<----validate(Accounts,BeneficiaryDto, validateBenType) BeneficiaryServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
         final String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
-        final StringBuffer location=new StringBuffer(500);
+        final String location;
         switch (type) {
             case ADD_BEN -> {
-                location.append("Inside ADD_BEN");
-                location.trimToSize();
+                location="Inside ADD_BEN";
                 boolean notPossible;
                 final Set<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
                 if (listOfBeneficiaries.size() >= 5) throw new BeneficiaryException(BeneficiaryException.class,
@@ -227,8 +226,7 @@ public final class ValidationServiceImpl implements IValidationService {
 
             }
             case UPDATE_BEN -> {
-                location.append("Inside UPDATE_BEN");
-                location.trimToSize();
+                location="Inside UPDATE_BEN";
                 boolean isTrue;
 
                 Predicate<String> guardClauseForEmptyStringCheck= StringUtils::isNotBlank;
@@ -286,8 +284,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 }
             }
             case DELETE_BEN -> {
-                location.append("Inside Delete Ben");
-                location.trimToSize();
+                location="Inside Delete Ben";
                 String beneficiaryId= beneficiaryDto.getBeneficiaryId();
                 if(isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
                         "Account has no beneficiaries to delete",String.format("%s of %s",location,methodName));
