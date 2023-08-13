@@ -291,7 +291,7 @@ public final class ValidationServiceImpl implements IValidationService {
 
                 //filter out the beneficiary to be deleted for that account
                 final Optional<Beneficiary> filteredBeneficiary= accounts.getListOfBeneficiary().
-                        stream().filter(beneficiary -> !beneficiaryId.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
+                        stream().filter(beneficiary -> beneficiaryId.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
                         findFirst();
                 if(filteredBeneficiary.isEmpty()) throw new BeneficiaryException(BeneficiaryException.class,
                         String.format("No such beneficiaries with id %s exist for this account",beneficiaryId)
