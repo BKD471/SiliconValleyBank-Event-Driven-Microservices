@@ -257,8 +257,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         //delete that beneficiary
         Predicate<Beneficiary> removeDeletedBeneficiary=(beneficiary) -> beneficiary.getBeneficiaryId().equalsIgnoreCase(beneficiaryId);
         Set<Beneficiary> beneficiaries=fetchedAccounts.getListOfBeneficiary()
-                .stream().toList().stream().filter(beneficiary -> !beneficiary.getBeneficiaryId().equalsIgnoreCase(beneficiaryId)).collect(Collectors.toSet());
-
+                .stream().toList().stream().filter(beneficiary -> removeDeletedBeneficiary.negate().test(beneficiary)).collect(Collectors.toSet());
 
         beneficiaryRepository.deleteAllByIdInBatch(Collections.singleton(beneficiaryId));
         fetchedAccounts.setListOfBeneficiary(beneficiaries);
