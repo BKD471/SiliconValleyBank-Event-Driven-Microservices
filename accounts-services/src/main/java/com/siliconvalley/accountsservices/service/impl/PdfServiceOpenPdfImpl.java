@@ -9,21 +9,20 @@ import com.siliconvalley.accountsservices.model.BankStatement;
 import com.siliconvalley.accountsservices.model.Transactions;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
+import com.siliconvalley.accountsservices.service.AbstractPdfService;
 import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.IPdfService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.util.Set;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Slf4j
 @Service("OpenPdfImplementation")
-public class PdfServiceOpenPdfImpl extends AbstractService implements IPdfService {
+public class PdfServiceOpenPdfImpl extends AbstractPdfService{
     protected PdfServiceOpenPdfImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
     }
@@ -78,7 +77,7 @@ public class PdfServiceOpenPdfImpl extends AbstractService implements IPdfServic
         log.info("################# Pdf Creation Service started ###################################");
 
         String title = "Silicon Valley Corporation Pvt Ltd Account Statement";
-        List<Transactions> transactionsListBetweenDate = prepareTransactionsListBetweenDate(startDate, endDate, accountNumber);
+        Set<Transactions> transactionsListBetweenDate = prepareTransactionsSetBetweenDate(startDate, endDate, accountNumber);
         Accounts loadAccount = fetchAccountByAccountNumber(accountNumber);
 
         BankStatement bankStatement = BankStatement.builder()

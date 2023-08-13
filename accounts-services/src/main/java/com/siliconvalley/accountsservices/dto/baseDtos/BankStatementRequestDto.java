@@ -15,4 +15,9 @@ public class BankStatementRequestDto {
     private String startDate;
     private String endDate;
     private String accountNumber;
+    private FORMAT_TYPE downloadFormat;
+    public enum FORMAT_TYPE{
+        HTML,PDF,XML
+    }
+
 }

@@ -1,12 +1,11 @@
 package com.siliconvalley.accountsservices.model;
 
-import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,7 +26,7 @@ public final class BankStatement {
     private String accountType;
     private Double RateOfInterest;
     private BigDecimal balance;
-    private List<Transactions> listOfTransaction;
+    private Set<Transactions> listOfTransaction;
 
     @Override
     public String toString() {

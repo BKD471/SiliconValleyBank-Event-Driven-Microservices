@@ -7,8 +7,11 @@ import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.TransactionException;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
+import com.siliconvalley.accountsservices.service.AbstractPdfService;
 import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
+import fansi.Str;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +32,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
     private final IPdfService pdfService;
 
     TransactionsControllerImpl(@Qualifier("transactionsServicePrimary") ITransactionsService transactionsService,
-                               @Qualifier("OpenPdfImplementation") IPdfService pdfService) {
+                               @Qualifier("jasperPdfService") IPdfService pdfService) {
         this.transactionsService = transactionsService;
         this.pdfService=pdfService;
     }
@@ -57,7 +60,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @Override
+
     public ResponseEntity<InputStreamResource> generateBankStatement(final BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException {
         String accountNumber=bankStatementRequestDto.getAccountNumber();
         LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.getStartDate());
@@ -71,4 +74,21 @@ public class TransactionsControllerImpl implements ITransactionsController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(pdf));
     }
+
+    /**
+     * @param bankStatementRequestDto
+     * @return
+     * @throws FileNotFoundException
+     */
+    @Override
+    public ResponseEntity<String> generateBankStatementAnyFormat(BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException, JRException {
+        String accountNumber=bankStatementRequestDto.getAccountNumber();
+        LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.getStartDate());
+        LocalDate endDate=dateParserInYYYYMMDD(bankStatementRequestDto.getEndDate());
+        BankStatementRequestDto.FORMAT_TYPE downloadableFORMAT=bankStatementRequestDto.getDownloadFormat();
+        String res=pdfService.generateBankStatement(downloadableFORMAT,startDate,endDate,accountNumber);
+        return new ResponseEntity<>(res,HttpStatus.OK);
+    }
+
+
 }

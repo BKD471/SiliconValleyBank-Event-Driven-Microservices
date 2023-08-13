@@ -1,5 +1,6 @@
 package com.siliconvalley.accountsservices.service;
 
+import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
 import com.siliconvalley.accountsservices.model.Transactions;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
@@ -7,19 +8,23 @@ import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
+import net.sf.jasperreports.engine.JRException;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.REQUEST_TO_BLOCK;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.STATUS_BLOCKED;
 
 
-public abstract class AbstractService {
+public abstract class AbstractService{
     private  final IAccountsRepository accountsRepository;
     private  final ICustomerRepository customerRepository;
 
@@ -48,7 +53,7 @@ public abstract class AbstractService {
         return loadCustomer.get();
     }
 
-    protected final List<Transactions> prepareTransactionsListBetweenDate(LocalDate startDate, LocalDate endDate, String accountNumber) {
+    protected final Set<Transactions> prepareTransactionsSetBetweenDate(LocalDate startDate, LocalDate endDate, String accountNumber) {
         final Accounts accounts=fetchAccountByAccountNumber(accountNumber);
         LocalDateTime startDateTime=startDate.atTime(LocalTime.from(LocalDateTime.now()));
         LocalDateTime endDateTime=endDate.atTime(LocalTime.from(LocalDateTime.now()));
@@ -58,6 +63,7 @@ public abstract class AbstractService {
                         && transactions.getTransactionTimeStamp().isBefore(endDateTime);
 
         return accounts.getListOfTransactions()
-                .stream().filter(conditionToFilterOutListOfTransactionBetweenGivenTimeInterval).toList();
+                .stream().filter(conditionToFilterOutListOfTransactionBetweenGivenTimeInterval).collect(Collectors.toSet());
     }
+
 }
