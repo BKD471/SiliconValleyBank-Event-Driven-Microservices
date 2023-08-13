@@ -48,6 +48,7 @@ public class PdfServiceJasperImpl extends AbstractPdfService {
      */
     @Override
     public String generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException {
+        final String path="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\bank Stmt Report";
         Accounts loadAccount=fetchAccountByAccountNumber(accountNumber);
         Set<Transactions> setOfTransactions=prepareTransactionsSetBetweenDate(startDate,endDate,accountNumber);
         BankStatement bankStatement=BankStatement.builder()
@@ -60,20 +61,18 @@ public class PdfServiceJasperImpl extends AbstractPdfService {
                 .listOfTransaction(loadAccount.getListOfTransactions()).build();
 
 
-        File file= ResourceUtils.getFile("classpath:BankStatement.jrxml");
-        JasperReport jasperReport= JasperCompileManager.compileReport(file.getAbsolutePath());
-        JRBeanCollectionDataSource dataSource=new JRBeanCollectionDataSource(setOfTransactions);
-        Map<String,Object> parameters=new HashMap<>();
-        parameters.put("Created By","Silicon Valley Corp");
-        JasperPrint jasperPrint= JasperFillManager.fillReport(jasperReport,parameters,dataSource);
-        if(reportFormat.toString().equalsIgnoreCase("html")){
-            JasperExportManager.exportReportToHtmlFile(jasperPrint,"C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\bank Stmt Report"+"\bankStatement.html");
-        }
-        if(reportFormat.toString().equalsIgnoreCase("pdf")){
-            JasperExportManager.exportReportToPdfFile(jasperPrint,"C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\bank Stmt Report"+"\bankStatement.pdf");
-
-        }
-
+//        File file= ResourceUtils.getFile("classpath:BankStatement.jrxml");
+//        JasperReport jasperReport= JasperCompileManager.compileReport(file.getAbsolutePath());
+//        JRBeanCollectionDataSource dataSource=new JRBeanCollectionDataSource(setOfTransactions);
+//        Map<String,Object> parameters=new HashMap<>();
+//        parameters.put("Created By","Silicon Valley Corp");
+//        JasperPrint jasperPrint= JasperFillManager.fillReport(jasperReport,parameters,dataSource);
+//
+//       switch (reportFormat){
+//           case PDF -> JasperExportManager.exportReportToPdfFile(jasperPrint,path+"\bankStatement.pdf");
+//           case HTML -> JasperExportManager.exportReportToHtmlFile(jasperPrint,path+"\bankStatement.pdf");
+//           case XML -> JasperExportManager.exportReportToXmlFile(jasperPrint,path+"\bankStatement.xml",false);
+//       }
         return "Report Generated";
     }
 
