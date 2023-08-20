@@ -2,6 +2,7 @@ package com.siliconvalley.accountsservices.dto.outputDtos;
 
 import com.siliconvalley.accountsservices.dto.baseDtos.AccountsDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
+import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.dto.responseDtos.PageableResponseDto;
 import lombok.*;
@@ -21,6 +22,7 @@ public class OutputDto {
     private BeneficiaryDto beneficiary;
     private TransactionsDto transactions;
     private PageableResponseDto<AccountsDto> accountsListPages;
+    private PageableResponseDto<CustomerDto> customerListPages;
     private PageableResponseDto<BeneficiaryDto> beneficiaryListPages;
     private Set<AccountsDto> listOfAccounts;
     private Set<BeneficiaryDto> beneficiaryList;
