@@ -21,11 +21,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToCustomer;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToCustomerDto;
@@ -35,26 +38,35 @@ import static java.util.Objects.isNull;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-
+    private static final String PATH_OF_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\controller\\properties\\AuthController.properties";
     private final AuthenticationManager manager;
     private final UserDetailsService userDetailsService;
+    private final ICustomerRepository customerRepository;
     private final JwtHelper jwtHelper;
     private final ModelMapper modelMapper;
     private final String googleClientId;
     private final String newPassword;
-    private final ICustomerRepository customerRepository;
+    private static final Properties properties=new Properties();
 
-    AuthController(AuthenticationManager manager,UserDetailsService userDetailsService,
+    static {
+        try {
+            properties.load(new FileInputStream(PATH_OF_PROPERTIES_FILE));
+        } catch (IOException e) {
+            log.error("Error while reading properties file");
+        }
+    }
+
+
+    public AuthController(AuthenticationManager manager,UserDetailsService userDetailsService,
                    JwtHelper jwtHelper,ModelMapper modelMapper,
-                   ICustomerRepository customerRepository,@Value("${googleClientId}") String googleClientId,
-                   @Value("${newPassword}") String newPassword){
+                   ICustomerRepository customerRepository){
         this.manager=manager;
         this.userDetailsService=userDetailsService;
         this.jwtHelper=jwtHelper;
         this.modelMapper=modelMapper;
         this.customerRepository=customerRepository;
-        this.googleClientId=googleClientId;
-        this.newPassword=newPassword;
+        this.googleClientId= properties.getProperty("googleClientId");;
+        this.newPassword= properties.getProperty("newPassword");
     }
 
     @GetMapping("/hello")
