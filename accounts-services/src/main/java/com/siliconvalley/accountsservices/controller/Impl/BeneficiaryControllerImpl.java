@@ -11,14 +11,30 @@ import com.siliconvalley.accountsservices.exception.BeneficiaryException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
 import com.siliconvalley.accountsservices.exception.ResponseException;
 import com.siliconvalley.accountsservices.service.IBeneficiaryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+@Slf4j
 @RestController
 public class BeneficiaryControllerImpl implements IBeneficiaryController {
+    private static final String PATH_TO_PROPERTIES="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\controller\\properties\\BeneficiaryController.properties";
     private final IBeneficiaryService beneficiaryService;
+    private static final Properties properties=new Properties();
+
+    static {
+        try {
+            properties.load(new FileInputStream(PATH_TO_PROPERTIES));
+        }catch (IOException e){
+            log.error("Error while reading properties file");
+        }
+    }
 
     BeneficiaryControllerImpl(@Qualifier("beneficiaryServicePrimary") IBeneficiaryService beneficiaryService) {
         this.beneficiaryService = beneficiaryService;

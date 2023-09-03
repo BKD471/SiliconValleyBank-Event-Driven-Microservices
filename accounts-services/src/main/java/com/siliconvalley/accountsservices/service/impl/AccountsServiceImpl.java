@@ -13,6 +13,7 @@ import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
 import com.siliconvalley.accountsservices.exception.RolesException;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
+import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.model.Role;
@@ -34,6 +35,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -44,9 +46,14 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
-import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.AccountsValidateType.GET_ALL_ACC;
-import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.AccountsValidateType.UPDATE_CUSTOMER_DETAILS;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.AccountsValidateType.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.BLOCK_ACCOUNT;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.CLOSE_ACCOUNT;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.RE_OPEN_ACCOUNT;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UPDATE_CASH_LIMIT;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UPDATE_HOME_BRANCH;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UPLOAD_PROFILE_IMAGE;
 import static com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 import static com.siliconvalley.accountsservices.helpers.PagingHelper.*;
@@ -69,15 +76,25 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Slf4j
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractService implements IAccountsService {
+    private static final String PATH_TO_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\service\\properties\\AccountsService.properties";
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;
     private final IImageService fIleService;
     private final IValidationService validationService;
-    private final String NORMAL_ROLE_ID;
     private final PasswordEncoder passwordEncoder;
-    private final String IMAGE_PATH;
     private final String UPDATE = "UPDATE";
+    private final String NORMAL_ROLE_ID;
+    private final String IMAGE_PATH;
+    private  static  final Properties properties=new Properties();
+
+    static {
+        try {
+            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
+        }catch (IOException e){
+            log.error("Error while reading properties file");
+        }
+    }
 
     /**
      * @paramType AccountsRepository
@@ -88,9 +105,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                                final IRoleRepository roleRepository,
                                final IValidationService validationService,
                                final PasswordEncoder passwordEncoder,
-                               @Qualifier("fileServicePrimary") final IImageService fIleService,
-                               @Value("${customer.profile.images.path}") final String IMAGE_PATH,
-                               @Value("${normal.role.id}") final String NORMAL_ROLE_ID) {
+                               @Qualifier("fileServicePrimary") final IImageService fIleService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
@@ -98,8 +113,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         this.fIleService = fIleService;
         this.validationService = validationService;
         this.passwordEncoder = passwordEncoder;
-        this.IMAGE_PATH = IMAGE_PATH;
-        this.NORMAL_ROLE_ID = NORMAL_ROLE_ID;
+        this.IMAGE_PATH =properties.getProperty("customer.profile.images.path");
+        this.NORMAL_ROLE_ID = properties.getProperty("normal.role.id");
     }
 
 
@@ -237,6 +252,19 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<------------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl ended ----------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------>");
         return getPageableResponse(allPagedAccounts.get(), AccountsDto.class);
+    }
+
+    private PageableResponseDto<CustomerDto> getAllCustomers( final Pageable pageable) throws AccountsException {
+        log.debug("<-----------------getAllActiveCustomer(long,Pageable) AccountsServiceImpl started -----------------------------------" +
+                "----------------------------------------------------------------------------------------------------------------->");
+        final String methodName = "getAllActiveCustomer(long) in AccountsServiceImpl";
+        final Optional<Page<Customer>> allPagedAccounts = customerRepository.findAll(pageable);
+        if (allPagedAccounts.isEmpty())
+            throw new CustomerException(CustomerException.class,
+                    "No such customers", methodName);
+        log.debug("<------------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl ended ----------------------------------------------------" +
+                "------------------------------------------------------------------------------------------------------------------>");
+        return getPageableResponse(allPagedAccounts.get(), CustomerDto.class);
     }
 
 
@@ -435,6 +463,28 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         return pageableResponseDto;
     }
 
+    private PageableResponseDto<CustomerDto> customerPagination(final DIRECTION sortDir, final String sortBy, final int pageNumber, final int pageSize) {
+        log.debug("<---------customerPagination(DIRECTION,String ,int,int long) AccountsServiceImpl started ------------------------------------------------" +
+                "-------------------------------------------------------------------------------------------------------------------->");
+        final String methodName = "customerPagination(DIRECTION,String,int,int,long) in AccountsServiceImpl";
+        final Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        final PageableResponseDto<CustomerDto> pageableResponseDto = getAllCustomers(pageable);
+        if (isEmpty(pageableResponseDto.getContent()))
+            throw new BadApiRequestException(BadApiRequestException.class,
+                    "No customers found",
+                    methodName);
+
+        final List<CustomerDto> allCustomers = pageableResponseDto.getContent()
+                .stream().toList();
+
+        Collections.sort(allCustomers.stream().map(MapperHelper::mapToCustomer).toList());
+        pageableResponseDto.setContent(allCustomers);
+        log.debug("<-----------------accountsPagination(DIRECTION,String,int,int,long) AccountsServiceImpl ended -------------------------------------------------------------------------------------------------------------->");
+        return pageableResponseDto;
+    }
+
     private void uploadProfileImage(final CustomerDto customerDto) throws IOException {
         log.debug("<-------------uploadProfileImage(CustomerDto) AccountsServiceImpl started --------------------------------------------------------------" +
                 "---------------------------------------------------------------------------------------------------------------------->");
@@ -487,6 +537,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         }
     }
 
+
     @Override
     public OutputDto getRequestExecutor(final GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException {
         final String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
@@ -525,6 +576,27 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             }
             case GET_ACC_INFO -> {
                 return getAccountInfo(accountNumber);
+            }
+            case GET_ALL_CUSTOMER -> {
+                location.append("Inside GET_ALL_CUST");
+                location.trimToSize();
+                validationService.accountsUpdateValidator(foundAccount,
+                        mapToCustomerDto(foundCustomer),GET_ALL_CUSTOMER);
+
+                final Set<String> allPageableFieldsOfCustomer = getAllPageableFieldsOfAcustomer();
+                if (!allPageableFieldsOfCustomer.contains(sortBy))
+                    throw new BadApiRequestException(BadApiRequestException.class,
+                            String.format("%s is not a valid field of account", sortBy),
+                            String.format("Inside %s of %s", location, methodName));
+                final PageableResponseDto<CustomerDto> pageableResponseDto =
+                        customerPagination(sortDir, sortBy, pageNumber, pageSize);
+
+                return OutputDto.builder()
+                        .customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
+                        .customerListPages(pageableResponseDto)
+                        .defaultMessage("Fetched all customers")
+                        .build();
+
             }
             case GET_ALL_ACC -> {
                 location="Inside GET_ALL_ACC";

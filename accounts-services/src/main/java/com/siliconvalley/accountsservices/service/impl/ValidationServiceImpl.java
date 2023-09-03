@@ -153,13 +153,17 @@ public final class ValidationServiceImpl implements IValidationService {
                                     accounts.getAccountStatus()), String.format("%s of %s", location, methodName));
             }
             case GET_ALL_ACC -> {
-                if (isNull(customerDto))
-                    throw new CustomerException(CustomerException.class,
-                            "No customer found", String.format("%s of %s", location, methodName));
+                if (isNull(accounts))
+                    throw new AccountsException(AccountsException.class,
+                            "No accounts found", String.format("%s of %s", location, methodName));
             }
             case UPDATE_CUSTOMER_DETAILS -> {
                 if (isNull(customerDto)) throw new CustomerException(CustomerException.class,
                         "Please specify a customer id to update details", String.format("%s of %s", location, methodName));
+            }
+            case GET_ALL_CUSTOMER -> {
+                if(isNull(customerDto)) throw  new CustomerException(CustomerException.class,
+                        "No customer provided",String.format("%s of %s",location,methodName));
             }
         }
 
