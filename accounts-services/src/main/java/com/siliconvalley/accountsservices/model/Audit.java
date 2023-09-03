@@ -23,5 +23,4 @@ public abstract class Audit{
     @CreatedBy
     protected String createdBy;
 
-    public abstract int compareTo(Customer cust);
 }

@@ -35,6 +35,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -75,15 +76,25 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Slf4j
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractService implements IAccountsService {
+    private static final String PATH_TO_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\service\\properties\\AccountsService.properties";
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;
     private final IImageService fIleService;
     private final IValidationService validationService;
-    private final String NORMAL_ROLE_ID;
     private final PasswordEncoder passwordEncoder;
-    private final String IMAGE_PATH;
     private final String UPDATE = "UPDATE";
+    private final String NORMAL_ROLE_ID;
+    private final String IMAGE_PATH;
+    private  static  final Properties properties=new Properties();
+
+    static {
+        try {
+            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
+        }catch (IOException e){
+            log.error("Error while reading properties file");
+        }
+    }
 
     /**
      * @paramType AccountsRepository
@@ -94,9 +105,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                                final IRoleRepository roleRepository,
                                final IValidationService validationService,
                                final PasswordEncoder passwordEncoder,
-                               @Qualifier("fileServicePrimary") final IImageService fIleService,
-                               @Value("${customer.profile.images.path}") final String IMAGE_PATH,
-                               @Value("${normal.role.id}") final String NORMAL_ROLE_ID) {
+                               @Qualifier("fileServicePrimary") final IImageService fIleService) {
         super(accountsRepository, customerRepository);
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
@@ -104,8 +113,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         this.fIleService = fIleService;
         this.validationService = validationService;
         this.passwordEncoder = passwordEncoder;
-        this.IMAGE_PATH = IMAGE_PATH;
-        this.NORMAL_ROLE_ID = NORMAL_ROLE_ID;
+        this.IMAGE_PATH =properties.getProperty("customer.profile.images.path");
+        this.NORMAL_ROLE_ID = properties.getProperty("normal.role.id");
     }
 
 
