@@ -5,13 +5,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
-public class BankStatementRequestDto {
+public class BankStatementRequestDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567892L;
     private String startDate;
     private String endDate;
     private String accountNumber;

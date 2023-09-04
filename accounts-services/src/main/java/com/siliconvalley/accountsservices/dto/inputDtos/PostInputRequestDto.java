@@ -11,6 +11,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +26,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostInputRequestDto {
+public class PostInputRequestDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567899L;
     private String customerId;
 
     @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long")

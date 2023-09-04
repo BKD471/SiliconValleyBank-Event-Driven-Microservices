@@ -2,6 +2,8 @@ package com.siliconvalley.accountsservices.dto.responseDtos;
 
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -9,7 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PageableResponseDto<T> {
+public class PageableResponseDto<T> implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567881L;
     private List<T> content;
     private int pageNumber;
     private int pageSize;

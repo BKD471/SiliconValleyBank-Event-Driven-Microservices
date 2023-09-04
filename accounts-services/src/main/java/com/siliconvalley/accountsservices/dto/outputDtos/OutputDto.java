@@ -7,6 +7,8 @@ import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.dto.responseDtos.PageableResponseDto;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +17,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutputDto {
+public class OutputDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567841L;
     private String defaultMessage;
     private CustomerOutPutDto customer;
     private AccountsOutPutDto accounts;

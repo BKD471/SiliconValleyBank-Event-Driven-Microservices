@@ -7,6 +7,8 @@ import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.model.Transactions;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DeleteInputRequestDto {
+public class DeleteInputRequestDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567897L;
     private String customerId;
     private String name;
     private int age;

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +16,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountsDto {
+public class AccountsDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567891L;
     private String accountNumber;
     private BigDecimal balance;
     private AllConstantHelpers.AccountType accountType;

@@ -5,6 +5,8 @@ import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +16,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountsOutPutDto {
+public class AccountsOutPutDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567821L;
     private String accountNumber;
     private BigDecimal balance;
     private AllConstantHelpers.Branch homeBranch;
