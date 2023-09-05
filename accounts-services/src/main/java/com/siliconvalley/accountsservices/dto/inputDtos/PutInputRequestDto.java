@@ -9,6 +9,8 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,7 +22,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PutInputRequestDto {
+public class PutInputRequestDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567811L;
     private String customerId;
     private String name;
     private int age;

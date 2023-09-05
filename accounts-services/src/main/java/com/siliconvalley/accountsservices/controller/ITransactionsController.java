@@ -23,8 +23,9 @@ public interface ITransactionsController {
     ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") final String accountNumber) throws AccountsException;
 
     @GetMapping("/v1/transactions/generateStatement")
-    ResponseEntity<InputStreamResource> generateBankStatement(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException;
+    ResponseEntity<InputStreamResource> generateBankStatementPdf(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException;
 
     @GetMapping("/v2/transactions/generateStatement")
     ResponseEntity<String> generateBankStatementAnyFormat(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException, JRException;
+
 }

@@ -4,6 +4,7 @@ import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.BankStatement;
 import com.siliconvalley.accountsservices.model.Transactions;
@@ -13,6 +14,7 @@ import com.siliconvalley.accountsservices.service.AbstractPdfService;
 import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.IPdfService;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.stereotype.Service;
 import java.util.Set;
 
@@ -85,7 +87,7 @@ public class PdfServiceOpenPdfImpl extends AbstractPdfService{
                 .accountNumber(loadAccount.getAccountNumber())
                 .accountType(loadAccount.getAccountType().toString())
                 .branch(loadAccount.getHomeBranch().toString())
-                .RateOfInterest(loadAccount.getRateOfInterest())
+                .rateOfInterest(loadAccount.getRateOfInterest())
                 .balance(loadAccount.getBalance())
                 .listOfTransaction(transactionsListBetweenDate)
                 .build();
@@ -119,4 +121,6 @@ public class PdfServiceOpenPdfImpl extends AbstractPdfService{
         log.info("################# Pdf Creation Service ended #######################################");
         return new ByteArrayInputStream(out.toByteArray());
     }
+
+
 }

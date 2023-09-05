@@ -15,6 +15,7 @@ import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.repository.ITransactionsRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
+import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ValidateTransactionType.GET_PAST_SIX_MONTHS_TRANSACTIONS;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 import static java.util.Objects.isNull;
 
@@ -33,13 +35,15 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
 
     private final ITransactionsRepository transactionsRepository;
     private final IAccountsRepository accountsRepository;
+    private final IValidationService validationService;
 
     TransactionsServiceImpl(final ITransactionsRepository transactionsRepository,
                             final IAccountsRepository accountsRepository,
-                            final ICustomerRepository customerRepository) {
+                            final ICustomerRepository customerRepository,final IValidationService validationService) {
         super(accountsRepository,customerRepository);
         this.transactionsRepository = transactionsRepository;
         this.accountsRepository = accountsRepository;
+        this.validationService=validationService;
     }
 
     private synchronized Transactions updateBalance(final Accounts accounts, final Transactions transactions, final BigDecimal amount, final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
@@ -158,6 +162,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final LocalDateTime today=LocalDateTime.now();
         final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
+        validationService.transactionsUpdateValidator(fetchedAccount,null,GET_PAST_SIX_MONTHS_TRANSACTIONS);
         final Set<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
                         .isAfter(pastSixMonthsDate)).collect(Collectors.toSet());

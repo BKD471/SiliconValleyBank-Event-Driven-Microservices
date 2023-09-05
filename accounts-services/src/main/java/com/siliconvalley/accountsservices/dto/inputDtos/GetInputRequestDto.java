@@ -8,6 +8,8 @@ import com.siliconvalley.accountsservices.model.Transactions;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -16,7 +18,9 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetInputRequestDto {
+public class GetInputRequestDto implements Serializable {
+  @Serial
+  private static final long serialVersionUID=1234567891234567898L;
   private String customerId;
   private String name;
   private int age;

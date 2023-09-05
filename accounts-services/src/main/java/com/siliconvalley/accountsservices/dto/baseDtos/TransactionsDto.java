@@ -7,6 +7,8 @@ import com.siliconvalley.accountsservices.validator.ValidDescription;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,7 +20,9 @@ import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.PAT
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionsDto {
+public class TransactionsDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567896L;
     @Min(value =1, message = "Please provide an account Number")
     private String accountNumber;
     private LocalDateTime transactionTimeStamp;

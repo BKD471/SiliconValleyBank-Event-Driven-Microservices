@@ -3,15 +3,14 @@ package com.siliconvalley.accountsservices.service.impl;
 import com.siliconvalley.accountsservices.dto.baseDtos.AccountsDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
-import com.siliconvalley.accountsservices.exception.AccountsException;
-import com.siliconvalley.accountsservices.exception.BadApiRequestException;
-import com.siliconvalley.accountsservices.exception.BeneficiaryException;
-import com.siliconvalley.accountsservices.exception.CustomerException;
+import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
+import com.siliconvalley.accountsservices.exception.*;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Beneficiary;
 import com.siliconvalley.accountsservices.model.Customer;
+import com.siliconvalley.accountsservices.model.Transactions;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.Setter;
@@ -53,9 +52,9 @@ public final class ValidationServiceImpl implements IValidationService {
 
     @Override
     public void accountsUpdateValidator(final Accounts accounts, final CustomerDto customerDto, final AccountsValidateType request) throws AccountsException, BadApiRequestException {
-        log.debug("<---------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl started -----------------------------------" +
+        log.debug("<---------------accountsUpdateValidator(Accounts,CustomerDto,ValidateType) ValidationServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
-        final String methodName = "updateValidator(Accounts,ValidateType) in AccountsServiceImpl";
+        final String methodName = "accountsUpdateValidator(Accounts,CustomerDto,ValidateType) in ValidationServiceImpl";
         final StringBuffer location = new StringBuffer(500);
         switch (request) {
             case CREATE_ACC -> {
@@ -153,7 +152,7 @@ public final class ValidationServiceImpl implements IValidationService {
                                     accounts.getAccountStatus()), String.format("%s of %s", location, methodName));
             }
             case GET_ALL_ACC -> {
-                if (isNull(accounts))
+                if (CollectionUtils.isEmpty(customerDto.getAccounts()))
                     throw new AccountsException(AccountsException.class,
                             "No accounts found", String.format("%s of %s", location, methodName));
             }
@@ -167,16 +166,16 @@ public final class ValidationServiceImpl implements IValidationService {
             }
         }
 
-        log.debug("<-----------------updateValidator(Accounts,AccountsDto,CustomerDto,ValidateType) AccountsServiceImpl ended -----------------------" +
+        log.debug("<-----------------accountsUpdateValidator(Accounts,CustomerDto,ValidateType) ValidationServiceImpl ended -----------------------" +
                 "----------" +
                 "-------------------------------------------------------------------------------------------------------------------------->");
     }
 
     @Override
     public void beneficiaryUpdateValidator(final Accounts accounts, final BeneficiaryDto beneficiaryDto, final validateBenType type) throws BeneficiaryException {
-        log.debug("<----validate(Accounts,BeneficiaryDto, validateBenType) BeneficiaryServiceImpl started -----------------------------------" +
+        log.debug("<----beneficiaryUpdateValidator(Accounts,BeneficiaryDto, validateBenType) ValidationServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
-        final String methodName = "validate(Accounts,validateBenType) in BeneficiaryServiceImpl";
+        final String methodName = "beneficiaryUpdateValidator(Accounts,BeneficiaryDto,validateBenType) in ValidationServiceImpl";
         final String location;
         switch (type) {
             case ADD_BEN -> {
@@ -338,7 +337,29 @@ public final class ValidationServiceImpl implements IValidationService {
             default -> throw new BeneficiaryException(BeneficiaryException.class,
                     "Invalid type of Validation request", methodName);
         }
-        log.debug("<-------------------validate(Accounts, BeneficiaryDto, validateBenType) BeneficiaryServiceImpl ended ---------------------" +
+        log.debug("<-------------------beneficiaryUpdateValidator(Accounts,BeneficiaryDto, validateBenType) ValidationServiceImpl ended ---------------------" +
                 "--------------------------------------------------------------------------------------------------->");
+    }
+
+    @Override
+    public void transactionsUpdateValidator(final Accounts accounts, final TransactionsDto transactionsDto, final AllConstantHelpers.ValidateTransactionType type){
+        log.debug("<----transactionsUpdateValidator(Accounts,TransactionsDto, ValidateTransactionType) BeneficiaryServiceImpl started -----------------------------------" +
+                "------------------------------------------------------------------------------------------------------>");
+        final String methodName = "transactionsUpdateValidator(Accounts,validateBenType) in ValidationServiceImpl";
+        final String location;
+        switch (type){
+            case GEN_BANK_STATEMENT -> {
+
+            }
+            case GET_PAST_SIX_MONTHS_TRANSACTIONS -> {
+                location="GET_PAST_SIX_MONTHS_TRANSACTIONS";
+                Set<Transactions> transactionsSet=accounts.getListOfTransactions();
+                if(CollectionUtils.isEmpty(transactionsSet)) throw new TransactionException(TransactionException.class,
+                        String.format("No transactions available for account with id:%s",accounts.getAccountNumber())
+                        ,String.format("Inside %s of %s",location,methodName));
+            }
+        }
+        log.debug("<----transactionsUpdateValidator(Accounts,TransactionsDto, ValidateTransactionType) BeneficiaryServiceImpl ended -----------------------------------" +
+                "------------------------------------------------------------------------------------------------------>");
     }
 }

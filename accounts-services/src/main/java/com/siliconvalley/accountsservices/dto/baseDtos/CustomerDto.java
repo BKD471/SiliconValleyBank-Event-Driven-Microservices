@@ -4,6 +4,8 @@ package com.siliconvalley.accountsservices.dto.baseDtos;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +16,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerDto {
+public class CustomerDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567894L;
     private String customerId;
     private LocalDate DateOfBirth;
     private String customerName;

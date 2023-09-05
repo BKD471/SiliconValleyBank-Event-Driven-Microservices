@@ -578,8 +578,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 return getAccountInfo(accountNumber);
             }
             case GET_ALL_CUSTOMER -> {
-                location.append("Inside GET_ALL_CUST");
-                location.trimToSize();
+                location="Inside GET_ALL_CUST";
                 validationService.accountsUpdateValidator(foundAccount,
                         mapToCustomerDto(foundCustomer),GET_ALL_CUSTOMER);
 

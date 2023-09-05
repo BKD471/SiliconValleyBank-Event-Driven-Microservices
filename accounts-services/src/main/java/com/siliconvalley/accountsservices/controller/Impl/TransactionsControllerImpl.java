@@ -6,11 +6,8 @@ import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.TransactionException;
-import com.siliconvalley.accountsservices.helpers.MapperHelper;
-import com.siliconvalley.accountsservices.service.AbstractPdfService;
 import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
-import fansi.Str;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
@@ -61,7 +58,9 @@ public class TransactionsControllerImpl implements ITransactionsController {
     }
 
 
-    public ResponseEntity<InputStreamResource> generateBankStatement(final BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException {
+    @Override
+    public ResponseEntity<InputStreamResource> generateBankStatementPdf(final BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException {
+
         String accountNumber=bankStatementRequestDto.getAccountNumber();
         LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.getStartDate());
         LocalDate endDate=dateParserInYYYYMMDD(bankStatementRequestDto.getEndDate());
@@ -74,6 +73,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(pdf));
     }
+
 
     /**
      * @param bankStatementRequestDto
@@ -89,6 +89,4 @@ public class TransactionsControllerImpl implements ITransactionsController {
         String res=pdfService.generateBankStatement(downloadableFORMAT,startDate,endDate,accountNumber);
         return new ResponseEntity<>(res,HttpStatus.OK);
     }
-
-
 }

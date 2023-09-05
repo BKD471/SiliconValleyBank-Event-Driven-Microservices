@@ -25,7 +25,6 @@ public class AllConstantHelpers {
         OPEN,BLOCKED,CLOSED
     }
 
-
     public  enum DIRECTION{
         asc,desc;
     }
@@ -37,7 +36,6 @@ public class AllConstantHelpers {
     public enum RELATION{
         FATHER,MOTHER,SPOUSE,SON,DAUGHTER
     }
-
 
     public enum AccountsValidateType {
         UPDATE_CASH_LIMIT,UPDATE_HOME_BRANCH,GENERATE_CREDIT_SCORE,UPDATE_CREDIT_SCORE,
@@ -59,6 +57,10 @@ public class AllConstantHelpers {
 
     public enum validateBenType {
         ADD_BEN, UPDATE_BEN, DELETE_BEN
+    }
+
+    public enum ValidateTransactionType{
+        GET_PAST_SIX_MONTHS_TRANSACTIONS,GEN_BANK_STATEMENT
     }
 
     public static final DIRECTION ASC=DIRECTION.asc;
@@ -106,4 +108,16 @@ public class AllConstantHelpers {
     public static final validateBenType ADD_BEN = validateBenType.ADD_BEN;
     public static final validateBenType UPDATE_BEN = validateBenType.UPDATE_BEN;
     public static final String REQUEST_TO_BLOCK = "BLOCK";
+
+    public static final ValidateTransactionType GET_PAST_SIX_MONTHS_OF_TRANSACTION=ValidateTransactionType.GET_PAST_SIX_MONTHS_TRANSACTIONS;
+    public static final ValidateTransactionType GEN_BANK_STATEMENT=ValidateTransactionType.GEN_BANK_STATEMENT;
+
+    //company specific data
+    public static final String companyName="SiliconValley Corporation Pvt Ltd";
+    public static final String city="Seattle";
+    public static final String street="562 1ST Ave S Ste 400";
+    public static final String ZipCode="98104-3816";
+    public static final String faxNumber="+1-907-555-1234";
+    public static final String State="Washington";
+    public static final String country="United States";
 }
