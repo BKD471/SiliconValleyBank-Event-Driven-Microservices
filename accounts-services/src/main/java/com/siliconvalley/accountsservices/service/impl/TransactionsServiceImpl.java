@@ -15,14 +15,19 @@ import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.repository.ITransactionsRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
+import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ValidateTransactionType.GET_PAST_SIX_MONTHS_TRANSACTIONS;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Service("transactionsServicePrimary")
@@ -30,42 +35,49 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
 
     private final ITransactionsRepository transactionsRepository;
     private final IAccountsRepository accountsRepository;
+    private final IValidationService validationService;
 
     TransactionsServiceImpl(final ITransactionsRepository transactionsRepository,
                             final IAccountsRepository accountsRepository,
-                            final ICustomerRepository customerRepository) {
+                            final ICustomerRepository customerRepository,final IValidationService validationService) {
         super(accountsRepository,customerRepository);
         this.transactionsRepository = transactionsRepository;
         this.accountsRepository = accountsRepository;
+        this.validationService=validationService;
     }
 
-    private Transactions updateBalance(final Accounts accounts, final Transactions transactions, final Long amount, final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
+    private synchronized Transactions updateBalance(final Accounts accounts, final Transactions transactions, final BigDecimal amount, final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
         log.debug("<--------------------updateBalance(Accounts, Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl started ----------" +
                 "--------------------------------------------------------------------------------------------------------->");
         final String methodName="updateBalance(Accounts,Transactions,Long,Transactions.TransactionType ) in TransactionsServiceImpl";
-        final Long previousBalance = accounts.getBalance();
+        final BigDecimal previousBalance = accounts.getBalance();
 
-        if (CREDIT.equals(transactionType)) {
-            accounts.setBalance(previousBalance + amount);
-            transactions.setTransactionType(CREDIT);
+            BigDecimal updatedAmount=new BigDecimal(0);
+            synchronized (this) {
+                if (CREDIT.equals(transactionType)) {
+                    updatedAmount = new BigDecimal(String.valueOf(previousBalance)).add(amount);
+                    accounts.setBalance(updatedAmount);
+                    transactions.setTransactionType(CREDIT);
+                }
+                if (DEBIT.equals(transactionType)) {
+                    updatedAmount = new BigDecimal(String.valueOf(previousBalance)).subtract(amount);
+                    if (previousBalance.compareTo(amount) >= 0) accounts.setBalance(updatedAmount);
+                    else throw new TransactionException(TransactionException.class, "Insufficient Balance", methodName);
+                    transactions.setTransactionType(DEBIT);
+                }
+                transactions.setBalance(updatedAmount);
+                accountsRepository.save(accounts);
+            }
+            log.debug("<---------updateBalance(Accounts , Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl ended -----------------" +
+                    "-------------------------------------------------------------------------------------------------------------->");
+            return transactions;
         }
-        if (DEBIT.equals(transactionType)) {
-            if (previousBalance >= amount) accounts.setBalance(previousBalance - amount);
-            else throw new TransactionException(TransactionException.class,"Insufficient Balance",methodName);
-            transactions.setTransactionType(DEBIT);
-        }
 
-        //update the latest balance to accounts db
-        accountsRepository.save(accounts);
-        log.debug("<---------updateBalance(Accounts , Transactions , Long , Transactions.TransactionType) TransactionsServiceImpl ended -----------------" +
-                "-------------------------------------------------------------------------------------------------------------->");
-        return transactions;
-    }
 
-    /**
-     * @param transactionsDto
-     * @returnType AccountsDto
-     */
+        /**
+         * @param transactionsDto
+         * @returnType AccountsDto
+         */
 
     private TransactionsDto payOrDepositMoney(final TransactionsDto transactionsDto, final AllConstantHelpers.TransactionType transactionType) throws AccountsException, TransactionException {
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl started -----------------------" +
@@ -78,12 +90,12 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final Transactions requestTransaction = mapToTransactions(transactionsDto);
 
         //get the money & update the balance
-        final Long amountToBeCredited = requestTransaction.getTransactionAmount();
+        final BigDecimal amountToBeCredited = requestTransaction.getTransactionAmount();
         final Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction,
                 amountToBeCredited, transactionType);
 
         //some critical linkup before saving it to db
-        final List<Transactions> listOfTransactions=new ArrayList<>();
+        final Set<Transactions> listOfTransactions=new LinkedHashSet<>();
         listOfTransactions.add(recentTransaction);
         fetchedAccount.setListOfTransactions(listOfTransactions);
         recentTransaction.setAccounts(fetchedAccount);
@@ -114,7 +126,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final String transactionId= UUID.randomUUID().toString();
         transactionsDto.setTransactionId(transactionId);
 
-        if(Objects.isNull(transactionsDto.getTransactionType())) throw new TransactionException(TransactionException.class,
+        if(isNull(transactionsDto.getTransactionType())) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
         switch (transactionsDto.getTransactionType()) {
             case CREDIT -> {
@@ -150,16 +162,18 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final LocalDateTime today=LocalDateTime.now();
         final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
-        final List<Transactions> listOfTransactions= new ArrayList<>(fetchedAccount.getListOfTransactions().
+        validationService.transactionsUpdateValidator(fetchedAccount,null,GET_PAST_SIX_MONTHS_TRANSACTIONS);
+        final Set<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
-                        .isAfter(pastSixMonthsDate)).toList());
+                        .isAfter(pastSixMonthsDate)).collect(Collectors.toSet());
 
-        listOfTransactions.sort((o1,o2)->(o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp()))? -1:
-                (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp()))? 1:0);
+        Comparator<Transactions> sortTransactions=(o1, o2) -> (o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp())) ? -1 :
+                (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp())) ? 1 : 0;
+        listOfTransactions.stream().toList().sort(sortTransactions);
 
-        final ArrayList<TransactionsDto> transactionsArrayList= listOfTransactions.stream()
+        final Set<TransactionsDto> transactionsArrayList= listOfTransactions.stream().toList().stream()
                 .map(MapperHelper::mapToTransactionsDto)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return OutputDto.builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(loadedCustomer)))
@@ -168,6 +182,9 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 .defaultMessage(String.format("Last 6 months transaction details for account:%s",accountNumber))
                 .build();
     }
+
+
+
 
     private TransactionsDto payBills(final TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         log.debug("<---------payBills(TransactionsDto transactionsDto) started --------------------------------------------------------------------" +

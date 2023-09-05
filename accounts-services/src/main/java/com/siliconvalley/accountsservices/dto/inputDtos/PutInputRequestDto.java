@@ -9,15 +9,22 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PutInputRequestDto {
+public class PutInputRequestDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567811L;
     private String customerId;
     private String name;
     private int age;
@@ -53,22 +60,22 @@ public class PutInputRequestDto {
     private String beneficiaryEmail;
     private String benVoterId;
     private String benDrivingLicense;
-    private long balance;
+    private BigDecimal balance;
     private AllConstantHelpers.UpdateRequest updateRequest;
     private String branchCode;
-    private long transferLimitPerDay;
+    private BigDecimal transferLimitPerDay;
     private int creditScore;
     private String address;
     private String imageName;
     private AllConstantHelpers.AccountStatus accountStatus;
-    private long approvedLoanLimitBasedOnCreditScore;
+    private BigDecimal approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
-    private long totLoanIssuedSoFar;
-    private long totalOutStandingAmountPayableToBank;
+    private BigDecimal totLoanIssuedSoFar;
+    private BigDecimal totalOutStandingAmountPayableToBank;
     private MultipartFile customerImage;
-    private List<Beneficiary> listOfBeneficiary = new ArrayList<>();
-    private List<Transactions> listOfTransactions = new ArrayList<>();
+    private Set<Beneficiary> listOfBeneficiary;
+    private Set<Transactions> listOfTransactions;
     private Customer customer;
-    private List<Accounts> accounts;
+    private Set<Accounts> accounts;
     private Accounts account;
 }

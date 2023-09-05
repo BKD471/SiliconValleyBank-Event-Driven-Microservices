@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 
@@ -13,7 +15,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BeneficiaryDto {
+public class BeneficiaryDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567893L;
     private String beneficiaryId;
     private String beneficiaryName;
     private String beneficiaryAccountNumber;

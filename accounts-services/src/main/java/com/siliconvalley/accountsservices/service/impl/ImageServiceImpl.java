@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Service("fileServicePrimary")
 public final class ImageServiceImpl extends AbstractService implements IImageService {
     private ImageServiceImpl(final IAccountsRepository accountsRepository, final ICustomerRepository customerRepository) {
@@ -27,7 +29,7 @@ public final class ImageServiceImpl extends AbstractService implements IImageSer
 
         final String originalFileName = file.getOriginalFilename();
 
-        if(StringUtils.isBlank(originalFileName)) throw new BadApiRequestException(BadApiRequestException.class,"Faced issue while fetching the image"
+        if(isBlank(originalFileName)) throw new BadApiRequestException(BadApiRequestException.class,"Faced issue while fetching the image"
                 ,methodName);
         final String fileName = UUID.randomUUID().toString();
         final String extension = originalFileName.substring(originalFileName.lastIndexOf("."));

@@ -3,6 +3,7 @@ package com.siliconvalley.accountsservices.helpers;
 import com.siliconvalley.accountsservices.dto.responseDtos.PageableResponseDto;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Beneficiary;
+import com.siliconvalley.accountsservices.model.Customer;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 
@@ -22,9 +23,8 @@ public class PagingHelper {
         final Set<String> setOfAccountFieldNames=new HashSet<>();
         //fetching the attribs of Accounts
         Field[] accFields = Accounts.class.getDeclaredFields();
-        for (Field field : accFields) {
-            setOfAccountFieldNames.add(field.getName());
-        }
+        for (Field field : accFields) setOfAccountFieldNames.add(field.getName());
+
         setOfAccountFieldNames.remove("listOfBeneficiary");
         setOfAccountFieldNames.remove("listOfTransactions");
         setOfAccountFieldNames.remove("customer");
@@ -35,13 +35,23 @@ public class PagingHelper {
         final Set<String> setOfBeneficiaryFieldNames=new HashSet<>();
         //fetching the attribs of Beneficiary
         Field[] benFields= Beneficiary.class.getDeclaredFields();
-        for(Field field:benFields){
-            setOfBeneficiaryFieldNames.add(field.getName());
-        }
+        for(Field field:benFields) setOfBeneficiaryFieldNames.add(field.getName());
         setOfBeneficiaryFieldNames.remove("accounts");
         return setOfBeneficiaryFieldNames;
     }
 
+    private static  Set<String> getSetsOfCustomerFieldsName(){
+        final Set<String> setOfCustomerFieldNames=new HashSet<>();
+        Field[] custFields= Customer.class.getDeclaredFields();
+        for(Field field:custFields) setOfCustomerFieldNames.add(field.getName());
+        setOfCustomerFieldNames.remove("accounts");
+        setOfCustomerFieldNames.remove("roles");
+        return setOfCustomerFieldNames;
+    }
+
+    public static Set<String> getAllPageableFieldsOfAcustomer(){
+        return getSetsOfCustomerFieldsName();
+    }
     public static Set<String> getAllPageableFieldsOfAccounts() {
         return getSetsOfAccountFieldNames();
     }

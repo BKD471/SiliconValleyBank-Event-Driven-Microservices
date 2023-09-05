@@ -1,6 +1,9 @@
 package com.siliconvalley.accountsservices.dto.outputDtos;
 
 import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 
@@ -9,7 +12,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerOutPutDto {
+public class CustomerOutPutDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567831L;
     private String customerId;
     private String customerName;
     private String email;
