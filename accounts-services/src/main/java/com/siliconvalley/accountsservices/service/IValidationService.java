@@ -3,6 +3,7 @@ package com.siliconvalley.accountsservices.service;
 import com.siliconvalley.accountsservices.dto.baseDtos.AccountsDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
+import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.BeneficiaryException;
@@ -46,4 +47,5 @@ public interface IValidationService {
 
     void accountsUpdateValidator(final Accounts accounts, final CustomerDto customerDto, final AllConstantHelpers.AccountsValidateType request) throws AccountsException, BadApiRequestException;
     void beneficiaryUpdateValidator(final Accounts accounts, final BeneficiaryDto beneficiaryDto, final AllConstantHelpers.validateBenType type) throws BeneficiaryException;
+    void transactionsUpdateValidator(final Accounts accounts, final TransactionsDto transactionsDto,final AllConstantHelpers.ValidateTransactionType type);
 }

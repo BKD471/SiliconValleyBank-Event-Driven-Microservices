@@ -6,6 +6,7 @@ import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.TransactionException;
 import jakarta.validation.Valid;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,5 +23,9 @@ public interface ITransactionsController {
     ResponseEntity<OutputDto> getPastSixMonthsTransaction(@Valid @PathVariable(name="num") final String accountNumber) throws AccountsException;
 
     @GetMapping("/createPdf")
-    ResponseEntity<InputStreamResource> generateBankStatement(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException;
+    ResponseEntity<InputStreamResource> generateBankStatementOpenPdf(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException;
+
+    @GetMapping("/genBankStatement")
+    ResponseEntity<String> generateBankStatementJasper(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws JRException;
+
 }

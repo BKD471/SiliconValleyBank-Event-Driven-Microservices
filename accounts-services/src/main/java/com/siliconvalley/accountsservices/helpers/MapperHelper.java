@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -552,5 +553,9 @@ public class MapperHelper {
                 .listOfBeneficiary(accountsDto.getListOfBeneficiary())
                 .listOfTransactions(accountsDto.getListOfTransactions())
                 .build();
+    }
+
+    public static Date convertToUtilDate(LocalDate date){
+        return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }

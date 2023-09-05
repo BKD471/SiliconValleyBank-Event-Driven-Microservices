@@ -12,6 +12,7 @@ import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.IPdfService;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -86,7 +87,7 @@ public class PdfServiceOpenPdfImpl extends AbstractService implements IPdfServic
                 .accountNumber(loadAccount.getAccountNumber())
                 .accountType(loadAccount.getAccountType().toString())
                 .branch(loadAccount.getHomeBranch().toString())
-                .RateOfInterest(loadAccount.getRateOfInterest())
+                .rateOfInterest(loadAccount.getRateOfInterest())
                 .balance(loadAccount.getBalance())
                 .listOfTransaction(transactionsListBetweenDate)
                 .build();
@@ -119,5 +120,17 @@ public class PdfServiceOpenPdfImpl extends AbstractService implements IPdfServic
         document.close();
         log.info("################# Pdf Creation Service ended #######################################");
         return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    /**
+     * @param accountNumber
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws JRException
+     */
+    @Override
+    public String generateBankStatement(String accountNumber, LocalDate startDate, LocalDate endDate) throws JRException {
+        return null;
     }
 }
