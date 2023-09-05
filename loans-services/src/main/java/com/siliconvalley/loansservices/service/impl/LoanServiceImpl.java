@@ -176,4 +176,14 @@ public class LoanServiceImpl implements ILoansService {
         return allLoans.get().stream().map(LoansMapperHelper::mapToLoansDto).
                 collect(Collectors.toList());
     }
+
+    /**
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @Override
+    public LoansDto downloadAllEmiStatementsAsCsv(LocalDate startDate, LocalDate endDate) {
+        return null;
+    }
 }
