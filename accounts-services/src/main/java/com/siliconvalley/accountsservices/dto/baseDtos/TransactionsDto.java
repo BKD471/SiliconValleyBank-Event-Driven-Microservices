@@ -6,6 +6,10 @@ import com.siliconvalley.accountsservices.validator.NotNullEnum;
 import com.siliconvalley.accountsservices.validator.ValidDescription;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.PATTERN_FOR_NOT_NULL_CHARS;
@@ -16,14 +20,16 @@ import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.PAT
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionsDto {
+public class TransactionsDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567896L;
     @Min(value =1, message = "Please provide an account Number")
     private String accountNumber;
     private LocalDateTime transactionTimeStamp;
     private String transactionId;
 
     @Min(value =100,message = "transaction Amount should not be less than 100")
-    private Long transactionAmount;
+    private BigDecimal transactionAmount;
     @Min(value =1, message = "Please provide a transacted Account Number")
     private String transactedAccountNumber;
     private AllConstantHelpers.TransactionType transactionType;

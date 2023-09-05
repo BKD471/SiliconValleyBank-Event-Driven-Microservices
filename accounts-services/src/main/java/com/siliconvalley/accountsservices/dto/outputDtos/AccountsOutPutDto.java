@@ -5,26 +5,32 @@ import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountsOutPutDto {
+public class AccountsOutPutDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID=1234567891234567821L;
     private String accountNumber;
-    private long balance;
+    private BigDecimal balance;
     private AllConstantHelpers.Branch homeBranch;
     private AllConstantHelpers.AccountType accountType;
     private AllConstantHelpers.AccountStatus accountStatus;
     private String branchCode;
-    private long transferLimitPerDay;
+    private BigDecimal transferLimitPerDay;
     private int creditScore;
-    private long approvedLoanLimitBasedOnCreditScore;
+    private BigDecimal approvedLoanLimitBasedOnCreditScore;
     private Boolean anyActiveLoans;
-    private long totalOutstandingAmountPayableToBank;
-    private long totLoanIssuedSoFar;
-    private List<BeneficiaryDto> listOfBeneficiary;
-    private List<TransactionsDto> listOfTransactions;
+    private BigDecimal totalOutstandingAmountPayableToBank;
+    private BigDecimal totLoanIssuedSoFar;
+    private Set<BeneficiaryDto> listOfBeneficiary;
+    private Set<TransactionsDto> listOfTransactions;
 }

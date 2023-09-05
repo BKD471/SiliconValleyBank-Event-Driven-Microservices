@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer extends Audit implements UserDetails {
+public class Customer extends Audit implements UserDetails,Comparable<Customer>{
     @Id
     private String customerId;
 
@@ -61,7 +61,7 @@ public class Customer extends Audit implements UserDetails {
     private String address;
 
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Accounts> accounts=new ArrayList<>();
+    private Set<Accounts> accounts=new LinkedHashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Role> roles=new HashSet<>();
@@ -121,5 +121,16 @@ public class Customer extends Audit implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+    /**
+     * @param cust
+     * @return
+     */
+    @Override
+    public int compareTo(Customer cust) {
+        int numOfAccounts=cust.getAccounts().size();
+        if(numOfAccounts==accounts.size()) return  0;
+        else if(numOfAccounts>accounts.size()) return -1;
+        else return 1;
     }
 }

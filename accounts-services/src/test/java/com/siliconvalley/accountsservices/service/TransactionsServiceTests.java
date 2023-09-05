@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -56,12 +57,12 @@ public class TransactionsServiceTests {
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
-                .balance(500000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
+                .balance(BigDecimal.valueOf(500000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
@@ -92,7 +93,7 @@ public class TransactionsServiceTests {
                 .transactionType(AllConstantHelpers.TransactionType.DEBIT)
                 .description(ELECTRICITY)
                 .accounts(accounts)
-                .transactionAmount(60000L)
+                .transactionAmount(BigDecimal.valueOf(60000L))
                 .build();
         transactions1.setTransactionTimeStamp(LocalDateTime.now());
         Transactions transactions2=Transactions.builder()
@@ -101,7 +102,7 @@ public class TransactionsServiceTests {
                 .transactionType(CREDIT)
                 .description(SALARY)
                 .accounts(accounts)
-                .transactionAmount(160000L)
+                .transactionAmount(BigDecimal.valueOf(160000L))
                 .build();
         transactions2.setTransactionTimeStamp(LocalDateTime.of(2023,06,17,05,40));
 
@@ -125,24 +126,24 @@ public class TransactionsServiceTests {
         TransactionsDto transactionsDto=TransactionsDto.builder()
                 .transactionId("1L")
                 .accountNumber("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(CREDIT)
                 .transactedAccountNumber("123")
                 .description(SALARY)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        long finalBalance=accounts.getBalance()+transactionsDto.getTransactionAmount();
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).add(transactionsDto.getTransactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
@@ -150,7 +151,7 @@ public class TransactionsServiceTests {
 
         Transactions transactionsState= Transactions.builder()
                 .transactionId("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(CREDIT)
                 .transactedAccountNumber("123")
                 .description(SALARY)
@@ -178,24 +179,24 @@ public class TransactionsServiceTests {
         TransactionsDto transactionsDto=TransactionsDto.builder()
                 .transactionId("1L")
                 .accountNumber("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(ELECTRICITY)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
@@ -203,7 +204,7 @@ public class TransactionsServiceTests {
 
         Transactions transactionsState= Transactions.builder()
                 .transactionId("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(ELECTRICITY)
@@ -230,7 +231,7 @@ public class TransactionsServiceTests {
         TransactionsDto transactionsDto=TransactionsDto.builder()
                 .transactionId("1L")
                 .accountNumber("1L")
-                .transactionAmount(800000L)
+                .transactionAmount(BigDecimal.valueOf(800000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(ELECTRICITY)
@@ -251,24 +252,24 @@ public class TransactionsServiceTests {
         TransactionsDto transactionsDto=TransactionsDto.builder()
                 .transactionId("1L")
                 .accountNumber("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(RENT)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
@@ -276,7 +277,7 @@ public class TransactionsServiceTests {
 
         Transactions transactionsState= Transactions.builder()
                 .transactionId("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(RENT)
@@ -304,24 +305,24 @@ public class TransactionsServiceTests {
         TransactionsDto transactionsDto=TransactionsDto.builder()
                 .transactionId("1L")
                 .accountNumber("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(FAMILY)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
@@ -329,7 +330,7 @@ public class TransactionsServiceTests {
 
         Transactions transactionsState= Transactions.builder()
                 .transactionId("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(FAMILY)
@@ -357,24 +358,24 @@ public class TransactionsServiceTests {
         TransactionsDto transactionsDto=TransactionsDto.builder()
                 .transactionId("1L")
                 .accountNumber("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(INVESTMENT)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
@@ -382,7 +383,7 @@ public class TransactionsServiceTests {
 
         Transactions transactionsState= Transactions.builder()
                 .transactionId("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(INVESTMENT)
@@ -410,24 +411,24 @@ public class TransactionsServiceTests {
         TransactionsDto transactionsDto=TransactionsDto.builder()
                 .transactionId("1L")
                 .accountNumber("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(E_SHOPPING)
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        long finalBalance=accounts.getBalance()-transactionsDto.getTransactionAmount();
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .balance(finalBalance)
@@ -435,7 +436,7 @@ public class TransactionsServiceTests {
 
         Transactions transactionsState= Transactions.builder()
                 .transactionId("1L")
-                .transactionAmount(100000L)
+                .transactionAmount(BigDecimal.valueOf(100000L))
                 .transactionType(DEBIT)
                 .transactedAccountNumber("123")
                 .description(E_SHOPPING)

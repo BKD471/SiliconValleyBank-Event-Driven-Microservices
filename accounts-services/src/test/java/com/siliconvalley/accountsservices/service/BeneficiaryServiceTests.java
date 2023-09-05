@@ -27,6 +27,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -63,12 +64,12 @@ public class BeneficiaryServiceTests {
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
-                .balance(60000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
+                .balance(BigDecimal.valueOf(60000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
@@ -317,12 +318,12 @@ public class BeneficiaryServiceTests {
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .anyActiveLoans(false)
-                .approvedLoanLimitBasedOnCreditScore(500000L)
-                .balance(60000L)
+                .approvedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(500000L))
+                .balance(BigDecimal.valueOf(60000L))
                 .branchCode(branchCode)
-                .totalOutStandingAmountPayableToBank(500000L)
-                .transferLimitPerDay(25000L)
-                .totLoanIssuedSoFar(450000L)
+                .totalOutStandingAmountPayableToBank(BigDecimal.valueOf(500000L))
+                .transferLimitPerDay(BigDecimal.valueOf(25000L))
+                .totLoanIssuedSoFar(BigDecimal.valueOf(450000L))
                 .listOfBeneficiary(accountsList)
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.BANGALORE).build();

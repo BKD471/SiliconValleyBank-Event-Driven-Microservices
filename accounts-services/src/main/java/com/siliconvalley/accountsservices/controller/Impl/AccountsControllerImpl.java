@@ -16,8 +16,10 @@ import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.IAccountsService;
 import com.siliconvalley.accountsservices.service.IImageService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,42 +27,58 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import java.util.Properties;
 
+@Slf4j
 @RestController
 public class AccountsControllerImpl implements IAccountsController {
+    private static final String PATH_OF_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\controller\\properties\\AccountsController.properties";
     private final IAccountsService accountsService;
     private final ICustomerRepository customerRepository;
     private final IImageService fIleService;
     private final String IMAGE_PATH;
+    private static final Properties properties=new Properties();
+
+    static {
+        try {
+            properties.load(new FileInputStream(PATH_OF_PROPERTIES_FILE));
+        } catch (IOException e) {
+            log.error("Error while reading properties file");
+        }
+    }
 
     AccountsControllerImpl(@Qualifier("accountsServicePrimary") IAccountsService accountsService,
                            ICustomerRepository customerRepository,
-                           @Qualifier("fileServicePrimary") IImageService fIleService,
-                           @Value("${customer.profile.images.path}") String IMAGE_PATH) {
+                           @Qualifier("fileServicePrimary") IImageService fIleService) {
         this.accountsService = accountsService;
         this.customerRepository = customerRepository;
         this.fIleService = fIleService;
-        this.IMAGE_PATH=IMAGE_PATH;
+        this.IMAGE_PATH=properties.getProperty("customer.profile.images.path");;
     }
+
 
     /**
      * @param getInputRequestDto
      * @return
      * @throws AccountsException
+     * @throws ResponseException
+     * @throws CustomerException
+     * @throws IOException
      */
     @Override
-    public ResponseEntity<OutputDto> getRequestForChange(final GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
-        final OutputDto responseBody = accountsService.getRequestExecutor(getInputRequestDto);
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    public ResponseEntity<OutputDto> getRequestForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
+            final OutputDto responseBody = accountsService.getRequestExecutor(getInputRequestDto);
+            return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
     /**
      * @param customerId
      * @param response
-     * @return
      */
     @Override
     public void serveUserImage(final String customerId,final HttpServletResponse response) throws IOException {
@@ -93,7 +111,7 @@ public class AccountsControllerImpl implements IAccountsController {
      * @throws IOException
      */
     @Override
-    public ResponseEntity<OutputDto> createAccount(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
+    public ResponseEntity<OutputDto> createAccount(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException {
         final OutputDto responseBody = accountsService.accountSetUp(postInputDto);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }

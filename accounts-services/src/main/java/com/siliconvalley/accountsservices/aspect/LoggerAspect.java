@@ -16,7 +16,7 @@ import java.time.Instant;
 @Slf4j
 public class LoggerAspect {
     //for intercepting public methods only, for pruvate methods we have individual logs
-    @Around(value = "execution(com.siliconvalley.accountsservices.dto.outputDtos.OutputDto  com.example.accountsservices.service.*.*(..))")
+    @Around(value = "execution(com.siliconvalley.accountsservices.dto.outputDtos.OutputDto  com.siliconvalley.accountsservices.service.*.*(..))")
     public OutputDto log(final ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("<---------------------------------->"+joinPoint.
                 getSignature().

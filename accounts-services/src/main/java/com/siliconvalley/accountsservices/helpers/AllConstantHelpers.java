@@ -3,7 +3,7 @@ package com.siliconvalley.accountsservices.helpers;
 public class AllConstantHelpers {
     public enum UpdateRequest {
         CREATE_ACC,ADD_ACCOUNT,LEND_LOAN,UPDATE_HOME_BRANCH,UPDATE_CREDIT_SCORE,UPDATE_CUSTOMER_DETAILS,
-        UPLOAD_CUSTOMER_IMAGE,GET_CUSTOMER_IMAGE,GET_CREDIT_SCORE,GET_ACC_INFO,GET_ALL_ACC,BLOCK_ACC,
+        UPLOAD_CUSTOMER_IMAGE,GET_CUSTOMER_IMAGE,GET_CREDIT_SCORE,GET_ACC_INFO,GET_ALL_CUSTOMER,GET_ALL_ACC,BLOCK_ACC,
         CLOSE_ACC,RE_OPEN_ACC,INC_TRANSFER_LIMIT,INC_APPROVED_LOAN_LIMIT,DELETE_ACC,DELETE_ALL_ACC
     }
     public enum BenUpdateRequest {
@@ -25,7 +25,6 @@ public class AllConstantHelpers {
         OPEN,BLOCKED,CLOSED
     }
 
-
     public  enum DIRECTION{
         asc,desc;
     }
@@ -38,17 +37,18 @@ public class AllConstantHelpers {
         FATHER,MOTHER,SPOUSE,SON,DAUGHTER
     }
 
-
     public enum AccountsValidateType {
         UPDATE_CASH_LIMIT,UPDATE_HOME_BRANCH,GENERATE_CREDIT_SCORE,UPDATE_CREDIT_SCORE,
-        UPLOAD_PROFILE_IMAGE,CLOSE_ACCOUNT,RE_OPEN_ACCOUNT,BLOCK_ACCOUNT,CREATE_ACC, ADD_ACC
+        UPLOAD_PROFILE_IMAGE,CLOSE_ACCOUNT,RE_OPEN_ACCOUNT,BLOCK_ACCOUNT,
+        CREATE_ACC, ADD_ACC,GET_ALL_CUSTOMER,GET_ALL_ACC, UPDATE_CUSTOMER_DETAILS
     }
 
     public enum DescriptionType{
         //credit types
         SALARY,DEPOSIT,RECEIVED_FROM_OTHER_ACCOUNT,
         //debit types
-        EMI,CREDIT_CARD_BILL_PAYMENT,DONATION,RENT,E_SHOPPING,BUSINESS,INVESTMENT,FAMILY,ELECTRICITY,OTHERS
+        EMI,CREDIT_CARD_BILL_PAYMENT,DONATION,RENT,E_SHOPPING,BUSINESS,
+        INVESTMENT,FAMILY,ELECTRICITY,OTHERS
     }
 
     public enum TransactionType {
@@ -57,6 +57,10 @@ public class AllConstantHelpers {
 
     public enum validateBenType {
         ADD_BEN, UPDATE_BEN, DELETE_BEN
+    }
+
+    public enum ValidateTransactionType{
+        GET_PAST_SIX_MONTHS_TRANSACTIONS,GEN_BANK_STATEMENT
     }
 
     public static final DIRECTION ASC=DIRECTION.asc;
@@ -104,4 +108,16 @@ public class AllConstantHelpers {
     public static final validateBenType ADD_BEN = validateBenType.ADD_BEN;
     public static final validateBenType UPDATE_BEN = validateBenType.UPDATE_BEN;
     public static final String REQUEST_TO_BLOCK = "BLOCK";
+
+    public static final ValidateTransactionType GET_PAST_SIX_MONTHS_OF_TRANSACTION=ValidateTransactionType.GET_PAST_SIX_MONTHS_TRANSACTIONS;
+    public static final ValidateTransactionType GEN_BANK_STATEMENT=ValidateTransactionType.GEN_BANK_STATEMENT;
+
+    //company specific data
+    public static final String companyName="SiliconValley Corporation Pvt Ltd";
+    public static final String city="Seattle";
+    public static final String street="562 1ST Ave S Ste 400";
+    public static final String ZipCode="98104-3816";
+    public static final String faxNumber="+1-907-555-1234";
+    public static final String State="Washington";
+    public static final String country="United States";
 }

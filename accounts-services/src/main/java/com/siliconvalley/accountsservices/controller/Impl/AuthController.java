@@ -3,7 +3,6 @@ package com.siliconvalley.accountsservices.controller.Impl;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.tokenDtos.JwtRequest;
 import com.siliconvalley.accountsservices.dto.tokenDtos.JwtResponse;
-import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.helpers.JwtHelper;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
@@ -17,46 +16,57 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Properties;
 
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToCustomer;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToCustomerDto;
+import static java.util.Objects.isNull;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-
+    private static final String PATH_OF_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\controller\\properties\\AuthController.properties";
     private final AuthenticationManager manager;
     private final UserDetailsService userDetailsService;
+    private final ICustomerRepository customerRepository;
     private final JwtHelper jwtHelper;
     private final ModelMapper modelMapper;
     private final String googleClientId;
     private final String newPassword;
-    private final ICustomerRepository customerRepository;
+    private static final Properties properties=new Properties();
 
-    AuthController(AuthenticationManager manager,UserDetailsService userDetailsService,
+    static {
+        try {
+            properties.load(new FileInputStream(PATH_OF_PROPERTIES_FILE));
+        } catch (IOException e) {
+            log.error("Error while reading properties file");
+        }
+    }
+
+
+    public AuthController(AuthenticationManager manager,UserDetailsService userDetailsService,
                    JwtHelper jwtHelper,ModelMapper modelMapper,
-                   ICustomerRepository customerRepository,@Value("${googleClientId}") String googleClientId,
-                   @Value("${newPassword}") String newPassword){
+                   ICustomerRepository customerRepository){
         this.manager=manager;
         this.userDetailsService=userDetailsService;
         this.jwtHelper=jwtHelper;
         this.modelMapper=modelMapper;
         this.customerRepository=customerRepository;
-        this.googleClientId=googleClientId;
-        this.newPassword=newPassword;
+        this.googleClientId= properties.getProperty("googleClientId");;
+        this.newPassword= properties.getProperty("newPassword");
     }
 
     @GetMapping("/hello")
@@ -86,20 +96,13 @@ public class AuthController {
     }
 
     private void doAuthenticate(final String email,final String password) {
-        final String methodName = "doAuthenticate(String,String) in AuthController";
         final UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(email, password);
-        try {
-            manager.authenticate(auth);
-        } catch (BadCredentialsException e) {
-            throw new BadApiRequestException(BadApiRequestException.class, "Invalid Credentials", methodName);
-        }
+        manager.authenticate(auth);
     }
 
     @PostMapping("/google")
-    public ResponseEntity<JwtResponse> loginWithGoogle(@RequestBody Map<String, Object> data) throws IOException, IOException {
-
-
+    public ResponseEntity<JwtResponse> loginWithGoogle(@RequestBody Map<String, Object> data) throws IOException {
         //get the id token from request
         String idToken = data.get("idToken").toString();
         NetHttpTransport netHttpTransport = new NetHttpTransport();
@@ -109,16 +112,10 @@ public class AuthController {
         GoogleIdToken.Payload payload = googleIdToken.getPayload();
         log.info("Payload : {}", payload);
         String email = payload.getEmail();
-        Customer customer = null;
-        customer = customerRepository.findCustomerByEmail(email).orElse(null);
+        Customer customer = customerRepository.findCustomerByEmail(email).orElse(null);
 
-        if (Objects.isNull(customer)) {
-            //create new user
-            customer = this.saveUser(email, data.get("name").toString(), data.get("photoUrl").toString());
-        }
-        ResponseEntity<JwtResponse> jwtResponseResponseEntity
-                = this.login(JwtRequest.builder().email(customer.getEmail()).password(newPassword).build());
-        return jwtResponseResponseEntity;
+        if (isNull(customer)) customer = this.saveUser(email, data.get("name").toString(), data.get("photoUrl").toString());
+        return this.login(JwtRequest.builder().email(customer.getEmail()).password(newPassword).build());
     }
 
     private Customer saveUser(String email, String name, String photoUrl) {

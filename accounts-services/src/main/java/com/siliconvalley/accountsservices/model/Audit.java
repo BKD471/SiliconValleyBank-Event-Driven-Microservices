@@ -15,11 +15,12 @@ import java.time.LocalDate;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class Audit{
+public abstract class Audit{
     @CreatedDate
     @Column(updatable = false,nullable = false)
     protected LocalDate createdDate;
 
     @CreatedBy
     protected String createdBy;
+
 }
