@@ -76,7 +76,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Slf4j
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractService implements IAccountsService {
-    private static final String PATH_TO_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\service\\properties\\AccountsService.properties";
+    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/service/properties/AccountsService.properties";
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;

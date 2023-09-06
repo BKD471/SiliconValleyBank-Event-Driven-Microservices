@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class Transactions extends AuditTransactions{
-
     @Id
     @Column(name="trans_id")
     private String transactionId;

@@ -38,7 +38,7 @@ import static java.util.Objects.isNull;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-    private static final String PATH_OF_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\controller\\properties\\AuthController.properties";
+    private static final String PATH_OF_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/controller/properties/AuthController.properties";
     private final AuthenticationManager manager;
     private final UserDetailsService userDetailsService;
     private final ICustomerRepository customerRepository;

@@ -5,6 +5,7 @@ import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.validator.NotNullEnum;
 import com.siliconvalley.accountsservices.validator.ValidDescription;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.io.Serial;
@@ -23,14 +24,14 @@ import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.PAT
 public class TransactionsDto implements Serializable {
     @Serial
     private static final long serialVersionUID=1234567891234567896L;
-    @Min(value =1, message = "Please provide an account Number")
+    @NotEmpty(message = "Please provide an account Number")
     private String accountNumber;
     private LocalDateTime transactionTimeStamp;
     private String transactionId;
 
     @Min(value =100,message = "transaction Amount should not be less than 100")
     private BigDecimal transactionAmount;
-    @Min(value =1, message = "Please provide a transacted Account Number")
+    @NotEmpty( message = "Please provide a transacted Account Number")
     private String transactedAccountNumber;
     private AllConstantHelpers.TransactionType transactionType;
     @NotNullEnum(regexp = PATTERN_FOR_NOT_NULL_CHARS,message = "Field can;t be null")

@@ -1,6 +1,8 @@
 package com.siliconvalley.accountsservices.service.impl;
 
 import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
+import com.siliconvalley.accountsservices.helpers.MapperHelper;
+import com.siliconvalley.accountsservices.helpers.TransactionsInvoicableObject;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.BankStatement;
 import com.siliconvalley.accountsservices.model.Transactions;
@@ -21,15 +23,17 @@ import java.util.Set;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.convertToUtilDate;
+import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToTransactionsInvoicableObject;
 
 
 @Slf4j
 @Service("jasperPdfService")
 public class PdfServiceJasperImpl extends AbstractService implements IPdfService {
-    private static final String PATH_TO_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\service\\properties\\PdfServiceJasper.properties";
+    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/service/properties/PdfServiceJasper.properties";
     private static final Map<String,Object> params=new HashMap<>();
     private static final Properties properties=new Properties();
     private final String PATH_TO_JASPER_XML;
@@ -44,7 +48,7 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         params.put("country",country);
 
         try{
-            properties.load(new FileReader(PATH_TO_PROPERTIES_FILE));
+            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
         }catch (IOException e){
             log.error("Error while Reading properties file of JasperPdfService");
         }
@@ -80,9 +84,6 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
     @Override
     public String generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException {
         log.info("################# Pdf Creation Service started ###################################");
-
-        final String path="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\bank Stmt Report";
-
         Set<Transactions> transactionsListBetweenDate =prepareTransactionsSetBetweenDate(startDate,endDate,accountNumber);
         Accounts loadAccount = fetchAccountByAccountNumber(accountNumber);
 
@@ -110,9 +111,13 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         params.put("startDate", convertToUtilDate(startDate));
         params.put("endDate",convertToUtilDate(endDate));
 
+
+        List<TransactionsInvoicableObject> listOfTransactionsBetweenDate=
+                transactionsListBetweenDate.stream().map(MapperHelper::mapToTransactionsInvoicableObject).toList();
+
         //transactionTimeStamp   transactionId   transactionAmount
         // transactedAccountNumber  transactionType  description  balance
-        JRBeanCollectionDataSource dataSource=new JRBeanCollectionDataSource(transactionsListBetweenDate);
+        JRBeanCollectionDataSource dataSource=new JRBeanCollectionDataSource(listOfTransactionsBetweenDate);
         JasperReport report= JasperCompileManager.compileReport(PATH_TO_JASPER_XML);
         JasperPrint print= JasperFillManager.fillReport(report,params,dataSource);
         switch (reportFormat){

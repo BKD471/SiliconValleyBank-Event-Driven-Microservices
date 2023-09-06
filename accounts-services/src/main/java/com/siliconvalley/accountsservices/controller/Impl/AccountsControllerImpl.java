@@ -37,7 +37,7 @@ import java.util.Properties;
 @Slf4j
 @RestController
 public class AccountsControllerImpl implements IAccountsController {
-    private static final String PATH_OF_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\controller\\properties\\AccountsController.properties";
+    private static final String PATH_OF_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/controller/properties/AccountsController.properties";
     private final IAccountsService accountsService;
     private final ICustomerRepository customerRepository;
     private final IImageService fIleService;

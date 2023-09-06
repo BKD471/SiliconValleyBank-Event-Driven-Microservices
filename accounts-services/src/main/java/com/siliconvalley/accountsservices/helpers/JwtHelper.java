@@ -21,7 +21,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Slf4j
 @Component
 public class JwtHelper {
-    private static final String PATH_TO_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\helpers\\properties\\JwtHelper.properties";
+    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/helpers/properties/JwtHelper.properties";
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
     private final String SECRET;
     private static final Properties properties=new Properties();

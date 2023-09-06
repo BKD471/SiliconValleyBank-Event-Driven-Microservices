@@ -89,6 +89,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         //converting to entity object
         final Transactions requestTransaction = mapToTransactions(transactionsDto);
 
+
         //get the money & update the balance
         final BigDecimal amountToBeCredited = requestTransaction.getTransactionAmount();
         final Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction,
@@ -99,6 +100,9 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         listOfTransactions.add(recentTransaction);
         fetchedAccount.setListOfTransactions(listOfTransactions);
         recentTransaction.setAccounts(fetchedAccount);
+
+        final String transactionId=UUID.randomUUID().toString();
+        recentTransaction.setTransactionId(transactionId);
 
         //save in DB & return
         final Transactions savedTransactions = transactionsRepository.save(recentTransaction);
@@ -122,9 +126,6 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
         final Customer fetchedCustomer=fetchedAccount.getCustomer();
 
-        //set transactionId
-        final String transactionId= UUID.randomUUID().toString();
-        transactionsDto.setTransactionId(transactionId);
 
         if(isNull(transactionsDto.getTransactionType())) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
@@ -163,15 +164,17 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
         validationService.transactionsUpdateValidator(fetchedAccount,null,GET_PAST_SIX_MONTHS_TRANSACTIONS);
-        final Set<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
+         Set<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
                         .isAfter(pastSixMonthsDate)).collect(Collectors.toSet());
 
-        Comparator<Transactions> sortTransactions=(o1, o2) -> (o1.getTransactionTimeStamp().isBefore(o2.getTransactionTimeStamp())) ? -1 :
+        Comparator<Transactions> sortTransactions=(o1, o2) -> (o1.getTransactionTimeStamp().
+                isBefore(o2.getTransactionTimeStamp())) ? -1 :
                 (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp())) ? 1 : 0;
-        listOfTransactions.stream().toList().sort(sortTransactions);
+       List<Transactions> modifiableTransactionList=new ArrayList<>(listOfTransactions.stream().toList());
+       modifiableTransactionList.sort(sortTransactions);
 
-        final Set<TransactionsDto> transactionsArrayList= listOfTransactions.stream().toList().stream()
+        final Set<TransactionsDto> transactionsArrayList= modifiableTransactionList.stream().toList().stream()
                 .map(MapperHelper::mapToTransactionsDto)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 

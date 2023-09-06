@@ -17,7 +17,9 @@ import com.siliconvalley.accountsservices.model.Transactions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -555,6 +557,23 @@ public class MapperHelper {
                 .build();
     }
 
+    //transactionTimeStamp   transactionId   transactionAmount
+    // transactedAccountNumber  transactionType  description  balance
+   public static TransactionsInvoicableObject mapToTransactionsInvoicableObject(Transactions transactions){
+        return TransactionsInvoicableObject.builder()
+                .transactionId(transactions.getTransactionId())
+                .transactionTimeStamp(convertLocalDateTimeToTimeStamp(transactions.getTransactionTimeStamp()))
+                .transactionAmount(transactions.getTransactionAmount())
+                .transactedAccountNumber(transactions.getTransactedAccountNumber())
+                .transactionType(transactions.getTransactionType().toString())
+                .description(transactions.getDescription().toString())
+                .balance(transactions.getBalance())
+                .build();
+   }
+
+   public static Timestamp convertLocalDateTimeToTimeStamp(LocalDateTime localDateTime){
+        return Timestamp.valueOf(localDateTime);
+   }
     public static Date convertToUtilDate(LocalDate date){
         return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }

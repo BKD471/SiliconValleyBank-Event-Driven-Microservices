@@ -62,7 +62,7 @@ public class Accounts extends Audit {
     @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL)
     private Set<Beneficiary> listOfBeneficiary=new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "accounts",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "accounts",cascade = CascadeType.MERGE)
     private Set<Transactions> listOfTransactions=new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

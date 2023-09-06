@@ -24,7 +24,7 @@ import java.util.Properties;
 @Slf4j
 @RestController
 public class BeneficiaryControllerImpl implements IBeneficiaryController {
-    private static final String PATH_TO_PROPERTIES="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\controller\\properties\\BeneficiaryController.properties";
+    private static final String PATH_TO_PROPERTIES="accounts-services/src/main/java/com/siliconvalley/accountsservices/controller/properties/BeneficiaryController.properties";
     private final IBeneficiaryService beneficiaryService;
     private static final Properties properties=new Properties();
 
