@@ -131,8 +131,8 @@
 				<textFieldExpression><![CDATA[$P{startDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="410" y="25" width="40" height="14" uuid="b4dfd86f-429c-4e61-a193-6eda3d4ab50e"/>
-				<text><![CDATA[Date]]></text>
+				<reportElement x="400" y="3" width="30" height="14" uuid="b4dfd86f-429c-4e61-a193-6eda3d4ab50e"/>
+				<text><![CDATA[Date:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="490" y="160" width="40" height="14" uuid="86b71c71-531e-45d6-ab7a-4bd18947bcff">
@@ -142,7 +142,7 @@
 				<textFieldExpression><![CDATA[$P{endDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="440" y="25" width="116" height="14" uuid="8f3305f0-ca04-4071-b38a-424a8bc8c120">
+				<reportElement x="430" y="3" width="106" height="14" uuid="8f3305f0-ca04-4071-b38a-424a8bc8c120">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -191,31 +191,31 @@
 				<textFieldExpression><![CDATA[$P{balance}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="0" width="310" height="20" uuid="4b11ca30-c163-46e7-aef7-ab4c84d9d8f6"/>
+				<reportElement x="80" y="0" width="230" height="20" uuid="4b11ca30-c163-46e7-aef7-ab4c84d9d8f6"/>
 				<textFieldExpression><![CDATA[$P{companyName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="21" width="70" height="19" uuid="644485b8-42ae-48e6-9235-cd5b69c390da"/>
+				<reportElement x="80" y="21" width="40" height="19" uuid="644485b8-42ae-48e6-9235-cd5b69c390da"/>
 				<textFieldExpression><![CDATA[$P{city}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="150" y="21" width="110" height="19" uuid="2a267c07-0da7-4142-9bdc-e20b47214122"/>
+				<reportElement x="120" y="21" width="90" height="19" uuid="2a267c07-0da7-4142-9bdc-e20b47214122"/>
 				<textFieldExpression><![CDATA[$P{street}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="260" y="21" width="130" height="19" uuid="e0681de2-64c5-4463-bddb-68fe4883aa37"/>
+				<reportElement x="210" y="21" width="100" height="19" uuid="e0681de2-64c5-4463-bddb-68fe4883aa37"/>
 				<textFieldExpression><![CDATA[$P{ZipCode}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="40" width="120" height="20" uuid="881a54f2-8bca-415b-9cc5-7d72bc1ef5b5"/>
+				<reportElement x="80" y="40" width="90" height="20" uuid="881a54f2-8bca-415b-9cc5-7d72bc1ef5b5"/>
 				<textFieldExpression><![CDATA[$P{faxNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="200" y="40" width="110" height="20" uuid="e5575f03-644f-4a93-a6da-f9309bd56091"/>
+				<reportElement x="170" y="40" width="60" height="20" uuid="e5575f03-644f-4a93-a6da-f9309bd56091"/>
 				<textFieldExpression><![CDATA[$P{State}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="310" y="40" width="80" height="21" uuid="390f44bf-31d2-4508-b471-08dc2d615b8f"/>
+				<reportElement x="230" y="40" width="80" height="21" uuid="390f44bf-31d2-4508-b471-08dc2d615b8f"/>
 				<textFieldExpression><![CDATA[$P{country}]]></textFieldExpression>
 			</textField>
 			<image>

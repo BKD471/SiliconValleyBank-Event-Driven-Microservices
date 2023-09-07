@@ -91,16 +91,16 @@
 			<textContent><![CDATA[19/07/23]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
-			<reportElement uuid="b4dfd86f-429c-4e61-a193-6eda3d4ab50e" x="430" y="45" width="40" height="14" origin="0" srcId="10" printId="1"/>
-			<textContent><![CDATA[Date]]></textContent>
+			<reportElement uuid="b4dfd86f-429c-4e61-a193-6eda3d4ab50e" x="420" y="23" width="30" height="14" origin="0" srcId="10" printId="1"/>
+			<textContent><![CDATA[Date:]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656" valueClass="java.util.Date" pattern="dd/MM/yy, h:mm a">
 			<reportElement uuid="86b71c71-531e-45d6-ab7a-4bd18947bcff" x="510" y="180" width="40" height="14" origin="0" srcId="11" printId="1"/>
 			<textContent><![CDATA[07/09/23]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656" valueClass="java.util.Date" pattern="dd/MM/yy, h:mm a">
-			<reportElement uuid="8f3305f0-ca04-4071-b38a-424a8bc8c120" x="460" y="45" width="116" height="14" origin="0" srcId="12" printId="1"/>
-			<textContent><![CDATA[07/09/23, 10:21 pm]]></textContent>
+			<reportElement uuid="8f3305f0-ca04-4071-b38a-424a8bc8c120" x="450" y="23" width="106" height="14" origin="0" srcId="12" printId="1"/>
+			<textContent><![CDATA[07/09/23, 10:40 pm]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
 			<reportElement uuid="c1ee84c6-e405-4f0e-a551-0dc19a2c3e53" x="100" y="110" width="100" height="14" origin="0" srcId="13" printId="1"/>
@@ -127,31 +127,31 @@
 			<textContent><![CDATA[101500.00]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
-			<reportElement uuid="4b11ca30-c163-46e7-aef7-ab4c84d9d8f6" x="100" y="20" width="310" height="20" origin="0" srcId="19" printId="1"/>
+			<reportElement uuid="4b11ca30-c163-46e7-aef7-ab4c84d9d8f6" x="100" y="20" width="230" height="20" origin="0" srcId="19" printId="1"/>
 			<textContent><![CDATA[Silicon Valley Corporation Pvt Ltd]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
-			<reportElement uuid="644485b8-42ae-48e6-9235-cd5b69c390da" x="100" y="41" width="70" height="19" origin="0" srcId="20" printId="1"/>
+			<reportElement uuid="644485b8-42ae-48e6-9235-cd5b69c390da" x="100" y="41" width="40" height="19" origin="0" srcId="20" printId="1"/>
 			<textContent><![CDATA[Seattle]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
-			<reportElement uuid="2a267c07-0da7-4142-9bdc-e20b47214122" x="170" y="41" width="110" height="19" origin="0" srcId="21" printId="1"/>
+			<reportElement uuid="2a267c07-0da7-4142-9bdc-e20b47214122" x="140" y="41" width="90" height="19" origin="0" srcId="21" printId="1"/>
 			<textContent><![CDATA[562 1ST Ave 400]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
-			<reportElement uuid="e0681de2-64c5-4463-bddb-68fe4883aa37" x="280" y="41" width="130" height="19" origin="0" srcId="22" printId="1"/>
+			<reportElement uuid="e0681de2-64c5-4463-bddb-68fe4883aa37" x="230" y="41" width="100" height="19" origin="0" srcId="22" printId="1"/>
 			<textContent><![CDATA[98104-3816]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
-			<reportElement uuid="881a54f2-8bca-415b-9cc5-7d72bc1ef5b5" x="100" y="60" width="120" height="20" origin="0" srcId="23" printId="1"/>
+			<reportElement uuid="881a54f2-8bca-415b-9cc5-7d72bc1ef5b5" x="100" y="60" width="90" height="20" origin="0" srcId="23" printId="1"/>
 			<textContent><![CDATA[+1-907-555-1234]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
-			<reportElement uuid="e5575f03-644f-4a93-a6da-f9309bd56091" x="220" y="60" width="110" height="20" origin="0" srcId="24" printId="1"/>
+			<reportElement uuid="e5575f03-644f-4a93-a6da-f9309bd56091" x="190" y="60" width="60" height="20" origin="0" srcId="24" printId="1"/>
 			<textContent><![CDATA[Washington]]></textContent>
 		</text>
 		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
-			<reportElement uuid="390f44bf-31d2-4508-b471-08dc2d615b8f" x="330" y="60" width="80" height="21" origin="0" srcId="25" printId="1"/>
+			<reportElement uuid="390f44bf-31d2-4508-b471-08dc2d615b8f" x="250" y="60" width="80" height="21" origin="0" srcId="25" printId="1"/>
 			<textContent><![CDATA[United States]]></textContent>
 		</text>
 		<image>
