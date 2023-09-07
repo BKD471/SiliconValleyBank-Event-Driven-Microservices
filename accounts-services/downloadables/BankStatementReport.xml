@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperPrint xmlns="http://jasperreports.sourceforge.net/jasperreports/print" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/print http://jasperreports.sourceforge.net/xsd/jasperprint.xsd" name="BankStatements" pageWidth="595" pageHeight="842" topMargin="20" leftMargin="20" bottomMargin="20" rightMargin="20" locale="en_IN" timezone="Asia/Calcutta">
+	<property name="net.sf.jasperreports.export.xml.start.page.index" value="0"/>
+	<property name="net.sf.jasperreports.export.xml.end.page.index" value="0"/>
+	<property name="net.sf.jasperreports.export.xml.page.count" value="1"/>
+	<origin band="title"/>
+	<origin band="columnHeader"/>
+	<origin band="detail"/>
+	<origin band="lastPageFooter"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+	<style name="Table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#CACED0">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<page>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="33274f5d-5b7e-4be2-a2ff-65d452a618ed" x="20" y="111" width="78" height="15" origin="0" srcId="1" printId="1"/>
+			<textContent><![CDATA[AccountName:]]></textContent>
+		</text>
+		<line>
+			<reportElement uuid="806ce5df-1219-4876-ae0c-ca7405b1f246" x="20" y="100" width="556" height="1" origin="0" srcId="2" printId="1"/>
+		</line>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="1d3045ed-03d6-4253-a959-aeeb491b73ca" x="20" y="125" width="78" height="15" origin="0" srcId="3" printId="1"/>
+			<textContent><![CDATA[AccountNumber:]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="235bf8b6-1e1e-49c7-b59f-7a46c30b8209" x="20" y="140" width="78" height="15" origin="0" srcId="4" printId="1"/>
+			<textContent><![CDATA[AccountType:]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="665f25c2-8663-4951-b699-1ab863bdeb76" x="20" y="155" width="78" height="15" origin="0" srcId="5" printId="1"/>
+			<textContent><![CDATA[Branch:]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="e0cc69b3-abb9-4018-97cc-29369312a1d8" x="20" y="170" width="78" height="15" origin="0" srcId="6" printId="1"/>
+			<textContent><![CDATA[RateOfInterest:]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="9dc69e8c-5c20-4705-a8bf-726dda78d813" x="20" y="185" width="78" height="15" origin="0" srcId="7" printId="1"/>
+			<textContent><![CDATA[Balance:]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="1a0d7088-5af7-4865-8be1-41ec5f51fb36" x="320" y="180" width="244" height="20" origin="0" srcId="8" printId="1"/>
+			<box>
+				<topPen lineWidth="1.1" lineStyle="Dashed"/>
+				<leftPen lineWidth="1.1" lineStyle="Dashed"/>
+				<bottomPen lineWidth="1.1" lineStyle="Dashed"/>
+				<rightPen lineWidth="1.1" lineStyle="Dashed"/>
+			</box>
+			<textContent><![CDATA[ Account  Statement  from                    to]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656" valueClass="java.util.Date" pattern="dd/MM/yy, h:mm a">
+			<reportElement uuid="a0a59d44-b93c-41af-9e8d-bdd5fc5ba659" x="440" y="180" width="40" height="14" origin="0" srcId="9" printId="1"/>
+			<textContent><![CDATA[19/07/23]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="b4dfd86f-429c-4e61-a193-6eda3d4ab50e" x="430" y="45" width="40" height="14" origin="0" srcId="10" printId="1"/>
+			<textContent><![CDATA[Date]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656" valueClass="java.util.Date" pattern="dd/MM/yy, h:mm a">
+			<reportElement uuid="86b71c71-531e-45d6-ab7a-4bd18947bcff" x="510" y="180" width="40" height="14" origin="0" srcId="11" printId="1"/>
+			<textContent><![CDATA[07/09/23]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656" valueClass="java.util.Date" pattern="dd/MM/yy, h:mm a">
+			<reportElement uuid="8f3305f0-ca04-4071-b38a-424a8bc8c120" x="460" y="45" width="116" height="14" origin="0" srcId="12" printId="1"/>
+			<textContent><![CDATA[07/09/23, 10:21 pm]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="c1ee84c6-e405-4f0e-a551-0dc19a2c3e53" x="100" y="110" width="100" height="14" origin="0" srcId="13" printId="1"/>
+			<textContent><![CDATA[Bhaskar]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="b4cd0e3f-7e5c-4de9-ab44-e0a11c6d4ceb" x="100" y="126" width="250" height="14" origin="0" srcId="14" printId="1"/>
+			<textContent><![CDATA[33c7e901-c33a-4ff8-8adf-67282fec34fd]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="5057b290-ce2e-4a67-a717-db9b55dd338e" x="100" y="140" width="100" height="14" origin="0" srcId="15" printId="1"/>
+			<textContent><![CDATA[CURRENT]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="e5c9bf8b-d5e9-4402-a6cb-9f26eded54c1" x="100" y="155" width="100" height="14" origin="0" srcId="16" printId="1"/>
+			<textContent><![CDATA[KOLKATA]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656" valueClass="java.lang.Double">
+			<reportElement uuid="ac888af6-0983-4a5c-b876-3a12d925206d" x="100" y="170" width="100" height="14" origin="0" srcId="17" printId="1"/>
+			<textContent><![CDATA[5.5]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656" valueClass="java.math.BigDecimal">
+			<reportElement uuid="15266cb5-acc5-4b38-bd8e-acfbb88324d0" x="100" y="185" width="180" height="14" origin="0" srcId="18" printId="1"/>
+			<textContent><![CDATA[101500.00]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="4b11ca30-c163-46e7-aef7-ab4c84d9d8f6" x="100" y="20" width="310" height="20" origin="0" srcId="19" printId="1"/>
+			<textContent><![CDATA[Silicon Valley Corporation Pvt Ltd]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="644485b8-42ae-48e6-9235-cd5b69c390da" x="100" y="41" width="70" height="19" origin="0" srcId="20" printId="1"/>
+			<textContent><![CDATA[Seattle]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="2a267c07-0da7-4142-9bdc-e20b47214122" x="170" y="41" width="110" height="19" origin="0" srcId="21" printId="1"/>
+			<textContent><![CDATA[562 1ST Ave 400]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="e0681de2-64c5-4463-bddb-68fe4883aa37" x="280" y="41" width="130" height="19" origin="0" srcId="22" printId="1"/>
+			<textContent><![CDATA[98104-3816]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="881a54f2-8bca-415b-9cc5-7d72bc1ef5b5" x="100" y="60" width="120" height="20" origin="0" srcId="23" printId="1"/>
+			<textContent><![CDATA[+1-907-555-1234]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="e5575f03-644f-4a93-a6da-f9309bd56091" x="220" y="60" width="110" height="20" origin="0" srcId="24" printId="1"/>
+			<textContent><![CDATA[Washington]]></textContent>
+		</text>
+		<text textHeight="12.578125" lineSpacingFactor="1.2578125" leadingOffset="-2.1972656">
+			<reportElement uuid="390f44bf-31d2-4508-b471-08dc2d615b8f" x="330" y="60" width="80" height="21" origin="0" srcId="25" printId="1"/>
+			<textContent><![CDATA[United States]]></textContent>
+		</text>
+		<image>
+			<reportElement uuid="2aaca196-50f4-4190-980c-e749081f395a" x="34" y="20" width="50" height="60" origin="0" srcId="26" printId="1"/>
+			<imageSource>
+				<![CDATA[BankStatementReport.xml_files/img_0]]>
+			</imageSource>
+		</image>
+		<text textAlignment="Center" verticalAlignment="Middle" textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="7a9b1327-f274-427f-b61e-5a69caba0d51" style="Column header" x="20" y="219" width="72" height="20" forecolor="#000000" origin="1" srcId="27" printId="1"/>
+			<font fontName="Arial" size="12" isBold="true"/>
+			<textContent><![CDATA[Txn Date]]></textContent>
+		</text>
+		<text textAlignment="Center" verticalAlignment="Middle" textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="860ffd84-8e8f-49d7-b1f3-27647b57bd27" style="Column header" x="170" y="219" width="90" height="20" forecolor="#000000" origin="1" srcId="28" printId="1"/>
+			<font fontName="Arial" size="12" isBold="true"/>
+			<textContent><![CDATA[Description]]></textContent>
+		</text>
+		<text textAlignment="Center" textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="1633571f-0938-462c-9a0f-6ebfbaf42b9d" style="Column header" x="270" y="219" width="70" height="20" forecolor="#000000" origin="1" srcId="29" printId="1"/>
+			<font fontName="Arial" size="12" isBold="true"/>
+			<textContent><![CDATA[Txn Acc ]]></textContent>
+		</text>
+		<text textAlignment="Center" textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="bbd83537-d6b1-4a8e-aa9b-9f2367932260" style="Column header" x="340" y="219" width="90" height="20" forecolor="#000000" origin="1" srcId="30" printId="1"/>
+			<font fontName="Arial" size="12" isBold="true"/>
+			<textContent><![CDATA[Txn Type]]></textContent>
+		</text>
+		<text textAlignment="Center" textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="338663ef-5c8b-4375-9fbd-e5026b9a01e3" style="Column header" x="430" y="219" width="80" height="20" forecolor="#000000" origin="1" srcId="31" printId="1"/>
+			<font fontName="Arial" size="12" isBold="true"/>
+			<textContent><![CDATA[Txn Amount]]></textContent>
+		</text>
+		<text textAlignment="Center" textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="a8690d62-3608-4156-98df-08d9ee4440dd" style="Column header" x="510" y="219" width="66" height="20" forecolor="#000000" origin="1" srcId="32" printId="1"/>
+			<font fontName="Arial" size="12" isBold="true"/>
+			<textContent><![CDATA[Balance]]></textContent>
+		</text>
+		<text textAlignment="Center" verticalAlignment="Middle" textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="a66e01da-0d2d-47fa-9cce-4ad9a4d291aa" style="Column header" x="92" y="219" width="78" height="20" forecolor="#000000" origin="1" srcId="33" printId="1"/>
+			<font fontName="Arial" size="12" isBold="true"/>
+			<textContent><![CDATA[Txn Id]]></textContent>
+		</text>
+		<text textHeight="27.597656" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.sql.Timestamp" pattern="dd/MM/yy, h:mm a">
+			<reportElement uuid="37145f67-cb4c-4e5a-904a-27e02f6e1799" style="Detail" x="20" y="244" width="72" height="28" origin="2" srcId="34" printId="1"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[07/09/23, 9:47 pm]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="a896b359-5c6e-4384-8f67-e2e5875b8fdb" style="Detail" x="170" y="244" width="90" height="20" origin="2" srcId="35" printId="1"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[SALARY]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="33541808-3232-4235-8f5c-b32e1b32a3d7" style="Detail" x="260" y="244" width="80" height="20" origin="2" srcId="36" printId="1"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[3453rr4654]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="e9111a01-2b2c-4a71-9e33-6aa5cb4e0256" style="Detail" x="340" y="244" width="90" height="20" origin="2" srcId="37" printId="1"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[CREDIT]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="0e0c2dd1-4468-44e3-a7c0-234abaa27f16" style="Detail" x="430" y="244" width="80" height="20" origin="2" srcId="38" printId="1"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[200000.00]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="58b048b8-4c0e-469e-9949-61aca669d2ae" style="Detail" x="510" y="244" width="66" height="20" origin="2" srcId="39" printId="1"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[200000.00]]></textContent>
+		</text>
+		<text textHeight="68.99414" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="09b8c742-a5fe-4fc2-b3ed-64b539cc2341" style="Detail" x="92" y="244" width="78" height="69" origin="2" srcId="40" printId="1"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[1fce099e-cc2e-4b54-9fa1-d2d02ae97224]]></textContent>
+		</text>
+		<text textHeight="27.597656" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.sql.Timestamp" pattern="dd/MM/yy, h:mm a">
+			<reportElement uuid="37145f67-cb4c-4e5a-904a-27e02f6e1799" style="Detail" x="20" y="318" width="72" height="28" origin="2" srcId="34" printId="2"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[07/09/23, 9:48 pm]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="a896b359-5c6e-4384-8f67-e2e5875b8fdb" style="Detail" x="170" y="318" width="90" height="20" origin="2" srcId="35" printId="2"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[ELECTRICITY]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="33541808-3232-4235-8f5c-b32e1b32a3d7" style="Detail" x="260" y="318" width="80" height="20" origin="2" srcId="36" printId="2"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[1234567]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="e9111a01-2b2c-4a71-9e33-6aa5cb4e0256" style="Detail" x="340" y="318" width="90" height="20" origin="2" srcId="37" printId="2"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[DEBIT]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="0e0c2dd1-4468-44e3-a7c0-234abaa27f16" style="Detail" x="430" y="318" width="80" height="20" origin="2" srcId="38" printId="2"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[8500.00]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="58b048b8-4c0e-469e-9949-61aca669d2ae" style="Detail" x="510" y="318" width="66" height="20" origin="2" srcId="39" printId="2"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[191500.00]]></textContent>
+		</text>
+		<text textHeight="68.99414" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="09b8c742-a5fe-4fc2-b3ed-64b539cc2341" style="Detail" x="92" y="318" width="78" height="69" origin="2" srcId="40" printId="2"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[3964b231-94cf-4608-ad4d-9cb57b2201d5]]></textContent>
+		</text>
+		<text textHeight="27.597656" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.sql.Timestamp" pattern="dd/MM/yy, h:mm a">
+			<reportElement uuid="37145f67-cb4c-4e5a-904a-27e02f6e1799" style="Detail" x="20" y="392" width="72" height="28" origin="2" srcId="34" printId="3"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[07/09/23, 9:49 pm]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="a896b359-5c6e-4384-8f67-e2e5875b8fdb" style="Detail" x="170" y="392" width="90" height="20" origin="2" srcId="35" printId="3"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[RENT]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="33541808-3232-4235-8f5c-b32e1b32a3d7" style="Detail" x="260" y="392" width="80" height="20" origin="2" srcId="36" printId="3"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[34534654]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="e9111a01-2b2c-4a71-9e33-6aa5cb4e0256" style="Detail" x="340" y="392" width="90" height="20" origin="2" srcId="37" printId="3"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[DEBIT]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="0e0c2dd1-4468-44e3-a7c0-234abaa27f16" style="Detail" x="430" y="392" width="80" height="20" origin="2" srcId="38" printId="3"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[20000.00]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="58b048b8-4c0e-469e-9949-61aca669d2ae" style="Detail" x="510" y="392" width="66" height="20" origin="2" srcId="39" printId="3"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[171500.00]]></textContent>
+		</text>
+		<text textHeight="55.195312" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="09b8c742-a5fe-4fc2-b3ed-64b539cc2341" style="Detail" x="92" y="392" width="78" height="56" origin="2" srcId="40" printId="3"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[13deac82-9092-4753-9f8e-a7424aafba0f]]></textContent>
+		</text>
+		<text textHeight="27.597656" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.sql.Timestamp" pattern="dd/MM/yy, h:mm a">
+			<reportElement uuid="37145f67-cb4c-4e5a-904a-27e02f6e1799" style="Detail" x="20" y="453" width="72" height="28" origin="2" srcId="34" printId="4"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[07/09/23, 9:50 pm]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="a896b359-5c6e-4384-8f67-e2e5875b8fdb" style="Detail" x="170" y="453" width="90" height="20" origin="2" srcId="35" printId="4"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[INVESTMENT]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="33541808-3232-4235-8f5c-b32e1b32a3d7" style="Detail" x="260" y="453" width="80" height="20" origin="2" srcId="36" printId="4"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[6457194]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="e9111a01-2b2c-4a71-9e33-6aa5cb4e0256" style="Detail" x="340" y="453" width="90" height="20" origin="2" srcId="37" printId="4"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[DEBIT]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="0e0c2dd1-4468-44e3-a7c0-234abaa27f16" style="Detail" x="430" y="453" width="80" height="20" origin="2" srcId="38" printId="4"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[30000.00]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="58b048b8-4c0e-469e-9949-61aca669d2ae" style="Detail" x="510" y="453" width="66" height="20" origin="2" srcId="39" printId="4"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[141500.00]]></textContent>
+		</text>
+		<text textHeight="55.195312" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="09b8c742-a5fe-4fc2-b3ed-64b539cc2341" style="Detail" x="92" y="453" width="78" height="56" origin="2" srcId="40" printId="4"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[6d669047-de6b-4942-8cfc-ca3f543c5006]]></textContent>
+		</text>
+		<text textHeight="27.597656" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.sql.Timestamp" pattern="dd/MM/yy, h:mm a">
+			<reportElement uuid="37145f67-cb4c-4e5a-904a-27e02f6e1799" style="Detail" x="20" y="514" width="72" height="28" origin="2" srcId="34" printId="5"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[07/09/23, 9:50 pm]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="a896b359-5c6e-4384-8f67-e2e5875b8fdb" style="Detail" x="170" y="514" width="90" height="20" origin="2" srcId="35" printId="5"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[FAMILY]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="33541808-3232-4235-8f5c-b32e1b32a3d7" style="Detail" x="260" y="514" width="80" height="20" origin="2" srcId="36" printId="5"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[1324354]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="e9111a01-2b2c-4a71-9e33-6aa5cb4e0256" style="Detail" x="340" y="514" width="90" height="20" origin="2" srcId="37" printId="5"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[DEBIT]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="0e0c2dd1-4468-44e3-a7c0-234abaa27f16" style="Detail" x="430" y="514" width="80" height="20" origin="2" srcId="38" printId="5"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[40000.00]]></textContent>
+		</text>
+		<text textHeight="13.798828" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688" valueClass="java.math.BigDecimal">
+			<reportElement uuid="58b048b8-4c0e-469e-9949-61aca669d2ae" style="Detail" x="510" y="514" width="66" height="20" origin="2" srcId="39" printId="5"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[101500.00]]></textContent>
+		</text>
+		<text textHeight="55.195312" lineSpacingFactor="1.1499023" leadingOffset="-2.5429688">
+			<reportElement uuid="09b8c742-a5fe-4fc2-b3ed-64b539cc2341" style="Detail" x="92" y="514" width="78" height="56" origin="2" srcId="40" printId="5"/>
+			<font fontName="Arial" size="12" isBold="false"/>
+			<textContent><![CDATA[3a6d5274-4074-47c0-8a24-1fc6ea9eb6d0]]></textContent>
+		</text>
+		<text textAlignment="Center" verticalAlignment="Middle" textHeight="11.408203" lineSpacingFactor="1.2675781" leadingOffset="-1.9775391">
+			<reportElement uuid="36aa233d-4305-48e6-974a-1bbf89bb3c8f" mode="Opaque" x="20" y="792" width="556" height="30" backcolor="#E6E8E9" origin="3" srcId="41" printId="1"/>
+			<font fontName="Serif" size="9" isItalic="true"/>
+			<textContent><![CDATA[THANKYOU FOR YOUR BUSINESS]]></textContent>
+		</text>
+	</page>
+</jasperPrint>

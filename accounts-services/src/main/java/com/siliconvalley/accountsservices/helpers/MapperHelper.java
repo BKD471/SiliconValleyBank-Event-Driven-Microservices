@@ -574,6 +574,10 @@ public class MapperHelper {
    public static Timestamp convertLocalDateTimeToTimeStamp(LocalDateTime localDateTime){
         return Timestamp.valueOf(localDateTime);
    }
+
+   public static LocalDateTime convertTimeStampToLocalDateTime(Timestamp timestamp){
+        return timestamp.toLocalDateTime();
+   }
     public static Date convertToUtilDate(LocalDate date){
         return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }

@@ -26,8 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
-import static com.siliconvalley.accountsservices.helpers.MapperHelper.convertToUtilDate;
-import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToTransactionsInvoicableObject;
+import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 
 
 @Slf4j
@@ -37,7 +36,9 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
     private static final Map<String,Object> params=new HashMap<>();
     private static final Properties properties=new Properties();
     private final String PATH_TO_JASPER_XML;
-    private final String PATH_TO_DOWNLOADABLES;
+    private final String PATH_TO_DOWNLOADABLES_PDF;
+    private final String PATH_TO_DOWNLOADABLES_XML;
+    private final String PATH_TO_DOWNLOADABLES_HTML;
     static {
         params.put("companyName",companyName);
         params.put("city",city);
@@ -57,7 +58,9 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
     protected PdfServiceJasperImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
         this.PATH_TO_JASPER_XML=properties.getProperty("path.jrxml");
-        this.PATH_TO_DOWNLOADABLES=properties.getProperty("path.downloadables");
+        this.PATH_TO_DOWNLOADABLES_PDF=properties.getProperty("path.downloadables.pdf");
+        this.PATH_TO_DOWNLOADABLES_XML=properties.getProperty("path.downloadables.xml");
+        this.PATH_TO_DOWNLOADABLES_HTML=properties.getProperty("path.downloadables.html");
     }
 
     /**
@@ -113,17 +116,25 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
 
 
         List<TransactionsInvoicableObject> listOfTransactionsBetweenDate=
-                transactionsListBetweenDate.stream().map(MapperHelper::mapToTransactionsInvoicableObject).toList();
+                new ArrayList<>(transactionsListBetweenDate.stream().map(MapperHelper::mapToTransactionsInvoicableObject).toList());
 
-        //transactionTimeStamp   transactionId   transactionAmount
-        // transactedAccountNumber  transactionType  description  balance
+
+
+        Comparator<TransactionsInvoicableObject> sortByTimeStampInAscendingOrderOfLatestTransaction=(o1,o2)->
+                (convertTimeStampToLocalDateTime(o1.getTransactionTimeStamp())
+                        .isBefore(convertTimeStampToLocalDateTime(o2.getTransactionTimeStamp())))? -1:
+                        (convertTimeStampToLocalDateTime(o1.getTransactionTimeStamp())
+                                .isAfter(convertTimeStampToLocalDateTime(o2.getTransactionTimeStamp())))? 1:0;
+
+        listOfTransactionsBetweenDate.sort(sortByTimeStampInAscendingOrderOfLatestTransaction);
+
         JRBeanCollectionDataSource dataSource=new JRBeanCollectionDataSource(listOfTransactionsBetweenDate);
         JasperReport report= JasperCompileManager.compileReport(PATH_TO_JASPER_XML);
         JasperPrint print= JasperFillManager.fillReport(report,params,dataSource);
         switch (reportFormat){
-            case PDF -> JasperExportManager.exportReportToPdfFile(print,PATH_TO_DOWNLOADABLES);
-            case HTML -> JasperExportManager.exportReportToHtmlFile(print,PATH_TO_DOWNLOADABLES);
-            case XML -> JasperExportManager.exportReportToXmlFile(print,PATH_TO_DOWNLOADABLES,false);
+            case PDF -> JasperExportManager.exportReportToPdfFile(print,PATH_TO_DOWNLOADABLES_PDF);
+            case HTML -> JasperExportManager.exportReportToHtmlFile(print,PATH_TO_DOWNLOADABLES_HTML);
+            case XML -> JasperExportManager.exportReportToXmlFile(print,PATH_TO_DOWNLOADABLES_XML,false);
         }
 
         return "Report Successfully generated";
