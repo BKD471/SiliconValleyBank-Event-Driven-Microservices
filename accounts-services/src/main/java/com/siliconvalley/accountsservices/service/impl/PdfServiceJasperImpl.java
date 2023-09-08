@@ -36,9 +36,10 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
     private static final Map<String,Object> params=new HashMap<>();
     private static final Properties properties=new Properties();
     private final String PATH_TO_JASPER_XML;
-    private final String PATH_TO_DOWNLOADABLES_PDF;
-    private final String PATH_TO_DOWNLOADABLES_XML;
-    private final String PATH_TO_DOWNLOADABLES_HTML;
+    private  final String PATH_TO_DOWNLOADABLES;
+    private  String PATH_TO_DOWNLOADABLES_PDF;
+    private  String PATH_TO_DOWNLOADABLES_HTML;
+    private  String PATH_TO_DOWNLOADABLES_XML;
     static {
         params.put("companyName",companyName);
         params.put("city",city);
@@ -58,9 +59,10 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
     protected PdfServiceJasperImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
         this.PATH_TO_JASPER_XML=properties.getProperty("path.jrxml");
-        this.PATH_TO_DOWNLOADABLES_PDF=properties.getProperty("path.downloadables.pdf");
-        this.PATH_TO_DOWNLOADABLES_XML=properties.getProperty("path.downloadables.xml");
-        this.PATH_TO_DOWNLOADABLES_HTML=properties.getProperty("path.downloadables.html");
+        this.PATH_TO_DOWNLOADABLES=properties.getProperty("path.downloadables");
+        this.PATH_TO_DOWNLOADABLES_PDF=PATH_TO_DOWNLOADABLES;
+        this.PATH_TO_DOWNLOADABLES_HTML=PATH_TO_DOWNLOADABLES;
+        this.PATH_TO_DOWNLOADABLES_XML=PATH_TO_DOWNLOADABLES;
     }
 
     /**
@@ -85,7 +87,7 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
      * @throws JRException
      */
     @Override
-    public String generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException {
+    public void generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException {
         log.info("################# Pdf Creation Service started ###################################");
         Set<Transactions> transactionsListBetweenDate =prepareTransactionsSetBetweenDate(startDate,endDate,accountNumber);
         Accounts loadAccount = fetchAccountByAccountNumber(accountNumber);
@@ -131,13 +133,22 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         JRBeanCollectionDataSource dataSource=new JRBeanCollectionDataSource(listOfTransactionsBetweenDate);
         JasperReport report= JasperCompileManager.compileReport(PATH_TO_JASPER_XML);
         JasperPrint print= JasperFillManager.fillReport(report,params,dataSource);
-        switch (reportFormat){
-            case PDF -> JasperExportManager.exportReportToPdfFile(print,PATH_TO_DOWNLOADABLES_PDF);
-            case HTML -> JasperExportManager.exportReportToHtmlFile(print,PATH_TO_DOWNLOADABLES_HTML);
-            case XML -> JasperExportManager.exportReportToXmlFile(print,PATH_TO_DOWNLOADABLES_XML,false);
-        }
+        final String accountUID=bankStatement.getAccountNumber();
 
-        return "Report Successfully generated";
+        switch (reportFormat){
+            case PDF -> {
+                PATH_TO_DOWNLOADABLES_PDF+=String.format("%s.pdf",accountUID);
+                JasperExportManager.exportReportToPdfFile(print,PATH_TO_DOWNLOADABLES_PDF);
+            }
+            case HTML -> {
+                PATH_TO_DOWNLOADABLES_HTML+=String.format("%s.html",accountUID);
+                JasperExportManager.exportReportToHtmlFile(print,PATH_TO_DOWNLOADABLES_HTML);
+            }
+            case XML -> {
+                PATH_TO_DOWNLOADABLES_XML+=String.format("%s.xml",accountUID);
+                JasperExportManager.exportReportToXmlFile(print,PATH_TO_DOWNLOADABLES_XML,false);
+            }
+        }
     }
 
 }

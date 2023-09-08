@@ -8,10 +8,12 @@ import com.siliconvalley.accountsservices.exception.TransactionException;
 import jakarta.validation.Valid;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 
 @RequestMapping("/api")
@@ -26,6 +28,6 @@ public interface ITransactionsController {
     ResponseEntity<InputStreamResource> generateBankStatementPdf(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException;
 
     @GetMapping("/v2/transactions/generateStatement")
-    ResponseEntity<String> generateBankStatementAnyFormat(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException, JRException;
+    ResponseEntity<Resource> generateBankStatementAnyFormat(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws IOException, JRException;
 
 }

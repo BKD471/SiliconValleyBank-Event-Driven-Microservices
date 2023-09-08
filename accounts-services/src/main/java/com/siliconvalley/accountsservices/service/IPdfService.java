@@ -9,5 +9,5 @@ import java.time.LocalDate;
 
 public interface IPdfService {
     ByteArrayInputStream generateBankStatement(LocalDate startDate,LocalDate endDate,String accountNumber) throws FileNotFoundException;
-    String generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException;
+    void generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException;
 }
