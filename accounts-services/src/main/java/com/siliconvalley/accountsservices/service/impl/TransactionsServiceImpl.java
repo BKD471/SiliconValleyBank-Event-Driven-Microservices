@@ -163,7 +163,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final LocalDateTime today=LocalDateTime.now();
         final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
-        validationService.transactionsUpdateValidator(fetchedAccount,null,GET_PAST_SIX_MONTHS_TRANSACTIONS);
+        validationService.transactionsUpdateValidator(fetchedAccount,null,null,GET_PAST_SIX_MONTHS_TRANSACTIONS);
          Set<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
                 stream().filter(transactions -> transactions.getTransactionTimeStamp()
                         .isAfter(pastSixMonthsDate)).collect(Collectors.toSet());

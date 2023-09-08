@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.Date;
 
@@ -20,11 +21,14 @@ public final class BankStatement {
     private Double rateOfInterest;
     private BigDecimal balance;
     private Set<Transactions> listOfTransaction;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Date date;
 
     public BankStatement(String accountName, String accountNumber, String branch,
                          String accountType, Double rateOfInterest,
-                         BigDecimal balance, Set<Transactions> listOfTransaction, Date date) {
+                         BigDecimal balance, Set<Transactions> listOfTransaction,
+                         LocalDate startDate,LocalDate endDate,Date date) {
         this.accountName = accountName;
         this.accountNumber = accountNumber;
         this.branch = branch;
@@ -32,6 +36,8 @@ public final class BankStatement {
         this.rateOfInterest = rateOfInterest;
         this.balance = balance;
         this.listOfTransaction = listOfTransaction;
+        this.startDate=startDate;
+        this.endDate=endDate;
         this.date = date;
     }
 
@@ -39,6 +45,6 @@ public final class BankStatement {
     public String toString() {
        return String.format("<-------------------------------------------------------------------------------------------------> \n" +
                 "accountName= %s \n accountNumber= %s \n branch= %s \n accountType= %s " +
-               "\n RateOfInterest= %s \n balance= %s \n transactionList= %s",accountName,accountNumber,branch,accountType,rateOfInterest,balance,listOfTransaction);
+               "\n RateOfInterest= %s \n balance= %s \n transactionList= %s \n date= %s \n startDate= %s \n endDate= %s]",accountName,accountNumber,branch,accountType,rateOfInterest,balance,listOfTransaction,date,startDate,endDate);
     }
 }

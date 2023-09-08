@@ -10,6 +10,7 @@ import com.siliconvalley.accountsservices.exception.BeneficiaryException;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
+import com.siliconvalley.accountsservices.model.BankStatement;
 
 import java.util.List;
 import java.util.Set;
@@ -47,5 +48,5 @@ public interface IValidationService {
 
     void accountsUpdateValidator(final Accounts accounts, final CustomerDto customerDto, final AllConstantHelpers.AccountsValidateType request) throws AccountsException, BadApiRequestException;
     void beneficiaryUpdateValidator(final Accounts accounts, final BeneficiaryDto beneficiaryDto, final AllConstantHelpers.validateBenType type) throws BeneficiaryException;
-    void transactionsUpdateValidator(final Accounts accounts, final TransactionsDto transactionsDto,final AllConstantHelpers.ValidateTransactionType type);
+    void transactionsUpdateValidator(final Accounts accounts, final TransactionsDto transactionsDto, final BankStatement bankStatement,final AllConstantHelpers.ValidateTransactionType type);
 }

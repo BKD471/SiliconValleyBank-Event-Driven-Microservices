@@ -10,6 +10,7 @@ import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.IPdfService;
+import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -34,6 +35,7 @@ import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 public class PdfServiceJasperImpl extends AbstractService implements IPdfService {
     private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/service/properties/PdfServiceJasper.properties";
     private static final Map<String,Object> params=new HashMap<>();
+    private final IValidationService validationService;
     private static final Properties properties=new Properties();
     private final String PATH_TO_JASPER_XML;
     private  final String PATH_TO_DOWNLOADABLES;
@@ -56,8 +58,10 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         }
     }
 
-    protected PdfServiceJasperImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
+    protected PdfServiceJasperImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository,
+                                   IValidationService validationService) {
         super(accountsRepository, customerRepository);
+        this.validationService=validationService;
         this.PATH_TO_JASPER_XML=properties.getProperty("path.jrxml");
         this.PATH_TO_DOWNLOADABLES=properties.getProperty("path.downloadables");
         this.PATH_TO_DOWNLOADABLES_PDF=PATH_TO_DOWNLOADABLES;
@@ -77,6 +81,13 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         return null;
     }
 
+
+    private void reset(){
+        PATH_TO_DOWNLOADABLES_PDF=this.PATH_TO_DOWNLOADABLES;
+        PATH_TO_DOWNLOADABLES_HTML=this.PATH_TO_DOWNLOADABLES;
+        PATH_TO_DOWNLOADABLES_XML=this.PATH_TO_DOWNLOADABLES;
+    }
+
     /**
      * @param reportFormat
      * @param startDate
@@ -88,7 +99,7 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
      */
     @Override
     public void generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException {
-        log.info("################# Pdf Creation Service started ###################################");
+        log.debug("################# Pdf Creation Service started ###################################");
         Set<Transactions> transactionsListBetweenDate =prepareTransactionsSetBetweenDate(startDate,endDate,accountNumber);
         Accounts loadAccount = fetchAccountByAccountNumber(accountNumber);
 
@@ -104,8 +115,11 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
                 .balance(loadAccount.getBalance())
                 .date(new Date())
                 .listOfTransaction(transactionsListBetweenDate)
+                .startDate(startDate)
+                .endDate(endDate)
                 .build();
 
+        validationService.transactionsUpdateValidator(loadAccount,null,bankStatement,GEN_BANK_STATEMENT);
         params.put("accountName",bankStatement.getAccountName());
         params.put("accountNumber",bankStatement.getAccountNumber());
         params.put("branch",bankStatement.getBranch());
@@ -139,16 +153,21 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
             case PDF -> {
                 PATH_TO_DOWNLOADABLES_PDF+=String.format("%s.pdf",accountUID);
                 JasperExportManager.exportReportToPdfFile(print,PATH_TO_DOWNLOADABLES_PDF);
+                reset();
             }
             case HTML -> {
                 PATH_TO_DOWNLOADABLES_HTML+=String.format("%s.html",accountUID);
                 JasperExportManager.exportReportToHtmlFile(print,PATH_TO_DOWNLOADABLES_HTML);
+                reset();
             }
             case XML -> {
                 PATH_TO_DOWNLOADABLES_XML+=String.format("%s.xml",accountUID);
                 JasperExportManager.exportReportToXmlFile(print,PATH_TO_DOWNLOADABLES_XML,false);
+                reset();
             }
         }
+
+        log.debug("################# Pdf Creation Service ended ###################################");
     }
 
 }

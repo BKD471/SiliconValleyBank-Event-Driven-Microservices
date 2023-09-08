@@ -11,6 +11,7 @@ import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
+import org.scalactic.Bad;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -128,6 +129,8 @@ public class TransactionsControllerImpl implements ITransactionsController {
         } catch (MalformedURLException e) {
             log.error("Error while fetching the file");
         }
+        if(null==resource) throw  new BadApiRequestException(BadApiRequestException.class,
+                "Your file is either corrupted or not been processed",methodName);
         ByteArrayInputStream stream=new ByteArrayInputStream(resource.getContentAsByteArray());
 
         switch (downloadableFORMAT){
@@ -149,7 +152,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
                         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName+fieldIdWithExtension+ "\"")
                         .body(new InputStreamResource(stream));
             }
-            default -> throw new BadApiRequestException(BadApiRequestException.class,"YOur request format is not supported",methodName);
+            default -> throw new BadApiRequestException(BadApiRequestException.class,"Your request format is not supported",methodName);
         }
     }
 }

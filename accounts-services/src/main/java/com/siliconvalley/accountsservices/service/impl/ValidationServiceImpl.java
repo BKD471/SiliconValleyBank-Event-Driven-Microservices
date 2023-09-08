@@ -1,20 +1,16 @@
 package com.siliconvalley.accountsservices.service.impl;
 
-import com.siliconvalley.accountsservices.dto.baseDtos.AccountsDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.*;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
-import com.siliconvalley.accountsservices.helpers.MapperHelper;
-import com.siliconvalley.accountsservices.model.Accounts;
-import com.siliconvalley.accountsservices.model.Beneficiary;
-import com.siliconvalley.accountsservices.model.Customer;
-import com.siliconvalley.accountsservices.model.Transactions;
+import com.siliconvalley.accountsservices.model.*;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.service.IValidationService;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +25,9 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
-import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UpdateRequest.GET_ALL_ACC;
-import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToBeneficiaryDto;
 import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.*;
-import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
-import scala.tools.nsc.doc.html.HtmlTags;
 
 @Service
 @Primary
@@ -55,11 +44,10 @@ public final class ValidationServiceImpl implements IValidationService {
         log.debug("<---------------accountsUpdateValidator(Accounts,CustomerDto,ValidateType) ValidationServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
         final String methodName = "accountsUpdateValidator(Accounts,CustomerDto,ValidateType) in ValidationServiceImpl";
-        final StringBuffer location = new StringBuffer(500);
+        final String location;
         switch (request) {
             case CREATE_ACC -> {
-                location.append("Inside CREATE_ACC");
-                location.trimToSize();
+                location="Inside CREATE_ACC";
                 //check whether such account owner is already present
                 final List<Accounts> accountsList = accountsRepository.findAll();
                 //if no accounts by far then certainly we can add
@@ -72,8 +60,7 @@ public final class ValidationServiceImpl implements IValidationService {
                             String.format("%s of %s", location, methodName));
             }
             case ADD_ACC -> {
-                location.append("Inside ADD_ACC");
-                location.trimToSize();
+                location="Inside ADD_ACC";
                 final int MAX_PERMISSIBLE_ACCOUNT = 5;
                 final Customer customer = accounts.getCustomer();
 
@@ -84,16 +71,14 @@ public final class ValidationServiceImpl implements IValidationService {
                             String.format("%s of %s", location, methodName));
             }
             case UPDATE_CASH_LIMIT -> {
-                location.append("Inside UPDATE_CASH_LIMIT");
-                location.trimToSize();
+                location="Inside UPDATE_CASH_LIMIT";
                 if (Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() < 6)
                     throw new AccountsException(AccountsException.class, "Your account must be at least 6 months old to update cash Limit",
                             String.format("%s of %s", location, methodName));
             }
             case UPLOAD_PROFILE_IMAGE -> {
-                location.append("Inside UPLOAD_PROFILE_IMAGE");
-                location.trimToSize();
-                if (isNull(customerDto.getCustomerImage()))
+                location="Inside UPLOAD_PROFILE_IMAGE";
+                if (Objects.isNull(customerDto.getCustomerImage()))
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Please provide image", String.format("%s of %s", methodName, location));
                 final double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
@@ -105,14 +90,12 @@ public final class ValidationServiceImpl implements IValidationService {
                             String.format("%s of %s", methodName, location));
             }
             case UPDATE_HOME_BRANCH -> {
-                location.append("Inside UPDATE_HOME_BRANCH");
-                location.trimToSize();
+                location="Inside UPDATE_HOME_BRANCH";
                 IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts,
                         String.format("%s of %s", location, methodName));
             }
             case CLOSE_ACCOUNT -> {
-                location.append("Inside CLOSE_ACCOUNT");
-                location.trimToSize();
+                location="Inside CLOSE_ACCOUNT";
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
 
                 if (accounts.getAnyActiveLoans())
@@ -130,8 +113,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 }
             }
             case RE_OPEN_ACCOUNT -> {
-                location.append("Inside RE_OPEN_ACCOUNT");
-                location.trimToSize();
+                location="Inside RE_OPEN_ACCOUNT";
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
                     case CLOSED -> {
@@ -144,24 +126,26 @@ public final class ValidationServiceImpl implements IValidationService {
                 }
             }
             case BLOCK_ACCOUNT -> {
-                location.append("Inside BLOCK_ACCOUNT");
-                location.trimToSize();
+                location="Inside BLOCK_ACCOUNT";
                 if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
                     throw new AccountsException(AccountsException.class,
                             String.format("Status of Account: %s is already Blocked",
                                     accounts.getAccountStatus()), String.format("%s of %s", location, methodName));
             }
             case GET_ALL_ACC -> {
+                location="GET_ALL_ACC";
                 if (CollectionUtils.isEmpty(customerDto.getAccounts()))
                     throw new AccountsException(AccountsException.class,
                             "No accounts found", String.format("%s of %s", location, methodName));
             }
             case UPDATE_CUSTOMER_DETAILS -> {
-                if (isNull(customerDto)) throw new CustomerException(CustomerException.class,
+                location="UPDATE_CUSTOMER_DETAILS";
+                if (Objects.isNull(customerDto)) throw new CustomerException(CustomerException.class,
                         "Please specify a customer id to update details", String.format("%s of %s", location, methodName));
             }
             case GET_ALL_CUSTOMER -> {
-                if(isNull(customerDto)) throw  new CustomerException(CustomerException.class,
+                location="GET_ALL_CUSTOMER";
+                if(Objects.isNull(customerDto)) throw  new CustomerException(CustomerException.class,
                         "No customer provided",String.format("%s of %s",location,methodName));
             }
         }
@@ -318,7 +302,7 @@ public final class ValidationServiceImpl implements IValidationService {
             case DELETE_BEN -> {
                 location = "Inside Delete Ben";
                 String beneficiaryId = beneficiaryDto.getBeneficiaryId();
-                if (isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
+                if (CollectionUtils.isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
                         "Account has no beneficiaries to delete", String.format("%s of %s", location, methodName));
 
                 //filter out the beneficiary to be deleted for that account
@@ -342,18 +326,24 @@ public final class ValidationServiceImpl implements IValidationService {
     }
 
     @Override
-    public void transactionsUpdateValidator(final Accounts accounts, final TransactionsDto transactionsDto, final AllConstantHelpers.ValidateTransactionType type){
+    public void transactionsUpdateValidator(final Accounts accounts, final TransactionsDto transactionsDto,final BankStatement bankStatement, final AllConstantHelpers.ValidateTransactionType type){
         log.debug("<----transactionsUpdateValidator(Accounts,TransactionsDto, ValidateTransactionType) BeneficiaryServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
         final String methodName = "transactionsUpdateValidator(Accounts,validateBenType) in ValidationServiceImpl";
         final String location;
         switch (type){
             case GEN_BANK_STATEMENT -> {
-
+                   location="GEN_BANK_STATEMENT";
+                   final Set<Transactions> setOfTransactions=bankStatement.getListOfTransaction();
+                   final LocalDate startDate=bankStatement.getStartDate();
+                   final LocalDate endDate=bankStatement.getEndDate();
+                   if(CollectionUtils.isEmpty(setOfTransactions)) throw new TransactionException(TransactionException.class,
+                           String.format("You have no transactions between %s & %s",startDate,endDate),
+                           String.format("Inside %s of %s",location,methodName));
             }
             case GET_PAST_SIX_MONTHS_TRANSACTIONS -> {
                 location="GET_PAST_SIX_MONTHS_TRANSACTIONS";
-                Set<Transactions> transactionsSet=accounts.getListOfTransactions();
+                final Set<Transactions> transactionsSet=accounts.getListOfTransactions();
                 if(CollectionUtils.isEmpty(transactionsSet)) throw new TransactionException(TransactionException.class,
                         String.format("No transactions available for account with id:%s",accounts.getAccountNumber())
                         ,String.format("Inside %s of %s",location,methodName));
