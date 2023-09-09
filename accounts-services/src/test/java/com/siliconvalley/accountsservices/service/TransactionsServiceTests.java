@@ -14,7 +14,6 @@ import com.siliconvalley.accountsservices.repository.ITransactionsRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,18 +34,17 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TransactionsServiceTests {
-    @Autowired
-    @Qualifier("transactionsServicePrimary")
-    ITransactionsService transactionsService;
-
+    private final ITransactionsService transactionsService;
     @MockBean
-    IAccountsRepository accountsRepositoryMock;
-
+    private IAccountsRepository accountsRepositoryMock;
     @MockBean
-    ITransactionsRepository transactionsRepositoryMock;
-
+    private ITransactionsRepository transactionsRepositoryMock;
     private static Accounts accounts;
     private static Customer customer;
+
+    TransactionsServiceTests(@Qualifier("transactionsServicePrimary") ITransactionsService transactionsService){
+        this.transactionsService=transactionsService;
+    }
 
     @BeforeAll
     public static void init() {
@@ -82,7 +80,7 @@ public class TransactionsServiceTests {
                 .voterId("voter")
                 .build();
         accounts.setCustomer(customer);
-        customer.setAccounts(Collections.singletonList(accounts));
+        customer.setAccounts(Collections.singleton(accounts));
     }
 
     @Test
@@ -107,7 +105,7 @@ public class TransactionsServiceTests {
         transactions2.setTransactionTimeStamp(LocalDateTime.of(2023,06,17,05,40));
 
 
-        List<Transactions> transactionsList = new ArrayList<>(Arrays.asList(transactions2, transactions1));
+        Set<Transactions> transactionsList = new HashSet<>(Arrays.asList(transactions2, transactions1));
         accounts.setListOfTransactions(transactionsList);
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
@@ -158,7 +156,7 @@ public class TransactionsServiceTests {
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
-        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+        accountStateAfterTransaction.setListOfTransactions(Collections.singleton(transactionsState));
 
         when(accountsRepositoryMock.save(any()))
                 .thenReturn(accountStateAfterTransaction);
@@ -211,7 +209,7 @@ public class TransactionsServiceTests {
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
-        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+        accountStateAfterTransaction.setListOfTransactions(Collections.singleton(transactionsState));
 
         when(accountsRepositoryMock.save(any()))
                 .thenReturn(accountStateAfterTransaction);
@@ -284,7 +282,7 @@ public class TransactionsServiceTests {
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
-        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+        accountStateAfterTransaction.setListOfTransactions(Collections.singleton(transactionsState));
 
         when(accountsRepositoryMock.save(any()))
                 .thenReturn(accountStateAfterTransaction);
@@ -337,7 +335,7 @@ public class TransactionsServiceTests {
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
-        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+        accountStateAfterTransaction.setListOfTransactions(Collections.singleton(transactionsState));
 
         when(accountsRepositoryMock.save(any()))
                 .thenReturn(accountStateAfterTransaction);
@@ -390,7 +388,7 @@ public class TransactionsServiceTests {
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
-        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+        accountStateAfterTransaction.setListOfTransactions(Collections.singleton(transactionsState));
 
         when(accountsRepositoryMock.save(any()))
                 .thenReturn(accountStateAfterTransaction);
@@ -443,7 +441,7 @@ public class TransactionsServiceTests {
                 .accounts(accountStateAfterTransaction)
                 .build();
         transactionsState.setTransactionTimeStamp(LocalDateTime.now());
-        accountStateAfterTransaction.setListOfTransactions(Collections.singletonList(transactionsState));
+        accountStateAfterTransaction.setListOfTransactions(Collections.singleton(transactionsState));
 
         when(accountsRepositoryMock.save(any()))
                 .thenReturn(accountStateAfterTransaction);

@@ -89,7 +89,7 @@ public class BeneficiaryControllerTest {
                 .imageName("img.png")
                 .DateOfBirth(LocalDate.of(1997, 12, 01))
                 .voterId("voter")
-                .accounts(Collections.singletonList(accounts))
+                .accounts(Collections.singleton(accounts))
                 .build();
 
         beneficiary = Beneficiary.builder()
@@ -113,8 +113,8 @@ public class BeneficiaryControllerTest {
                 .build();
 
         accounts.setCustomer(customer);
-        accounts.setListOfBeneficiary(Collections.singletonList(beneficiary));
-        customer.setAccounts(Collections.singletonList(accounts));
+        accounts.setListOfBeneficiary(Collections.singleton(beneficiary));
+        customer.setAccounts(Collections.singleton(accounts));
 
         dto=OutputDto.builder()
                 .defaultMessage("Account with id 1 is created for customer 1")

@@ -16,6 +16,7 @@ import com.siliconvalley.accountsservices.model.Role;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.repository.IRoleRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +32,7 @@ import org.springframework.data.domain.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,41 +42,47 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-
+@Slf4j
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AccountsServiceTests {
-    @Qualifier("accountsServicePrimary")
-    @Autowired
-    private IAccountsService accountsService;
+    private static final String PATH_TO_PROPERTIES = "accounts-services/src/test/java/com/siliconvalley/accountsservices/service/properties/AccountsServiceTests.properties";
 
-    @Qualifier("fileServicePrimary")
-    @Autowired
-    private IImageService fileService;
+    private final IAccountsService accountsService;
+    private final IImageService fileService;
 
     @MockBean
-    private IRoleRepository roleRepositoryMock;
+    private  IRoleRepository roleRepositoryMock;
+    @MockBean
+    private  ICustomerRepository customerRepositoryMock;
 
     @MockBean
-    private ICustomerRepository customerRepositoryMock;
-
-    @MockBean
-    private IAccountsRepository accountsRepositoryMock;
+    private  IAccountsRepository accountsRepositoryMock;
 
     private Customer customer;
     private Accounts accounts;
-
     private Role normalRole;
+    private final String NORMAL_ROLE_ID;
+    private static final Properties properties = new Properties();
 
-    @Value("${customer.profile.images.path}")
-    private String IMAGE_PATH;
+    static {
+        try {
+            properties.load(new FileInputStream(PATH_TO_PROPERTIES));
+        } catch (IOException e) {
+            log.error("Error while reading properties file");
+        }
+    }
 
-    @Value("${normal.role.id}")
-    private String NORMAL_ROLE_ID;
+    AccountsServiceTests(@Qualifier("accountsServicePrimary") IAccountsService accountsService,
+                         @Qualifier("fileServicePrimary") IImageService fileService) {
+        this.accountsService = accountsService;
+        this.fileService = fileService;
+        this.NORMAL_ROLE_ID=properties.getProperty("normal.role.id");
+    }
 
     @BeforeEach
-    public  void init() {
+    public void init() {
         String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.KOLKATA);
         accounts = Accounts.builder()
                 .accountNumber("1L")
@@ -91,9 +99,9 @@ public class AccountsServiceTests {
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
 
-        accounts.setCreatedDate(LocalDate.of(1990,12,01));
+        accounts.setCreatedDate(LocalDate.of(1990, 12, 01));
 
-        normalRole= Role.builder().roleId(NORMAL_ROLE_ID).roleName("NORMAL").build();
+        normalRole = Role.builder().roleId(NORMAL_ROLE_ID).roleName("NORMAL").build();
 
         customer = Customer.builder()
                 .customerId("1L")
@@ -110,7 +118,7 @@ public class AccountsServiceTests {
                 .DateOfBirth(LocalDate.of(1997, 12, 01))
                 .voterId("voter")
                 .roles(new HashSet<>(Collections.singleton(normalRole)))
-                .accounts(Collections.singletonList(accounts))
+                .accounts(Collections.singleton(accounts))
                 .build();
         accounts.setCustomer(customer);
 
@@ -152,19 +160,19 @@ public class AccountsServiceTests {
                 .build();
         OutputDto response = accountsService.accountSetUp(postInputRequestDto);
 
-        assertEquals("phoenix@gmail.com", response.getCustomer().getEmail(),"Customer Email should have matched");
-        assertEquals("passport", response.getCustomer().getPassportNumber(),"Customer Passport should have matched");
-        assertEquals("address", response.getCustomer().getAddress(),"Customer address should have matched");
-        assertEquals("adhar", response.getCustomer().getAdharNumber(),"Customer adhar should have matched");
-        assertEquals("voter", response.getCustomer().getVoterId(),"Customer voter should have matched");
-        assertEquals("driving", response.getCustomer().getDrivingLicense(),"Customer driving should have matched");
-        assertEquals("pan", response.getCustomer().getPanNumber(),"Customer pan should have matched");
-        assertEquals(25, response.getCustomer().getAge(),"Customer age should have matched");
+        assertEquals("phoenix@gmail.com", response.getCustomer().getEmail(), "Customer Email should have matched");
+        assertEquals("passport", response.getCustomer().getPassportNumber(), "Customer Passport should have matched");
+        assertEquals("address", response.getCustomer().getAddress(), "Customer address should have matched");
+        assertEquals("adhar", response.getCustomer().getAdharNumber(), "Customer adhar should have matched");
+        assertEquals("voter", response.getCustomer().getVoterId(), "Customer voter should have matched");
+        assertEquals("driving", response.getCustomer().getDrivingLicense(), "Customer driving should have matched");
+        assertEquals("pan", response.getCustomer().getPanNumber(), "Customer pan should have matched");
+        assertEquals(25, response.getCustomer().getAge(), "Customer age should have matched");
         assertEquals(LocalDate.of(1997, 12, 01), response.getCustomer().getDateOfBirth(),
                 "Customer dob should have matched");
-        assertEquals(60000, response.getAccounts().getBalance(),"Customer balance should have matched");
-        assertEquals(25000, response.getAccounts().getTransferLimitPerDay(),"Customer transferLimit should have matched");
-        assertEquals(750, response.getAccounts().getCreditScore(),"Customer credit score should have matched");
+        assertEquals(60000, response.getAccounts().getBalance(), "Customer balance should have matched");
+        assertEquals(25000, response.getAccounts().getTransferLimitPerDay(), "Customer transferLimit should have matched");
+        assertEquals(750, response.getAccounts().getCreditScore(), "Customer credit score should have matched");
     }
 
     @Test
@@ -200,17 +208,17 @@ public class AccountsServiceTests {
                 .homeBranch(AllConstantHelpers.Branch.CHENNAI)
                 .build();
         OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
-        assertEquals(850, response.getAccounts().getCreditScore(),"Account CreditScore should have matched");
-        assertEquals(90000L, response.getAccounts().getBalance(),"Account Balance should have matched");
-        assertEquals(AllConstantHelpers.Branch.CHENNAI, response.getAccounts().getHomeBranch(),"Account Branch should have matched");
+        assertEquals(850, response.getAccounts().getCreditScore(), "Account CreditScore should have matched");
+        assertEquals(90000L, response.getAccounts().getBalance(), "Account Balance should have matched");
+        assertEquals(AllConstantHelpers.Branch.CHENNAI, response.getAccounts().getHomeBranch(), "Account Branch should have matched");
     }
 
     @Test
     @DisplayName("Adding accounts failed when no of accounts exceeds the permissible limit")
-    public void addAccountValidationForMaxPermissibleAccountTest(){
+    public void addAccountValidationForMaxPermissibleAccountTest() {
         when(customerRepositoryMock.findById(anyString())).thenReturn(Optional.of(customer));
 
-        List<Accounts> accountsList = new ArrayList<>();
+        Set<Accounts> accountsList = new HashSet<>();
         int MAX_PERMISSIBLE_ACCOUNTS = 5;
         for (int i = 0; i < MAX_PERMISSIBLE_ACCOUNTS; i++) {
             accountsList.add(new Accounts());
@@ -224,13 +232,13 @@ public class AccountsServiceTests {
                 .build();
         Assertions.assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(putInputRequestDto);
-        },"AccountsException should have been thrown");
+        }, "AccountsException should have been thrown");
 
     }
 
     @Test
     @DisplayName("Adding accounts failed for invalid Customer Id")
-    public void AddAccountFailedForInvalidCustomerIdTest(){
+    public void AddAccountFailedForInvalidCustomerIdTest() {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
         when(customerRepositoryMock.findById(anyString())).thenReturn(Optional.of(customer))
@@ -245,7 +253,7 @@ public class AccountsServiceTests {
         assertThrows(AccountsException.class,
                 () -> {
                     accountsService.putRequestExecutor(putInputRequestDto);
-                },"AccountsException should have been thrown");
+                }, "AccountsException should have been thrown");
     }
 
     @Test
@@ -272,13 +280,13 @@ public class AccountsServiceTests {
         when(accountsRepositoryMock.save(any())).thenReturn(savedAccount);
         OutputDto response = accountsService.putRequestExecutor(putInputRequestDto);
 
-        assertEquals(AllConstantHelpers.Branch.BANGALORE, response.getAccounts().getHomeBranch(),"Accounts Branch should have matched");
-        assertEquals(newBranchCode, response.getAccounts().getBranchCode(),"Account Branch COde should have matched");
+        assertEquals(AllConstantHelpers.Branch.BANGALORE, response.getAccounts().getHomeBranch(), "Accounts Branch should have matched");
+        assertEquals(newBranchCode, response.getAccounts().getBranchCode(), "Account Branch COde should have matched");
     }
 
     @Test
     @DisplayName("Update home branch failed when there is already another account with same type ")
-    public void updateHomeBranchFailedTest(){
+    public void updateHomeBranchFailedTest() {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
         when(customerRepositoryMock.findById(anyString()))
@@ -291,7 +299,7 @@ public class AccountsServiceTests {
 
         assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(putInputRequestDto);
-        },"AccountsException should have been thrown");
+        }, "AccountsException should have been thrown");
     }
 
     @Test
@@ -305,7 +313,7 @@ public class AccountsServiceTests {
         Assertions.assertThrows(CustomerException.class,
                 () -> {
                     accountsService.putRequestExecutor(putInputRequestDto);
-                },"Customer Exception not being thrown");
+                }, "Customer Exception not being thrown");
     }
 
     @Test
@@ -318,7 +326,7 @@ public class AccountsServiceTests {
         assertThrows(AccountsException.class,
                 () -> {
                     accountsService.putRequestExecutor(putInputRequestDto);
-                },"AccountsException should have been thrown");
+                }, "AccountsException should have been thrown");
     }
 
     @Test
@@ -328,7 +336,7 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(customer));
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
-        Customer updatedCustomer= Customer.builder()
+        Customer updatedCustomer = Customer.builder()
                 .customerId("1L")
                 .name("Updated Name")
                 .email("updated@gmail.com")
@@ -345,7 +353,7 @@ public class AccountsServiceTests {
         List<Accounts> accountsList = new ArrayList<>();
         for (int i = 0; i < 5; i++) accountsList.add(new Accounts());
         Page<Accounts> allPagedAccounts = new PageImpl<>(accountsList);
-        when(accountsRepositoryMock.findAllByCustomer_CustomerId(anyString(),any(Pageable.class)))
+        when(accountsRepositoryMock.findAllByCustomer_CustomerId(anyString(), any(Pageable.class)))
                 .thenReturn(Optional.of(allPagedAccounts));
 
         PutInputRequestDto request = PutInputRequestDto.builder()
@@ -364,26 +372,26 @@ public class AccountsServiceTests {
                 .build();
 
         OutputDto response = accountsService.putRequestExecutor(request);
-        assertNotNull(response.getCustomer(),"Customer should not be null");
-        assertEquals(response.getCustomer().getEmail(),request.getEmail(),"Customer Email should have updated");
-        assertEquals(response.getCustomer().getCustomerName(),request.getName(),"Customer Name should have updated");
-        assertEquals(response.getCustomer().getPhoneNumber(),request.getPhoneNumber(),"Customer Phone Number should have updated");
-        assertEquals(response.getCustomer().getAdharNumber(),request.getAdharNumber(),"Customer Adhar Number should have updated");
-        assertEquals(response.getCustomer().getPanNumber(),request.getPanNumber(),"Customer Pan Number should have updated");
-        assertEquals(response.getCustomer().getVoterId(),request.getVoterId(),"Customer Voter Id should have updated");
-        assertEquals(response.getCustomer().getAddress(),request.getAddress(),"Customer Address should have updated");
-        assertEquals(response.getCustomer().getDrivingLicense(),request.getDrivingLicense(),"Customer DrivingLicense should have updated");
+        assertNotNull(response.getCustomer(), "Customer should not be null");
+        assertEquals(response.getCustomer().getEmail(), request.getEmail(), "Customer Email should have updated");
+        assertEquals(response.getCustomer().getCustomerName(), request.getName(), "Customer Name should have updated");
+        assertEquals(response.getCustomer().getPhoneNumber(), request.getPhoneNumber(), "Customer Phone Number should have updated");
+        assertEquals(response.getCustomer().getAdharNumber(), request.getAdharNumber(), "Customer Adhar Number should have updated");
+        assertEquals(response.getCustomer().getPanNumber(), request.getPanNumber(), "Customer Pan Number should have updated");
+        assertEquals(response.getCustomer().getVoterId(), request.getVoterId(), "Customer Voter Id should have updated");
+        assertEquals(response.getCustomer().getAddress(), request.getAddress(), "Customer Address should have updated");
+        assertEquals(response.getCustomer().getDrivingLicense(), request.getDrivingLicense(), "Customer DrivingLicense should have updated");
     }
 
     @Test
     @DisplayName("Test upload profile image")
-    public void uploadProfileImageTest() throws IOException{
+    public void uploadProfileImageTest() throws IOException {
         UUID imageId = UUID.randomUUID();
         mockStatic(UUID.class);
         when(UUID.randomUUID()).thenReturn(imageId);
 
         when(customerRepositoryMock.findById(anyString())).thenReturn(Optional.of(customer));
-        Customer customerWithUploadedImage=Customer.builder()
+        Customer customerWithUploadedImage = Customer.builder()
                 .customerId("1L")
                 .imageName(imageId.toString())
                 .build();
@@ -393,16 +401,16 @@ public class AccountsServiceTests {
 
         MockMultipartFile imgFile =
                 new MockMultipartFile("data", "uploadedFile.png", "text/plain", "some kml".getBytes());
-        PutInputRequestDto request= PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .customerId("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerImage(imgFile)
                 .build();
 
-        OutputDto response=accountsService.putRequestExecutor(request);
-        assertEquals(customerWithUploadedImage.getImageName()+".png",response.getCustomer().getImageName(),
+        OutputDto response = accountsService.putRequestExecutor(request);
+        assertEquals(customerWithUploadedImage.getImageName() + ".png", response.getCustomer().getImageName(),
                 "Image should have been uploaded");
-       verify(customerRepositoryMock,times(1)).save(any());
+        verify(customerRepositoryMock, times(1)).save(any());
     }
 
     @Test
@@ -410,35 +418,37 @@ public class AccountsServiceTests {
     public void blockAccountTest() throws AccountsException, IOException {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
-        Accounts blockedAccount=Accounts.builder()
+        Accounts blockedAccount = Accounts.builder()
                 .accountNumber("1L")
                 .accountStatus(AllConstantHelpers.AccountStatus.BLOCKED)
                 .build();
         when(accountsRepositoryMock.save(any())).thenReturn(blockedAccount);
 
-        PutInputRequestDto request= PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.BLOCK_ACC)
                 .build();
 
         accountsService.putRequestExecutor(request);
-        verify(accountsRepositoryMock,times(1)).save(accounts);
+        verify(accountsRepositoryMock, times(1)).save(accounts);
     }
 
     @Test
     @DisplayName("Failed blocking account test")
     public void blockAccountFailedTest() throws AccountsException {
-        Accounts blockedAccounts= accounts;
+        Accounts blockedAccounts = accounts;
         blockedAccounts.setAccountStatus(AllConstantHelpers.AccountStatus.BLOCKED);
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(blockedAccounts));
 
-        PutInputRequestDto request= PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.BLOCK_ACC)
                 .build();
 
-        assertThrows(AccountsException.class,()->{accountsService.putRequestExecutor(request);});
+        assertThrows(AccountsException.class, () -> {
+            accountsService.putRequestExecutor(request);
+        });
     }
 
     @Test
@@ -446,30 +456,30 @@ public class AccountsServiceTests {
     public void closeAccountTest() throws AccountsException, IOException {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
-        Accounts closedAccount=Accounts.builder()
+        Accounts closedAccount = Accounts.builder()
                 .accountNumber("1L")
                 .accountStatus(AllConstantHelpers.AccountStatus.CLOSED)
                 .build();
         when(accountsRepositoryMock.save(any())).thenReturn(closedAccount);
 
-        PutInputRequestDto request= PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.CLOSE_ACC)
                 .build();
 
         accountsService.putRequestExecutor(request);
-        verify(accountsRepositoryMock,times(1)).save(accounts);
+        verify(accountsRepositoryMock, times(1)).save(accounts);
     }
 
     @Test
     @DisplayName("Test the reopening of closed account")
     public void reOpenClosedAccountTest() throws AccountsException, IOException {
 
-        Accounts openedAccount=Accounts.builder()
+        Accounts openedAccount = Accounts.builder()
                 .accountNumber("1L")
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .build();
-        Accounts closedAccount=Accounts.builder()
+        Accounts closedAccount = Accounts.builder()
                 .accountNumber("1L")
                 .accountStatus(AllConstantHelpers.AccountStatus.CLOSED)
                 .build();
@@ -477,47 +487,47 @@ public class AccountsServiceTests {
                 .thenReturn(Optional.of(closedAccount));
         when(accountsRepositoryMock.save(any())).thenReturn(openedAccount);
 
-        PutInputRequestDto request= PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.RE_OPEN_ACC)
                 .accountStatus(AllConstantHelpers.AccountStatus.CLOSED)
                 .build();
 
         accountsService.putRequestExecutor(request);
-        verify(accountsRepositoryMock,times(1)).save(closedAccount);
+        verify(accountsRepositoryMock, times(1)).save(closedAccount);
     }
 
     @Test
     @DisplayName("Test delete account")
-    public void deleteAccountTest() throws AccountsException{
+    public void deleteAccountTest() throws AccountsException {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        DeleteInputRequestDto request= DeleteInputRequestDto.builder()
+        DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.DELETE_ACC)
                 .accountStatus(AllConstantHelpers.AccountStatus.OPEN)
                 .build();
 
         accountsService.deleteRequestExecutor(request);
-        verify(accountsRepositoryMock,times(1)).deleteByAccountNumber("1L");
+        verify(accountsRepositoryMock, times(1)).deleteByAccountNumber("1L");
     }
 
 
     @Test
     @DisplayName("Test fetching the account information")
-    public  void getAccountInfoTest() throws AccountsException,IOException{
+    public void getAccountInfoTest() throws AccountsException, IOException {
         when(accountsRepositoryMock.findByAccountNumber(anyString())).thenReturn(Optional.of(accounts));
         when(roleRepositoryMock.findById(anyString())).thenReturn(Optional.of(normalRole));
 
-        GetInputRequestDto request=GetInputRequestDto.builder()
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.GET_ACC_INFO)
                 .build();
 
-        OutputDto response=accountsService.getRequestExecutor(request);
-        assertNotNull(response.getAccounts(),"Accounts should nt be null");
-        assertEquals(accounts.getAccountNumber(),response.getAccounts().getAccountNumber(),
+        OutputDto response = accountsService.getRequestExecutor(request);
+        assertNotNull(response.getAccounts(), "Accounts should nt be null");
+        assertEquals(accounts.getAccountNumber(), response.getAccounts().getAccountNumber(),
                 "Account NUmber should also be equal");
     }
 
@@ -535,18 +545,18 @@ public class AccountsServiceTests {
                 .adharNumber("adhar")
                 .build();
 
-        Customer customerWithDuplicateCredentials=Customer.builder()
+        Customer customerWithDuplicateCredentials = Customer.builder()
                 .adharNumber("adhar")
                 .build();
-        Accounts accountsWithDuplicatedCredentials=Accounts.builder()
+        Accounts accountsWithDuplicatedCredentials = Accounts.builder()
                 .accountNumber("3L")
                 .customer(customerWithDuplicateCredentials)
                 .build();
-        List<Accounts> duplicateAccountThatWillCauseException=Collections
+        List<Accounts> duplicateAccountThatWillCauseException = Collections
                 .singletonList(accountsWithDuplicatedCredentials);
         when(accountsRepositoryMock.findAll()).thenReturn(duplicateAccountThatWillCauseException);
-        assertThrows(AccountsException.class,()->{
-             accountsService.accountSetUp(postInputRequestDto);
+        assertThrows(AccountsException.class, () -> {
+            accountsService.accountSetUp(postInputRequestDto);
         });
     }
 
@@ -554,20 +564,20 @@ public class AccountsServiceTests {
     @DisplayName("Test the increment of transfer limit per day")
     public void increaseTransferLimitPerDayTest() throws IOException {
         when(accountsRepositoryMock.findByAccountNumber(anyString())).thenReturn(Optional.of(accounts));
-        PutInputRequestDto request= PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.INC_TRANSFER_LIMIT)
                 .transferLimitPerDay(BigDecimal.valueOf(125000L))
                 .build();
 
-        Accounts savedAccount=Accounts.builder()
+        Accounts savedAccount = Accounts.builder()
                 .accountNumber("1L")
                 .transferLimitPerDay(BigDecimal.valueOf(125000L))
                 .build();
         when(accountsRepositoryMock.save(any())).thenReturn(savedAccount);
-        OutputDto response=accountsService.putRequestExecutor(request);
-        assertEquals(125000L,response.getAccounts()
-                .getTransferLimitPerDay(),"Transfer limit should have updated");
+        OutputDto response = accountsService.putRequestExecutor(request);
+        assertEquals(125000L, response.getAccounts()
+                .getTransferLimitPerDay(), "Transfer limit should have updated");
     }
 
     @Test
@@ -576,216 +586,216 @@ public class AccountsServiceTests {
         accounts.setCreatedDate(LocalDate.now());
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
-        PutInputRequestDto request= PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.INC_TRANSFER_LIMIT)
                 .transferLimitPerDay(BigDecimal.valueOf(125000L))
                 .build();
 
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(request);
-        },"Should have thrown accounts Exception");
+        }, "Should have thrown accounts Exception");
     }
 
     @Test
     @DisplayName("Delete all accounts by customer")
-    public void deleteAllAccountsByCustomerTest(){
+    public void deleteAllAccountsByCustomerTest() {
         when(customerRepositoryMock.findById(anyString())).thenReturn(Optional.of(customer));
-        DeleteInputRequestDto request=DeleteInputRequestDto.builder()
+        DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.DELETE_ALL_ACC)
                 .customerId("1L")
                 .build();
 
         accountsService.deleteRequestExecutor(request);
-        verify(accountsRepositoryMock,times(1))
+        verify(accountsRepositoryMock, times(1))
                 .deleteAllByCustomer_CustomerId(anyString());
     }
 
     @Test
     @DisplayName("Delete all accounts by customer Failed")
-    public void deleteAllAccountsByCustomerFailedTest(){
+    public void deleteAllAccountsByCustomerFailedTest() {
         when(customerRepositoryMock.findById(anyString()))
                 .thenReturn(Optional.empty());
-        DeleteInputRequestDto request=DeleteInputRequestDto.builder()
+        DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.DELETE_ALL_ACC)
                 .customerId("1L")
                 .build();
 
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.deleteRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Get all accounts")
-    public void getAllAccTest() throws AccountsException,IOException{
+    public void getAllAccTest() throws AccountsException, IOException {
         when(customerRepositoryMock.findById(anyString())).thenReturn(Optional.of(customer));
         List<Accounts> accountsList = new ArrayList<>();
         for (int i = 0; i < 5; i++) accountsList.add(new Accounts());
         Page<Accounts> allPagedAccounts = new PageImpl<>(accountsList);
-        when(accountsRepositoryMock.findAllByCustomer_CustomerId(anyString(),any(Pageable.class)))
+        when(accountsRepositoryMock.findAllByCustomer_CustomerId(anyString(), any(Pageable.class)))
                 .thenReturn(Optional.of(allPagedAccounts));
 
-        GetInputRequestDto request= GetInputRequestDto.builder()
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .customerId("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.GET_ALL_ACC)
                 .build();
 
         accountsService.getRequestExecutor(request);
-        verify(accountsRepositoryMock,times(1))
-                .findAllByCustomer_CustomerId(anyString(),any(Pageable.class));
+        verify(accountsRepositoryMock, times(1))
+                .findAllByCustomer_CustomerId(anyString(), any(Pageable.class));
     }
 
     @Test
     @DisplayName("Get all accounts Failed for customer with no accounts")
-    public void getAllAccTestFailedForCustomerWithNoAccounts() throws AccountsException{
+    public void getAllAccTestFailedForCustomerWithNoAccounts() throws AccountsException {
         when(customerRepositoryMock.findById(anyString())).thenReturn(Optional.of(customer));
-        when(accountsRepositoryMock.findAllByCustomer_CustomerId(anyString(),any(Pageable.class)))
+        when(accountsRepositoryMock.findAllByCustomer_CustomerId(anyString(), any(Pageable.class)))
                 .thenReturn(Optional.empty());
 
-        GetInputRequestDto request= GetInputRequestDto.builder()
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .customerId("1L")
                 .updateRequest(AllConstantHelpers.UpdateRequest.GET_ALL_ACC)
                 .build();
 
-       assertThrows(AccountsException.class,()->{
-           accountsService.getRequestExecutor(request);
-       });
+        assertThrows(AccountsException.class, () -> {
+            accountsService.getRequestExecutor(request);
+        });
     }
 
     @Test
     @DisplayName("Invalid request type for get")
-    public  void invalidGetRequestType() throws AccountsException {
-        GetInputRequestDto request= GetInputRequestDto.builder()
+    public void invalidGetRequestType() throws AccountsException {
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.ADD_ACCOUNT).build();
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.getRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Invalid request type for put")
-    public  void invalidPutRequestType(){
-        PutInputRequestDto request= PutInputRequestDto.builder()
+    public void invalidPutRequestType() {
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.GET_ACC_INFO).build();
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Invalid request type for post")
-    public  void invalidPostRequestType(){
-        PostInputRequestDto request= PostInputRequestDto.builder()
+    public void invalidPostRequestType() {
+        PostInputRequestDto request = PostInputRequestDto.builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.DELETE_ACC).build();
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.postRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Invalid request type for delete")
-    public  void invalidDeleteRequestType(){
-        DeleteInputRequestDto request= DeleteInputRequestDto.builder()
+    public void invalidDeleteRequestType() {
+        DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.UPDATE_CREDIT_SCORE).build();
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.deleteRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Null update Request type for get")
-    public  void nullUpdateGetRequestFailedTest(){
+    public void nullUpdateGetRequestFailedTest() {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        GetInputRequestDto request=GetInputRequestDto.builder()
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(null)
                 .build();
 
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.getRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Null update Request type for put")
-    public  void nullUpdatePutRequestFailedTest(){
+    public void nullUpdatePutRequestFailedTest() {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        PutInputRequestDto request=PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(null)
                 .build();
 
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.putRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Null update Request type for post")
-    public  void nullUpdatePostRequestFailedTest(){
+    public void nullUpdatePostRequestFailedTest() {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
-        PostInputRequestDto request=PostInputRequestDto.builder()
+        PostInputRequestDto request = PostInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(null)
                 .build();
 
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.postRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Null update Request type for delete")
-    public  void nullUpdateDeleteRequestFailedTest(){
+    public void nullUpdateDeleteRequestFailedTest() {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        DeleteInputRequestDto request=DeleteInputRequestDto.builder()
+        DeleteInputRequestDto request = DeleteInputRequestDto.builder()
                 .accountNumber("1L")
                 .updateRequest(null)
                 .build();
 
-        assertThrows(AccountsException.class,()->{
+        assertThrows(AccountsException.class, () -> {
             accountsService.deleteRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("Put request Failed for Invalid page SIze")
-    public void invalidPageSizeForUpdateCustomerDataTest(){
+    public void invalidPageSizeForUpdateCustomerDataTest() {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
-        PutInputRequestDto request=PutInputRequestDto.builder()
+        PutInputRequestDto request = PutInputRequestDto.builder()
                 .accountNumber("1L")
                 .pageSize(-69)
                 .build();
 
-        assertThrows(BadApiRequestException.class,()->{
-           accountsService.putRequestExecutor(request);
+        assertThrows(BadApiRequestException.class, () -> {
+            accountsService.putRequestExecutor(request);
         });
     }
 
     @Test
     @DisplayName("request Failed for Invalid page filed")
-    public void invalidPageFieldForGetALLACCTest(){
+    public void invalidPageFieldForGetALLACCTest() {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
         when(customerRepositoryMock.findById(anyString()))
                 .thenReturn(Optional.of(customer));
-        GetInputRequestDto request=GetInputRequestDto.builder()
+        GetInputRequestDto request = GetInputRequestDto.builder()
                 .accountNumber("1L")
                 .customerId("1L")
                 .sortBy("INVALID FIELD")
                 .updateRequest(AllConstantHelpers.UpdateRequest.GET_ALL_ACC)
                 .build();
 
-        assertThrows(BadApiRequestException.class,()->{
+        assertThrows(BadApiRequestException.class, () -> {
             accountsService.getRequestExecutor(request);
         });
     }

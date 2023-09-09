@@ -123,14 +123,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
             case XML->    fieldIdWithExtension=String.format("%s.xml",accountNumber);
         }
         Path path = Paths.get(fileBasePath +fileName+fieldIdWithExtension);
-        Resource resource = null;
-        try {
-            resource = new UrlResource(path.toUri());
-        } catch (MalformedURLException e) {
-            log.error("Error while fetching the file");
-        }
-        if(null==resource) throw  new BadApiRequestException(BadApiRequestException.class,
-                "Your file is either corrupted or not been processed",methodName);
+        Resource resource = new UrlResource(path.toUri());
         ByteArrayInputStream stream=new ByteArrayInputStream(resource.getContentAsByteArray());
 
         switch (downloadableFORMAT){

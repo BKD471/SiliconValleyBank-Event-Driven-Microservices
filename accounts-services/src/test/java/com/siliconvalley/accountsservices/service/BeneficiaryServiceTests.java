@@ -41,19 +41,19 @@ import static org.mockito.Mockito.*;
 @AutoConfigureMockMvc
 @SpringBootTest
 public class BeneficiaryServiceTests {
-    @Autowired
-    @Qualifier("beneficiaryServicePrimary")
-    private IBeneficiaryService beneficiaryService;
+
+    private final IBeneficiaryService beneficiaryService;
 
     @MockBean
-    IBeneficiaryRepository beneficiaryRepositoryMock;
+    private IBeneficiaryRepository beneficiaryRepositoryMock;
     @MockBean
-    IAccountsRepository accountsRepositoryMock;
-
+    private IAccountsRepository accountsRepositoryMock;
     private Beneficiary beneficiary;
     private Accounts accounts;
-    private Customer customer;
     private final int MAX_PERMISSIBLE_BENEFICIARIES=5;
+    BeneficiaryServiceTests(@Qualifier("beneficiaryServicePrimary") IBeneficiaryService beneficiaryService){
+        this.beneficiaryService=beneficiaryService;
+    }
 
     @BeforeEach
     public void init() {
@@ -73,7 +73,7 @@ public class BeneficiaryServiceTests {
                 .creditScore(750)
                 .homeBranch(AllConstantHelpers.Branch.KOLKATA)
                 .build();
-        customer = Customer.builder()
+        Customer customer = Customer.builder()
                 .customerId("1L")
                 .age(25)
                 .name("phoenix")
@@ -110,8 +110,8 @@ public class BeneficiaryServiceTests {
                 .build();
 
         accounts.setCustomer(customer);
-        accounts.setListOfBeneficiary(Collections.singletonList(beneficiary));
-        customer.setAccounts(Collections.singletonList(accounts));
+        accounts.setListOfBeneficiary(Collections.singleton(beneficiary));
+        customer.setAccounts(Collections.singleton(accounts));
     }
 
 
@@ -154,7 +154,7 @@ public class BeneficiaryServiceTests {
     public void addBeneficiaryFailedForExceedingBeneficiaryLimitTest() {
         LocalDate dob = LocalDate.of(1997, 12, 01);
 
-        List<Beneficiary> beneficiaryList=new ArrayList<>();
+        Set<Beneficiary> beneficiaryList=new HashSet<>();
         for(int i=0;i<MAX_PERMISSIBLE_BENEFICIARIES;i++) beneficiaryList.add(new Beneficiary());
         accounts.setListOfBeneficiary(beneficiaryList);
 
@@ -311,7 +311,7 @@ public class BeneficiaryServiceTests {
     @Test
     public void noBeneficiaryAccountsForAnAccountTest() {
         String branchCode = CodeRetrieverHelper.getBranchCode(AllConstantHelpers.Branch.BANGALORE);
-        List<Beneficiary> accountsList = new ArrayList<>();
+        Set<Beneficiary> accountsList = new HashSet<>();
 
         Accounts accountWithNoBeneficiary = Accounts.builder()
                 .accountNumber("1L")
@@ -521,7 +521,7 @@ public class BeneficiaryServiceTests {
 
         beneficiaryService.deleteRequestBenExecutor(request);
         verify(beneficiaryRepositoryMock, times(1))
-                .deleteByBeneficiaryId(anyString());
+                .deleteById(anyString());
     }
 
     @Test

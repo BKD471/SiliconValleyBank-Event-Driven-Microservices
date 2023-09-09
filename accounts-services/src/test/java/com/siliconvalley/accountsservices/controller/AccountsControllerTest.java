@@ -107,7 +107,7 @@ public class AccountsControllerTest {
                 .imageName("img.png")
                 .DateOfBirth(LocalDate.of(1997, 12, 01))
                 .voterId("voter")
-                .accounts(Collections.singletonList(accounts))
+                .accounts(Collections.singleton(accounts))
                 .build();
         accounts.setCustomer(customer);
         dto=OutputDto.builder()

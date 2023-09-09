@@ -29,10 +29,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -56,7 +54,7 @@ public class TransactionsControllerTest {
 
     private static Accounts accounts;
     private static Customer customer;
-    private static List<Transactions> transactionsList;
+    private static Set<Transactions> transactionsList;
     private static OutputDto dto;
     private final String BASE_URL_TRANSACTIONS = "/api/v1/transactions/";
 
@@ -94,7 +92,7 @@ public class TransactionsControllerTest {
                 .voterId("voter")
                 .build();
         accounts.setCustomer(customer);
-        customer.setAccounts(Collections.singletonList(accounts));
+        customer.setAccounts(Collections.singleton(accounts));
 
         Transactions transactions1=Transactions.builder()
                 .transactionId("1L")
@@ -116,11 +114,11 @@ public class TransactionsControllerTest {
         transactions2.setTransactionTimeStamp(LocalDateTime.of(2023,06,17,05,40));
 
 
-        transactionsList = new ArrayList<>(Arrays.asList(transactions2, transactions1));
+        transactionsList = new HashSet<>(Arrays.asList(transactions2, transactions1));
         accounts.setListOfTransactions(transactionsList);
-        List<TransactionsDto> transactionsDtoList=transactionsList.stream()
+        Set<TransactionsDto> transactionsDtoList=transactionsList.stream()
                 .map(MapperHelper::mapToTransactionsDto)
-                .toList();
+                .collect(Collectors.toSet());
 
         dto = OutputDto.builder()
                 .defaultMessage("Account with id 1 is created for customer 1")
