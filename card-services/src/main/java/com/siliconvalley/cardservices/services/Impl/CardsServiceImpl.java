@@ -110,7 +110,7 @@ public class CardsServiceImpl implements ICardsService {
      * @return
      */
     @Override
-    public List<CardsDto> getPastTransactions(final LocalDate startDate,final LocalDate endDate) {
+    public List<CardsDto> getPastTransactions(final LocalDate startDate,final LocalDate endDate,final String cardNumber) {
         return null;
     }
 
