@@ -72,16 +72,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    /**
-     * @param accountNumber
-     * @return
-     * @throws AccountsException
-     */
-    @Override
-    public ResponseEntity<OutputDto> getPastSixMonthsTransaction(final String accountNumber) throws AccountsException {
-        final OutputDto responseDto = transactionsService.getPastSixMonthsTransactionsForAnAccount(accountNumber);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
-    }
+
 
 
     @Override
@@ -101,6 +92,55 @@ public class TransactionsControllerImpl implements ITransactionsController {
     }
 
 
+    private ResponseEntity<Resource> generateStatementForAnyFormat(final String accountNumber, final BankStatementRequestDto.FORMAT_TYPE formatType) throws IOException {
+        final String methodName="generateStatementForAnyFormat(accountNumber,formatType) in TransactionsController";
+        String fieldIdWithExtension = null;
+        switch (formatType) {
+            case PDF -> fieldIdWithExtension = String.format("%s.pdf", accountNumber);
+            case HTML -> fieldIdWithExtension = String.format("%s.html", accountNumber);
+            case XML -> fieldIdWithExtension = String.format("%s.xml", accountNumber);
+        }
+        Path path = Paths.get(fileBasePath + fileName + fieldIdWithExtension);
+        Resource resource = new UrlResource(path.toUri());
+        ByteArrayInputStream stream = new ByteArrayInputStream(resource.getContentAsByteArray());
+
+        switch (formatType) {
+            case PDF -> {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + fieldIdWithExtension + "\"")
+                        .body(new InputStreamResource(stream));
+            }
+            case HTML -> {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + fieldIdWithExtension + "\"")
+                        .body(new InputStreamResource(stream));
+            }
+            case XML -> {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_XML)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + fieldIdWithExtension + "\"")
+                        .body(new InputStreamResource(stream));
+            }
+            default ->
+                    throw new BadApiRequestException(BadApiRequestException.class, "Your request format is not supported", methodName);
+
+        }
+    }
+    /**
+     * @param transactionsDto
+     * @return
+     * @throws AccountsException
+     */
+    @Override
+    public ResponseEntity<Resource> getPastSixMonthsTransaction(final TransactionsDto transactionsDto) throws AccountsException, JRException, IOException {
+        final String accountNumber=transactionsDto.getAccountNumber();
+        final BankStatementRequestDto.FORMAT_TYPE formatType=transactionsDto.getDownloadFormat();
+        transactionsService.getPastSixMonthsTransactionsForAnAccount(accountNumber, formatType);
+        return generateStatementForAnyFormat(accountNumber,formatType);
+    }
+
     /**
      * @param bankStatementRequestDto
      * @return
@@ -108,44 +148,11 @@ public class TransactionsControllerImpl implements ITransactionsController {
      */
     @Override
     public ResponseEntity<Resource> generateBankStatementAnyFormat(BankStatementRequestDto bankStatementRequestDto) throws IOException, JRException {
-        final String methodName="generateBankStatementAnyFormat(BankStatementRequestDto)";
-
         String accountNumber=bankStatementRequestDto.getAccountNumber();
         LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.getStartDate());
         LocalDate endDate=dateParserInYYYYMMDD(bankStatementRequestDto.getEndDate());
         BankStatementRequestDto.FORMAT_TYPE downloadableFORMAT=bankStatementRequestDto.getDownloadFormat();
         pdfService.generateBankStatement(downloadableFORMAT,startDate,endDate,accountNumber);
-
-        String fieldIdWithExtension=null;
-        switch(downloadableFORMAT){
-            case PDF -> fieldIdWithExtension=String.format("%s.pdf",accountNumber);
-            case HTML -> fieldIdWithExtension=String.format("%s.html",accountNumber);
-            case XML->    fieldIdWithExtension=String.format("%s.xml",accountNumber);
-        }
-        Path path = Paths.get(fileBasePath +fileName+fieldIdWithExtension);
-        Resource resource = new UrlResource(path.toUri());
-        ByteArrayInputStream stream=new ByteArrayInputStream(resource.getContentAsByteArray());
-
-        switch (downloadableFORMAT){
-            case PDF -> {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_PDF)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName+fieldIdWithExtension+ "\"")
-                        .body(new InputStreamResource(stream));
-            }
-            case HTML -> {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName+fieldIdWithExtension+ "\"")
-                        .body(new InputStreamResource(stream));
-            }
-            case XML -> {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_XML)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName+fieldIdWithExtension+ "\"")
-                        .body(new InputStreamResource(stream));
-            }
-            default -> throw new BadApiRequestException(BadApiRequestException.class,"Your request format is not supported",methodName);
-        }
+        return generateStatementForAnyFormat(accountNumber,downloadableFORMAT);
     }
 }

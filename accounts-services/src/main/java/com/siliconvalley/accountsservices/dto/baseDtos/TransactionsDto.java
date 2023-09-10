@@ -37,4 +37,6 @@ public class TransactionsDto implements Serializable {
     @NotNullEnum(regexp = PATTERN_FOR_NOT_NULL_CHARS,message = "Field can;t be null")
     @ValidDescription
     private AllConstantHelpers.DescriptionType description;
+
+    private BankStatementRequestDto.FORMAT_TYPE downloadFormat;
 }

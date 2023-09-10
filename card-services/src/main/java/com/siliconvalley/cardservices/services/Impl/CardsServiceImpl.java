@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.siliconvalley.cardservices.helpers.AllConstantHelpers.CardsValidationType.GET_ALL_CARDS;
+import static com.siliconvalley.cardservices.helpers.CardsMapperHelper.mapToCards;
+import static com.siliconvalley.cardservices.helpers.CardsMapperHelper.mapToCardsDto;
+
 @Service("cardsServicePrimary")
 public class CardsServiceImpl implements ICardsService {
     private final IValidationService validationService;
@@ -38,7 +42,7 @@ public class CardsServiceImpl implements ICardsService {
         final BigDecimal ISSUED_CREDIT_LIMIT = issuedCreditLimit(cards);
         final long BILL_GENERATION_IN_DAYS = 20;
         final long DUE_IN = 10;
-        final LocalDateTime ISSUED_DATE = cards.getIssuedDate();
+        final LocalDateTime ISSUED_DATE = LocalDateTime.now();
         final LocalDate BILL_GEN_DATE = ISSUED_DATE.plusDays(BILL_GENERATION_IN_DAYS).toLocalDate();
         final LocalDate DUE_DATE = BILL_GEN_DATE.plusDays(DUE_IN);
         final String cardNumber = UUID.randomUUID().toString();
@@ -66,13 +70,11 @@ public class CardsServiceImpl implements ICardsService {
      */
     @Override
     public CardsDto issueCard(final CardsDto cardsDto) {
-        //validating the unhappy path
         validationService.cardsValidator(cardsDto, null, AllConstantHelpers.ISSUE_CARD);
-        final Cards card = CardsMapperHelper.mapToCards(cardsDto);
-        final Cards savedCards = cardsRepository.save(card);
-        final Cards processedCardsInfo = processCardInformation(savedCards);
-        final Cards savedAndProcessedCardInfo = cardsRepository.save(processedCardsInfo);
-        return CardsMapperHelper.mapToCardsDto(savedAndProcessedCardInfo);
+        final Cards card = mapToCards(cardsDto);
+        final Cards processedCardsInfo = processCardInformation(card);
+        final Cards processSavedCards = cardsRepository.save(processedCardsInfo);
+        return mapToCardsDto(processSavedCards);
     }
 
     /**
@@ -84,7 +86,7 @@ public class CardsServiceImpl implements ICardsService {
         final String methodName = "getAllCardsByCustomerId(Long) in CardsServiceImpl";
         final CardsDto cardsDto = CardsDto.builder().customerId(customerId).build();
 
-        validationService.cardsValidator(cardsDto, null, AllConstantHelpers.GET_ALL_CARDS);
+        validationService.cardsValidator(cardsDto, null, GET_ALL_CARDS);
 
         final Optional<List<Cards>> listOfCards = cardsRepository.findAllByCustomerId(customerId);
         if (listOfCards.isEmpty()) throw new CardsException(CardsException.class,
@@ -138,9 +140,7 @@ public class CardsServiceImpl implements ICardsService {
                 String.format("No cards exist with card Number %s", cardNumber), methodName);
 
         validationService.cardsValidator(null, loadCard.get(), AllConstantHelpers.REQUEST_FOR_REVISED_CREDIT_LIMIT);
-
-        //to be done with loans
-        return CardsMapperHelper.mapToCardsDto(loadCard.get());
+        return mapToCardsDto(loadCard.get());
     }
 
     private long calculateEmi(final Long loanAmount,final int tenure) throws TenureException {
@@ -167,8 +167,6 @@ public class CardsServiceImpl implements ICardsService {
         final Optional<Cards> loadCard = cardsRepository.findByCardNumber(cardNumber);
         if (loadCard.isEmpty()) throw new CardsException(CardsException.class, "Invalid cardNumber", methodName);
         validationService.cardsValidator(null, loadCard.get(), AllConstantHelpers.FLEXI_PAY);
-
-        //to be
         return null;
     }
 
@@ -178,7 +176,7 @@ public class CardsServiceImpl implements ICardsService {
      * @return
      */
     @Override
-    public CardsDto downloadCreditCardStatementsAsCsv(LocalDate startDate, LocalDate endDate) {
+    public CardsDto downloadCreditCardStatements(final LocalDate startDate,final LocalDate endDate,String cardNumber) {
         return null;
     }
 }

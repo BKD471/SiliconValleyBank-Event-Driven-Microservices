@@ -1,12 +1,12 @@
 package com.siliconvalley.accountsservices.service.impl;
 
 
+import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
 import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.TransactionException;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
-import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.model.Transactions;
@@ -14,15 +14,18 @@ import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.repository.ITransactionsRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
+import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
 import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ValidateTransactionType.GET_PAST_SIX_MONTHS_TRANSACTIONS;
@@ -35,15 +38,19 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
 
     private final ITransactionsRepository transactionsRepository;
     private final IAccountsRepository accountsRepository;
+    private final IPdfService pdfService;
     private final IValidationService validationService;
 
     TransactionsServiceImpl(final ITransactionsRepository transactionsRepository,
                             final IAccountsRepository accountsRepository,
-                            final ICustomerRepository customerRepository,final IValidationService validationService) {
+                            final ICustomerRepository customerRepository,
+                            final IValidationService validationService,
+                            @Qualifier("jasperPdfService") final IPdfService pdfService) {
         super(accountsRepository,customerRepository);
         this.transactionsRepository = transactionsRepository;
         this.accountsRepository = accountsRepository;
         this.validationService=validationService;
+        this.pdfService=pdfService;
     }
 
     private synchronized Transactions updateBalance(final Accounts accounts, final Transactions transactions, final BigDecimal amount, final AllConstantHelpers.TransactionType transactionType) throws TransactionException {
@@ -82,20 +89,15 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
     private TransactionsDto payOrDepositMoney(final TransactionsDto transactionsDto, final AllConstantHelpers.TransactionType transactionType) throws AccountsException, TransactionException {
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl started -----------------------" +
                 "-------------------------------------------------------------------------------------------------------------------------->");
-        //fetch account
         final String accountNumber = transactionsDto.getAccountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
-
-        //converting to entity object
         final Transactions requestTransaction = mapToTransactions(transactionsDto);
 
 
-        //get the money & update the balance
         final BigDecimal amountToBeCredited = requestTransaction.getTransactionAmount();
         final Transactions recentTransaction = updateBalance(fetchedAccount, requestTransaction,
                 amountToBeCredited, transactionType);
 
-        //some critical linkup before saving it to db
         final Set<Transactions> listOfTransactions=new LinkedHashSet<>();
         listOfTransactions.add(recentTransaction);
         fetchedAccount.setListOfTransactions(listOfTransactions);
@@ -104,7 +106,6 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final String transactionId=UUID.randomUUID().toString();
         recentTransaction.setTransactionId(transactionId);
 
-        //save in DB & return
         final Transactions savedTransactions = transactionsRepository.save(recentTransaction);
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl ended ------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
@@ -154,36 +155,14 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
     }
 
     @Override
-    public OutputDto getPastSixMonthsTransactionsForAnAccount(final String accountNumber) throws  AccountsException{
-        //fetch account
+    public void getPastSixMonthsTransactionsForAnAccount(final String accountNumber, BankStatementRequestDto.FORMAT_TYPE formatType) throws AccountsException, JRException, FileNotFoundException {
         final Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
-        final Customer loadedCustomer=fetchedAccount.getCustomer();
 
-        //Calculate the  date six months before today's date
         final LocalDateTime today=LocalDateTime.now();
         final LocalDateTime pastSixMonthsDate=today.minusMonths(6);
 
         validationService.transactionsUpdateValidator(fetchedAccount,null,null,GET_PAST_SIX_MONTHS_TRANSACTIONS);
-         Set<Transactions> listOfTransactions= fetchedAccount.getListOfTransactions().
-                stream().filter(transactions -> transactions.getTransactionTimeStamp()
-                        .isAfter(pastSixMonthsDate)).collect(Collectors.toSet());
-
-        Comparator<Transactions> sortTransactions=(o1, o2) -> (o1.getTransactionTimeStamp().
-                isBefore(o2.getTransactionTimeStamp())) ? -1 :
-                (o1.getTransactionTimeStamp().isAfter(o2.getTransactionTimeStamp())) ? 1 : 0;
-       List<Transactions> modifiableTransactionList=new ArrayList<>(listOfTransactions.stream().toList());
-       modifiableTransactionList.sort(sortTransactions);
-
-        final Set<TransactionsDto> transactionsArrayList= modifiableTransactionList.stream().toList().stream()
-                .map(MapperHelper::mapToTransactionsDto)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return OutputDto.builder()
-                .customer(mapToCustomerOutputDto(mapToCustomerDto(loadedCustomer)))
-                .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
-                .transactionsList(transactionsArrayList)
-                .defaultMessage(String.format("Last 6 months transaction details for account:%s",accountNumber))
-                .build();
+        pdfService.generateBankStatement(formatType,pastSixMonthsDate.toLocalDate(),today.toLocalDate(),accountNumber);
     }
 
 

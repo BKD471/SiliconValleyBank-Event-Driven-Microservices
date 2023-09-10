@@ -134,19 +134,7 @@ public class TransactionsControllerTest {
                 .build();
     }
 
-    @Test
-    @DisplayName("Test the past six months  transactions")
-    public void getPastSixMonthsTransactionTest() throws Exception {
-        long accountNumber=1L;
-        when(transactionsServiceMock.getPastSixMonthsTransactionsForAnAccount(any())).thenReturn(dto);
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL_TRANSACTIONS +accountNumber)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ObjectToJsonStringConverterHelper.convertObjToJsonString(dto))
-                        .accept(MediaType.APPLICATION_JSON)
-                ).andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.transactionsList").exists());
-    }
+
 
     @Test
     @DisplayName("Test the transactions executor")
