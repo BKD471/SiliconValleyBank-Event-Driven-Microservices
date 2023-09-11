@@ -9,7 +9,6 @@ import com.siliconvalley.loansservices.service.ILoansService;
 import com.siliconvalley.loansservices.service.IValidationService;
 import com.siliconvalley.loansservices.exception.*;
 import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
-import com.siliconvalley.loansservices.helpers.RateOfInterestHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.*;
 import static com.siliconvalley.loansservices.helpers.LoansMapperHelper.*;
+import static com.siliconvalley.loansservices.helpers.RateOfInterestHelper.getRateOfInterest;
 
 
 /**
@@ -55,8 +55,8 @@ public class LoanServiceImpl implements ILoansService {
     private BigDecimal calculateEmi(final BigDecimal loanAmount, final int tenure) throws TenureException {
         log.debug("<#####################calculateEmi(final BigDecimal, final int) in LoanServiceImpl started ###########################################################" +
                 "###");
-        final String methodName = "calculateEmi(Long,int) in LoanServiceImpl";
-        final Double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
+        final String methodName = "calculateEmi(BigDecimal,int) in LoanServiceImpl";
+        final Double rate_of_interest = getRateOfInterest(tenure);
         if (Objects.isNull(rate_of_interest)) throw new TenureException(TenureException.class,
                 String.format("Tenure %s is not available", tenure), methodName);
 
@@ -81,10 +81,10 @@ public class LoanServiceImpl implements ILoansService {
         final Loans loan = loansRepository.save(loans);
         final String loanNumber = UUID.randomUUID().toString();
         final int tenure = loan.getLoanTenureInYears();
-        LocalDate endDate = loan.getStartDate().plusYears(tenure);
+        final LocalDate endDate = loan.getStartDate().plusYears(tenure);
         final BigDecimal loanAmount = loan.getTotalLoan();
         final BigDecimal emiAmount = calculateEmi(loanAmount, tenure);
-        final double rate_of_interest = RateOfInterestHelper.getRateOfInterest(tenure);
+        final double rate_of_interest = getRateOfInterest(tenure);
 
         loan.setLoanNumber(loanNumber);
         loan.setLoanTenureInYears(tenure);
@@ -108,10 +108,12 @@ public class LoanServiceImpl implements ILoansService {
      * @returnType LoansDto
      */
     private LoansDto borrowLoan(final LoansDto loansDto) throws TenureException, ValidationException, PaymentException, InstallmentsException, LoansException {
+        log.debug("<################### borrowLoan(final LoansDto loansDto) started #############################################>");
         final Loans loan = LoansMapperHelper.mapToLoans(loansDto);
-        validationService.validator(loan, loansDto, AllConstantsHelper.ISSUE_LOAN, Optional.empty());
+        validationService.validator(loan, loansDto, ISSUE_LOAN, Optional.empty());
         final Loans processedLoan = processLoanInformationAndCreateLoan(loan);
         final Loans savedLoan = loansRepository.save(processedLoan);
+        log.debug("<################### borrowLoan(final LoansDto loansDto) ended #############################################>");
         return mapToLoansDto(savedLoan);
     }
 
@@ -121,6 +123,7 @@ public class LoanServiceImpl implements ILoansService {
      * @returnType PaymentDto
      */
     private LoansDto payInstallments(final LoansDto loansDto) throws LoansException, PaymentException, InstallmentsException, ValidationException {
+        log.debug("<################### payInstallments(final LoansDto loansDto) started #############################################>");
         final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber
                 (loansDto.getCustomerId(), loansDto.getLoanNumber());
 
@@ -130,27 +133,28 @@ public class LoanServiceImpl implements ILoansService {
 
         LoansDto processedLoansDto= mapToLoansDto(loan.get());
         processedLoansDto.setPaymentAmount(loansDto.getPaymentAmount());
-        validationService.validator(loan.get(), processedLoansDto, PAY_EMI,Optional.of(List.of(loan.get())));
+        validationService.validator(loan.get(), processedLoansDto, PAY_EMI,Optional.of(Set.of(loan.get())));
 
         final Loans currentLoan = loan.get();
-        BigDecimal emi = currentLoan.getEmiAmount();
-        int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
-        int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
-        BigDecimal payment = processedLoansDto.getPaymentAmount();
+        final BigDecimal emi = currentLoan.getEmiAmount();
+        final int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
+        final int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
+        final BigDecimal payment = processedLoansDto.getPaymentAmount();
 
-        int NoOfInstallments =new BigDecimal(String.valueOf(payment)).divide(emi, RoundingMode.CEILING).intValue();
+        final int NoOfInstallments =new BigDecimal(String.valueOf(payment)).divide(emi, RoundingMode.CEILING).intValue();
         currentLoan.setInstallmentsPaidInNumber(NoOfInstallments + paidInstallments);
         currentLoan.setInstallmentsRemainingInNumber(remainingInstallments - NoOfInstallments);
         if(currentLoan.getInstallmentsRemainingInNumber()==0) currentLoan.setLoanActive(false);
 
-        BigDecimal outstandingAmount = currentLoan.getOutstandingAmount();
-        BigDecimal amountPaid = currentLoan.getAmountPaid();
-        BigDecimal outStandingAmountToBePaid=new BigDecimal(String.valueOf(outstandingAmount)).subtract(payment);
+        final BigDecimal outstandingAmount = currentLoan.getOutstandingAmount();
+        final BigDecimal amountPaid = currentLoan.getAmountPaid();
+        final BigDecimal outStandingAmountToBePaid=new BigDecimal(String.valueOf(outstandingAmount)).subtract(payment);
         currentLoan.setOutstandingAmount(outStandingAmountToBePaid);
-        BigDecimal amountToBePaid=new BigDecimal(String.valueOf(amountPaid)).add(payment);
+        final BigDecimal amountToBePaid=new BigDecimal(String.valueOf(amountPaid)).add(payment);
         currentLoan.setAmountPaid(amountToBePaid);
 
-        Loans paidEmi = loansRepository.save(currentLoan);
+        final Loans paidEmi = loansRepository.save(currentLoan);
+        log.debug("<################### payInstallments(final LoansDto loansDto) ended #############################################>");
         return mapToPaymentDto(paidEmi, payment);
     }
 
@@ -159,9 +163,11 @@ public class LoanServiceImpl implements ILoansService {
      * @paramType Long
      * @returnType LoansDto
      */
-    private LoansDto getInfoAboutAParticularLoan(final String customerId, final String loanNumber) throws LoansException, ValidationException, PaymentException, InstallmentsException {
+    private LoansDto getLoanInfoByCustomerIdAndLoanNumber(final String customerId, final String loanNumber) throws LoansException, ValidationException, PaymentException, InstallmentsException {
+        log.debug("<################### getLoanInfoByCUstomerIdAndLoanNumber(final LoansDto loansDto) started #############################################>");
         final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber);
-        validationService.validator(loan.get(),null, GET_INFO_LOAN ,Optional.of(List.of(loan.get())));
+        validationService.validator(loan.get(),null, GET_INFO_LOAN ,Optional.of(Set.of(loan.get())));
+        log.debug("<################### getLoanInfoByCustomerIdAndLoanNumber(final LoansDto loansDto) ended #############################################>");
         return mapToLoansDto(loan.get());
     }
 
@@ -171,11 +177,13 @@ public class LoanServiceImpl implements ILoansService {
      * @paramType Long
      * @returnType List<LoansDto>
      */
-    public List<LoansDto> getAllLoansForACustomer(final String customerId) throws LoansException, ValidationException, PaymentException, InstallmentsException {
-        final Optional<List<Loans>> allLoans = loansRepository.findAllByCustomerId(customerId);
-        validationService.validator(null,LoansDto.builder().customerId(customerId).build(), AllConstantsHelper.GET_ALL_LOAN,allLoans);
+    public Set<LoansDto> getAllLoansByCustomerId(final String customerId) throws LoansException, ValidationException, PaymentException, InstallmentsException {
+        log.debug("<################### getAllLoansByCustomerId(String CustomerId) started #############################################>");
+        final Optional<Set<Loans>> allLoans = loansRepository.findAllByCustomerId(customerId);
+        validationService.validator(null,LoansDto.builder().customerId(customerId).build(), GET_ALL_LOAN,allLoans);
+        log.debug("<################### getAllLoansByCustomerId(String customerId) ended #############################################>");
         return allLoans.get().stream().map(LoansMapperHelper::mapToLoansDto).
-                collect(Collectors.toList());
+                collect(Collectors.toSet());
     }
 
     /**
@@ -193,7 +201,7 @@ public class LoanServiceImpl implements ILoansService {
      * @return
      */
     @Override
-    public OutPutDto transactionsExecutor(LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
+    public OutPutDto loansExecutor(LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
         validationService.validator(mapToLoans(loansDto),loansDto, DRIVER_METHOD_VALIDATION, Optional.empty());
         final String customerId=loansDto.getCustomerId();
         final String loanNumber= loansDto.getLoanNumber();
@@ -204,28 +212,28 @@ public class LoanServiceImpl implements ILoansService {
         AllConstantsHelper.RequestType requestType=loansDto.getRequestType();
         switch (requestType){
             case BORROW_LOAN -> {
-                LoansDto responseDto=borrowLoan(loansDto);
+                final LoansDto responseDto=borrowLoan(loansDto);
                 return OutPutDto.builder().loansDto(responseDto).build();
             }
             case PAY_INSTALLMENTS -> {
-               LoansDto responseDto=payInstallments(loansDto);
+               final LoansDto responseDto=payInstallments(loansDto);
                return OutPutDto.builder().loansDto(responseDto).build();
             }
             case GET_INFO -> {
                 validationService.validator(mapToLoans(loansDto),loansDto,
                         DRIVER_METHOD_VALIDATION,Optional.empty());
-                LoansDto responseDto=getInfoAboutAParticularLoan(customerId,loanNumber);
+                final LoansDto responseDto=getLoanInfoByCustomerIdAndLoanNumber(customerId,loanNumber);
                 return OutPutDto.builder().loansDto(responseDto).build();
             }
             case GET_ALL_LOANS_FOR_CUSTOMER -> {
-               List<LoansDto> loansList=getAllLoansForACustomer(customerId);
-               return OutPutDto.builder().listOfLoans(loansList).build();
+               final Set<LoansDto> loansSet=getAllLoansByCustomerId(customerId);
+               return OutPutDto.builder().listOfLoans(loansSet).build();
             }
             case DOWNLOAD_EMI_STMT -> {
-                LoansDto loansDtos=downloadAllEmiStatements(startDate,endDate,customerId);
+                final LoansDto loansDtos=downloadAllEmiStatements(startDate,endDate,customerId);
                 return OutPutDto.builder().loansDto(loansDtos).build();
             }
+            default -> throw  new BadApiRequestException(BadApiRequestException.class,"Invalid request type","transactionsExecutor(LoansDto loansDto)");
         }
-        return null;
     }
 }

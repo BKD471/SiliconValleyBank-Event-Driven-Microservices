@@ -21,6 +21,7 @@ import java.util.List;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 
 import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.GET_INFO;
@@ -43,7 +44,7 @@ public final class ValidationServiceImpl implements IValidationService {
      */
     @Override
     public void validator(Loans loans, LoansDto loansDto,
-                          AllConstantsHelper.LoansValidateType loansValidateType, Optional<List<Loans>> optionalFields) throws ValidationException, PaymentException, InstallmentsException, LoansException {
+                          AllConstantsHelper.LoansValidateType loansValidateType, Optional<Set<Loans>> optionalFields) throws ValidationException, PaymentException, InstallmentsException, LoansException {
         log.debug("<################# validator(Loans, LoansDto," +
                 "AllConstantsHelper.LoansValidateType,Optional<List<Loans>>) started " +
                 "##################################" +
@@ -61,14 +62,14 @@ public final class ValidationServiceImpl implements IValidationService {
                 //get credit score
 
                 //get any pre existing running loan
-                final Optional<List<Loans>> allActiveLoans =
+                final Optional<Set<Loans>> allActiveLoans =
                         loansRepository.getAllByCustomerIdAndLoanActiveIs(customerId, true);
                 if (allActiveLoans.isPresent() && allActiveLoans.get().size() > MAX_PERMISSIBLE_LOANS)
-                    throw new ValidationException(ValidationException.class, "You already have too much loans active", methodName);
+                    throw new LoansException(LoansException.class, "You already have too much loans active", methodName);
             }
             case PAY_EMI -> {
                 if (optionalFields.isEmpty())
-                    throw new LoansException(LoansException.class, String.format("No such loans exist with Loan id %s",
+                    throw new ValidationException(ValidationException.class, String.format("No such loans exist with Loan id %s",
                             loans.getLoanNumber()), methodName);
 
                 boolean isLoanClosed = !loans.isLoanActive();
@@ -82,13 +83,18 @@ public final class ValidationServiceImpl implements IValidationService {
 
             }
             case GET_ALL_LOAN -> {
-                if (optionalFields.isEmpty()) throw new LoansException(LoansException.class,
+                if (optionalFields.isEmpty()) throw new ValidationException(ValidationException.class,
                         String.format("There is no loan found for customer with Id %s", loansDto.getCustomerId()),
                         methodName);
             }
             case GET_INFO_LOAN -> {
                 if (optionalFields.isEmpty())
-                    throw new LoansException(LoansException.class, String.format("No such loan exist with id %s", loansDto.getCustomerId()), methodName);
+                    throw new ValidationException(LoansException.class, String.format("No such loan exist with id %s", loansDto.getCustomerId()), methodName);
+            }
+            case GEN_EMI_STMT -> {
+                if (optionalFields.isEmpty()) throw new ValidationException(ValidationException.class,"No loans persent for customer WIth Id",methodName);
+
+
             }
             case DRIVER_METHOD_VALIDATION -> {
                 final AllConstantsHelper.RequestType requestType= loansDto.getRequestType();

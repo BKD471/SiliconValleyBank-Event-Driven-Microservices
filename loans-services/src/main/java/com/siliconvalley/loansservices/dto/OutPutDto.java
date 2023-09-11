@@ -7,6 +7,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,5 +16,5 @@ import java.util.List;
 @Builder
 public class OutPutDto implements Dto{
     private LoansDto loansDto;
-    private List<LoansDto> listOfLoans;
+    private Set<LoansDto> listOfLoans;
 }

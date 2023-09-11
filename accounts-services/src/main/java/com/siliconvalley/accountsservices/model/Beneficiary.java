@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 public class Beneficiary extends Audit{
     @Id
-    @Column(name="ben_id")
+    @Column(name="ben_id",nullable = false)
     private String beneficiaryId;
 
     @Column(name = "ben_name",nullable = false)

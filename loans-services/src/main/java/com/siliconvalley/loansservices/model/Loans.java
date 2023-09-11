@@ -7,6 +7,9 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,6 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Loans extends Audit{
     @Id
+    @Column(name = "loan_num",unique = true,nullable = false)
     private String loanNumber;
 
     @Column(name = "customer_id")
@@ -60,4 +64,7 @@ public class Loans extends Audit{
 
     @Column(name = "last_payment_date")
     private LocalDateTime lastPayMentBeingMade;
+
+    @OneToMany(mappedBy = "loans",cascade = CascadeType.ALL)
+    private Set<Emi> setOfEmis=new LinkedHashSet<>();
 }

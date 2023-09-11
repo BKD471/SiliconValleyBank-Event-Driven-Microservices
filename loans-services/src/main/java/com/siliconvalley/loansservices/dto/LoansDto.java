@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Getter
@@ -30,4 +31,5 @@ public class LoansDto implements   Dto{
     private int installmentsRemainingInNumber;
     private BigDecimal outstandingAmount;
     private AllConstantsHelper.RequestType requestType;
+    private Set<Loans> loansSet;
 }

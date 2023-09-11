@@ -2,7 +2,7 @@ package com.siliconvalley.loansservices.helpers;
 
 public class AllConstantsHelper {
     public enum LoansValidateType{
-        ISSUE_LOAN,PAY_EMI,GET_INFO_LOAN,GET_ALL_LOAN,DRIVER_METHOD_VALIDATION
+        ISSUE_LOAN,PAY_EMI,GET_INFO_LOAN,GET_ALL_LOAN,DRIVER_METHOD_VALIDATION,GEN_EMI_STMT
     }
 
     public enum RequestType{
@@ -12,6 +12,14 @@ public class AllConstantsHelper {
     public enum LoanType{
         HOUSE_LOAN,CAR_LOAN,EDUCATION_LOAN,BUSINESS_LOAN
     }
+
+    public enum FormatType{
+        PDF,XML,HTML
+    }
+
+    public static final FormatType PDF=FormatType.PDF;
+    public static final FormatType XML=FormatType.XML;
+    public static final FormatType HTML=FormatType.HTML;
     public static final RequestType BORROW_LOAN=RequestType.BORROW_LOAN;
     public static final RequestType PAY_INSTALLMENTS=RequestType.PAY_INSTALLMENTS;
     public static final RequestType GET_INFO=RequestType.GET_INFO;

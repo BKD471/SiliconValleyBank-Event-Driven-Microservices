@@ -10,7 +10,8 @@ import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IValidationService {
-    void validator(Loans loans, LoansDto loansDto, AllConstantsHelper.LoansValidateType loansValidateType, Optional<List<Loans>> optionalField) throws ValidationException, PaymentException, InstallmentsException, LoansException;
+    void validator(Loans loans, LoansDto loansDto, AllConstantsHelper.LoansValidateType loansValidateType, Optional<Set<Loans>> optionalField) throws ValidationException, PaymentException, InstallmentsException, LoansException;
 }

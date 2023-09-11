@@ -15,26 +15,26 @@ public class LoansController {
     LoansController(ILoansService loanService){this.loanService=loanService;}
     @PostMapping
     public ResponseEntity<OutPutDto> borrowLoan(@RequestBody LoansDto loansDto) throws TenureException, ValidationException, PaymentException, LoansException, InstallmentsException {
-        OutPutDto processedLoansDto=loanService.transactionsExecutor(loansDto);
+        OutPutDto processedLoansDto=loanService.loansExecutor(loansDto);
         return new ResponseEntity<>(processedLoansDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/pay/emi")
     public ResponseEntity<OutPutDto> payEmi(@RequestBody LoansDto loansDto) throws PaymentException, InstallmentsException, LoansException, TenureException, ValidationException {
-      OutPutDto paidEmi=loanService.transactionsExecutor(loansDto);
+      OutPutDto paidEmi=loanService.loansExecutor(loansDto);
       return new ResponseEntity<>(paidEmi,HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OutPutDto> getAllLoansByCustomerId(@RequestBody final LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException {
-       OutPutDto allLoans=loanService.transactionsExecutor(loansDto);
+    public ResponseEntity<OutPutDto> getAllLoansByCustomerId(@RequestBody final LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
+       OutPutDto allLoans=loanService.loansExecutor(loansDto);
        return new ResponseEntity<>(allLoans,HttpStatus.OK);
     }
 
     @GetMapping("/{id}/{num}")
     public  ResponseEntity<OutPutDto> getInfoAboutLoanByCustomerIdAndLoanNumber
-            (@RequestBody LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException {
-        OutPutDto loan=loanService.transactionsExecutor(loansDto);
+            (@RequestBody LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
+        OutPutDto loan=loanService.loansExecutor(loansDto);
         return new ResponseEntity<>(loan,HttpStatus.OK);
     }
 }
