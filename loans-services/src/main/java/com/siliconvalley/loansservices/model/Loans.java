@@ -1,10 +1,12 @@
 package com.siliconvalley.loansservices.model;
 
+import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -24,11 +26,9 @@ public class Loans extends Audit{
 
     @Column(name = "loan_type",nullable = false)
     @Enumerated(EnumType.STRING)
-    private LoanType loanType;
+    private AllConstantsHelper.LoanType loanType;
 
-    public enum LoanType{
-        HOUSE_LOAN,CAR_LOAN,EDUCATION_LOAN,BUSINESS_LOAN
-    }
+
     @Column(name = "total_loan")
     private BigDecimal totalLoan;
 
@@ -57,4 +57,7 @@ public class Loans extends Audit{
 
     @Column(name="is_loan_active")
     private boolean isLoanActive;
+
+    @Column(name = "last_payment_date")
+    private LocalDateTime lastPayMentBeingMade;
 }

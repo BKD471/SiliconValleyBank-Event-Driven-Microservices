@@ -9,17 +9,23 @@ import com.siliconvalley.loansservices.model.Loans;
 import com.siliconvalley.loansservices.repository.ILoansRepository;
 import com.siliconvalley.loansservices.service.IValidationService;
 import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
+import fansi.Str;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+
+import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.GET_INFO;
+import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.RequestType.DOWNLOAD_EMI_STMT;
+import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.RequestType.GET_ALL_LOANS_FOR_CUSTOMER;
 
 @Slf4j
 @Service("validationServicePrimary")
@@ -83,6 +89,26 @@ public final class ValidationServiceImpl implements IValidationService {
             case GET_INFO_LOAN -> {
                 if (optionalFields.isEmpty())
                     throw new LoansException(LoansException.class, String.format("No such loan exist with id %s", loansDto.getCustomerId()), methodName);
+            }
+            case DRIVER_METHOD_VALIDATION -> {
+                final AllConstantsHelper.RequestType requestType= loansDto.getRequestType();
+                final String customerId=loansDto.getCustomerId();
+                final String loanNumber= loansDto.getLoanNumber();
+                final LocalDate startDate=loansDto.getStartDt();
+                final LocalDate endDate=loansDto.getEndDt();
+
+                if(Objects.isNull(requestType)) throw new LoansException(LoansException.class,"Please provide request Type",methodName);
+                switch (requestType){
+                    case GET_INFO -> {
+                        if(StringUtils.isEmpty(customerId) || StringUtils.isEmpty(loanNumber)) throw new LoansException(LoansException.class,"Please provide customerId or loanNumber",methodName);
+                    }
+                    case GET_ALL_LOANS_FOR_CUSTOMER -> {
+                        if(StringUtils.isEmpty(customerId)) throw new LoansException(LoansException.class,"Please provide customerId",methodName);
+                    }
+                    case DOWNLOAD_EMI_STMT -> {
+                        if(StringUtils.isEmpty(customerId) || Objects.isNull(startDate) || Objects.isNull(endDate)) throw new LoansException(LoansException.class,"Please provide startDate or endDate or customerId",methodName);
+                    }
+                }
             }
         }
         log.debug("<################# validator(Loans, LoansDto," +
