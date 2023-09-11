@@ -1,7 +1,6 @@
 package com.siliconvalley.loansservices.helpers;
 
 import com.siliconvalley.loansservices.dto.LoansDto;
-import com.siliconvalley.loansservices.dto.PaymentDto;
 import com.siliconvalley.loansservices.model.Loans;
 
 import java.math.BigDecimal;
@@ -34,15 +33,15 @@ public class LoansMapperHelper {
                 .build();
     }
 
-    public static PaymentDto mapToPaymentDto(final Loans loans, final BigDecimal payment) {
-        return PaymentDto.builder()
+    public static LoansDto mapToPaymentDto(final Loans loans, final BigDecimal payment) {
+        return LoansDto.builder()
                 .loanNumber(loans.getLoanNumber())
                 .customerId(loans.getCustomerId())
                 .loanType(loans.getLoanType())
                 .totalLoan(loans.getTotalLoan())
                 .paymentAmount(payment)
                 .loanTenureInYears(loans.getLoanTenureInYears())
-                .Rate_Of_Interest(loans.getRate_Of_Interest())
+                .Rate_of_Interest(loans.getRate_Of_Interest())
                 .amountPaid(loans.getAmountPaid())
                 .totalInstallmentsInNumber(loans.getTotalInstallmentsInNumber())
                 .installmentsPaidInNumber(loans.getInstallmentsPaidInNumber())

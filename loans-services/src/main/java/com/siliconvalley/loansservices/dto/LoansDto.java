@@ -1,5 +1,6 @@
 package com.siliconvalley.loansservices.dto;
 
+import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 import com.siliconvalley.loansservices.model.Loans;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class LoansDto implements   Dto{
     private String customerId;
     private LocalDate endDt;
     private LocalDate startDt;
-    private Loans.LoanType loanType;
+    private AllConstantsHelper.LoanType loanType;
     private BigDecimal totalLoan;
     private int loanTenureInYears;
     private BigDecimal paymentAmount;
@@ -28,4 +29,5 @@ public class LoansDto implements   Dto{
     private int installmentsPaidInNumber;
     private int installmentsRemainingInNumber;
     private BigDecimal outstandingAmount;
+    private AllConstantsHelper.RequestType requestType;
 }
