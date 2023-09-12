@@ -31,5 +31,6 @@ public class LoansDto implements   Dto{
     private int installmentsRemainingInNumber;
     private BigDecimal outstandingAmount;
     private AllConstantsHelper.RequestType requestType;
+    private AllConstantsHelper.FormatType formatType;
     private Set<Loans> loansSet;
 }

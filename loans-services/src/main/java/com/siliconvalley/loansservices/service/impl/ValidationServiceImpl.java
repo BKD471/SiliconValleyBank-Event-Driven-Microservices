@@ -69,17 +69,23 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case PAY_EMI -> {
                 if (optionalFields.isEmpty())
-                    throw new ValidationException(ValidationException.class, String.format("No such loans exist with Loan id %s",
+                    throw new ValidationException(ValidationException.class,
+                            String.format("No such loans exist with Loan id %s",
                             loans.getLoanNumber()), methodName);
 
                 boolean isLoanClosed = !loans.isLoanActive();
                 if (isLoanClosed)
-                    throw new InstallmentsException(InstallmentsException.class, String.format("Yr loan with id %s is already closed", loansDto.getLoanNumber()), methodName);
+                    throw new InstallmentsException(InstallmentsException.class,
+                            String.format("Yr loan with id %s is already closed",
+                                    loansDto.getLoanNumber()), methodName);
 
                 BiPredicate<LoansDto,Loans> guardClauseForPaymentAcceptanceCriteria=(dto, entity)-> new BigDecimal(String.valueOf(dto.getPaymentAmount())).compareTo(entity.getEmiAmount())<0
-                        || new BigDecimal(String.valueOf(dto.getPaymentAmount())).divide(entity.getEmiAmount(), RoundingMode.FLOOR).intValue()!=0;
+                        || new BigDecimal(String.valueOf(dto.getPaymentAmount())).divide(entity.getEmiAmount(), RoundingMode.FLOOR).intValue()>0;
+
                 if (guardClauseForPaymentAcceptanceCriteria.test(loansDto,loans))
-                    throw new PaymentException(PaymentException.class, String.format("yr payment %s should be greater equal to or multiple of yr emi %s", loansDto.getPaymentAmount(), loans.getEmiAmount()), methodName);
+                    throw new PaymentException(PaymentException.class,
+                            String.format("yr payment %s should be greater equal to or multiple of yr emi %s",
+                                    loansDto.getPaymentAmount(), loans.getEmiAmount()), methodName);
 
             }
             case GET_ALL_LOAN -> {

@@ -3,9 +3,11 @@ package com.siliconvalley.loansservices.service.impl;
 import com.siliconvalley.loansservices.dto.LoansDto;
 import com.siliconvalley.loansservices.dto.OutPutDto;
 import com.siliconvalley.loansservices.helpers.LoansMapperHelper;
+import com.siliconvalley.loansservices.model.Emi;
 import com.siliconvalley.loansservices.model.Loans;
 import com.siliconvalley.loansservices.repository.ILoansRepository;
 import com.siliconvalley.loansservices.service.ILoansService;
+import com.siliconvalley.loansservices.service.IPdfService;
 import com.siliconvalley.loansservices.service.IValidationService;
 import com.siliconvalley.loansservices.exception.*;
 import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
@@ -16,10 +18,12 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.*;
+import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.LoansValidateType.GEN_EMI_STMT;
 import static com.siliconvalley.loansservices.helpers.LoansMapperHelper.*;
 import static com.siliconvalley.loansservices.helpers.RateOfInterestHelper.getRateOfInterest;
 
@@ -38,15 +42,19 @@ import static com.siliconvalley.loansservices.helpers.RateOfInterestHelper.getRa
 public class LoanServiceImpl implements ILoansService {
     private final IValidationService validationService;
     private final ILoansRepository loansRepository;
+    private final IPdfService pdfService;
 
     /**
      * @param: loansRepository
      * @paramType: LoansRepository
      * @returnType: NA
      **/
-    LoanServiceImpl(final ILoansRepository loansRepository,final IValidationService validationService) {
+    LoanServiceImpl(final ILoansRepository loansRepository,
+                    final IValidationService validationService,
+                    final IPdfService pdfService) {
         this.loansRepository = loansRepository;
         this.validationService = validationService;
+        this.pdfService=pdfService;
     }
 
     /**
@@ -153,6 +161,19 @@ public class LoanServiceImpl implements ILoansService {
         final BigDecimal amountToBePaid=new BigDecimal(String.valueOf(amountPaid)).add(payment);
         currentLoan.setAmountPaid(amountToBePaid);
 
+        final String emiId=UUID.randomUUID().toString();
+        Emi emiss= Emi.builder()
+                   .emiId(emiId)
+                .emiAmount(payment)
+                .amountPaid(amountPaid)
+                .outStandingAMount(outStandingAmountToBePaid)
+                .timeStamp(LocalDateTime.now()).build();
+
+        Set<Emi> setOfEmis=new HashSet<>();
+        setOfEmis.add(emiss);
+        currentLoan.setSetOfEmis(setOfEmis);
+        emiss.setLoans(currentLoan);
+
         final Loans paidEmi = loansRepository.save(currentLoan);
         log.debug("<################### payInstallments(final LoansDto loansDto) ended #############################################>");
         return mapToPaymentDto(paidEmi, payment);
@@ -191,8 +212,19 @@ public class LoanServiceImpl implements ILoansService {
      * @param endDate
      * @return
      */
-    public LoansDto downloadAllEmiStatements(final LocalDate startDate,final LocalDate endDate,final String customerId) {
-        return null;
+    public void downloadAllEmiStatements(final LocalDate startDate,final LocalDate endDate,
+                                         final String customerId,final String loanNumber,
+                                         final FormatType formatType) throws ValidationException, PaymentException, LoansException, InstallmentsException {
+        Optional<Loans> fetchedLoan=loansRepository.findByCustomerIdAndLoanNumber(customerId,loanNumber);
+
+        validationService.validator(fetchedLoan.get(),null,GEN_EMI_STMT,Optional.of(Set.of(fetchedLoan.get())));
+
+        List<Emi> listOfEmis=fetchedLoan.get().getSetOfEmis().stream().toList();
+        LocalDate tempStartDate=startDate;
+        LocalDate tempEndDate=endDate;
+        if(Objects.isNull(tempStartDate)) tempStartDate=listOfEmis.get(0).getTimeStamp().toLocalDate();
+        if(Objects.isNull(tempEndDate)) tempEndDate=LocalDate.now();
+        pdfService.generateStatement(fetchedLoan.get(),listOfEmis,startDate,endDate,formatType);
     }
 
 
@@ -208,6 +240,7 @@ public class LoanServiceImpl implements ILoansService {
 
         final LocalDate startDate=loansDto.getStartDt();
         final LocalDate endDate=loansDto.getEndDt();
+        final FormatType formatType=loansDto.getFormatType();
 
         AllConstantsHelper.RequestType requestType=loansDto.getRequestType();
         switch (requestType){
@@ -230,8 +263,8 @@ public class LoanServiceImpl implements ILoansService {
                return OutPutDto.builder().listOfLoans(loansSet).build();
             }
             case DOWNLOAD_EMI_STMT -> {
-                final LoansDto loansDtos=downloadAllEmiStatements(startDate,endDate,customerId);
-                return OutPutDto.builder().loansDto(loansDtos).build();
+                downloadAllEmiStatements(startDate,endDate,customerId,loanNumber,formatType);
+                return OutPutDto.builder().defaultMessage(String.format("Emi Stmt generated for customer with id %s",customerId)).build();
             }
             default -> throw  new BadApiRequestException(BadApiRequestException.class,"Invalid request type","transactionsExecutor(LoansDto loansDto)");
         }

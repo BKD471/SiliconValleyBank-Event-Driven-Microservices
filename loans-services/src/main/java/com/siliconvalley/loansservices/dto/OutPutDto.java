@@ -15,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class OutPutDto implements Dto{
+    private String defaultMessage;
     private LoansDto loansDto;
     private Set<LoansDto> listOfLoans;
 }
