@@ -4,6 +4,8 @@ import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 import com.siliconvalley.loansservices.model.Loans;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
@@ -14,7 +16,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoansDto implements   Dto{
+public class LoansDto implements   Dto, Serializable {
+    @Serial
+    private static final long serialVersionUID=1234561231234567841L;
     private String loanNumber;
     private String customerId;
     private LocalDate endDt;
