@@ -169,7 +169,7 @@ public class LoanServiceImpl implements ILoansService {
                 .outStandingAMount(outStandingAmountToBePaid)
                 .timeStamp(LocalDateTime.now()).build();
 
-        Set<Emi> setOfEmis=new HashSet<>();
+        Set<Emi> setOfEmis=new LinkedHashSet<>();
         setOfEmis.add(emiss);
         currentLoan.setSetOfEmis(setOfEmis);
         emiss.setLoans(currentLoan);
@@ -198,7 +198,7 @@ public class LoanServiceImpl implements ILoansService {
      * @paramType Long
      * @returnType List<LoansDto>
      */
-    public Set<LoansDto> getAllLoansByCustomerId(final String customerId) throws LoansException, ValidationException, PaymentException, InstallmentsException {
+    private Set<LoansDto> getAllLoansByCustomerId(final String customerId) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         log.debug("<################### getAllLoansByCustomerId(String CustomerId) started #############################################>");
         final Optional<Set<Loans>> allLoans = loansRepository.findAllByCustomerId(customerId);
         validationService.validator(null,LoansDto.builder().customerId(customerId).build(), GET_ALL_LOAN,allLoans);
@@ -212,7 +212,7 @@ public class LoanServiceImpl implements ILoansService {
      * @param endDate
      * @return
      */
-    public void downloadAllEmiStatements(final LocalDate startDate,final LocalDate endDate,
+    private void downloadAllEmiStatements(final LocalDate startDate,final LocalDate endDate,
                                          final String customerId,final String loanNumber,
                                          final FormatType formatType) throws ValidationException, PaymentException, LoansException, InstallmentsException {
         Optional<Loans> fetchedLoan=loansRepository.findByCustomerIdAndLoanNumber(customerId,loanNumber);

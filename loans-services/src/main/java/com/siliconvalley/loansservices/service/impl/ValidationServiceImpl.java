@@ -5,6 +5,7 @@ import com.siliconvalley.loansservices.exception.InstallmentsException;
 import com.siliconvalley.loansservices.exception.LoansException;
 import com.siliconvalley.loansservices.exception.PaymentException;
 import com.siliconvalley.loansservices.exception.ValidationException;
+import com.siliconvalley.loansservices.helpers.TriPredicate;
 import com.siliconvalley.loansservices.model.Loans;
 import com.siliconvalley.loansservices.repository.ILoansRepository;
 import com.siliconvalley.loansservices.service.IValidationService;
@@ -23,6 +24,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.GET_INFO;
 import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.RequestType.DOWNLOAD_EMI_STMT;
@@ -108,17 +111,26 @@ public final class ValidationServiceImpl implements IValidationService {
                 final String loanNumber= loansDto.getLoanNumber();
                 final LocalDate startDate=loansDto.getStartDt();
                 final LocalDate endDate=loansDto.getEndDt();
-
                 if(Objects.isNull(requestType)) throw new LoansException(LoansException.class,"Please provide request Type",methodName);
+
+                Predicate<String> testCustomerIdNotNull=StringUtils::isEmpty;
+                Predicate<LocalDate> testDateNotNull=Objects::isNull;
+
+                BiPredicate<String,String> testGetInfo= (s1,s2)-> testCustomerIdNotNull.test(s1) || StringUtils.isEmpty(s2);
+                TriPredicate<String,LocalDate,LocalDate> testDownloadEmiStmt=(s1,d1,d2)-> testCustomerIdNotNull.test(s1)
+                        || testDateNotNull.test(d1)
+                        || testDateNotNull.test(d2);
+
+
                 switch (requestType){
                     case GET_INFO -> {
-                        if(StringUtils.isEmpty(customerId) || StringUtils.isEmpty(loanNumber)) throw new LoansException(LoansException.class,"Please provide customerId or loanNumber",methodName);
+                        if(testGetInfo.test(customerId,loanNumber)) throw new LoansException(LoansException.class,"Please provide customerId or loanNumber",methodName);
                     }
                     case GET_ALL_LOANS_FOR_CUSTOMER -> {
-                        if(StringUtils.isEmpty(customerId)) throw new LoansException(LoansException.class,"Please provide customerId",methodName);
+                        if(testCustomerIdNotNull.test(customerId)) throw new LoansException(LoansException.class,"Please provide customerId",methodName);
                     }
                     case DOWNLOAD_EMI_STMT -> {
-                        if(StringUtils.isEmpty(customerId) || Objects.isNull(startDate) || Objects.isNull(endDate)) throw new LoansException(LoansException.class,"Please provide startDate or endDate or customerId",methodName);
+                        if(testDownloadEmiStmt.test(customerId,startDate,endDate)) throw new LoansException(LoansException.class,"Please provide startDate or endDate or customerId",methodName);
                     }
                 }
             }
