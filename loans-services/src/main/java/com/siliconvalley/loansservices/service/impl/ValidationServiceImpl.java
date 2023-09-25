@@ -5,12 +5,11 @@ import com.siliconvalley.loansservices.exception.InstallmentsException;
 import com.siliconvalley.loansservices.exception.LoansException;
 import com.siliconvalley.loansservices.exception.PaymentException;
 import com.siliconvalley.loansservices.exception.ValidationException;
-import com.siliconvalley.loansservices.helpers.TriPredicate;
+import com.siliconvalley.loansservices.helpers.TriPredicateCustom;
 import com.siliconvalley.loansservices.model.Loans;
 import com.siliconvalley.loansservices.repository.ILoansRepository;
 import com.siliconvalley.loansservices.service.IValidationService;
 import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
-import fansi.Str;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -18,18 +17,14 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.List;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.GET_INFO;
-import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.RequestType.DOWNLOAD_EMI_STMT;
-import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.RequestType.GET_ALL_LOANS_FOR_CUSTOMER;
+
 
 @Slf4j
 @Service("validationServicePrimary")
@@ -117,7 +112,8 @@ public final class ValidationServiceImpl implements IValidationService {
                 Predicate<LocalDate> testDateNotNull=Objects::isNull;
 
                 BiPredicate<String,String> testGetInfo= (s1,s2)-> testCustomerIdNotNull.test(s1) || StringUtils.isEmpty(s2);
-                TriPredicate<String,LocalDate,LocalDate> testDownloadEmiStmt=(s1,d1,d2)-> testCustomerIdNotNull.test(s1)
+
+                TriPredicateCustom<String,LocalDate,LocalDate> testDownloadEmiStmt=(s1,d1,d2)-> testCustomerIdNotNull.test(s1)
                         || testDateNotNull.test(d1)
                         || testDateNotNull.test(d2);
 

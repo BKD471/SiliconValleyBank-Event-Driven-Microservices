@@ -141,7 +141,8 @@ public class LoanServiceImpl implements ILoansService {
 
         LoansDto processedLoansDto= mapToLoansDto(loan.get());
         processedLoansDto.setPaymentAmount(loansDto.getPaymentAmount());
-        validationService.validator(loan.get(), processedLoansDto, PAY_EMI,Optional.of(Set.of(loan.get())));
+        validationService.validator(loan.get(), processedLoansDto, PAY_EMI,
+                Optional.of(Set.of(loan.get())));
 
         final Loans currentLoan = loan.get();
         final BigDecimal emi = currentLoan.getEmiAmount();
