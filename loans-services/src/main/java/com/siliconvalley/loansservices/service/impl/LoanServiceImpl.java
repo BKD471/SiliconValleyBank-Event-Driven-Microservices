@@ -12,6 +12,7 @@ import com.siliconvalley.loansservices.service.IValidationService;
 import com.siliconvalley.loansservices.exception.*;
 import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 
@@ -37,7 +38,7 @@ import static com.siliconvalley.loansservices.helpers.RateOfInterestHelper.getRa
  * payInstallments,getAllLoansForCustomerById
  * @specializedMethods: None
  */
-@Service
+@Service("loanServicePrimary")
 @Slf4j
 public class LoanServiceImpl implements ILoansService {
     private final IValidationService validationService;
@@ -50,8 +51,8 @@ public class LoanServiceImpl implements ILoansService {
      * @returnType: NA
      **/
     LoanServiceImpl(final ILoansRepository loansRepository,
-                    final IValidationService validationService,
-                    final IPdfService pdfService) {
+                    @Qualifier("validationServicePrimary") final IValidationService validationService,
+                    @Qualifier("jasperPdfService") final IPdfService pdfService) {
         this.loansRepository = loansRepository;
         this.validationService = validationService;
         this.pdfService=pdfService;

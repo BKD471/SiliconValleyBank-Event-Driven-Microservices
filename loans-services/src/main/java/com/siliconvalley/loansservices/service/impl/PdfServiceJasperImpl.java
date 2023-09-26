@@ -12,6 +12,7 @@ import com.siliconvalley.loansservices.repository.ILoansRepository;
 import com.siliconvalley.loansservices.service.IPdfService;
 import com.siliconvalley.loansservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,7 +29,8 @@ public class PdfServiceJasperImpl implements IPdfService {
     private final ILoansRepository loansRepository;
     private final IValidationService validationService;
 
-    PdfServiceJasperImpl(ILoansRepository loansRepository,IValidationService validationService){
+    PdfServiceJasperImpl(ILoansRepository loansRepository,
+                         @Qualifier("validationServicePrimary") IValidationService validationService){
         this.loansRepository=loansRepository;
         this.validationService=validationService;
     }

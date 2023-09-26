@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -9,6 +10,8 @@
         <option value="$PROJECT_DIR$/accounts-services/pom.xml" />
         <option value="$PROJECT_DIR$/bank-data/pom.xml" />
         <option value="$PROJECT_DIR$/Schedulers/pom.xml" />
+        <option value="$PROJECT_DIR$/EmailNotificationServices/pom.xml" />
+        <option value="$PROJECT_DIR$/PaymentServices/pom.xml" />
       </list>
     </option>
   </component>

@@ -4,6 +4,7 @@ import com.siliconvalley.loansservices.dto.LoansDto;
 import com.siliconvalley.loansservices.dto.OutPutDto;
 import com.siliconvalley.loansservices.service.ILoansService;
 import com.siliconvalley.loansservices.exception.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/loans")
 public class LoansController {
     private final ILoansService loanService;
-    LoansController(ILoansService loanService){this.loanService=loanService;}
+    LoansController(@Qualifier("loanServicePrimary") ILoansService loanService){
+        this.loanService=loanService;
+    }
     @PostMapping
     public ResponseEntity<OutPutDto> borrowLoan(@RequestBody LoansDto loansDto) throws TenureException, ValidationException, PaymentException, LoansException, InstallmentsException {
         OutPutDto processedLoansDto=loanService.loansExecutor(loansDto);

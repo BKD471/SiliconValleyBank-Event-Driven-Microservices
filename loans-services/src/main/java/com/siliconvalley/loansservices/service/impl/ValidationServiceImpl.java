@@ -60,8 +60,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 //get credit score
 
                 //get any pre existing running loan
-                final Optional<Set<Loans>> allActiveLoans =
-                        loansRepository.getAllByCustomerIdAndLoanActiveIs(customerId, true);
+                final Optional<Set<Loans>> allActiveLoans =loansRepository.getAllByCustomerIdForActiveOrInactiveLoans(customerId, true);
                 if (allActiveLoans.isPresent() && allActiveLoans.get().size() > MAX_PERMISSIBLE_LOANS)
                     throw new LoansException(LoansException.class, "You already have too much loans active", methodName);
             }
