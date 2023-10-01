@@ -240,7 +240,7 @@ public class LoanServiceImpl implements ILoansService {
      * @return
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exceptiongit.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutPutDto loansExecutor(LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
         validationService.validator(mapToLoans(loansDto),loansDto, DRIVER_METHOD_VALIDATION, Optional.empty());
         final String customerId=loansDto.getCustomerId();
