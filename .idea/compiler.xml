@@ -23,7 +23,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="EmailNotificationServices" options="-parameters" />
       <module name="PaymentServices" options="-parameters" />
-      <module name="Schedulers" options="-parameters" />
+      <module name="Schedulers" options="" />
       <module name="accounts-services" options="-parameters" />
       <module name="card-services" options="-parameters" />
       <module name="customerbase" options="-parameters" />
