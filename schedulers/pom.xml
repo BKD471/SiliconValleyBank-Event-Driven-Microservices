@@ -15,7 +15,7 @@
 	<description>Project for Schedulers</description>
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
+		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>git pus
 	</properties>
 	<dependencies>
 		<dependency>
