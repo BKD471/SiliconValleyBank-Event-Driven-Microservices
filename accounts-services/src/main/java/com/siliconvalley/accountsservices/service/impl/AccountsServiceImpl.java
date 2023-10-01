@@ -33,6 +33,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.FileInputStream;
@@ -508,6 +510,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto postRequestExecutor(final PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException {
         final String methodName = "postRequestExecutor(InputDto) in AccountsServiceImpl";
         //map
@@ -539,6 +542,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto getRequestExecutor(final GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException {
         final String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
 
@@ -620,6 +624,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto putRequestExecutor(final PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException {
         final String methodName = "putRequestExecutor(InputDto) in AccountsServiceImpl";
         final AccountsDto accountsDto = putInputRequestToAccountsDto(putInputRequestDto);
@@ -720,6 +725,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto deleteRequestExecutor(final DeleteInputRequestDto deleteInputRequestDto) throws AccountsException {
         final String methodName = "requestExecutor(InputDto) in AccountsServiceImpl";
         //map
@@ -751,6 +757,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
      * @return
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto deleteCustomer(final DeleteInputRequestDto deleteInputRequestDto) {
         final String methodName = "deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
 

@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
@@ -61,16 +63,20 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
 
             BigDecimal updatedAmount=new BigDecimal(0);
             synchronized (this) {
-                if (CREDIT.equals(transactionType)) {
-                    updatedAmount = new BigDecimal(String.valueOf(previousBalance)).add(amount);
-                    accounts.setBalance(updatedAmount);
-                    transactions.setTransactionType(CREDIT);
-                }
-                if (DEBIT.equals(transactionType)) {
-                    updatedAmount = new BigDecimal(String.valueOf(previousBalance)).subtract(amount);
-                    if (previousBalance.compareTo(amount) >= 0) accounts.setBalance(updatedAmount);
-                    else throw new TransactionException(TransactionException.class, "Insufficient Balance", methodName);
-                    transactions.setTransactionType(DEBIT);
+                switch (transactionType){
+                    case CREDIT -> {
+                        updatedAmount = new BigDecimal(String.valueOf(previousBalance)).add(amount);
+                        log.info("Account with id {} got credited with {}",accounts.getAccountNumber(),amount);
+                        accounts.setBalance(updatedAmount);
+                        transactions.setTransactionType(CREDIT);
+                    }
+                    case DEBIT -> {
+                        updatedAmount = new BigDecimal(String.valueOf(previousBalance)).subtract(amount);
+                        if (previousBalance.compareTo(amount) >= 0) accounts.setBalance(updatedAmount);
+                        else throw new TransactionException(TransactionException.class, "Insufficient Balance", methodName);
+                        log.info("Account with id {} got debited with amount {} ",accounts.getAccountNumber(),amount);
+                        transactions.setTransactionType(DEBIT);
+                    }
                 }
                 transactions.setBalance(updatedAmount);
                 accountsRepository.save(accounts);
@@ -120,6 +126,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
     //only SALARY is credit type, we only add money ,so it's simple need not to add too much complexity
     //so just call payOrDeposit method to process the transaction
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto transactionsExecutor(final TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         final String methodName="transactionsExecutor(TransactionsDto) in TransactionsServiceImpl";
 
@@ -155,6 +162,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public void getPastSixMonthsTransactionsForAnAccount(final String accountNumber, BankStatementRequestDto.FORMAT_TYPE formatType) throws AccountsException, JRException, FileNotFoundException {
         final Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
 

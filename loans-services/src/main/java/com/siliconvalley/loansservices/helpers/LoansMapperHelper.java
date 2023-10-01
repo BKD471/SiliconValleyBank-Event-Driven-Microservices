@@ -20,6 +20,7 @@ public class LoansMapperHelper {
                 .loanNumber(loans.getLoanNumber())
                 .customerId(loans.getCustomerId())
                 .loanType(loans.getLoanType())
+                .totalLoan(loans.getTotalLoan())
                 .amountPaid(loans.getAmountPaid())
                 .outstandingAmount(loans.getOutstandingAmount())
                 .loanTenureInYears(loans.getLoanTenureInYears())

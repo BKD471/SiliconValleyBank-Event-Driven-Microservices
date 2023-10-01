@@ -14,6 +14,8 @@ import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.math.BigDecimal;
@@ -39,6 +41,7 @@ import static com.siliconvalley.loansservices.helpers.RateOfInterestHelper.getRa
  * @specializedMethods: None
  */
 @Service("loanServicePrimary")
+@Transactional
 @Slf4j
 public class LoanServiceImpl implements ILoansService {
     private final IValidationService validationService;
@@ -59,43 +62,22 @@ public class LoanServiceImpl implements ILoansService {
     }
 
     /**
-     * Method to calculate monthly emi
-     */
-    private BigDecimal calculateEmi(final BigDecimal loanAmount, final int tenure) throws TenureException {
-        log.debug("<#####################calculateEmi(final BigDecimal, final int) in LoanServiceImpl started ###########################################################" +
-                "###");
-        final String methodName = "calculateEmi(BigDecimal,int) in LoanServiceImpl";
-        final Double rate_of_interest = getRateOfInterest(tenure);
-        if (Objects.isNull(rate_of_interest)) throw new TenureException(TenureException.class,
-                String.format("Tenure %s is not available", tenure), methodName);
-
-        final BigDecimal magic_co_eff = BigDecimal.valueOf(((rate_of_interest / 100) / 12));
-        final BigDecimal interest =  new BigDecimal(String.valueOf(loanAmount)).multiply(magic_co_eff);
-
-        final BigDecimal numerator = new BigDecimal(String.valueOf(new BigDecimal(String.valueOf(magic_co_eff)).add(BigDecimal.valueOf(1)))).pow(tenure*12);
-        final BigDecimal denominator = new BigDecimal(String.valueOf(numerator)).subtract(BigDecimal.valueOf(1));
-        final BigDecimal emi_co_eff = new BigDecimal(String.valueOf(numerator)).divide(denominator,RoundingMode.FLOOR);
-        log.debug("<##################### calculateEmi(final BigDecimal, final int) in LoanServiceImpl ended ###########################################################" +
-                "###");
-        return new BigDecimal(String.valueOf(interest)) .multiply( emi_co_eff);
-    }
-
-    /**
      * Method to process critical information like  no of installments,
      * Maturity Date ,emi amount
      */
     private Loans processLoanInformationAndCreateLoan(final Loans loans) throws TenureException {
         log.debug("<############ processLoanInformationAndCreateLoan(final Loans) started ###############" +
                 "#########################>");
-        final Loans loan = loansRepository.save(loans);
         final String loanNumber = UUID.randomUUID().toString();
+        loans.setLoanNumber(loanNumber);
+        final Loans loan = loansRepository.save(loans);
+
         final int tenure = loan.getLoanTenureInYears();
         final LocalDate endDate = loan.getStartDate().plusYears(tenure);
         final BigDecimal loanAmount = loan.getTotalLoan();
         final BigDecimal emiAmount = calculateEmi(loanAmount, tenure);
         final double rate_of_interest = getRateOfInterest(tenure);
 
-        loan.setLoanNumber(loanNumber);
         loan.setLoanTenureInYears(tenure);
         loan.setEndDt(endDate);
         loan.setEmiAmount(emiAmount);
@@ -118,7 +100,7 @@ public class LoanServiceImpl implements ILoansService {
      */
     private LoansDto borrowLoan(final LoansDto loansDto) throws TenureException, ValidationException, PaymentException, InstallmentsException, LoansException {
         log.debug("<################### borrowLoan(final LoansDto loansDto) started #############################################>");
-        final Loans loan = LoansMapperHelper.mapToLoans(loansDto);
+        final Loans loan = mapToLoans(loansDto);
         validationService.validator(loan, loansDto, ISSUE_LOAN, Optional.empty());
         final Loans processedLoan = processLoanInformationAndCreateLoan(loan);
         final Loans savedLoan = loansRepository.save(processedLoan);
@@ -181,6 +163,29 @@ public class LoanServiceImpl implements ILoansService {
         return mapToPaymentDto(paidEmi, payment);
     }
 
+
+    /**
+     * Method to calculate monthly emi
+     */
+    private BigDecimal calculateEmi(final BigDecimal loanAmount, final int tenure) throws TenureException {
+        log.debug("<#####################calculateEmi(final BigDecimal, final int) in LoanServiceImpl started ###########################################################" +
+                "###");
+        final String methodName = "calculateEmi(BigDecimal,int) in LoanServiceImpl";
+        final Double rate_of_interest = getRateOfInterest(tenure);
+        if (Objects.isNull(rate_of_interest)) throw new TenureException(TenureException.class,
+                String.format("Tenure %s is not available", tenure), methodName);
+
+        final BigDecimal magic_co_eff = BigDecimal.valueOf(((rate_of_interest / 100) / 12));
+        final BigDecimal interest =  new BigDecimal(String.valueOf(loanAmount)).multiply(magic_co_eff);
+
+        final BigDecimal numerator = new BigDecimal(String.valueOf(new BigDecimal(String.valueOf(magic_co_eff)).add(BigDecimal.valueOf(1)))).pow(tenure*12);
+        final BigDecimal denominator = new BigDecimal(String.valueOf(numerator)).subtract(BigDecimal.valueOf(1));
+        final BigDecimal emi_co_eff = new BigDecimal(String.valueOf(numerator)).divide(denominator,RoundingMode.FLOOR);
+        log.debug("<##################### calculateEmi(final BigDecimal, final int) in LoanServiceImpl ended ###########################################################" +
+                "###");
+        return new BigDecimal(String.valueOf(interest)) .multiply( emi_co_eff);
+    }
+
     /**
      * @param customerId
      * @paramType Long
@@ -235,6 +240,7 @@ public class LoanServiceImpl implements ILoansService {
      * @return
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutPutDto loansExecutor(LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
         validationService.validator(mapToLoans(loansDto),loansDto, DRIVER_METHOD_VALIDATION, Optional.empty());
         final String customerId=loansDto.getCustomerId();
@@ -248,7 +254,10 @@ public class LoanServiceImpl implements ILoansService {
         switch (requestType){
             case BORROW_LOAN -> {
                 final LoansDto responseDto=borrowLoan(loansDto);
-                return OutPutDto.builder().loansDto(responseDto).build();
+                return OutPutDto.builder()
+                        .defaultMessage(String.format("Loan of %s has been granted for customer: %s",responseDto.getTotalLoan(),
+                                responseDto.getCustomerId()))
+                        .loansDto(responseDto).build();
             }
             case PAY_INSTALLMENTS -> {
                final LoansDto responseDto=payInstallments(loansDto);

@@ -30,6 +30,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
@@ -296,6 +298,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto postRequestBenExecutor(final PostInputRequestDto postInputDto) throws BeneficiaryException, AccountsException {
         final String methodName = "postRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapInputDtoToBenDto(postInputDto);
@@ -326,6 +329,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto putRequestBenExecutor(final PutInputRequestDto putInputRequestDto) throws BeneficiaryException, AccountsException {
         final String methodName = "putRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapPutInputRequestDtoToBenDto(putInputRequestDto);
@@ -353,6 +357,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto getRequestBenExecutor(final GetInputRequestDto getInputRequestDto) throws AccountsException, BeneficiaryException, BadApiRequestException {
         final String methodName = "getRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapGetRequestInputDtoToBenDto(getInputRequestDto);
@@ -414,6 +419,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutputDto deleteRequestBenExecutor(final DeleteInputRequestDto deleteInputRequestDto) throws BeneficiaryException, AccountsException {
         final String methodName = "deleteRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapDeleteInputRequestDtoToBenDto(deleteInputRequestDto);

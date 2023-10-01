@@ -1,6 +1,9 @@
 package com.siliconvalley.loansservices.helpers;
 
 import com.siliconvalley.loansservices.exception.TenureException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.HashMap;
 import java.util.Map;
