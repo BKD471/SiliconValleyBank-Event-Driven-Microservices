@@ -66,7 +66,6 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 switch (transactionType){
                     case CREDIT -> {
                         updatedAmount = new BigDecimal(String.valueOf(previousBalance)).add(amount);
-                        log.info("Account with id {} got credited with {}",accounts.getAccountNumber(),amount);
                         accounts.setBalance(updatedAmount);
                         transactions.setTransactionType(CREDIT);
                     }
@@ -74,10 +73,12 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                         updatedAmount = new BigDecimal(String.valueOf(previousBalance)).subtract(amount);
                         if (previousBalance.compareTo(amount) >= 0) accounts.setBalance(updatedAmount);
                         else throw new TransactionException(TransactionException.class, "Insufficient Balance", methodName);
-                        log.info("Account with id {} got debited with amount {} ",accounts.getAccountNumber(),amount);
                         transactions.setTransactionType(DEBIT);
                     }
                 }
+                log.info("#### Account with id {} got {} with amount {} #####################",accounts.getAccountNumber(),
+                        transactionType,amount);
+                log.info("Current Balance is {}",updatedAmount);
                 transactions.setBalance(updatedAmount);
                 accountsRepository.save(accounts);
             }
