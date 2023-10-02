@@ -68,8 +68,8 @@ public final class ValidationServiceImpl implements IValidationService {
             case GET_ALL_CARDS -> {
                 location.append("INSIDE GET_ALL_CARDS");
                 location.trimToSize();
-                final boolean isCustomerExist = cardsRepository.findByCustomerIdExists(customerId);
-                if (!isCustomerExist) throw new CardsException(BadApiRequestException.class
+                Optional<List<Cards>> cardsList= cardsRepository.findAllByCustomerId(customerId);
+                if (cardsList.isEmpty()) throw new CardsException(BadApiRequestException.class
                         , String.format("No such customers exists with this id %s", customerId),
                         String.format("%s of %s",location,methodName));
             }

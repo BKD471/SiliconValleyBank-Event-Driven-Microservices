@@ -10,6 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ICardsRepository extends JpaRepository<Cards,String> {
     Optional<List<Cards>> findAllByCustomerId(String customerId);
-    boolean findByCustomerIdExists(String customerId);
     Optional<Cards> findByCardNumber(String cardNumber);
 }

@@ -8,22 +8,24 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="accounts-services" />
+        <module name="LoadBalancer" />
         <module name="PaymentServices" />
         <module name="card-services" />
-        <module name="Schedulers" />
         <module name="EmailNotificationServices" />
         <module name="loans-services" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="customerbase" target="19" />
+      <module name="Schedulers" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="EmailNotificationServices" options="-parameters" />
+      <module name="LoadBalancer" options="-parameters" />
       <module name="PaymentServices" options="-parameters" />
-      <module name="Schedulers" options="" />
+      <module name="Schedulers" options="-parameters" />
       <module name="accounts-services" options="-parameters" />
       <module name="card-services" options="-parameters" />
       <module name="customerbase" options="-parameters" />
