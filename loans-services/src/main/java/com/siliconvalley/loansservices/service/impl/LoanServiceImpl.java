@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -171,19 +172,21 @@ public class LoanServiceImpl implements ILoansService {
         log.debug("<#####################calculateEmi(final BigDecimal, final int) in LoanServiceImpl started ###########################################################" +
                 "###");
         final String methodName = "calculateEmi(BigDecimal,int) in LoanServiceImpl";
+        final MathContext mc=MathContext.DECIMAL128;
         final Double rate_of_interest = getRateOfInterest(tenure);
         if (Objects.isNull(rate_of_interest)) throw new TenureException(TenureException.class,
                 String.format("Tenure %s is not available", tenure), methodName);
 
         final BigDecimal magic_co_eff = BigDecimal.valueOf(((rate_of_interest / 100) / 12));
-        final BigDecimal interest =  new BigDecimal(String.valueOf(loanAmount)).multiply(magic_co_eff);
+        final BigDecimal interest =  new BigDecimal(String.valueOf(loanAmount),mc).multiply(magic_co_eff,mc);
 
-        final BigDecimal numerator = new BigDecimal(String.valueOf(new BigDecimal(String.valueOf(magic_co_eff)).add(BigDecimal.valueOf(1)))).pow(tenure*12);
-        final BigDecimal denominator = new BigDecimal(String.valueOf(numerator)).subtract(BigDecimal.valueOf(1));
-        final BigDecimal emi_co_eff = new BigDecimal(String.valueOf(numerator)).divide(denominator,RoundingMode.FLOOR);
+        final BigDecimal numerator = new BigDecimal(String.valueOf(new BigDecimal(String.valueOf(magic_co_eff),mc).add(BigDecimal.valueOf(1),mc))).pow(tenure*12);
+        final BigDecimal denominator = new BigDecimal(String.valueOf(numerator),mc).subtract(BigDecimal.valueOf(1),mc);
+        final BigDecimal emi_co_eff = new BigDecimal(String.valueOf(numerator),mc).divide(denominator,RoundingMode.HALF_DOWN);
         log.debug("<##################### calculateEmi(final BigDecimal, final int) in LoanServiceImpl ended ###########################################################" +
                 "###");
-        return new BigDecimal(String.valueOf(interest)) .multiply( emi_co_eff);
+        final BigDecimal emiAmount=new BigDecimal(String.valueOf(interest),mc) .multiply( emi_co_eff,mc);
+        return emiAmount.setScale(2,RoundingMode.HALF_DOWN);
     }
 
     /**
