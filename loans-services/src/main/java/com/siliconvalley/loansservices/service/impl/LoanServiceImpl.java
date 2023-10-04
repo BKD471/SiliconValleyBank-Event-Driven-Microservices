@@ -1,5 +1,6 @@
 package com.siliconvalley.loansservices.service.impl;
 
+import com.siliconvalley.loansservices.dto.EmiDto;
 import com.siliconvalley.loansservices.dto.LoansDto;
 import com.siliconvalley.loansservices.dto.OutPutDto;
 import com.siliconvalley.loansservices.helpers.LoansMapperHelper;
@@ -110,12 +111,12 @@ public class LoanServiceImpl implements ILoansService {
     }
 
     /**
-     * @param loansDto
-     * @paramType PaymentDto
-     * @returnType PaymentDto
+     * @paramType LoansDto
+     * @returnType LoansDto
      */
-    private LoansDto payInstallments(final LoansDto loansDto) throws LoansException, PaymentException, InstallmentsException, ValidationException {
+    private EmiDto payInstallments(final LoansDto loansDto) throws LoansException, PaymentException, InstallmentsException, ValidationException {
         log.debug("<################### payInstallments(final LoansDto loansDto) started #############################################>");
+        MathContext mc=MathContext.DECIMAL128;
         final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber
                 (loansDto.getCustomerId(), loansDto.getLoanNumber());
 
@@ -134,16 +135,17 @@ public class LoanServiceImpl implements ILoansService {
         final int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
         final BigDecimal payment = processedLoansDto.getPaymentAmount();
 
-        final int NoOfInstallments =new BigDecimal(String.valueOf(payment)).divide(emi, RoundingMode.CEILING).intValue();
+        final int NoOfInstallments =new BigDecimal(String.valueOf(payment),mc)
+                .divide(emi,RoundingMode.UNNECESSARY).intValue();
         currentLoan.setInstallmentsPaidInNumber(NoOfInstallments + paidInstallments);
         currentLoan.setInstallmentsRemainingInNumber(remainingInstallments - NoOfInstallments);
         if(currentLoan.getInstallmentsRemainingInNumber()==0) currentLoan.setLoanActive(false);
 
         final BigDecimal outstandingAmount = currentLoan.getOutstandingAmount();
         final BigDecimal amountPaid = currentLoan.getAmountPaid();
-        final BigDecimal outStandingAmountToBePaid=new BigDecimal(String.valueOf(outstandingAmount)).subtract(payment);
+        final BigDecimal outStandingAmountToBePaid=new BigDecimal(String.valueOf(outstandingAmount),mc).subtract(payment);
         currentLoan.setOutstandingAmount(outStandingAmountToBePaid);
-        final BigDecimal amountToBePaid=new BigDecimal(String.valueOf(amountPaid)).add(payment);
+        final BigDecimal amountToBePaid=new BigDecimal(String.valueOf(amountPaid),mc).add(payment);
         currentLoan.setAmountPaid(amountToBePaid);
 
         final String emiId=UUID.randomUUID().toString();
@@ -161,7 +163,7 @@ public class LoanServiceImpl implements ILoansService {
 
         final Loans paidEmi = loansRepository.save(currentLoan);
         log.debug("<################### payInstallments(final LoansDto loansDto) ended #############################################>");
-        return mapToPaymentDto(paidEmi, payment);
+        return mapToEmiDto(paidEmi,payment);
     }
 
 
@@ -263,8 +265,8 @@ public class LoanServiceImpl implements ILoansService {
                         .loansDto(responseDto).build();
             }
             case PAY_INSTALLMENTS -> {
-               final LoansDto responseDto=payInstallments(loansDto);
-               return OutPutDto.builder().loansDto(responseDto).build();
+               final EmiDto responseDto=payInstallments(loansDto);
+               return OutPutDto.builder().emiDto(responseDto).build();
             }
             case GET_INFO -> {
                 validationService.validator(mapToLoans(loansDto),loansDto,

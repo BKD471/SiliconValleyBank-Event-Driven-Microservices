@@ -21,5 +21,6 @@ public class OutPutDto implements Dto, Serializable {
     private static final long serialVersionUID=7894567891234567841L;
     private String defaultMessage;
     private LoansDto loansDto;
+    private EmiDto emiDto;
     private Set<LoansDto> listOfLoans;
 }
