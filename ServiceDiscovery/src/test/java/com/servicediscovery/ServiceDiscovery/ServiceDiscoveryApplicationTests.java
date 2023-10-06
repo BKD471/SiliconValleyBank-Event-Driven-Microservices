@@ -1,10 +1,10 @@
-package com.loadbalancer.LoadBalancer;
+package com.servicediscovery.ServiceDiscovery;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LoadBalancerApplicationTests {
+class ServiceDiscoveryApplicationTests {
 
 	@Test
 	void contextLoads() {
