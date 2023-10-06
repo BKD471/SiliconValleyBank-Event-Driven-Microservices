@@ -13,7 +13,13 @@
         <option value="$PROJECT_DIR$/EmailNotificationServices/pom.xml" />
         <option value="$PROJECT_DIR$/PaymentServices/pom.xml" />
         <option value="$PROJECT_DIR$/LoadBalancer/pom.xml" />
+        <option value="$PROJECT_DIR$/../ms security/ServiceRegistry/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/ServiceDiscovery/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="NullableNotNullManager">

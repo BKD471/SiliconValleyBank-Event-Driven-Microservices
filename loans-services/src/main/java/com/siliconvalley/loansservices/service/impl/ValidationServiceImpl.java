@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
@@ -48,7 +49,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 "##################################" +
                 "#######>");
         final String methodName = "validator(Loans,LoansDto,LoansValidateType) in ValidationServiceImpl";
-
+        final MathContext mc=MathContext.DECIMAL128;
         if (Objects.isNull(loansValidateType)) throw new ValidationException(LoansException.class
                 , "Please provide a validation type", methodName);
         switch (loansValidateType) {
@@ -76,8 +77,11 @@ public final class ValidationServiceImpl implements IValidationService {
                             String.format("Yr loan with id %s is already closed",
                                     loansDto.getLoanNumber()), methodName);
 
-                BiPredicate<LoansDto,Loans> guardClauseForPaymentAcceptanceCriteria=(dto, entity)-> new BigDecimal(String.valueOf(dto.getPaymentAmount())).compareTo(entity.getEmiAmount())<0
-                        || new BigDecimal(String.valueOf(dto.getPaymentAmount())).divide(entity.getEmiAmount(), RoundingMode.FLOOR).intValue()>0;
+                BiPredicate<LoansDto,Loans> guardClauseForPaymentAcceptanceCriteria=(dto, entity)->
+                        new BigDecimal(String.valueOf(dto.getPaymentAmount()),mc).compareTo(entity.getEmiAmount())<0
+                        || new BigDecimal(String.valueOf(dto.getPaymentAmount()),mc)
+                                .divide(entity.getEmiAmount(), RoundingMode.UNNECESSARY)
+                                .remainder(BigDecimal.valueOf(1),mc).compareTo(BigDecimal.ZERO)!=0;
 
                 if (guardClauseForPaymentAcceptanceCriteria.test(loansDto,loans))
                     throw new PaymentException(PaymentException.class,

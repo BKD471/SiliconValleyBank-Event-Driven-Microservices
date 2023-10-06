@@ -1,5 +1,6 @@
 package com.siliconvalley.loansservices.helpers;
 
+import com.siliconvalley.loansservices.dto.EmiDto;
 import com.siliconvalley.loansservices.dto.LoansDto;
 import com.siliconvalley.loansservices.model.Loans;
 
@@ -34,20 +35,21 @@ public class LoansMapperHelper {
                 .build();
     }
 
-    public static LoansDto mapToPaymentDto(final Loans loans, final BigDecimal payment) {
-        return LoansDto.builder()
+    public static EmiDto mapToEmiDto(final Loans loans,final BigDecimal paymentAmount ){
+        return EmiDto.builder()
                 .loanNumber(loans.getLoanNumber())
                 .customerId(loans.getCustomerId())
                 .loanType(loans.getLoanType())
                 .totalLoan(loans.getTotalLoan())
-                .paymentAmount(payment)
                 .loanTenureInYears(loans.getLoanTenureInYears())
-                .Rate_of_Interest(loans.getRate_Of_Interest())
+                .paymentAmount(paymentAmount)
                 .amountPaid(loans.getAmountPaid())
+                .emiAmount(loans.getEmiAmount())
                 .totalInstallmentsInNumber(loans.getTotalInstallmentsInNumber())
                 .installmentsPaidInNumber(loans.getInstallmentsPaidInNumber())
                 .installmentsRemainingInNumber(loans.getInstallmentsRemainingInNumber())
                 .outstandingAmount(loans.getOutstandingAmount())
+                .rate_of_Interest(loans.getRate_Of_Interest())
                 .build();
     }
 }
