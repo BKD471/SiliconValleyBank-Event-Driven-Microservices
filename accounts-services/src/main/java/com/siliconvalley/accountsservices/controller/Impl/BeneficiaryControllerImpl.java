@@ -24,15 +24,16 @@ import java.util.Properties;
 @Slf4j
 @RestController
 public class BeneficiaryControllerImpl implements IBeneficiaryController {
-    private static final String PATH_TO_PROPERTIES="accounts-services/src/main/java/com/siliconvalley/accountsservices/controller/properties/BeneficiaryController.properties";
+    private static final String PATH_TO_PROPERTIES="accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/controller_properties/BeneficiaryController.properties";
     private final IBeneficiaryService beneficiaryService;
     private static final Properties properties=new Properties();
+    private static final String CLASS_NAME=BeneficiaryControllerImpl.class.getSimpleName();
 
     static {
         try {
             properties.load(new FileInputStream(PATH_TO_PROPERTIES));
         }catch (IOException e){
-            log.error("Error while reading properties file");
+            log.error("Error while reading {}'s properties file {}",CLASS_NAME,e.getMessage());
         }
     }
 

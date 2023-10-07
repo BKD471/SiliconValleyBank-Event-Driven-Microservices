@@ -37,18 +37,18 @@ import static com.siliconvalley.accountsservices.helpers.MapperHelper.dateParser
 @Slf4j
 @RestController
 public class TransactionsControllerImpl implements ITransactionsController {
-    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/controller/properties/TransactionsController.properties";
+    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/controller_properties/TransactionsController.properties";
     private static final Properties properties=new Properties();
     private final ITransactionsService transactionsService;
     private final IPdfService pdfService;
     private final String fileBasePath;
     private final String fileName;
-
+    private static final String CLASS_NAME=AccountsControllerImpl.class.getSimpleName();
     static {
         try {
           properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
         }catch (IOException e){
-            log.error("Error while reading properties file");
+            log.error("Error while reading {}'s properties file {}",CLASS_NAME,e.getMessage());
         }
     }
 

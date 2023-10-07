@@ -111,13 +111,4 @@ public class AllConstantHelpers {
 
     public static final ValidateTransactionType GET_PAST_SIX_MONTHS_OF_TRANSACTION=ValidateTransactionType.GET_PAST_SIX_MONTHS_TRANSACTIONS;
     public static final ValidateTransactionType GEN_BANK_STATEMENT=ValidateTransactionType.GEN_BANK_STATEMENT;
-
-    //company specific data
-    public static final String companyName="Silicon Valley Corporation Pvt Ltd";
-    public static final String city="Seattle";
-    public static final String street="562 1ST Ave 400";
-    public static final String ZipCode="98104-3816";
-    public static final String faxNumber="+1-907-555-1234";
-    public static final String State="Washington";
-    public static final String country="United States";
 }

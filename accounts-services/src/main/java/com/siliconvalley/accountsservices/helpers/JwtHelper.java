@@ -21,16 +21,17 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Slf4j
 @Component
 public class JwtHelper {
-    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/helpers/properties/JwtHelper.properties";
+    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/helper_properties/JwtHelper.properties";
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
     private final String SECRET;
+    private static final String CLASS_NAME=JwtHelper.class.getSimpleName();
     private static final Properties properties=new Properties();
 
     static {
         try {
             properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
         }catch (IOException e){
-            log.error("Error while reading properties file");
+            log.error("Error while reading {}'s properties file {}",CLASS_NAME,e.getMessage());
         }
 
     }

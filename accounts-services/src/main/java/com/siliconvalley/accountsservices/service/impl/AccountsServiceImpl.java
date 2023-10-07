@@ -78,7 +78,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Slf4j
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractService implements IAccountsService {
-    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/service/properties/AccountsService.properties";
+    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/service_properties/AccountsService.properties";
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;
@@ -89,12 +89,13 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private final String NORMAL_ROLE_ID;
     private final String IMAGE_PATH;
     private  static  final Properties properties=new Properties();
+    private static final String CLASS_NAME=AccountsServiceImpl.class.getSimpleName();
 
     static {
         try {
             properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
         }catch (IOException e){
-            log.error("Error while reading properties file");
+            log.error("Error while reading {}'s properties file {}",CLASS_NAME,e.getMessage());
         }
     }
 

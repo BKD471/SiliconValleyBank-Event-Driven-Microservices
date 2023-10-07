@@ -38,7 +38,7 @@ import static java.util.Objects.isNull;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-    private static final String PATH_OF_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/controller/properties/AuthController.properties";
+    private static final String PATH_OF_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/controller_properties/AuthController.properties";
     private final AuthenticationManager manager;
     private final UserDetailsService userDetailsService;
     private final ICustomerRepository customerRepository;
@@ -46,13 +46,14 @@ public class AuthController {
     private final ModelMapper modelMapper;
     private final String googleClientId;
     private final String newPassword;
+    private static final String CLASS_NAME=AuthController.class.getSimpleName();
     private static final Properties properties=new Properties();
 
     static {
         try {
             properties.load(new FileInputStream(PATH_OF_PROPERTIES_FILE));
         } catch (IOException e) {
-            log.error("Error while reading properties file");
+            log.error("Error while reading {}'s properties file {}",CLASS_NAME,e.getMessage());
         }
     }
 

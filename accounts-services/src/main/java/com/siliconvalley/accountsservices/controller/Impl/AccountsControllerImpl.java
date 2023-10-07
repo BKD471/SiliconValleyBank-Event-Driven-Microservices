@@ -37,18 +37,19 @@ import java.util.Properties;
 @Slf4j
 @RestController
 public class AccountsControllerImpl implements IAccountsController {
-    private static final String PATH_OF_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/controller/properties/AccountsController.properties";
+    private static final String PATH_OF_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/controller_properties/AccountsController.properties";
     private final IAccountsService accountsService;
     private final ICustomerRepository customerRepository;
     private final IImageService fIleService;
     private final String IMAGE_PATH;
+    private static final String CLASS_NAME=AccountsControllerImpl.class.getSimpleName();
     private static final Properties properties=new Properties();
 
     static {
         try {
             properties.load(new FileInputStream(PATH_OF_PROPERTIES_FILE));
         } catch (IOException e) {
-            log.error("Error while reading properties file");
+            log.error("Error while reading {}'s properties file {}",CLASS_NAME,e.getMessage());
         }
     }
 

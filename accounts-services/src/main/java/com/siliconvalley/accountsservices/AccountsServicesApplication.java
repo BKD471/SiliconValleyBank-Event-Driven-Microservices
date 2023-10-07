@@ -18,8 +18,9 @@ public class AccountsServicesApplication implements  CommandLineRunner{
 	public static void main(String[] args) {
 		SpringApplication.run(AccountsServicesApplication.class, args);
 	}
-	private static final String PATH_TO_PROPERTIES_FILE="C:\\Users\\Bhaskar\\Desktop\\Spring\\Banks Services\\accounts-services\\src\\main\\java\\com\\siliconvalley\\accountsservices\\AccountsServiceApplication.properties";
+	private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/app_properties/AccountsServiceApplication.properties";
 	private static final Properties properties=new Properties();
+	private static final String CLASS_NAME=AccountsServicesApplication.class.getSimpleName();
 	private final String role_normal_id;
 	private final String role_admin_id;
 	@Autowired
@@ -30,7 +31,7 @@ public class AccountsServicesApplication implements  CommandLineRunner{
 		try{
 			properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
 		}catch (IOException e){
-			log.error("Error while reading properties file");
+			log.error("Error while reading {}'s properties file {}",CLASS_NAME,e.getMessage());
 		}
 	}
 	AccountsServicesApplication(){

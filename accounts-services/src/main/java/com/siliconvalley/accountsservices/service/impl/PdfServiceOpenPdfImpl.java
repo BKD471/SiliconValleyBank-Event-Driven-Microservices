@@ -4,24 +4,28 @@ import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.BankStatement;
 import com.siliconvalley.accountsservices.model.Transactions;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractPdfService;
-import com.siliconvalley.accountsservices.service.AbstractService;
-import com.siliconvalley.accountsservices.service.IPdfService;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jasperreports.engine.JRException;
 import org.springframework.stereotype.Service;
 import java.util.Set;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.List;
 
+/**
+ * NOTE TO CONTRIBUTORS
+ * This class is unfinished and incomplete , currently our project is using
+ * the japser implementation of pdf service .
+ * Open pdf is yet to be done, i don't have time for now to figure out its working as
+ * i am new to open pdf.
+ * I will be obliged if you can do it for me
+ * THANK YOU :)
+ * */
 @Slf4j
 @Service("OpenPdfImplementation")
 public class PdfServiceOpenPdfImpl extends AbstractPdfService{
