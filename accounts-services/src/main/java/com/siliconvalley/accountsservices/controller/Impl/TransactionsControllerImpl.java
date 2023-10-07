@@ -11,8 +11,8 @@ import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
-import org.scalactic.Bad;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -26,7 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -37,27 +36,24 @@ import static com.siliconvalley.accountsservices.helpers.MapperHelper.dateParser
 @Slf4j
 @RestController
 public class TransactionsControllerImpl implements ITransactionsController {
-    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/controller_properties/TransactionsController.properties";
-    private static final Properties properties=new Properties();
     private final ITransactionsService transactionsService;
     private final IPdfService pdfService;
     private final String fileBasePath;
     private final String fileName;
-    private static final String CLASS_NAME=AccountsControllerImpl.class.getSimpleName();
-    static {
-        try {
-          properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
-        }catch (IOException e){
-            log.error("Error while reading {}'s properties file {}",CLASS_NAME,e.getMessage());
-        }
-    }
+
 
     TransactionsControllerImpl(@Qualifier("transactionsServicePrimary") ITransactionsService transactionsService,
-                               @Qualifier("jasperPdfService") IPdfService pdfService) {
+                               @Qualifier("jasperPdfService") IPdfService pdfService,@Value("${path.controller.transactions}") String path_transaction_controller_properties) {
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(path_transaction_controller_properties));
+        }catch (IOException e){
+            log.error("Error while reading {}'s properties file {}",AccountsControllerImpl.class.getSimpleName(),e.getMessage());
+        }
         this.transactionsService = transactionsService;
         this.pdfService=pdfService;
-        this.fileBasePath=properties.getProperty("fileBasePath");
-        this.fileName=properties.getProperty("fileName");
+        this.fileBasePath= properties.getProperty("fileBasePath");
+        this.fileName= properties.getProperty("fileName");
     }
 
     /**
