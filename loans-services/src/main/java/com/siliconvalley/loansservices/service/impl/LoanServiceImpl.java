@@ -117,19 +117,18 @@ public class LoanServiceImpl implements ILoansService {
     private EmiDto payInstallments(final LoansDto loansDto) throws LoansException, PaymentException, InstallmentsException, ValidationException {
         log.debug("<################### payInstallments(final LoansDto loansDto) started #############################################>");
         MathContext mc=MathContext.DECIMAL128;
-        final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber
-                (loansDto.getCustomerId(), loansDto.getLoanNumber());
-
-        if(loan.isEmpty()) throw new LoansException(LoansException.class,
+        final Loans loan = loansRepository.findByCustomerIdAndLoanNumber
+                (loansDto.getCustomerId(), loansDto.getLoanNumber()).orElseThrow(() -> new LoansException(LoansException.class,
                 String.format("No loans been found with customerId %s & loanNumber %s"
-                ,loansDto.getCustomerId(),loansDto.getLoanNumber()),"payInstallments(LoansDto)");
+                        , loansDto.getCustomerId(), loansDto.getLoanNumber()), "payInstallments(LoansDto)"));
 
-        LoansDto processedLoansDto= mapToLoansDto(loan.get());
+
+        LoansDto processedLoansDto= mapToLoansDto(loan);
         processedLoansDto.setPaymentAmount(loansDto.getPaymentAmount());
-        validationService.validator(loan.get(), processedLoansDto, PAY_EMI,
-                Optional.of(Set.of(loan.get())));
+        validationService.validator(loan, processedLoansDto, PAY_EMI,
+                Optional.of(Set.of(loan)));
 
-        final Loans currentLoan = loan.get();
+        final Loans currentLoan = loan;
         final BigDecimal emi = currentLoan.getEmiAmount();
         final int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
         final int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
@@ -198,10 +197,12 @@ public class LoanServiceImpl implements ILoansService {
      */
     private LoansDto getLoanInfoByCustomerIdAndLoanNumber(final String customerId, final String loanNumber) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         log.debug("<################### getLoanInfoByCUstomerIdAndLoanNumber(final LoansDto loansDto) started #############################################>");
-        final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber);
-        validationService.validator(loan.get(),null, GET_INFO_LOAN ,Optional.of(Set.of(loan.get())));
+        final String methodName="LoansDto getLoanInfoByCustomerIdAndLoanNumber(final String customerId, final String loanNumber) ";
+        final Loans loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber).orElseThrow(()->
+                new ValidationException(LoansException.class,
+                        String.format("No such loan exist with id %s", customerId), methodName));
         log.debug("<################### getLoanInfoByCustomerIdAndLoanNumber(final LoansDto loansDto) ended #############################################>");
-        return mapToLoansDto(loan.get());
+        return mapToLoansDto(loan);
     }
 
 
@@ -212,10 +213,13 @@ public class LoanServiceImpl implements ILoansService {
      */
     private Set<LoansDto> getAllLoansByCustomerId(final String customerId) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         log.debug("<################### getAllLoansByCustomerId(String CustomerId) started #############################################>");
-        final Optional<Set<Loans>> allLoans = loansRepository.findAllByCustomerId(customerId);
-        validationService.validator(null,LoansDto.builder().customerId(customerId).build(), GET_ALL_LOAN,allLoans);
+        final String methodName="Set<LoansDto> getAllLoansByCustomerId(String)";
+        final Set<Loans> allLoans = loansRepository.findAllByCustomerId(customerId)
+                .orElseThrow(()-> new ValidationException(ValidationException.class,
+                String.format("There is no loan found for customer with Id %s", customerId),
+                methodName));
         log.debug("<################### getAllLoansByCustomerId(String customerId) ended #############################################>");
-        return allLoans.get().stream().map(LoansMapperHelper::mapToLoansDto).
+        return allLoans.stream().map(LoansMapperHelper::mapToLoansDto).
                 collect(Collectors.toSet());
     }
 
@@ -227,16 +231,18 @@ public class LoanServiceImpl implements ILoansService {
     private void downloadAllEmiStatements(final LocalDate startDate,final LocalDate endDate,
                                          final String customerId,final String loanNumber,
                                          final FormatType formatType) throws ValidationException, PaymentException, LoansException, InstallmentsException {
-        Optional<Loans> fetchedLoan=loansRepository.findByCustomerIdAndLoanNumber(customerId,loanNumber);
+        final String methodName="downloadAllEmiStatements(LocalDate,LocalDate,String ,String,FormatType)";
+        Loans fetchedLoan=loansRepository.findByCustomerIdAndLoanNumber(customerId,loanNumber)
+                .orElseThrow(()->new ValidationException(ValidationException.class,
+                        "No loans persent for customer WIth Id",methodName));
 
-        validationService.validator(fetchedLoan.get(),null,GEN_EMI_STMT,Optional.of(Set.of(fetchedLoan.get())));
 
-        List<Emi> listOfEmis=fetchedLoan.get().getSetOfEmis().stream().toList();
+        List<Emi> listOfEmis=fetchedLoan.getSetOfEmis().stream().toList();
         LocalDate tempStartDate=startDate;
         LocalDate tempEndDate=endDate;
         if(Objects.isNull(tempStartDate)) tempStartDate=listOfEmis.get(0).getTimeStamp().toLocalDate();
         if(Objects.isNull(tempEndDate)) tempEndDate=LocalDate.now();
-        pdfService.generateStatement(fetchedLoan.get(),listOfEmis,startDate,endDate,formatType);
+        pdfService.generateStatement(fetchedLoan,listOfEmis,startDate,endDate,formatType);
     }
 
 

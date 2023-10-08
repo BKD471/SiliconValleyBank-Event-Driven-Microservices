@@ -45,10 +45,10 @@ public class PdfServiceJasperImpl implements IPdfService {
     @Override
     public void generateStatement(final Loans loans, final List<Emi> emiList, final LocalDate startDate, final LocalDate endDate, AllConstantsHelper.FormatType formatType) throws ValidationException, PaymentException, LoansException, InstallmentsException {
         log.debug("################# Pdf Creation Service started ###################################");
-        Optional<Set<Loans>> loansSet=loansRepository.findAllByCustomerId(loans.getCustomerId());
-        validationService.validator(null, LoansDto.builder().loansSet(loansSet.get()).build(),
-                GEN_EMI_STMT,loansSet);
-
+        final String methodName="generateStatement(Loans,List<Emi>,LocalDate,LocalDate,FormatType)";
+        final Set<Loans> loansSet=loansRepository.findAllByCustomerId(loans.getCustomerId())
+                .orElseThrow(()->
+                        new ValidationException(ValidationException.class,"No loans persent for customer WIth Id",methodName));
 
 
 

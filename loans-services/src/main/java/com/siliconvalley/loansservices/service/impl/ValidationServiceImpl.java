@@ -100,8 +100,6 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case GEN_EMI_STMT -> {
                 if (optionalFields.isEmpty()) throw new ValidationException(ValidationException.class,"No loans persent for customer WIth Id",methodName);
-
-
             }
             case DRIVER_METHOD_VALIDATION -> {
                 final AllConstantsHelper.RequestType requestType= loansDto.getRequestType();
