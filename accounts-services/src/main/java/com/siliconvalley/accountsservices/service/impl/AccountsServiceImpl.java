@@ -104,7 +104,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         try {
             properties.load(new FileInputStream(path_to_accounts_service_properties));
         }catch (IOException e){
-            log.error("Error while reading {}'s properties file {}",AccountsServiceImpl.class.getSimpleName(),e.getMessage());
+            log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
         }
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;

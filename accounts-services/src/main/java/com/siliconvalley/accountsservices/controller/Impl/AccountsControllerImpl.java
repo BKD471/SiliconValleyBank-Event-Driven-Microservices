@@ -50,7 +50,7 @@ public class AccountsControllerImpl implements IAccountsController {
         try {
             properties.load(new FileInputStream(path_to_accounts_controller_properties));
         } catch (IOException e) {
-            log.error("Error while reading {}'s properties file {}",AccountsControllerImpl.class.getSimpleName(),e.getMessage());
+            log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
         }
         this.accountsService = accountsService;
         this.customerRepository = customerRepository;

@@ -61,7 +61,7 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
             properties1.load(new FileInputStream(path_to_pdf_properties));
             properties2.load(new FileInputStream(path_to_company_details_properties));
         }catch (IOException e){
-            log.error("Error while reading {}'s properties file {}",PdfServiceJasperImpl.class.getSimpleName(),e.getMessage());
+            log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
         }
         this.validationService=validationService;
         this.PATH_TO_JASPER_XML= properties1.getProperty("path.jrxml");

@@ -34,7 +34,7 @@ public class BeneficiaryControllerImpl implements IBeneficiaryController {
             properties.load(new FileInputStream(path_ben_controller_properties));
         }catch (IOException e){
             log.error("Error while reading {}'s properties file {}",
-                    BeneficiaryControllerImpl.class.getSimpleName(),e.getMessage());
+                    this.getClass().getSimpleName(),e.getMessage());
         }
         this.beneficiaryService = beneficiaryService;
     }

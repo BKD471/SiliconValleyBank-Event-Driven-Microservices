@@ -48,7 +48,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
         try {
             properties.load(new FileInputStream(path_transaction_controller_properties));
         }catch (IOException e){
-            log.error("Error while reading {}'s properties file {}",AccountsControllerImpl.class.getSimpleName(),e.getMessage());
+            log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
         }
         this.transactionsService = transactionsService;
         this.pdfService=pdfService;

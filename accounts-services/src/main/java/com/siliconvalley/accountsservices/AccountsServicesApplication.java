@@ -1,11 +1,10 @@
 package com.siliconvalley.accountsservices;
 
-import com.siliconvalley.accountsservices.model.Role;
+import com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper;
 import com.siliconvalley.accountsservices.repository.IRoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -23,12 +22,12 @@ public class AccountsServicesApplication{
 	private final String role_admin_id;
 	@Autowired
 	private IRoleRepository roleRepository;
+	@Autowired
+	private CodeRetrieverHelper codeRetrieverHelper;
 
 
-	static {
-
-	}
-	AccountsServicesApplication(@Value("${path.project.properties}") String path_to_accounts_main_properties){
+	AccountsServicesApplication(@Value("${path.project.properties}") String path_to_accounts_main_properties, CodeRetrieverHelper codeRetrieverHelper){
+		this.codeRetrieverHelper = codeRetrieverHelper;
 		Properties properties = new Properties();
 		try{
 			properties.load(new FileInputStream(path_to_accounts_main_properties));

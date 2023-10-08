@@ -54,7 +54,7 @@ public class AuthController {
         try {
             properties.load(new FileInputStream(path_auth_controller_properties));
         } catch (IOException e) {
-            log.error("Error while reading {}'s properties file {}",AuthController.class.getSimpleName(),e.getMessage());
+            log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
         }
         this.manager=manager;
         this.userDetailsService=userDetailsService;
