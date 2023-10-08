@@ -13,7 +13,7 @@ public class ValidateAge implements ConstraintValidator<ValidAge,String> {
      */
     @Override
     public boolean isValid(final String value,final ConstraintValidatorContext context) {
-        if(value.trim().length()==0) return false;
+        if(value.trim().isEmpty()) return false;
         final LocalDate today=LocalDate.now();
         final int years= Period.between(LocalDate.parse(value),today).getYears();
         return years >= 18;

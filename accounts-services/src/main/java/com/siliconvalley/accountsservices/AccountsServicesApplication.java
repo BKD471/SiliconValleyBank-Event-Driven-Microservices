@@ -20,13 +20,12 @@ public class AccountsServicesApplication{
 	}
 	private final String role_normal_id;
 	private final String role_admin_id;
-	@Autowired
-	private IRoleRepository roleRepository;
-	@Autowired
-	private CodeRetrieverHelper codeRetrieverHelper;
+	private final IRoleRepository roleRepository;
+	private final CodeRetrieverHelper codeRetrieverHelper;
 
 
-	AccountsServicesApplication(@Value("${path.project.properties}") String path_to_accounts_main_properties, CodeRetrieverHelper codeRetrieverHelper){
+	AccountsServicesApplication(@Value("${path.project.properties}") String path_to_accounts_main_properties,IRoleRepository roleRepository, CodeRetrieverHelper codeRetrieverHelper){
+		this.roleRepository=roleRepository;
 		this.codeRetrieverHelper = codeRetrieverHelper;
 		Properties properties = new Properties();
 		try{
@@ -37,19 +36,4 @@ public class AccountsServicesApplication{
 		this.role_normal_id= properties.getProperty("normal.role.id");
 		this.role_admin_id= properties.getProperty("admin.role.id");
 	}
-
-	/**
-	 * @param args incoming main method arguments
-	 * @throws Exception
-	 */
-//	@Override
-//	public void run(String... args) throws Exception {
-//		try{
-//			Role role_admin=Role.builder().roleId(role_normal_id).roleName("ROLE_ADMIN").build();
-//			Role role_normal=Role.builder().roleId(role_admin_id).roleName("ROLE_NORMAL").build();
-//			roleRepository.save(role_admin);roleRepository.save(role_normal);
-//		}catch (Exception e){
-//			e.printStackTrace();
-//		}
-//	}
 }

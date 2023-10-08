@@ -26,7 +26,7 @@ public class AllConstantHelpers {
     }
 
     public  enum DIRECTION{
-        asc,desc;
+        asc,desc
     }
 
     public enum BanksSupported{
@@ -68,7 +68,6 @@ public class AllConstantHelpers {
     public static final  AccountStatus STATUS_CLOSED=AccountStatus.CLOSED;
     public static final AccountStatus STATUS_OPENED=AccountStatus.OPEN;
 
-
     public static final RELATION FATHER=RELATION.FATHER;
     public static final RELATION MOTHER=RELATION.MOTHER;
     public  static  final RELATION SPOUSE=RELATION.SPOUSE;
@@ -76,10 +75,8 @@ public class AllConstantHelpers {
     public  static  final RELATION DAUGHTER=RELATION.DAUGHTER;
 
 
-
     public static final TransactionType CREDIT=TransactionType.CREDIT;
     public static final TransactionType DEBIT=TransactionType.DEBIT;
-
 
 
     public static final DescriptionType SALARY=DescriptionType.SALARY;
@@ -95,8 +92,6 @@ public class AllConstantHelpers {
     public static final DescriptionType ELECTRICITY=DescriptionType.ELECTRICITY;
     public static final DescriptionType OTHERS=DescriptionType.OTHERS;
 
-
-
     public static final AccountsValidateType UPDATE_CASH_LIMIT = AccountsValidateType.UPDATE_CASH_LIMIT;
     public static final AccountsValidateType UPDATE_HOME_BRANCH = AccountsValidateType.UPDATE_HOME_BRANCH;
     public static final AccountsValidateType CLOSE_ACCOUNT = AccountsValidateType.CLOSE_ACCOUNT;
@@ -105,10 +100,5 @@ public class AllConstantHelpers {
     public static final AccountsValidateType CREATE_ACCOUNT = AccountsValidateType.CREATE_ACC;
     public static final AccountsValidateType ADD_ACCOUNT = AccountsValidateType.ADD_ACC;
     public static final AccountsValidateType UPLOAD_PROFILE_IMAGE = AccountsValidateType.UPLOAD_PROFILE_IMAGE;
-    public static final validateBenType ADD_BEN = validateBenType.ADD_BEN;
-    public static final validateBenType UPDATE_BEN = validateBenType.UPDATE_BEN;
-    public static final String REQUEST_TO_BLOCK = "BLOCK";
-
-    public static final ValidateTransactionType GET_PAST_SIX_MONTHS_OF_TRANSACTION=ValidateTransactionType.GET_PAST_SIX_MONTHS_TRANSACTIONS;
     public static final ValidateTransactionType GEN_BANK_STATEMENT=ValidateTransactionType.GEN_BANK_STATEMENT;
 }

@@ -34,9 +34,11 @@ public class MapperHelper {
      * @ReturnType Accounts
      */
     public static Accounts mapToAccounts(final AccountsDto accountsDto) {
-        return  Accounts.builder()
+        return Accounts.builder()
                 .accountType(accountsDto.getAccountType())
-                .homeBranch(accountsDto.getHomeBranch()).build();
+                .homeBranch(accountsDto.getHomeBranch())
+                .creditScore(accountsDto.getCreditScore())
+                .build();
     }
 
     public static LocalDate dateParserInYYYYMMDD(String dateInString){
@@ -170,6 +172,7 @@ public class MapperHelper {
                 .imageName(beneficiaryDto.getImageName())
                 .address(beneficiaryDto.getAddress())
                 .BenDate_Of_Birth(beneficiaryDto.getBenDate_Of_Birth())
+                .benAge(beneficiaryDto.getBenAge())
                 .build();
     }
 
@@ -428,6 +431,7 @@ public class MapperHelper {
                 .passportNumber(postInputRequestDto.getPassportNumber())
                 .imageName(postInputRequestDto.getImageName())
                 .address(postInputRequestDto.getAddress())
+                .age(postInputRequestDto.getAge())
                 .build();
     }
 
