@@ -121,7 +121,7 @@ public class AuthController {
                 .password(newPassword)
                 .imageName(photoUrl)
                 .roles(new HashSet<>())
-                .build();
+                .age(0).build();
 
         CustomerDto customer =createUser(newUser);
         return this.modelMapper.map(customer, Customer.class);

@@ -100,14 +100,15 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         processedBeneficiaryAccount.setBeneficiaryId(beneficiaryId);
 
         final Accounts savedAccounts=accountsRepository.save(fetchedAccount);
-        final Optional<Beneficiary> createdBeneficiary=savedAccounts.getListOfBeneficiary().stream().
+        final Beneficiary createdBeneficiary=savedAccounts.getListOfBeneficiary().stream().
                 filter(ben->ben.getBeneficiaryEmail().
-                        equalsIgnoreCase(processedBeneficiaryAccount.getBeneficiaryEmail()))
-                        .findFirst();
-        if(createdBeneficiary.isEmpty()) throw new BeneficiaryException(BeneficiaryException.class,"Faced problem while saving your beneficiary",methodName);
+                        equalsIgnoreCase(processedBeneficiaryAccount.getBeneficiaryEmail())).findFirst()
+                .orElseThrow(()-> new BeneficiaryException(BeneficiaryException.class,
+                        "Faced problem while saving your beneficiary",methodName));
+
         log.debug("<-------------addBeneficiary(Accounts,BeneficiaryDto) BeneficiaryServiceImpl ended ----------------------------------------" +
                 "------------------------------------------------------------------------------------------------->");
-        return createdBeneficiary.get();
+        return createdBeneficiary;
     }
 
     private Optional<Beneficiary> getBeneficiaryById(final Accounts fetchedAccount,final String benId) throws BeneficiaryException {
@@ -127,13 +128,15 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         log.debug("<------------- getAllBeneficiariesOfAnAccountByAccountNumber(Accounts,Pageable) BeneficiaryServiceImpl started -------------" +
                 "--------------------------------------------------------------------------------------------------->");
         final String methodName = "getAllAccountsByCustomerId(Account,Pageable) in BeneficiaryServiceImpl";
-        final Optional<Page<Beneficiary>> allPagedBeneficiary = beneficiaryRepository.findAllByAccounts_AccountNumber(fetchedAccount.getAccountNumber(), pageable);
-        if (allPagedBeneficiary.isEmpty())
-            throw new BeneficiaryException(BeneficiaryException.class,
-                    String.format("No such beneficiary present for this account ben id: %s", fetchedAccount.getAccountNumber()), methodName);
+        final Page<Beneficiary> allPagedBeneficiary =
+                beneficiaryRepository.findAllByAccounts_AccountNumber(fetchedAccount.getAccountNumber(), pageable)
+                        .orElseThrow(()->new BeneficiaryException(BeneficiaryException.class,
+                                String.format("No such beneficiary present for this account ben id: %s",
+                                        fetchedAccount.getAccountNumber()), methodName));
+
         log.debug("<---------getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount,Pageable pageable) BeneficiaryServiceImpl ended --------------------------------------" +
                 "----------------------------------------------------------------------------------------------->");
-        return getPageableResponse(allPagedBeneficiary.get(), BeneficiaryDto.class);
+        return getPageableResponse(allPagedBeneficiary, BeneficiaryDto.class);
     }
 
     private Beneficiary processedBeneficiaryAccount(final Beneficiary oldBeneficiaryData,final Beneficiary newBeneficiaryData) throws AccountsException {
@@ -225,22 +228,20 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         log.debug("<---------------updateBeneficiaryDetailsOfAnAccount(Accounts, BeneficiaryDto) BeneficiaryServiceImpl started -----------------" +
                 "--------------------------------------------------------------------------------------------------------->");
         final String methodName = "updateBeneficiaryDetailsOfAnAccount(Long , BeneficiaryDto ) in BeneficiaryServiceImpl";
-
         validationService.beneficiaryUpdateValidator(fetchedAccounts, beneficiaryDto, UPDATE_BEN);
 
         final String BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
         if (isBlank(BENEFICIARY_ID)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please enter a valid beneficiary id", methodName);
-        final Optional<Beneficiary> beneficiaryAccount = fetchedAccounts.getListOfBeneficiary().stream().
+
+        final Beneficiary beneficiaryAccount = fetchedAccounts.getListOfBeneficiary().stream().
                 filter(beneficiary -> BENEFICIARY_ID.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
-                findFirst();
-        if (beneficiaryAccount.isEmpty())
-            throw new BeneficiaryException(BeneficiaryException.class,
+                findFirst().orElseThrow(()->new BeneficiaryException(BeneficiaryException.class,
                     String.format("No such beneficiary accounts exist with beneficiary id %s",
-                            BENEFICIARY_ID), methodName);
+                            BENEFICIARY_ID), methodName));
 
         final Beneficiary newBeneficiaryData = mapToBeneficiary(beneficiaryDto);
-        final Beneficiary processedAccount = processedBeneficiaryAccount(beneficiaryAccount.get(), newBeneficiaryData);
+        final Beneficiary processedAccount = processedBeneficiaryAccount(beneficiaryAccount, newBeneficiaryData);
         log.debug("<---------------updateBeneficiaryDetailsOfAnAccount(Accounts, BeneficiaryDto) BeneficiaryServiceImpl ended ----------------" +
                 "------------------------------------------------------------------------------------------------------>");
         return beneficiaryRepository.save(processedAccount);
@@ -253,13 +254,16 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         if (isBlank(beneficiaryId))
             throw new BeneficiaryException(BeneficiaryException.class, "Please provide a valid beneficiary id", methodName);
 
-        BeneficiaryDto beneficiaryDto=BeneficiaryDto.builder().beneficiaryId(beneficiaryId).build();
+        BeneficiaryDto beneficiaryDto= BeneficiaryDto.builder().beneficiaryId(beneficiaryId).benAge(0).build();
         validationService.beneficiaryUpdateValidator(fetchedAccounts,beneficiaryDto,DELETE_BEN);
 
         //delete that beneficiary
-        Predicate<Beneficiary> removeDeletedBeneficiary=(beneficiary) -> beneficiary.getBeneficiaryId().equalsIgnoreCase(beneficiaryId);
+        Predicate<Beneficiary> removeDeletedBeneficiary=(beneficiary) ->
+                beneficiary.getBeneficiaryId().equalsIgnoreCase(beneficiaryId);
         Set<Beneficiary> beneficiaries=fetchedAccounts.getListOfBeneficiary()
-                .stream().toList().stream().filter(beneficiary -> removeDeletedBeneficiary.negate().test(beneficiary)).collect(Collectors.toSet());
+                .stream().toList().stream()
+                .filter(beneficiary -> removeDeletedBeneficiary.negate().test(beneficiary))
+                .collect(Collectors.toSet());
 
         beneficiaryRepository.deleteAllByIdInBatch(Collections.singleton(beneficiaryId));
         fetchedAccounts.setListOfBeneficiary(beneficiaries);
@@ -384,15 +388,14 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         switch (requestType) {
             case GET_BEN -> {
                 location="Inside GET_BEN";
-                final Optional<Beneficiary> beneficiary = getBeneficiaryById(fetchedAccount, beneficiaryDto.getBeneficiaryId());
-                if (beneficiary.isEmpty())
-                    throw new BeneficiaryException(BeneficiaryException.class, String.format("No such beneficiaries present with id:%s",
-                            beneficiaryDto.getBeneficiaryId()), String.format("%s of %s", location, methodName));
+                final Beneficiary beneficiary = getBeneficiaryById(fetchedAccount, beneficiaryDto.getBeneficiaryId())
+                        .orElseThrow(()-> new BeneficiaryException(BeneficiaryException.class, String.format("No such beneficiaries present with id:%s",
+                            beneficiaryDto.getBeneficiaryId()), String.format("%s of %s", location, methodName)));
 
                 return OutputDto.builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
-                        .beneficiary(mapToBeneficiaryDto(beneficiary.get()))
+                        .beneficiary(mapToBeneficiaryDto(beneficiary))
                         .defaultMessage(String.format("Fetched beneficiary with id:%s",beneficiaryDto.getBeneficiaryId()))
                         .build();
             }

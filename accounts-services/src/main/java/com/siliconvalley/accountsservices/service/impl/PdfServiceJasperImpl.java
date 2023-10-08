@@ -40,13 +40,7 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
     private  String PATH_TO_DOWNLOADABLES_PDF;
     private  String PATH_TO_DOWNLOADABLES_HTML;
     private  String PATH_TO_DOWNLOADABLES_XML;
-    private final String COMPANY_NAME;
-    private final String CITY;
-    private final String STREET;
-    private final String ZIP_CODE;
-    private final String FAX_NUMBER;
-    private final String STATE;
-    private final String COUNTRY;
+    private final Set<String> companydetailsSet;
 
 
      PdfServiceJasperImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository,
@@ -66,13 +60,14 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         this.validationService=validationService;
         this.PATH_TO_JASPER_XML= properties1.getProperty("path.jrxml");
         this.PATH_TO_DOWNLOADABLES= properties1.getProperty("path.downloadables");
-        this.COMPANY_NAME= properties2.getProperty("companyName");
-        this.CITY= properties2.getProperty("city");
-        this.STREET= properties2.getProperty("street");
-        this.STATE= properties2.getProperty("state");
-        this.COUNTRY= properties2.getProperty("country");
-        this.ZIP_CODE= properties2.getProperty("ZipCode");
-        this.FAX_NUMBER= properties2.getProperty("faxNumber");
+        this.companydetailsSet= new HashSet<>(Arrays.stream(properties2.getProperty("companyDetails").split(",")).toList());
+
+        companydetailsSet.forEach( companyDetails->{
+            String[] parsedData=companyDetails.split(":");
+            String field=parsedData[0];
+            String value=parsedData[1];
+            params.put(field,value);
+        });
         this.PATH_TO_DOWNLOADABLES_XML=PATH_TO_DOWNLOADABLES;
         this.PATH_TO_DOWNLOADABLES_PDF=PATH_TO_DOWNLOADABLES;
         this.PATH_TO_DOWNLOADABLES_HTML=PATH_TO_DOWNLOADABLES;
@@ -138,19 +133,9 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         params.put("date",bankStatement.getDate());
         params.put("startDate", convertToUtilDate(startDate));
         params.put("endDate",convertToUtilDate(endDate));
-        params.put("companyName",COMPANY_NAME);
-        params.put("city",CITY);
-        params.put("street",STREET);
-        params.put("ZipCode",ZIP_CODE);
-        params.put("faxNumber",FAX_NUMBER);
-        params.put("State",STATE);
-        params.put("country",COUNTRY);
-
 
         List<TransactionsInvoicableObject> listOfTransactionsBetweenDate=
                 new ArrayList<>(transactionsListBetweenDate.stream().map(MapperHelper::mapToTransactionsInvoicableObject).toList());
-
-
 
         Comparator<TransactionsInvoicableObject> sortByTimeStampInAscendingOrderOfLatestTransaction=(o1,o2)->
                 (convertTimeStampToLocalDateTime(o1.getTransactionTimeStamp())

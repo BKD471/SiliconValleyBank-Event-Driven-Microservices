@@ -80,10 +80,12 @@ public class AccountsControllerImpl implements IAccountsController {
     @Override
     public void serveUserImage(final String customerId,final HttpServletResponse response) throws IOException {
         final String methodName = "serveUserImage(Long,HttpServlet) in AccountsControllerImpl";
-        final Optional<Customer> fetchedCustomer = customerRepository.findById(customerId);
-        if (fetchedCustomer.isEmpty())
-            throw new CustomerException(CustomerException.class, String.format("No such customer with id:%s", customerId), methodName);
-        final InputStream resource = fIleService.getResource(IMAGE_PATH, fetchedCustomer.get().getImageName());
+        final Customer fetchedCustomer = customerRepository.findById(customerId)
+                .orElseThrow(()->
+                        new CustomerException(CustomerException.class,
+                                String.format("No such customer with id:%s", customerId), methodName));
+
+        final InputStream resource = fIleService.getResource(IMAGE_PATH, fetchedCustomer.getImageName());
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         StreamUtils.copy(resource, response.getOutputStream());
     }
@@ -135,7 +137,7 @@ public class AccountsControllerImpl implements IAccountsController {
                 .updateRequest(AllConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerId(customerId)
                 .customerImage(image)
-                .build();
+                .age(0).pageNumber(0).pageSize(0).benAge(0).creditScore(0).build();
         final OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
         final ImageResponseMessages imgResponseMessages= ImageResponseMessages.builder()
                 .message(responseBody.getDefaultMessage())

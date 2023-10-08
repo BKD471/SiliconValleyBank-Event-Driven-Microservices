@@ -157,9 +157,9 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         customer.setCustomerId(customerId);
 
         //set role
-        final Optional<Role> roles = roleRepository.findById(NORMAL_ROLE_ID);
-        if (roles.isEmpty()) throw new RolesException(RolesException.class, "No roles found", methodName);
-        customer.setRoles(new HashSet<>(Collections.singletonList(roles.get())));
+        final Role roles = roleRepository.findById(NORMAL_ROLE_ID)
+                .orElseThrow(()-> new RolesException(RolesException.class, "No roles found", methodName));
+        customer.setRoles(new HashSet<>(Collections.singletonList(roles)));
 
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         log.debug("<----------------processCustomerInformation(Customer) AccountsServiceImpl ended ------------------------------------------------------------" +
@@ -199,22 +199,22 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-------------- createAccountForAlreadyCreatedUser(long,Accounts,AccountsDto) AccountsServiceImpl started -----------------------------" +
                 "------------------------------------------------------------------------------------------------------>--->");
         final String methodName = "createAccountForAlreadyCreatedUser(long,InoutDto) in AccountsServiceImpl";
-        final Optional<Customer> customer = customerRepository.findById(customerId);
-        if (customer.isEmpty()) throw new AccountsException(AccountsException.class,
-                String.format("No such customers with id %s found", customerId),
-                methodName);
+        final Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(()-> new AccountsException(AccountsException.class,
+                        String.format("No such customers with id %s found", customerId),
+                        methodName));
 
-        loadAccount.setCustomer(customer.get());
+        loadAccount.setCustomer(customer);
         validationService.accountsUpdateValidator(loadAccount, null, ADD_ACCOUNT);
         final Accounts accounts = mapToAccounts(accountsDto);
-        accounts.setCustomer(customer.get());
+        accounts.setCustomer(customer);
         Accounts processedAccount = processAccountInit(accounts, UPDATE);
         final Accounts savedAccount = accountsRepository.save(processedAccount);
         log.debug("<-------createAccountForAlreadyCreatedUser(long,Accounts,AccountsDto) AccountsServiceImpl ended -----------------------------------" +
                 "--------------------------------------------------------------------------------------------------------------------->");
 
         return OutputDto.builder()
-                .customer(mapToCustomerOutputDto(mapToCustomerDto(customer.get())))
+                .customer(mapToCustomerOutputDto(mapToCustomerDto(customer)))
                 .accounts(mapToAccountsOutputDto(mapToAccountsDto(savedAccount)))
                 .defaultMessage(String.format("New account with id %s is created for customer with id:%s", savedAccount.getAccountNumber(), customerId))
                 .build();
@@ -244,26 +244,26 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-----------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl started -----------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
         final String methodName = "getAllAccountsByCustomerId(long) in AccountsServiceImpl";
-        final Optional<Page<Accounts>> allPagedAccounts = accountsRepository.findAllByCustomer_CustomerId(customerId, pageable);
-        if (allPagedAccounts.isEmpty())
-            throw new AccountsException(AccountsException.class,
-                    String.format("No such accounts present with this customer %s", customerId), methodName);
+        final Page<Accounts> allPagedAccounts = accountsRepository.findAllByCustomer_CustomerId(customerId, pageable)
+                .orElseThrow(()-> new AccountsException(AccountsException.class,
+                String.format("No such accounts present with this customer %s", customerId), methodName));
+
         log.debug("<------------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl ended ----------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------>");
-        return getPageableResponse(allPagedAccounts.get(), AccountsDto.class);
+        return getPageableResponse(allPagedAccounts, AccountsDto.class);
     }
 
     private PageableResponseDto<CustomerDto> getAllCustomers( final Pageable pageable) throws AccountsException {
         log.debug("<-----------------getAllActiveCustomer(long,Pageable) AccountsServiceImpl started -----------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
         final String methodName = "getAllActiveCustomer(long) in AccountsServiceImpl";
-        final Optional<Page<Customer>> allPagedAccounts = customerRepository.findAll(pageable);
-        if (allPagedAccounts.isEmpty())
-            throw new CustomerException(CustomerException.class,
-                    "No such customers", methodName);
+        final Page<Customer> allPagedAccounts = customerRepository.findAll(pageable)
+                .orElseThrow(()-> new CustomerException(CustomerException.class,
+                "No such customers", methodName));
+
         log.debug("<------------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl ended ----------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------>");
-        return getPageableResponse(allPagedAccounts.get(), CustomerDto.class);
+        return getPageableResponse(allPagedAccounts, CustomerDto.class);
     }
 
 
@@ -293,7 +293,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final BigDecimal newCashLimit = accountsDto.getTransferLimitPerDay();
 
         Accounts savedAccount = accounts;
-        BiPredicate<BigDecimal, BigDecimal> checkForCashLimitRevision = (newLimit, oldLimit) -> newLimit.compareTo(BigDecimal.ZERO) == 0
+        BiPredicate<BigDecimal, BigDecimal> checkForCashLimitRevision = (newLimit, oldLimit) ->
+                newLimit.compareTo(BigDecimal.ZERO) == 0
                 && newLimit.compareTo(oldLimit) != 0;
 
         validationService.accountsUpdateValidator(accounts, null, UPDATE_CASH_LIMIT);
@@ -355,10 +356,11 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 "---------------------------------------------------------------------------------------------------------------->");
         final String methodName = "deleteAllAccountsByCustomer(long ) in AccountsServiceImpl";
         //checking whether customer exist
-        final Optional<Customer> foundCustomer = customerRepository.findById(customerId);
+        final Customer foundCustomer = customerRepository.findById(customerId)
+                .orElseThrow(()->
+                        new AccountsException(AccountsException.class,
+                                String.format("No such customer exists with id %s", customerId), methodName));
 
-        if (foundCustomer.isEmpty())
-            throw new AccountsException(AccountsException.class, String.format("No such customer exists with id %s", customerId), methodName);
         accountsRepository.deleteAllByCustomer_CustomerId(customerId);
         log.debug("<-----------deleteAllAccountsByCustomer(long) AccountsServiceImpl ended ----------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------->");
@@ -477,9 +479,10 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         final List<CustomerDto> allCustomers = pageableResponseDto.getContent()
                 .stream().toList();
-
-        Collections.sort(allCustomers.stream().map(MapperHelper::mapToCustomer).toList());
-        pageableResponseDto.setContent(allCustomers);
+        List<Customer> mutableListOfCustomers= new ArrayList<>(allCustomers.stream()
+                .map(MapperHelper::mapToCustomer).toList());
+        Collections.sort(mutableListOfCustomers);
+        pageableResponseDto.setContent(mutableListOfCustomers.stream().map(MapperHelper::mapToCustomerDto).toList());
         log.debug("<-----------------accountsPagination(DIRECTION,String,int,int,long) AccountsServiceImpl ended -------------------------------------------------------------------------------------------------------------->");
         return pageableResponseDto;
     }
