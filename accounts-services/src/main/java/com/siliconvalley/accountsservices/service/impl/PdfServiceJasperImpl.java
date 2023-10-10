@@ -14,6 +14,7 @@ import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -24,7 +25,6 @@ import java.util.Set;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
@@ -33,40 +33,49 @@ import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 @Slf4j
 @Service("jasperPdfService")
 public class PdfServiceJasperImpl extends AbstractService implements IPdfService {
-    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/service/properties/PdfServiceJasper.properties";
     private static final Map<String,Object> params=new HashMap<>();
     private final IValidationService validationService;
-    private static final Properties properties=new Properties();
     private final String PATH_TO_JASPER_XML;
     private  final String PATH_TO_DOWNLOADABLES;
     private  String PATH_TO_DOWNLOADABLES_PDF;
     private  String PATH_TO_DOWNLOADABLES_HTML;
     private  String PATH_TO_DOWNLOADABLES_XML;
-    static {
-        params.put("companyName",companyName);
-        params.put("city",city);
-        params.put("street",street);
-        params.put("ZipCode",ZipCode);
-        params.put("faxNumber",faxNumber);
-        params.put("State",State);
-        params.put("country",country);
+    private final String COMPANY_NAME;
+    private final String CITY;
+    private final String STREET;
+    private final String ZIP_CODE;
+    private final String FAX_NUMBER;
+    private final String STATE;
+    private final String COUNTRY;
 
-        try{
-            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
-        }catch (IOException e){
-            log.error("Error while Reading properties file of JasperPdfService");
-        }
-    }
 
-    protected PdfServiceJasperImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository,
-                                   IValidationService validationService) {
+     PdfServiceJasperImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository,
+                                   IValidationService validationService,
+                                   @Value("${path.service.pdf}") String path_to_pdf_properties,
+                                   @Value("${path.details.company}") String path_to_company_details_properties) {
         super(accountsRepository, customerRepository);
+
+        Properties properties1 = new Properties();
+        Properties properties2 = new Properties();
+        try{
+            properties1.load(new FileInputStream(path_to_pdf_properties));
+            properties2.load(new FileInputStream(path_to_company_details_properties));
+        }catch (IOException e){
+            log.error("Error while reading {}'s properties file {}",PdfServiceJasperImpl.class.getSimpleName(),e.getMessage());
+        }
         this.validationService=validationService;
-        this.PATH_TO_JASPER_XML=properties.getProperty("path.jrxml");
-        this.PATH_TO_DOWNLOADABLES=properties.getProperty("path.downloadables");
+        this.PATH_TO_JASPER_XML= properties1.getProperty("path.jrxml");
+        this.PATH_TO_DOWNLOADABLES= properties1.getProperty("path.downloadables");
+        this.COMPANY_NAME= properties2.getProperty("companyName");
+        this.CITY= properties2.getProperty("city");
+        this.STREET= properties2.getProperty("street");
+        this.STATE= properties2.getProperty("state");
+        this.COUNTRY= properties2.getProperty("country");
+        this.ZIP_CODE= properties2.getProperty("ZipCode");
+        this.FAX_NUMBER= properties2.getProperty("faxNumber");
+        this.PATH_TO_DOWNLOADABLES_XML=PATH_TO_DOWNLOADABLES;
         this.PATH_TO_DOWNLOADABLES_PDF=PATH_TO_DOWNLOADABLES;
         this.PATH_TO_DOWNLOADABLES_HTML=PATH_TO_DOWNLOADABLES;
-        this.PATH_TO_DOWNLOADABLES_XML=PATH_TO_DOWNLOADABLES;
     }
 
     /**
@@ -129,6 +138,13 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         params.put("date",bankStatement.getDate());
         params.put("startDate", convertToUtilDate(startDate));
         params.put("endDate",convertToUtilDate(endDate));
+        params.put("companyName",COMPANY_NAME);
+        params.put("city",CITY);
+        params.put("street",STREET);
+        params.put("ZipCode",ZIP_CODE);
+        params.put("faxNumber",FAX_NUMBER);
+        params.put("State",STATE);
+        params.put("country",COUNTRY);
 
 
         List<TransactionsInvoicableObject> listOfTransactionsBetweenDate=
@@ -166,8 +182,6 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
                 reset();
             }
         }
-
         log.debug("################# Pdf Creation Service ended ###################################");
     }
-
 }

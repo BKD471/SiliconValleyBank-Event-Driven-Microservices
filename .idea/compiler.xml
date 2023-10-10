@@ -7,12 +7,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="accounts-services" />
         <module name="PaymentServices" />
-        <module name="ServiceRegistry" />
         <module name="card-services" />
         <module name="EmailNotificationServices" />
         <module name="loans-services" />
+        <module name="accounts-services" />
+        <module name="configServerMysql" />
+        <module name="ServiceRegistry" />
+        <module name="configServerPostgress" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -30,6 +32,8 @@
       <module name="ServiceRegistry" options="-parameters" />
       <module name="accounts-services" options="-parameters" />
       <module name="card-services" options="-parameters" />
+      <module name="configServerMysql" options="-parameters" />
+      <module name="configServerPostgress" options="-parameters" />
       <module name="customerbase" options="-parameters" />
       <module name="loans-services" options="-parameters" />
     </option>

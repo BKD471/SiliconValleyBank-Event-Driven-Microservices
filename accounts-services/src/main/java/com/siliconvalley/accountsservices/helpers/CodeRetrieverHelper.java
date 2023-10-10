@@ -1,71 +1,59 @@
 package com.siliconvalley.accountsservices.helpers;
 
 import com.siliconvalley.accountsservices.exception.AccountsException;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
 
+
+@Slf4j
 public class CodeRetrieverHelper {
-    //Bank code
-    private static final String SBI_UID = "SBI01121997";
-    private static final String AXIS_UID = "AXI01121997";
-    private static final String HDFC_UID = "HDF01121997";
-    private static final String ICICI_UID = "ICI01121997";
-    private static final String CANARA_UID = "CAN01121997";
-    private static final String PNB_UID = "PNB01121997";
-    private static final String ORIENTAL_UID = "ORI01121997";
-    private static final String BOI_UID = "BOI01121997";
-    private static final String YES_UID = "YES01121997";
-    private static final String BANDHAN_UID = "BAN01121997";
-    private static final String BOB_UID = "BOB01121997";
+    private static final String PATH_TO_PROPERTIES_FILE = "accounts-services/src/main/java/com/siliconvalley/accountsservices/properties/helper_properties/CodeRetriever.properties";
+    private static final String CLASS_NAME = CodeRetrieverHelper.class.getSimpleName();
+    private static final Properties properties = new Properties();
+    private static final Map<AllConstantHelpers.BanksSupported, String> hashedBankCode = new HashMap<>();
+    private static final Map<AllConstantHelpers.Branch, String> hashedBranchCode = new HashMap<>();
+    private static Set<String> listOfBankCodes;
+    private static Set<String> listOfBranchCodes;
 
-    //Branch code
-    private static final String KOLKATA_UID = "KOL01121997";
-    private static final String BANGALORE_UID = "BAN01121997";
-    private static final String MUMBAI_UID = "MUM01121997";
-    private static final String CHENNAI_UID = "CHE01121997";
-    private static final String BARODA_UID = "BAR01121997";
-    private static final String HYDERABAD_UID = "HYD01121997";
-    private static final String BHUBANESWAR_UID = "BHU01121997";
-    private static final String PATNA_UID = "PAT01121997";
-    private static final String KERALA_UID = "KER01121997";
-    private static final String DELHI_UID = "DEL01121997";
-    private static final Map<AllConstantHelpers.BanksSupported,String> hashedBankCode=new HashMap<>();
-    private static final Map<AllConstantHelpers.Branch,String> hashedBranchCode=new HashMap<>();
     static {
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.SBI, SBI_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.AXIS, AXIS_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.HDFC, HDFC_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.ICICI, ICICI_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.CANARA, CANARA_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.PNB, PNB_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.ORIENTAL, ORIENTAL_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.BOI, BOI_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.YES, YES_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.BANDHAN, BANDHAN_UID);
-        hashedBankCode.put(AllConstantHelpers.BanksSupported.BOB, BOB_UID);
+        try {
+            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
+        } catch (IOException e) {
+            log.error("Error while reading {}'s properties file {}", CLASS_NAME, e.getMessage());
+        }
+    }
 
-        hashedBranchCode.put(AllConstantHelpers.Branch.KOLKATA, KOLKATA_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.BANGALORE, BANGALORE_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.MUMBAI, MUMBAI_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.CHENNAI, CHENNAI_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.BARODA, BARODA_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.HYDERABAD, HYDERABAD_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.BHUBANESWAR, BHUBANESWAR_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.PATNA, PATNA_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.KERALA, KERALA_UID);
-        hashedBranchCode.put(AllConstantHelpers.Branch.DELHI, DELHI_UID);
+    static {
+        listOfBankCodes = new HashSet<>(Arrays.stream(properties.getProperty("bankCodes").split(",")).toList());
+        listOfBranchCodes = new HashSet<>(Arrays.stream(properties.getProperty("branchCodes").split(",")).toList());
+        listOfBankCodes.forEach(bankCodes -> {
+            String[] parsedDataArray = bankCodes.split(":");
+            String bankName = parsedDataArray[0];
+            String bankID = parsedDataArray[1];
+            hashedBankCode.put(AllConstantHelpers.BanksSupported.valueOf(bankName), bankID);
+        });
+
+        listOfBranchCodes.forEach(brnachCodes -> {
+            String[] parsedDataArray = brnachCodes.split(":");
+            String branchName = parsedDataArray[0];
+            String branchID = parsedDataArray[1];
+            hashedBranchCode.put(AllConstantHelpers.Branch.valueOf(branchName), branchID);
+        });
+
     }
 
     public static String getBankCode(final AllConstantHelpers.BanksSupported banksSupported) throws AccountsException {
-        final String methodName = "getBankCode(Account.Branch) in BankCodeRetrieverHelper";
+        final String methodName = "getBankCode(Account.Branch) in CodeRetrieverHelper";
         if (hashedBankCode.containsKey(banksSupported)) return hashedBankCode.get(banksSupported);
         throw new AccountsException(AccountsException.class, String.format("No such" +
                 "banks exist with name %s", banksSupported), methodName);
     }
 
     public static String getBranchCode(final AllConstantHelpers.Branch homeBranch) throws AccountsException {
-        final String methodName = "getBranchCode(Account.Branch) in BranchCodeHelper";
+        final String methodName = "getBranchCode(Account.Branch) in CodeRetrieverHelper";
         if (hashedBranchCode.containsKey(homeBranch)) return hashedBranchCode.get(homeBranch);
         throw new AccountsException(AccountsException.class, String.format("No such" +
                 " branches exist with name %s", homeBranch), methodName);

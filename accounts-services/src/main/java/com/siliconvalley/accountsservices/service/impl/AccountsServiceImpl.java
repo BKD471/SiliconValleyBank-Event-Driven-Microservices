@@ -78,7 +78,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Slf4j
 @Service("accountsServicePrimary")
 public class AccountsServiceImpl extends AbstractService implements IAccountsService {
-    private static final String PATH_TO_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/service/properties/AccountsService.properties";
     private final IAccountsRepository accountsRepository;
     private final IRoleRepository roleRepository;
     private final ICustomerRepository customerRepository;
@@ -88,15 +87,6 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private final String UPDATE = "UPDATE";
     private final String NORMAL_ROLE_ID;
     private final String IMAGE_PATH;
-    private  static  final Properties properties=new Properties();
-
-    static {
-        try {
-            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
-        }catch (IOException e){
-            log.error("Error while reading properties file");
-        }
-    }
 
     /**
      * @paramType AccountsRepository
@@ -107,15 +97,22 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                                final IRoleRepository roleRepository,
                                final IValidationService validationService,
                                final PasswordEncoder passwordEncoder,
-                               @Qualifier("fileServicePrimary") final IImageService fIleService) {
+                               @Qualifier("fileServicePrimary") final IImageService fIleService,
+                               @Value("${path.service.accounts}") String path_to_accounts_service_properties) {
         super(accountsRepository, customerRepository);
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(path_to_accounts_service_properties));
+        }catch (IOException e){
+            log.error("Error while reading {}'s properties file {}",AccountsServiceImpl.class.getSimpleName(),e.getMessage());
+        }
         this.accountsRepository = accountsRepository;
         this.customerRepository = customerRepository;
         this.roleRepository = roleRepository;
         this.fIleService = fIleService;
         this.validationService = validationService;
         this.passwordEncoder = passwordEncoder;
-        this.IMAGE_PATH =properties.getProperty("customer.profile.images.path");
+        this.IMAGE_PATH = properties.getProperty("customer.profile.images.path");
         this.NORMAL_ROLE_ID = properties.getProperty("normal.role.id");
     }
 

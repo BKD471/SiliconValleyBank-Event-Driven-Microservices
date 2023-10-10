@@ -37,28 +37,25 @@ import java.util.Properties;
 @Slf4j
 @RestController
 public class AccountsControllerImpl implements IAccountsController {
-    private static final String PATH_OF_PROPERTIES_FILE="accounts-services/src/main/java/com/siliconvalley/accountsservices/controller/properties/AccountsController.properties";
     private final IAccountsService accountsService;
     private final ICustomerRepository customerRepository;
     private final IImageService fIleService;
     private final String IMAGE_PATH;
-    private static final Properties properties=new Properties();
-
-    static {
-        try {
-            properties.load(new FileInputStream(PATH_OF_PROPERTIES_FILE));
-        } catch (IOException e) {
-            log.error("Error while reading properties file");
-        }
-    }
 
     AccountsControllerImpl(@Qualifier("accountsServicePrimary") IAccountsService accountsService,
                            ICustomerRepository customerRepository,
-                           @Qualifier("fileServicePrimary") IImageService fIleService) {
+                           @Qualifier("fileServicePrimary") IImageService fIleService,@Value("${path.controller.accounts}") String path_to_accounts_controller_properties) {
+
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(path_to_accounts_controller_properties));
+        } catch (IOException e) {
+            log.error("Error while reading {}'s properties file {}",AccountsControllerImpl.class.getSimpleName(),e.getMessage());
+        }
         this.accountsService = accountsService;
         this.customerRepository = customerRepository;
         this.fIleService = fIleService;
-        this.IMAGE_PATH=properties.getProperty("customer.profile.images.path");;
+        this.IMAGE_PATH= properties.getProperty("customer.profile.images.path");
     }
 
 
