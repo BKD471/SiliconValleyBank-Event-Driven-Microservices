@@ -14,6 +14,8 @@
         <option value="$PROJECT_DIR$/PaymentServices/pom.xml" />
         <option value="$PROJECT_DIR$/LoadBalancer/pom.xml" />
         <option value="$PROJECT_DIR$/../ms security/ServiceRegistry/pom.xml" />
+        <option value="$PROJECT_DIR$/configServerPostgress/pom.xml" />
+        <option value="$PROJECT_DIR$/configServerMysql/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
