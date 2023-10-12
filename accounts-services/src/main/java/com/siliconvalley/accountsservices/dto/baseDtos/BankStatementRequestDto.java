@@ -1,27 +1,46 @@
 package com.siliconvalley.accountsservices.dto.baseDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDate;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Getter
-public class BankStatementRequestDto implements Serializable {
-    @Serial
-    private static final long serialVersionUID=1234567891234567892L;
-    private String startDate;
-    private String endDate;
-    private String accountNumber;
-    private FORMAT_TYPE downloadFormat;
-    public enum FORMAT_TYPE{
-        HTML,PDF,XML
+
+public record BankStatementRequestDto(String startDate, String endDate,
+                                      String accountNumber,
+                                      AllConstantHelpers.FORMAT_TYPE downloadFormat){
+
+    public static final class Builder{
+        private String startDate;
+        private String endDate;
+        private String accountNumber;
+        private AllConstantHelpers.FORMAT_TYPE downloadFormat;
+
+        public Builder(){
+        }
+
+        public Builder startDate(String startDate){
+            this.startDate=startDate;
+            return this;
+        }
+
+        public Builder endDate(String endDate){
+            this.endDate=endDate;
+            return this;
+        }
+
+        public Builder accountNumber(String accountNumber){
+            this.accountNumber=accountNumber;
+            return this;
+        }
+
+        public Builder downloadFormat(AllConstantHelpers.FORMAT_TYPE downloadFormat){
+            this.downloadFormat=downloadFormat;
+            return this;
+        }
+
+        public BankStatementRequestDto build(){
+            return new BankStatementRequestDto(startDate,endDate,
+                    accountNumber,downloadFormat);
+        }
     }
-
 }
+

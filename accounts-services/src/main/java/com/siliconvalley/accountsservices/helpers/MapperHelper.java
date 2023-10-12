@@ -35,9 +35,9 @@ public class MapperHelper {
      */
     public static Accounts mapToAccounts(final AccountsDto accountsDto) {
         return Accounts.builder()
-                .accountType(accountsDto.getAccountType())
-                .homeBranch(accountsDto.getHomeBranch())
-                .creditScore(accountsDto.getCreditScore())
+                .accountType(accountsDto.accountType())
+                .homeBranch(accountsDto.homeBranch())
+                .creditScore(accountsDto.creditScore())
                 .build();
     }
 
@@ -68,7 +68,7 @@ public class MapperHelper {
                     .collect(Collectors.toSet());
         }
 
-        return AccountsDto.builder()
+        return new AccountsDto.Builder()
                 .accountNumber(accounts.getAccountNumber())
                 .balance(accounts.getBalance())
                 .accountType(accounts.getAccountType())
@@ -135,7 +135,7 @@ public class MapperHelper {
     }
 
     public static BeneficiaryDto mapToBeneficiaryDto(final Beneficiary beneficiary) {
-        return BeneficiaryDto.builder()
+        return new BeneficiaryDto.Builder()
                 .beneficiaryId(beneficiary.getBeneficiaryId())
                 .beneficiaryName(beneficiary.getBeneficiaryName())
                 .benAge(beneficiary.getBenAge())
@@ -158,21 +158,21 @@ public class MapperHelper {
 
     public static Beneficiary mapToBeneficiary(final BeneficiaryDto beneficiaryDto) {
         return Beneficiary.builder()
-                .beneficiaryName(beneficiaryDto.getBeneficiaryName())
-                .beneficiaryAccountNumber(beneficiaryDto.getBeneficiaryAccountNumber())
-                .benBank(beneficiaryDto.getBenBank())
-                .benAdharNumber(beneficiaryDto.getBenAdharNumber())
-                .relation(beneficiaryDto.getRelation())
-                .benPhoneNumber(beneficiaryDto.getBenPhoneNumber())
-                .beneficiaryEmail(beneficiaryDto.getBeneficiaryEmail())
-                .benVoterId(beneficiaryDto.getBenVoterId())
-                .benPanNumber(beneficiaryDto.getBenPanNumber())
-                .benDrivingLicense(beneficiaryDto.getBenDrivingLicense())
-                .benPassportNumber(beneficiaryDto.getBenPassportNumber())
-                .imageName(beneficiaryDto.getImageName())
-                .address(beneficiaryDto.getAddress())
-                .BenDate_Of_Birth(beneficiaryDto.getBenDate_Of_Birth())
-                .benAge(beneficiaryDto.getBenAge())
+                .beneficiaryName(beneficiaryDto.beneficiaryName())
+                .beneficiaryAccountNumber(beneficiaryDto.beneficiaryAccountNumber())
+                .benBank(beneficiaryDto.benBank())
+                .benAdharNumber(beneficiaryDto.benAdharNumber())
+                .relation(beneficiaryDto.relation())
+                .benPhoneNumber(beneficiaryDto.benPhoneNumber())
+                .beneficiaryEmail(beneficiaryDto.beneficiaryEmail())
+                .benVoterId(beneficiaryDto.benVoterId())
+                .benPanNumber(beneficiaryDto.benPanNumber())
+                .benDrivingLicense(beneficiaryDto.benDrivingLicense())
+                .benPassportNumber(beneficiaryDto.benPassportNumber())
+                .imageName(beneficiaryDto.imageName())
+                .address(beneficiaryDto.address())
+                .BenDate_Of_Birth(beneficiaryDto.BenDate_Of_Birth())
+                .benAge(beneficiaryDto.benAge())
                 .build();
     }
 
@@ -229,7 +229,7 @@ public class MapperHelper {
     }
 
     public static AccountsDto inputToAccountsDto(final PostInputRequestDto postInputRequestDto) {
-        return AccountsDto.builder()
+        return new AccountsDto.Builder()
                 .accountNumber(postInputRequestDto.getAccountNumber())
                 .balance(postInputRequestDto.getBalance())
                 .accountType(postInputRequestDto.getAccountType())
@@ -260,7 +260,7 @@ public class MapperHelper {
                     .collect(Collectors.toSet());
         }
 
-        return AccountsDto.builder()
+        return new AccountsDto.Builder()
                 .accountNumber(deleteInputRequestDto.getAccountNumber())
                 .balance(deleteInputRequestDto.getBalance())
                 .accountType(deleteInputRequestDto.getAccountType())
@@ -291,7 +291,7 @@ public class MapperHelper {
                     .collect(Collectors.toSet());
         }
 
-        return AccountsDto.builder()
+        return new AccountsDto.Builder()
                 .accountNumber(putInputRequestDto.getAccountNumber())
                 .balance(putInputRequestDto.getBalance())
                 .accountType(putInputRequestDto.getAccountType())
@@ -322,7 +322,7 @@ public class MapperHelper {
                     .collect(Collectors.toSet());
         }
 
-        return AccountsDto.builder()
+        return new AccountsDto.Builder()
                 .accountNumber(getInputRequestDto.getAccountNumber())
                 .balance(getInputRequestDto.getBalance())
                 .accountType(getInputRequestDto.getAccountType())
@@ -436,7 +436,7 @@ public class MapperHelper {
     }
 
     public static BeneficiaryDto mapInputDtoToBenDto(final PostInputRequestDto postInputRequestDto) {
-        return BeneficiaryDto.builder()
+        return new BeneficiaryDto.Builder()
                 .beneficiaryAccountNumber(postInputRequestDto.getBeneficiaryAccountNumber())
                 .beneficiaryName(postInputRequestDto.getBeneficiaryName())
                 .benAge(postInputRequestDto.getBenAge())
@@ -459,7 +459,7 @@ public class MapperHelper {
 
 
     public static BeneficiaryDto mapDeleteInputRequestDtoToBenDto(final DeleteInputRequestDto deleteInputRequestDto) {
-        return BeneficiaryDto.builder()
+        return new BeneficiaryDto.Builder()
                 .beneficiaryAccountNumber(deleteInputRequestDto.getBeneficiaryAccountNumber())
                 .beneficiaryName(deleteInputRequestDto.getBeneficiaryName())
                 .benAge(deleteInputRequestDto.getBenAge())
@@ -481,7 +481,7 @@ public class MapperHelper {
     }
 
     public static BeneficiaryDto mapPutInputRequestDtoToBenDto(final PutInputRequestDto putInputRequestDto) {
-        return BeneficiaryDto.builder()
+        return new BeneficiaryDto.Builder()
                 .beneficiaryAccountNumber(putInputRequestDto.getBeneficiaryAccountNumber())
                 .beneficiaryName(putInputRequestDto.getBeneficiaryName())
                 .benAge(putInputRequestDto.getBenAge())
@@ -503,7 +503,7 @@ public class MapperHelper {
     }
 
     public static BeneficiaryDto mapGetRequestInputDtoToBenDto(final GetInputRequestDto getInputRequestDto) {
-        return BeneficiaryDto.builder()
+        return new BeneficiaryDto.Builder()
                 .beneficiaryAccountNumber(getInputRequestDto.getBeneficiaryAccountNumber())
                 .beneficiaryName(getInputRequestDto.getBeneficiaryName())
                 .benAge(getInputRequestDto.getBenAge())
@@ -544,20 +544,20 @@ public class MapperHelper {
 
     public static AccountsOutPutDto mapToAccountsOutputDto(final AccountsDto accountsDto) {
         return AccountsOutPutDto.builder()
-                .accountNumber(accountsDto.getAccountNumber())
-                .balance(accountsDto.getBalance())
-                .accountType(accountsDto.getAccountType())
-                .branchCode(accountsDto.getBranchCode())
-                .homeBranch(accountsDto.getHomeBranch())
-                .transferLimitPerDay(accountsDto.getTransferLimitPerDay())
-                .creditScore(accountsDto.getCreditScore())
-                .approvedLoanLimitBasedOnCreditScore(accountsDto.getApprovedLoanLimitBasedOnCreditScore())
-                .anyActiveLoans(accountsDto.getAnyActiveLoans())
-                .totLoanIssuedSoFar(accountsDto.getTotLoanIssuedSoFar())
-                .totalOutstandingAmountPayableToBank(accountsDto.getTotalOutstandingAmountPayableToBank())
-                .accountStatus(accountsDto.getAccountStatus())
-                .listOfBeneficiary(accountsDto.getListOfBeneficiary())
-                .listOfTransactions(accountsDto.getListOfTransactions())
+                .accountNumber(accountsDto.accountNumber())
+                .balance(accountsDto.balance())
+                .accountType(accountsDto.accountType())
+                .branchCode(accountsDto.branchCode())
+                .homeBranch(accountsDto.homeBranch())
+                .transferLimitPerDay(accountsDto.transferLimitPerDay())
+                .creditScore(accountsDto.creditScore())
+                .approvedLoanLimitBasedOnCreditScore(accountsDto.approvedLoanLimitBasedOnCreditScore())
+                .anyActiveLoans(accountsDto.anyActiveLoans())
+                .totLoanIssuedSoFar(accountsDto.totLoanIssuedSoFar())
+                .totalOutstandingAmountPayableToBank(accountsDto.totalOutstandingAmountPayableToBank())
+                .accountStatus(accountsDto.accountStatus())
+                .listOfBeneficiary(accountsDto.listOfBeneficiary())
+                .listOfTransactions(accountsDto.listOfTransactions())
                 .build();
     }
 

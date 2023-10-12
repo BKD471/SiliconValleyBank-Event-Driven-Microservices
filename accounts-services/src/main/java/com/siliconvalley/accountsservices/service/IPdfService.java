@@ -1,6 +1,7 @@
 package com.siliconvalley.accountsservices.service;
 
 import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
+import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import net.sf.jasperreports.engine.JRException;
 
 import java.io.ByteArrayInputStream;
@@ -9,5 +10,5 @@ import java.time.LocalDate;
 
 public interface IPdfService {
     ByteArrayInputStream generateBankStatement(LocalDate startDate,LocalDate endDate,String accountNumber) throws FileNotFoundException;
-    void generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException;
+    void generateBankStatement(AllConstantHelpers.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException;
 }

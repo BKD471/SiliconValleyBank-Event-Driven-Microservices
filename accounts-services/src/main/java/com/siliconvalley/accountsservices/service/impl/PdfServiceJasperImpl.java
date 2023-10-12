@@ -102,7 +102,7 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
      * @throws JRException
      */
     @Override
-    public void generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException {
+    public void generateBankStatement(FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException {
         log.debug("################# Pdf Creation Service started ###################################");
         Set<Transactions> transactionsListBetweenDate =prepareTransactionsSetBetweenDate(startDate,endDate,accountNumber);
         Accounts loadAccount = fetchAccountByAccountNumber(accountNumber);

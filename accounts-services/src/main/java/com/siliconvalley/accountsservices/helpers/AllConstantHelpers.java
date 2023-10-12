@@ -63,6 +63,10 @@ public class AllConstantHelpers {
         GET_PAST_SIX_MONTHS_TRANSACTIONS,GEN_BANK_STATEMENT
     }
 
+    public enum FORMAT_TYPE{
+        HTML,PDF,XML
+    }
+
     public static final DIRECTION ASC=DIRECTION.asc;
     public static final AccountStatus STATUS_BLOCKED=AccountStatus.BLOCKED;
     public static final  AccountStatus STATUS_CLOSED=AccountStatus.CLOSED;
