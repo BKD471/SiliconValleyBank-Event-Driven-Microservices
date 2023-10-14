@@ -122,7 +122,7 @@ public class TransactionsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        TransactionsDto transactionsDto=TransactionsDto.builder()
+        TransactionsDto transactionsDto=new TransactionsDto.Builder()
                 .transactionId("1L")
                 .accountNumber("1L")
                 .transactionAmount(BigDecimal.valueOf(100000L))
@@ -132,7 +132,7 @@ public class TransactionsServiceTests {
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).add(transactionsDto.getTransactionAmount());
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).add(transactionsDto.transactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
@@ -175,7 +175,7 @@ public class TransactionsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        TransactionsDto transactionsDto=TransactionsDto.builder()
+        TransactionsDto transactionsDto=new TransactionsDto.Builder()
                 .transactionId("1L")
                 .accountNumber("1L")
                 .transactionAmount(BigDecimal.valueOf(100000L))
@@ -185,7 +185,7 @@ public class TransactionsServiceTests {
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.transactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
@@ -227,7 +227,7 @@ public class TransactionsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        TransactionsDto transactionsDto=TransactionsDto.builder()
+        TransactionsDto transactionsDto=new TransactionsDto.Builder()
                 .transactionId("1L")
                 .accountNumber("1L")
                 .transactionAmount(BigDecimal.valueOf(800000L))
@@ -248,7 +248,7 @@ public class TransactionsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        TransactionsDto transactionsDto=TransactionsDto.builder()
+        TransactionsDto transactionsDto=new TransactionsDto.Builder()
                 .transactionId("1L")
                 .accountNumber("1L")
                 .transactionAmount(BigDecimal.valueOf(100000L))
@@ -258,7 +258,7 @@ public class TransactionsServiceTests {
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.transactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
@@ -301,7 +301,7 @@ public class TransactionsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        TransactionsDto transactionsDto=TransactionsDto.builder()
+        TransactionsDto transactionsDto=new TransactionsDto.Builder()
                 .transactionId("1L")
                 .accountNumber("1L")
                 .transactionAmount(BigDecimal.valueOf(100000L))
@@ -311,7 +311,7 @@ public class TransactionsServiceTests {
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.transactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
@@ -354,7 +354,7 @@ public class TransactionsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        TransactionsDto transactionsDto=TransactionsDto.builder()
+        TransactionsDto transactionsDto=new TransactionsDto.Builder()
                 .transactionId("1L")
                 .accountNumber("1L")
                 .transactionAmount(BigDecimal.valueOf(100000L))
@@ -364,7 +364,7 @@ public class TransactionsServiceTests {
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.transactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)
@@ -407,7 +407,7 @@ public class TransactionsServiceTests {
         when(accountsRepositoryMock.findByAccountNumber(anyString()))
                 .thenReturn(Optional.of(accounts));
 
-        TransactionsDto transactionsDto=TransactionsDto.builder()
+        TransactionsDto transactionsDto=new TransactionsDto.Builder()
                 .transactionId("1L")
                 .accountNumber("1L")
                 .transactionAmount(BigDecimal.valueOf(100000L))
@@ -417,7 +417,7 @@ public class TransactionsServiceTests {
                 .transactionTimeStamp(LocalDateTime.now())
                 .build();
 
-        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.getTransactionAmount());
+        BigDecimal finalBalance=new BigDecimal(String.valueOf(accounts.getBalance())).subtract(transactionsDto.transactionAmount());
         Accounts accountStateAfterTransaction=Accounts.builder()
                 .accountNumber("1L")
                 .accountType(AllConstantHelpers.AccountType.SAVINGS)

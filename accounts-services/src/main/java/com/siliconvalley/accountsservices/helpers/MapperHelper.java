@@ -88,24 +88,24 @@ public class MapperHelper {
 
     public static Customer mapToCustomer(final CustomerDto customerDto) {
         Set<Accounts> listOfAccounts = new LinkedHashSet<>();
-        if (!isEmpty(customerDto.getAccounts())) {
-            listOfAccounts = customerDto.getAccounts().stream().
+        if (!isEmpty(customerDto.accounts())) {
+            listOfAccounts = customerDto.accounts().stream().
                     map(MapperHelper::mapToAccounts).collect(Collectors.toSet());
         }
         return Customer.builder()
-                .customerId(customerDto.getCustomerId())
-                .name(customerDto.getCustomerName())
-                .DateOfBirth(customerDto.getDateOfBirth())
-                .age(customerDto.getAge())
-                .email(customerDto.getEmail())
-                .phoneNumber(customerDto.getPhoneNumber())
-                .adharNumber(customerDto.getAdharNumber())
-                .panNumber(customerDto.getPanNumber())
-                .voterId(customerDto.getVoterId())
-                .address(customerDto.getAddress())
-                .imageName(customerDto.getImageName())
-                .drivingLicense(customerDto.getDrivingLicense())
-                .passportNumber(customerDto.getPassportNumber())
+                .customerId(customerDto.customerId())
+                .name(customerDto.customerName())
+                .DateOfBirth(customerDto.DateOfBirth())
+                .age(customerDto.age())
+                .email(customerDto.email())
+                .phoneNumber(customerDto.phoneNumber())
+                .adharNumber(customerDto.adharNumber())
+                .panNumber(customerDto.panNumber())
+                .voterId(customerDto.voterId())
+                .address(customerDto.address())
+                .imageName(customerDto.imageName())
+                .drivingLicense(customerDto.drivingLicense())
+                .passportNumber(customerDto.passportNumber())
                 .accounts(listOfAccounts)
                 .build();
     }
@@ -116,7 +116,7 @@ public class MapperHelper {
             listOfAccounts = customer.getAccounts().stream().
                     map(MapperHelper::mapToAccountsDto).collect(Collectors.toSet());
         }
-        return CustomerDto.builder()
+        return new CustomerDto.Builder()
                 .customerId(customer.getCustomerId())
                 .customerName(customer.getName())
                 .DateOfBirth(customer.getDateOfBirth())
@@ -178,15 +178,15 @@ public class MapperHelper {
 
     public static Transactions mapToTransactions(final TransactionsDto transactionsDto) {
         return Transactions.builder()
-                .transactionAmount(transactionsDto.getTransactionAmount())
-                .transactedAccountNumber(transactionsDto.getTransactedAccountNumber())
-                .transactionType(transactionsDto.getTransactionType())
-                .description(transactionsDto.getDescription())
+                .transactionAmount(transactionsDto.transactionAmount())
+                .transactedAccountNumber(transactionsDto.transactedAccountNumber())
+                .transactionType(transactionsDto.transactionType())
+                .description(transactionsDto.description())
                 .build();
     }
 
     public static TransactionsDto mapToTransactionsDto(final Transactions transactions) {
-        return TransactionsDto.builder()
+        return new TransactionsDto.Builder()
                 .transactionId(transactions.getTransactionId())
                 .transactionAmount(transactions.getTransactionAmount())
                 .transactionTimeStamp(transactions.getTransactionTimeStamp())
@@ -342,7 +342,7 @@ public class MapperHelper {
     }
 
     public static CustomerDto inputToCustomerDto(final PostInputRequestDto postInputRequestDto) {
-        return CustomerDto.builder()
+        return new CustomerDto.Builder()
                 .customerId(postInputRequestDto.getCustomerId())
                 .customerName(postInputRequestDto.getName())
                 .DateOfBirth(dateParserInYYYYMMDD(postInputRequestDto.getDateOfBirthInYYYYMMDD()))
@@ -362,7 +362,7 @@ public class MapperHelper {
     }
 
     public static CustomerDto deleteInputRequestToCustomerDto(final DeleteInputRequestDto deleteInputRequestDto) {
-        return CustomerDto.builder()
+        return new CustomerDto.Builder()
                 .customerId(deleteInputRequestDto.getCustomerId())
                 .customerName(deleteInputRequestDto.getName())
                 .DateOfBirth(dateParserInYYYYMMDD(deleteInputRequestDto.getDateOfBirthInYYYYMMDD()))
@@ -380,7 +380,7 @@ public class MapperHelper {
     }
 
     public static CustomerDto putInputRequestToCustomerDto(final PutInputRequestDto putInputRequestDto) {
-        return CustomerDto.builder()
+        return new CustomerDto.Builder()
                 .customerId(putInputRequestDto.getCustomerId())
                 .customerName(putInputRequestDto.getName())
                 .DateOfBirth(dateParserInYYYYMMDD(putInputRequestDto.getDateOfBirthInYYYYMMDD()))
@@ -400,7 +400,7 @@ public class MapperHelper {
     }
 
     public static CustomerDto getInputToCustomerDto(final GetInputRequestDto getInputRequestDto) {
-        return CustomerDto.builder()
+        return new CustomerDto.Builder()
                 .customerId(getInputRequestDto.getCustomerId())
                 .customerName(getInputRequestDto.getName())
                 .DateOfBirth(dateParserInYYYYMMDD(getInputRequestDto.getDateOfBirthInYYYYMMDD()))
@@ -526,19 +526,19 @@ public class MapperHelper {
 
     public static CustomerOutPutDto mapToCustomerOutputDto(final CustomerDto customerDto) {
         return CustomerOutPutDto.builder()
-                .customerId(customerDto.getCustomerId())
-                .customerName(customerDto.getCustomerName())
-                .DateOfBirth(customerDto.getDateOfBirth())
-                .age(customerDto.getAge())
-                .email(customerDto.getEmail())
-                .phoneNumber(customerDto.getPhoneNumber())
-                .adharNumber(customerDto.getAdharNumber())
-                .panNumber(customerDto.getPanNumber())
-                .voterId(customerDto.getVoterId())
-                .drivingLicense(customerDto.getDrivingLicense())
-                .passportNumber(customerDto.getPassportNumber())
-                .address(customerDto.getAddress())
-                .imageName(customerDto.getImageName())
+                .customerId(customerDto.customerId())
+                .customerName(customerDto.customerName())
+                .DateOfBirth(customerDto.DateOfBirth())
+                .age(customerDto.age())
+                .email(customerDto.email())
+                .phoneNumber(customerDto.phoneNumber())
+                .adharNumber(customerDto.adharNumber())
+                .panNumber(customerDto.panNumber())
+                .voterId(customerDto.voterId())
+                .drivingLicense(customerDto.drivingLicense())
+                .passportNumber(customerDto.passportNumber())
+                .address(customerDto.address())
+                .imageName(customerDto.imageName())
                 .build();
     }
 

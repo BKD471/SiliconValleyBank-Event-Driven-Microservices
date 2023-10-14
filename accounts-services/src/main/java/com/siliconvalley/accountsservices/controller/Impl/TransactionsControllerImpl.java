@@ -7,6 +7,7 @@ import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.TransactionException;
+import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
 import lombok.extern.slf4j.Slf4j;
@@ -74,9 +75,9 @@ public class TransactionsControllerImpl implements ITransactionsController {
     @Override
     public ResponseEntity<InputStreamResource> generateBankStatementPdf(final BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException {
 
-        String accountNumber=bankStatementRequestDto.getAccountNumber();
-        LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.getStartDate());
-        LocalDate endDate=dateParserInYYYYMMDD(bankStatementRequestDto.getEndDate());
+        String accountNumber=bankStatementRequestDto.accountNumber();
+        LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.startDate());
+        LocalDate endDate=dateParserInYYYYMMDD(bankStatementRequestDto.endDate());
 
         ByteArrayInputStream pdf=pdfService.generateBankStatement(startDate,endDate,accountNumber);
         HttpHeaders httpHeaders=new HttpHeaders();
@@ -88,7 +89,7 @@ public class TransactionsControllerImpl implements ITransactionsController {
     }
 
 
-    private ResponseEntity<Resource> generateStatementForAnyFormat(final String accountNumber, final BankStatementRequestDto.FORMAT_TYPE formatType) throws IOException {
+    private ResponseEntity<Resource> generateStatementForAnyFormat(final String accountNumber, final AllConstantHelpers.FORMAT_TYPE formatType) throws IOException {
         final String methodName="generateStatementForAnyFormat(accountNumber,formatType) in TransactionsController";
         String fieldIdWithExtension = null;
         switch (formatType) {
@@ -131,8 +132,8 @@ public class TransactionsControllerImpl implements ITransactionsController {
      */
     @Override
     public ResponseEntity<Resource> getPastSixMonthsTransaction(final TransactionsDto transactionsDto) throws AccountsException, JRException, IOException {
-        final String accountNumber=transactionsDto.getAccountNumber();
-        final BankStatementRequestDto.FORMAT_TYPE formatType=transactionsDto.getDownloadFormat();
+        final String accountNumber=transactionsDto.accountNumber();
+        final AllConstantHelpers.FORMAT_TYPE formatType=transactionsDto.downloadFormat();
         transactionsService.getPastSixMonthsTransactionsForAnAccount(accountNumber, formatType);
         return generateStatementForAnyFormat(accountNumber,formatType);
     }
@@ -144,10 +145,10 @@ public class TransactionsControllerImpl implements ITransactionsController {
      */
     @Override
     public ResponseEntity<Resource> generateBankStatementAnyFormat(BankStatementRequestDto bankStatementRequestDto) throws IOException, JRException {
-        String accountNumber=bankStatementRequestDto.getAccountNumber();
-        LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.getStartDate());
-        LocalDate endDate=dateParserInYYYYMMDD(bankStatementRequestDto.getEndDate());
-        BankStatementRequestDto.FORMAT_TYPE downloadableFORMAT=bankStatementRequestDto.getDownloadFormat();
+        String accountNumber=bankStatementRequestDto.accountNumber();
+        LocalDate startDate=dateParserInYYYYMMDD(bankStatementRequestDto.startDate());
+        LocalDate endDate=dateParserInYYYYMMDD(bankStatementRequestDto.endDate());
+        AllConstantHelpers.FORMAT_TYPE downloadableFORMAT=bankStatementRequestDto.downloadFormat();
         pdfService.generateBankStatement(downloadableFORMAT,startDate,endDate,accountNumber);
         return generateStatementForAnyFormat(accountNumber,downloadableFORMAT);
     }

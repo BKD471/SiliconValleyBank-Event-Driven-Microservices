@@ -271,7 +271,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-------------updateHomeBranch(AccountsDto,Accounts) AccountsServiceImpl started --------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
         final AllConstantHelpers.Branch oldHomeBranch = accounts.getHomeBranch();
-        final AllConstantHelpers.Branch newHomeBranch = accountsDto.getHomeBranch();
+        final AllConstantHelpers.Branch newHomeBranch = accountsDto.homeBranch();
         Accounts savedUpdatedAccount = accounts;
 
         validationService.accountsUpdateValidator(accounts, null, UPDATE_HOME_BRANCH);
@@ -290,7 +290,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 "------------------------------------------------------------------------------------------------------------------->");
         final String methodName = "increaseTransferLimit(AccountsDto,Accounts) in AccountsServiceImpl";
         final BigDecimal oldCashLimit = accounts.getTransferLimitPerDay();
-        final BigDecimal newCashLimit = accountsDto.getTransferLimitPerDay();
+        final BigDecimal newCashLimit = accountsDto.transferLimitPerDay();
 
         Accounts savedAccount = accounts;
         BiPredicate<BigDecimal, BigDecimal> checkForCashLimitRevision = (newLimit, oldLimit) ->
@@ -370,48 +370,48 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-----------updateCustomerDetails(Customer,CustomerDto ) AccountsServiceImpl started-----------------------" +
                 "--------------------------------------------------------------------------------------------------------------------->");
         final String oldName = oldCustomerRecord.getName();
-        final String newName = newCustomerRecord.getCustomerName();
+        final String newName = newCustomerRecord.customerName();
         final LocalDate oldDateOfBirth = oldCustomerRecord.getDateOfBirth();
-        final LocalDate newDateOfBirth = newCustomerRecord.getDateOfBirth();
+        final LocalDate newDateOfBirth = newCustomerRecord.DateOfBirth();
         final int newAge = Period.between(newDateOfBirth, LocalDate.now()).getYears();
         final String oldEmail = oldCustomerRecord.getEmail();
-        final String newEmail = newCustomerRecord.getEmail();
+        final String newEmail = newCustomerRecord.email();
         final String oldPhoneNumber = oldCustomerRecord.getPhoneNumber();
-        final String newPhoneNumber = newCustomerRecord.getPhoneNumber();
+        final String newPhoneNumber = newCustomerRecord.phoneNumber();
         final String oldAdharNumber = oldCustomerRecord.getAdharNumber();
-        final String newAdharNumber = newCustomerRecord.getAdharNumber();
+        final String newAdharNumber = newCustomerRecord.adharNumber();
         final String oldPanNumber = oldCustomerRecord.getPanNumber();
-        final String newPanNumber = newCustomerRecord.getPanNumber();
+        final String newPanNumber = newCustomerRecord.panNumber();
         final String oldVoterId = oldCustomerRecord.getVoterId();
-        final String newVoterId = newCustomerRecord.getVoterId();
+        final String newVoterId = newCustomerRecord.voterId();
         final String oldDrivingLicense = oldCustomerRecord.getDrivingLicense();
-        final String newDrivingLicense = newCustomerRecord.getDrivingLicense();
+        final String newDrivingLicense = newCustomerRecord.drivingLicense();
         final String oldPassportNumber = oldCustomerRecord.getPassportNumber();
-        final String newPassportNumber = newCustomerRecord.getPassportNumber();
+        final String newPassportNumber = newCustomerRecord.passportNumber();
 
         BiPredicate<String, String> isAllowedToUpdate = (newRecord, oldRecord) -> isNotBlank(newRecord) && !oldRecord.equalsIgnoreCase(newRecord);
         BiPredicate<LocalDate, LocalDate> isAllowedToUpdateForObjects = (newObj, oldObj) -> nonNull(newObj) && !oldObj.equals(newObj);
 
         if (isAllowedToUpdate.test(newName, oldName))
-            newCustomerRecord.setCustomerName(newName);
+            newCustomerRecord.withCustomerName(newName);
         if (isAllowedToUpdateForObjects.test(newDateOfBirth, oldDateOfBirth)) {
-            newCustomerRecord.setDateOfBirth(newDateOfBirth);
-            newCustomerRecord.setAge(newAge);
+            newCustomerRecord.withDateOfBirth(newDateOfBirth);
+            newCustomerRecord.withAge(newAge);
         }
         if (isAllowedToUpdate.test(newEmail, oldEmail))
-            newCustomerRecord.setEmail(newEmail);
+            newCustomerRecord.withEmail(newEmail);
         if (isAllowedToUpdate.test(newPhoneNumber, oldPhoneNumber))
-            newCustomerRecord.setCustomerName(newPhoneNumber);
+            newCustomerRecord.withPhoneNumber(newPhoneNumber);
         if (isAllowedToUpdate.test(newAdharNumber, oldAdharNumber))
-            newCustomerRecord.setCustomerName(newAdharNumber);
+            newCustomerRecord.withAdharNumber(newAdharNumber);
         if (isAllowedToUpdate.test(newPassportNumber, oldPassportNumber))
-            newCustomerRecord.setCustomerName(newPassportNumber);
+            newCustomerRecord.withPassportNumber(newPassportNumber);
         if (isAllowedToUpdate.test(newPanNumber, oldPanNumber))
-            newCustomerRecord.setCustomerName(newPanNumber);
+            newCustomerRecord.withPanNumber(newPanNumber);
         if (isAllowedToUpdate.test(newVoterId, oldVoterId))
-            newCustomerRecord.setCustomerName(newVoterId);
-        if (isAllowedToUpdate.test(newName, oldDrivingLicense))
-            newCustomerRecord.setDrivingLicense(newDrivingLicense);
+            newCustomerRecord.withVoterId(newVoterId);
+        if (isAllowedToUpdate.test(newDrivingLicense, oldDrivingLicense))
+            newCustomerRecord.withDrivingLicense(newDrivingLicense);
 
         final Customer updatedCustomer = mapToCustomer(newCustomerRecord);
 
@@ -453,8 +453,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                     String.format("Customer with id %s have no accounts present", customerId),
                     methodName);
 
-        Predicate<AccountsDto> checkForOnlyActiveAccounts=acc -> !STATUS_BLOCKED.equals(acc.getAccountStatus())
-                && !STATUS_CLOSED.equals(acc.getAccountStatus());
+        Predicate<AccountsDto> checkForOnlyActiveAccounts=acc -> !STATUS_BLOCKED.equals(acc.accountStatus())
+                && !STATUS_CLOSED.equals(acc.accountStatus());
 
         final List<AccountsDto> onlyActiveAccounts = pageableResponseDto.getContent()
                 .stream().filter(checkForOnlyActiveAccounts).toList();
@@ -491,8 +491,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-------------uploadProfileImage(CustomerDto) AccountsServiceImpl started --------------------------------------------------------------" +
                 "---------------------------------------------------------------------------------------------------------------------->");
         validationService.accountsUpdateValidator(null,  customerDto, UPLOAD_PROFILE_IMAGE);
-        final String imageName = fIleService.uploadFile(customerDto.getCustomerImage(), IMAGE_PATH);
-        final Customer customer = fetchCustomerByCustomerNumber(customerDto.getCustomerId());
+        final String imageName = fIleService.uploadFile(customerDto.customerImage(), IMAGE_PATH);
+        final Customer customer = fetchCustomerByCustomerNumber(customerDto.customerId());
         customer.setImageName(imageName);
         customerRepository.save(customer);
         log.debug("<--------------uploadProfileImage(CustomerDto) AccountsServiceImpl ended ----------------------------------------------------------------" +
@@ -518,17 +518,17 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final CustomerDto customerDto = inputToCustomerDto(postInputRequestDto);
 
         //Get the accountNumber & account & customer
-        final String accountNumber = accountsDto.getAccountNumber();
+        final String accountNumber = accountsDto.accountNumber();
         Accounts foundAccount;
         if (isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
-        final String customerId = customerDto.getCustomerId();
+        final String customerId = customerDto.customerId();
         Customer foundCustomer;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
         //check the request type
-        if (isNull(accountsDto.getUpdateRequest()))
+        if (isNull(accountsDto.updateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        final AllConstantHelpers.UpdateRequest request = accountsDto.updateRequest();
         switch (request) {
             case LEND_LOAN -> {
                 //to be done...
@@ -559,18 +559,18 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final AccountsDto accountsDto = getInputToAccountsDto(getInputRequestDto);
         final CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);
         //load accounts & customer
-        final String accountNumber = accountsDto.getAccountNumber();
+        final String accountNumber = accountsDto.accountNumber();
         Accounts foundAccount = null;
         if (isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
-        final String customerId = customerDto.getCustomerId();
+        final String customerId = customerDto.customerId();
         Customer foundCustomer = null;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
-        if (Objects.isNull(accountsDto.getUpdateRequest()))
+        if (Objects.isNull(accountsDto.updateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        final AllConstantHelpers.UpdateRequest request = accountsDto.updateRequest();
         final String location;
         switch (request) {
             case GET_CREDIT_SCORE -> {
@@ -642,23 +642,23 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final DIRECTION sortDir = (Objects.isNull(putInputRequestDto.getSortDir())) ? DIRECTION.asc : putInputRequestDto.getSortDir();
 
         //Get the accountNumber & account & customer
-        final String accountNumber = accountsDto.getAccountNumber();
+        final String accountNumber = accountsDto.accountNumber();
         Accounts foundAccount = null;
         if (isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
 
-        final String customerId = customerDto.getCustomerId();
+        final String customerId = customerDto.customerId();
         Customer foundCustomer = null;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
         //check the request type
-        if (isNull(accountsDto.getUpdateRequest()))
+        if (isNull(accountsDto.updateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        final AllConstantHelpers.UpdateRequest request = accountsDto.updateRequest();
 
         final String location;
         switch (request) {
             case ADD_ACCOUNT -> {
-                return createAccountForAlreadyCreatedUser(customerDto.getCustomerId(), mapToAccounts(accountsDto), accountsDto);
+                return createAccountForAlreadyCreatedUser(customerDto.customerId(), mapToAccounts(accountsDto), accountsDto);
             }
             case UPDATE_HOME_BRANCH -> {
                 final Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
@@ -667,7 +667,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(updatedAccount.getCustomer())))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(updatedAccount)))
                         .defaultMessage(String.format("Home branch is changed from %s to %s for customer with id %s",
-                                foundAccount.getHomeBranch(), accountsDto.getHomeBranch(), foundAccount.getCustomer().getCustomerId()))
+                                foundAccount.getHomeBranch(), accountsDto.homeBranch(), foundAccount.getCustomer().getCustomerId()))
                         .build();
             }
             case UPDATE_CREDIT_SCORE -> {
@@ -677,7 +677,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             case UPLOAD_CUSTOMER_IMAGE -> {
                 uploadProfileImage(customerDto);
                 return OutputDto.builder().customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
-                        .defaultMessage(String.format("Profile Image for customer with id:%s has been updated successfully", customerDto.getCustomerId()))
+                        .defaultMessage(String.format("Profile Image for customer with id:%s has been updated successfully", customerDto.customerId()))
                         .build();
             }
             case INC_TRANSFER_LIMIT -> {
@@ -691,7 +691,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             case CLOSE_ACC -> {
                 closeAccount(foundAccount);
                 return OutputDto.builder()
-                        .defaultMessage(String.format("Account with id %s is successfully closed", accountsDto.getAccountNumber()))
+                        .defaultMessage(String.format("Account with id %s is successfully closed", accountsDto.accountNumber()))
                         .build();
             }
             case RE_OPEN_ACC -> {
@@ -732,20 +732,20 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final AccountsDto accountsDto = deleteRequestInputToAccountsDto(deleteInputRequestDto);
         final CustomerDto customerDto = deleteInputRequestToCustomerDto(deleteInputRequestDto);
         //check the request type
-        if (isNull(accountsDto.getUpdateRequest()))
+        if (isNull(accountsDto.updateRequest()))
             throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
-        final AllConstantHelpers.UpdateRequest request = accountsDto.getUpdateRequest();
+        final AllConstantHelpers.UpdateRequest request = accountsDto.updateRequest();
         switch (request) {
             case DELETE_ACC -> {
-                final String accountNumber = accountsDto.getAccountNumber();
+                final String accountNumber = accountsDto.accountNumber();
                 deleteAccount(accountNumber);
                 return OutputDto.builder().defaultMessage(String.format("Account with id %s is successfully deleted", accountNumber)).build();
             }
             case DELETE_ALL_ACC -> {
-                deleteAllAccountsByCustomer(customerDto.getCustomerId());
+                deleteAllAccountsByCustomer(customerDto.customerId());
                 return OutputDto.builder()
                         .defaultMessage(String.format("All accounts that belonged to customer with id %s has been deleted",
-                                customerDto.getCustomerId())).build();
+                                customerDto.customerId())).build();
             }
             default -> throw new AccountsException(AccountsException.class,
                     String.format("Invalid request type %s for DELETE request", request), methodName);

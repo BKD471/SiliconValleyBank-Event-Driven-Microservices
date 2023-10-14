@@ -96,7 +96,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
     private TransactionsDto payOrDepositMoney(final TransactionsDto transactionsDto, final AllConstantHelpers.TransactionType transactionType) throws AccountsException, TransactionException {
         log.debug("<-------------payOrDepositMoney(TransactionsDto, Transactions.TransactionType) TransactionsServiceImpl started -----------------------" +
                 "-------------------------------------------------------------------------------------------------------------------------->");
-        final String accountNumber = transactionsDto.getAccountNumber();
+        final String accountNumber = transactionsDto.accountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
         final Transactions requestTransaction = mapToTransactions(transactionsDto);
 
@@ -131,14 +131,14 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
     public OutputDto transactionsExecutor(final TransactionsDto transactionsDto) throws TransactionException, AccountsException {
         final String methodName="transactionsExecutor(TransactionsDto) in TransactionsServiceImpl";
 
-        final String accountNumber=transactionsDto.getAccountNumber();
+        final String accountNumber=transactionsDto.accountNumber();
         final Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
         final Customer fetchedCustomer=fetchedAccount.getCustomer();
 
 
-        if(isNull(transactionsDto.getTransactionType())) throw new TransactionException(TransactionException.class,
+        if(isNull(transactionsDto.transactionType())) throw new TransactionException(TransactionException.class,
                 "Please provide transaction Type",methodName);
-        switch (transactionsDto.getTransactionType()) {
+        switch (transactionsDto.transactionType()) {
             case CREDIT -> {
                 final TransactionsDto transactionDetails=payOrDepositMoney(transactionsDto, CREDIT);
                 return OutputDto.builder()
@@ -164,7 +164,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
-    public void getPastSixMonthsTransactionsForAnAccount(final String accountNumber, BankStatementRequestDto.FORMAT_TYPE formatType) throws AccountsException, JRException, FileNotFoundException {
+    public void getPastSixMonthsTransactionsForAnAccount(final String accountNumber, FORMAT_TYPE formatType) throws AccountsException, JRException, FileNotFoundException {
         final Accounts fetchedAccount=fetchAccountByAccountNumber(accountNumber);
 
         final LocalDateTime today=LocalDateTime.now();
@@ -182,7 +182,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 "--------------------------------------------------------------------------------->");
         final String methodName="payBills(TransactionDto) in TransactionsServiceImpl";
 
-        switch (transactionsDto.getDescription()) {
+        switch (transactionsDto.description()) {
             // this will be built along with loan microservices
             //we need to call Loan microservices apis
             case EMI -> {

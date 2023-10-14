@@ -27,7 +27,7 @@ public interface IValidationService {
         AccountsDto accountsDto= mapToAccountsDto(accounts);
         final String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
                 "coming from %s", locality);
-        final AllConstantHelpers.Branch newhomeBranch =(null == accountsDto) ? accounts.getHomeBranch() : accountsDto.getHomeBranch();
+        final AllConstantHelpers.Branch newhomeBranch =(null == accountsDto) ? accounts.getHomeBranch() : accountsDto.homeBranch();
         final AllConstantHelpers.AccountType accountType = accounts.getAccountType();
 
         //get all accounts for customer

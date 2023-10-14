@@ -230,7 +230,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "updateBeneficiaryDetailsOfAnAccount(Long , BeneficiaryDto ) in BeneficiaryServiceImpl";
         validationService.beneficiaryUpdateValidator(fetchedAccounts, beneficiaryDto, UPDATE_BEN);
 
-        final String BENEFICIARY_ID = beneficiaryDto.getBeneficiaryId();
+        final String BENEFICIARY_ID = beneficiaryDto.beneficiaryId();
         if (isBlank(BENEFICIARY_ID)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please enter a valid beneficiary id", methodName);
 
@@ -254,7 +254,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         if (isBlank(beneficiaryId))
             throw new BeneficiaryException(BeneficiaryException.class, "Please provide a valid beneficiary id", methodName);
 
-        BeneficiaryDto beneficiaryDto= BeneficiaryDto.builder().beneficiaryId(beneficiaryId).benAge(0).build();
+        BeneficiaryDto beneficiaryDto=new BeneficiaryDto.Builder().beneficiaryId(beneficiaryId).benAge(0).build();
         validationService.beneficiaryUpdateValidator(fetchedAccounts,beneficiaryDto,DELETE_BEN);
 
         //delete that beneficiary
@@ -388,15 +388,15 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         switch (requestType) {
             case GET_BEN -> {
                 location="Inside GET_BEN";
-                final Beneficiary beneficiary = getBeneficiaryById(fetchedAccount, beneficiaryDto.getBeneficiaryId())
+                final Beneficiary beneficiary = getBeneficiaryById(fetchedAccount, beneficiaryDto.beneficiaryId())
                         .orElseThrow(()-> new BeneficiaryException(BeneficiaryException.class, String.format("No such beneficiaries present with id:%s",
-                            beneficiaryDto.getBeneficiaryId()), String.format("%s of %s", location, methodName)));
+                            beneficiaryDto.beneficiaryId()), String.format("%s of %s", location, methodName)));
 
                 return OutputDto.builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
                         .beneficiary(mapToBeneficiaryDto(beneficiary))
-                        .defaultMessage(String.format("Fetched beneficiary with id:%s",beneficiaryDto.getBeneficiaryId()))
+                        .defaultMessage(String.format("Fetched beneficiary with id:%s",beneficiaryDto.beneficiaryId()))
                         .build();
             }
             case GET_ALL_BEN -> {
@@ -435,9 +435,9 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
             case DELETE_BEN -> {
-                deleteBeneficiariesForAnAccount(fetchedAccount, beneficiaryDto.getBeneficiaryId());
+                deleteBeneficiariesForAnAccount(fetchedAccount, beneficiaryDto.beneficiaryId());
                 return OutputDto.builder()
-                        .defaultMessage(String.format("Beneficiary with id:%s has been deleted",beneficiaryDto.getBeneficiaryId()))
+                        .defaultMessage(String.format("Beneficiary with id:%s has been deleted",beneficiaryDto.beneficiaryId()))
                         .build();
             }
             case DELETE_ALL_BEN -> {

@@ -115,13 +115,13 @@ public class AuthController {
     }
 
     private Customer saveUser(String email, String name, String photoUrl) {
-        CustomerDto newUser = CustomerDto.builder()
+        CustomerDto newUser =new CustomerDto.Builder()
                 .customerName(name)
                 .email(email)
                 .password(newPassword)
                 .imageName(photoUrl)
                 .roles(new HashSet<>())
-                .age(0).build();
+                .build();
 
         CustomerDto customer =createUser(newUser);
         return this.modelMapper.map(customer, Customer.class);

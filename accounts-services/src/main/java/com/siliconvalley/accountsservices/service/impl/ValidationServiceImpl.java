@@ -78,12 +78,12 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case UPLOAD_PROFILE_IMAGE -> {
                 location="Inside UPLOAD_PROFILE_IMAGE";
-                if (Objects.isNull(customerDto.getCustomerImage()))
+                if (Objects.isNull(customerDto.customerImage()))
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Please provide image", String.format("%s of %s", methodName, location));
                 final double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
 
-                Predicate<CustomerDto> checkUnhappyPathConditionForUploadingProfileImage = customer -> customer.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customer.getCustomerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0;
+                Predicate<CustomerDto> checkUnhappyPathConditionForUploadingProfileImage = customer -> customer.customerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customer.customerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0;
                 if (checkUnhappyPathConditionForUploadingProfileImage.test(customerDto))
                     throw new BadApiRequestException(BadApiRequestException.class,
                             "Your file is either corrupted or you are exceeding the max size of 100mb",
@@ -134,7 +134,7 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case GET_ALL_ACC -> {
                 location="GET_ALL_ACC";
-                if (CollectionUtils.isEmpty(customerDto.getAccounts()))
+                if (CollectionUtils.isEmpty(customerDto.accounts()))
                     throw new AccountsException(AccountsException.class,
                             "No accounts found", String.format("%s of %s", location, methodName));
             }
@@ -170,19 +170,19 @@ public final class ValidationServiceImpl implements IValidationService {
                         "You can't add more than 5 beneficiaries", String.format("%s of %s", location, methodName));
 
                 BiPredicate<Accounts, BeneficiaryDto> checkUnhappyConditionForAddingBeneficiaryCompulsoryFields = (acc, ben) ->
-                        ben.getBenAdharNumber().equalsIgnoreCase(acc.getCustomer().getAdharNumber()) ||
-                                ben.getBeneficiaryEmail().equalsIgnoreCase(acc.getCustomer().getEmail()) ||
-                                ben.getBenPanNumber().equalsIgnoreCase(acc.getCustomer().getPanNumber()) ||
-                                ben.getBenPhoneNumber().equalsIgnoreCase(acc.getCustomer().getPhoneNumber());
+                        ben.benAdharNumber().equalsIgnoreCase(acc.getCustomer().getAdharNumber()) ||
+                                ben.beneficiaryEmail().equalsIgnoreCase(acc.getCustomer().getEmail()) ||
+                                ben.benPanNumber().equalsIgnoreCase(acc.getCustomer().getPanNumber()) ||
+                                ben.benPhoneNumber().equalsIgnoreCase(acc.getCustomer().getPhoneNumber());
 
                 BiPredicate<Accounts, BeneficiaryDto> checkUnhappyConditionForAddingBeneficiaryOptionalFields = (acc, ben) -> {
                     final String voterId = acc.getCustomer().getVoterId();
                     final String drivingLicense = acc.getCustomer().getDrivingLicense();
                     final String passport = acc.getCustomer().getPassportNumber();
 
-                    final String newVoterId = ben.getBenVoterId();
-                    final String newDrivingLicense = ben.getBenDrivingLicense();
-                    final String newPassportNumber = ben.getBenPassportNumber();
+                    final String newVoterId = ben.benVoterId();
+                    final String newDrivingLicense = ben.benDrivingLicense();
+                    final String newPassportNumber = ben.benPassportNumber();
 
                     return (isNotBlank(voterId) && voterId.equalsIgnoreCase(newVoterId))
                             || (isNotBlank(drivingLicense) && drivingLicense.equalsIgnoreCase(newDrivingLicense))
@@ -199,15 +199,15 @@ public final class ValidationServiceImpl implements IValidationService {
 
 
                 Predicate<Beneficiary> checkWheteherBeneficiaryAlreadyPresentCompulSoryFields = (ben) ->
-                        ben.getBenAdharNumber().equalsIgnoreCase(beneficiaryDto.getBenAdharNumber()) ||
-                                ben.getBeneficiaryEmail().equalsIgnoreCase(beneficiaryDto.getBeneficiaryEmail()) ||
-                                ben.getBenPanNumber().equalsIgnoreCase(beneficiaryDto.getBenPanNumber()) ||
-                                ben.getBenPhoneNumber().equalsIgnoreCase(beneficiaryDto.getBenPhoneNumber());
+                        ben.getBenAdharNumber().equalsIgnoreCase(beneficiaryDto.benAdharNumber()) ||
+                                ben.getBeneficiaryEmail().equalsIgnoreCase(beneficiaryDto.beneficiaryEmail()) ||
+                                ben.getBenPanNumber().equalsIgnoreCase(beneficiaryDto.benPanNumber()) ||
+                                ben.getBenPhoneNumber().equalsIgnoreCase(beneficiaryDto.benPhoneNumber());
 
                 Predicate<Beneficiary> checkWhetherBeneficiaryAlreadyPresentOptionalFields=(ben)->{
-                    final String voterId=beneficiaryDto.getBenVoterId();
-                    final String drivingLicense=beneficiaryDto.getBenDrivingLicense();
-                    final String passPortNumber=beneficiaryDto.getBenPassportNumber();
+                    final String voterId=beneficiaryDto.benVoterId();
+                    final String drivingLicense=beneficiaryDto.benDrivingLicense();
+                    final String passPortNumber=beneficiaryDto.benPassportNumber();
 
                     return ( isNotBlank(voterId) && voterId.equalsIgnoreCase(ben.getBenVoterId())) ||
                             ( isNotBlank(drivingLicense) && drivingLicense.equalsIgnoreCase(ben.getBenDrivingLicense())) ||
@@ -222,7 +222,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
                         "This person is already added as a beneficiary", String.format("%s of %s", location, methodName));
 
-                switch (beneficiaryDto.getRelation()) {
+                switch (beneficiaryDto.relation()) {
                     case FATHER -> {
                         notPossible = listOfBeneficiaries.stream().anyMatch(ben -> ben.getRelation().equals(FATHER));
                         if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
@@ -248,52 +248,52 @@ public final class ValidationServiceImpl implements IValidationService {
                 Predicate<String> guardClauseForEmptyStringCheck = StringUtils::isNotBlank;
                 Predicate<Object> guardClauseForEmptyObjectCheck = Objects::nonNull;
 
-                if (guardClauseForEmptyObjectCheck.test(beneficiaryDto.getBenDate_Of_Birth())) {
-                    isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.getBenDate_Of_Birth().toString());
+                if (guardClauseForEmptyObjectCheck.test(beneficiaryDto.BenDate_Of_Birth())) {
+                    isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.BenDate_Of_Birth().toString());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give DOB in YYYY-mm-dd format",
                                 String.format("%s of %s", location, methodName));
                 }
 
-                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBeneficiaryEmail())) {
-                    isTrue = Pattern.matches(PATTERN_FOR_EMAIL, beneficiaryDto.getBeneficiaryEmail());
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.beneficiaryEmail())) {
+                    isTrue = Pattern.matches(PATTERN_FOR_EMAIL, beneficiaryDto.beneficiaryEmail());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give email in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
 
-                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenPhoneNumber())) {
-                    isTrue = Pattern.matches(PATTERN_FOR_PHONE_NUMBER, beneficiaryDto.getBenPhoneNumber());
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benPhoneNumber())) {
+                    isTrue = Pattern.matches(PATTERN_FOR_PHONE_NUMBER, beneficiaryDto.benPhoneNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give phone Number in valid format e.g +xx-xxxxxxxxxx",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenAdharNumber())) {
-                    isTrue = Pattern.matches(PATTERN_FOR_ADHAR, beneficiaryDto.getBenAdharNumber());
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benAdharNumber())) {
+                    isTrue = Pattern.matches(PATTERN_FOR_ADHAR, beneficiaryDto.benAdharNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give adhar number in valid xxxx-xxxx-xxxx format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenPanNumber())) {
-                    isTrue = Pattern.matches(PATTERN_FOR_PAN_NUMBER, beneficiaryDto.getBenPanNumber());
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benPanNumber())) {
+                    isTrue = Pattern.matches(PATTERN_FOR_PAN_NUMBER, beneficiaryDto.benPanNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give pan number in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenPassportNumber())) {
-                    isTrue = Pattern.matches(PATTERN_FOR_PASSPORT, beneficiaryDto.getBenPassportNumber());
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benPassportNumber())) {
+                    isTrue = Pattern.matches(PATTERN_FOR_PASSPORT, beneficiaryDto.benPassportNumber());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give passport number in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenVoterId())) {
-                    isTrue = Pattern.matches(PATTERN_FOR_VOTER, beneficiaryDto.getBenVoterId());
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benVoterId())) {
+                    isTrue = Pattern.matches(PATTERN_FOR_VOTER, beneficiaryDto.benVoterId());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give voter in valid format",
                                 String.format("%s of %s", location, methodName));
                 }
-                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.getBenDrivingLicense())) {
-                    isTrue = Pattern.matches(PATTERN_FOR_DRIVING_LICENSE, beneficiaryDto.getBenDrivingLicense());
+                if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benDrivingLicense())) {
+                    isTrue = Pattern.matches(PATTERN_FOR_DRIVING_LICENSE, beneficiaryDto.benDrivingLicense());
                     if (!isTrue)
                         throw new BeneficiaryException(BeneficiaryException.class, "Please give driving license in valid format",
                                 String.format("%s of %s", location, methodName));
@@ -301,7 +301,7 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case DELETE_BEN -> {
                 location = "Inside Delete Ben";
-                String beneficiaryId = beneficiaryDto.getBeneficiaryId();
+                String beneficiaryId = beneficiaryDto.beneficiaryId();
                 if (CollectionUtils.isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
                         "Account has no beneficiaries to delete", String.format("%s of %s", location, methodName));
 

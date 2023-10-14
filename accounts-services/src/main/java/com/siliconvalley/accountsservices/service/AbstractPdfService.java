@@ -1,6 +1,7 @@
 package com.siliconvalley.accountsservices.service;
 
 import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
+import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.IPdfService;
@@ -20,6 +21,6 @@ public abstract class AbstractPdfService extends AbstractService implements IPdf
     public ByteArrayInputStream generateBankStatement(LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException{
         return null;
     }
-    public void generateBankStatement(BankStatementRequestDto.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException{
+    public void generateBankStatement(AllConstantHelpers.FORMAT_TYPE reportFormat, LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException, JRException{
     }
 }
