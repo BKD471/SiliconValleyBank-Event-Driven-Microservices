@@ -448,7 +448,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<AccountsDto> pageableResponseDto = getAllActiveAccountsByCustomerId(customerId, pageable);
-        if (isEmpty(pageableResponseDto.getContent()))
+        if (isEmpty(pageableResponseDto.content()))
             throw new BadApiRequestException(BadApiRequestException.class,
                     String.format("Customer with id %s have no accounts present", customerId),
                     methodName);
@@ -456,10 +456,10 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         Predicate<AccountsDto> checkForOnlyActiveAccounts=acc -> !STATUS_BLOCKED.equals(acc.accountStatus())
                 && !STATUS_CLOSED.equals(acc.accountStatus());
 
-        final List<AccountsDto> onlyActiveAccounts = pageableResponseDto.getContent()
+        final List<AccountsDto> onlyActiveAccounts = pageableResponseDto.content()
                 .stream().filter(checkForOnlyActiveAccounts).toList();
 
-        pageableResponseDto.setContent(onlyActiveAccounts);
+        pageableResponseDto.withContent(onlyActiveAccounts);
         log.debug("<-----------------accountsPagination(DIRECTION,String,int,int,long) AccountsServiceImpl ended -------------------------------------------------------------------------------------------------------------->");
         return pageableResponseDto;
     }
@@ -472,17 +472,17 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<CustomerDto> pageableResponseDto = getAllCustomers(pageable);
-        if (isEmpty(pageableResponseDto.getContent()))
+        if (isEmpty(pageableResponseDto.content()))
             throw new BadApiRequestException(BadApiRequestException.class,
                     "No customers found",
                     methodName);
 
-        final List<CustomerDto> allCustomers = pageableResponseDto.getContent()
+        final List<CustomerDto> allCustomers = pageableResponseDto.content()
                 .stream().toList();
         List<Customer> mutableListOfCustomers= new ArrayList<>(allCustomers.stream()
                 .map(MapperHelper::mapToCustomer).toList());
         Collections.sort(mutableListOfCustomers);
-        pageableResponseDto.setContent(mutableListOfCustomers.stream().map(MapperHelper::mapToCustomerDto).toList());
+        pageableResponseDto.withContent(mutableListOfCustomers.stream().map(MapperHelper::mapToCustomerDto).toList());
         log.debug("<-----------------accountsPagination(DIRECTION,String,int,int,long) AccountsServiceImpl ended -------------------------------------------------------------------------------------------------------------->");
         return pageableResponseDto;
     }

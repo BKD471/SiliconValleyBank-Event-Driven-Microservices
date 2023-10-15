@@ -291,7 +291,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<BeneficiaryDto> pageableResponseDto = getAllBeneficiariesOfAnAccountByAccountNumber(fetchedAccount,pageable);
 
-        if (isEmpty(pageableResponseDto.getContent()))
+        if (isEmpty(pageableResponseDto.content()))
             throw new BadApiRequestException(BadApiRequestException.class,
                     String.format("Account with id %s have no beneficiary present", fetchedAccount.getAccountNumber()),
                     methodName);

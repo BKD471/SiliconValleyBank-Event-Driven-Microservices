@@ -5,15 +5,25 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+public record JwtResponse(String jwtToken,CustomerDto customer){
+  public static final class Builder{
+    private String jwtToken;
+    private CustomerDto customer;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class JwtResponse implements Serializable {
-  @Serial
-  private static final long serialVersionUID=1234567891234567112L;
-  private String jwtToken;
-  private CustomerDto customer;
+    public Builder(){}
+    public  Builder jwtToken(String jwtToken){
+      this.jwtToken=jwtToken;
+      return this;
+    }
+
+    public Builder customer(CustomerDto customer){
+      this.customer=customer;
+      return this;
+    }
+
+    public JwtResponse build(){
+      return new JwtResponse(jwtToken,customer);
+    }
+  }
 }
+

@@ -1,18 +1,23 @@
 package com.siliconvalley.accountsservices.dto.tokenDtos;
 
-import lombok.*;
+public record JwtRequest(String email,String password){
+    public static final class Builder{
+        private String email;
+        private String password;
 
-import java.io.Serial;
-import java.io.Serializable;
+        public Builder(){}
+        public Builder email(String email){
+            this.email=email;
+            return this;
+        }
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class JwtRequest implements Serializable {
-    @Serial
-    private static final long serialVersionUID=1234567891234567111L;
-    private String email;
-    private String password;
+        public Builder password(String password){
+            this.password=password;
+            return this;
+        }
+
+        public JwtRequest build(){
+            return new JwtRequest(email,password);
+        }
+    }
 }

@@ -61,13 +61,15 @@ public class PagingHelper {
         final List<e> entity=page.getContent();
         final List<d> userDtoList=entity.stream().map( Object->new ModelMapper().map(Object,type)).toList();
 
-        final PageableResponseDto<d> responseDto=new PageableResponseDto<>();
-        responseDto.setContent(userDtoList);
-        responseDto.setPageNumber(page.getNumber());
-        responseDto.setPageSize(page.getSize());
-        responseDto.setTotalPages(page.getTotalPages());
-        responseDto.setTotalElements(page.getTotalElements());
-        responseDto.setLastPage(page.isLast());
+        final PageableResponseDto<d> responseDto=new PageableResponseDto.Builder<d>()
+                .content(userDtoList)
+                .pageNumber(page.getNumber())
+                .pageSize(page.getSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .lastPage(page.isLast())
+                .build();
+
         return responseDto;
     }
 }

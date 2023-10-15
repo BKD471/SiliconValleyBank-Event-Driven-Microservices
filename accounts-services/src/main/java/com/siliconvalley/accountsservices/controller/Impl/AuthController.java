@@ -72,11 +72,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody final JwtRequest jwtRequest) {
-        this.doAuthenticate(jwtRequest.getEmail(), jwtRequest.getPassword());
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
+        this.doAuthenticate( jwtRequest.email(), jwtRequest.password());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.email());
         final String token = jwtHelper.generateToken(userDetails);
         final CustomerDto customerDto = modelMapper.map(userDetails, CustomerDto.class);
-        final JwtResponse jwtResponse = JwtResponse.builder()
+        final JwtResponse jwtResponse =new JwtResponse.Builder()
                 .jwtToken(token)
                 .customer(customerDto).build();
 
@@ -111,7 +111,7 @@ public class AuthController {
         Customer customer = customerRepository.findCustomerByEmail(email).orElse(null);
 
         if (isNull(customer)) customer = this.saveUser(email, data.get("name").toString(), data.get("photoUrl").toString());
-        return this.login(JwtRequest.builder().email(customer.getEmail()).password(newPassword).build());
+        return this.login(new JwtRequest.Builder().email(customer.getEmail()).password(newPassword).build());
     }
 
     private Customer saveUser(String email, String name, String photoUrl) {
