@@ -120,7 +120,7 @@ public class TransactionsControllerTest {
                 .map(MapperHelper::mapToTransactionsDto)
                 .collect(Collectors.toSet());
 
-        dto = OutputDto.builder()
+        dto = new OutputDto.Builder()
                 .defaultMessage("Account with id 1 is created for customer 1")
                 .customer(MapperHelper.mapToCustomerOutputDto(MapperHelper.mapToCustomerDto(customer)))
                 .accounts(MapperHelper.mapToAccountsOutputDto(MapperHelper.mapToAccountsDto(accounts)))

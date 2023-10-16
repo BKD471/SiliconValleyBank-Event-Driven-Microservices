@@ -165,8 +165,8 @@ public class TransactionsServiceTests {
                 .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
-        assertNotNull(response.getTransactions());
-        assertEquals(finalBalance,response.getAccounts().getBalance());
+        assertNotNull(response.transactions());
+        assertEquals(finalBalance,response.accounts().balance());
     }
 
     @Test
@@ -218,8 +218,8 @@ public class TransactionsServiceTests {
                 .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
-        assertNotNull(response.getTransactions());
-        assertEquals(finalBalance,response.getAccounts().getBalance());
+        assertNotNull(response.transactions());
+        assertEquals(finalBalance,response.accounts().balance());
     }
 
     @Test
@@ -291,8 +291,8 @@ public class TransactionsServiceTests {
                 .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
-        assertNotNull(response.getTransactions());
-        assertEquals(finalBalance,response.getAccounts().getBalance());
+        assertNotNull(response.transactions());
+        assertEquals(finalBalance,response.accounts().balance());
     }
 
     @Test
@@ -344,8 +344,8 @@ public class TransactionsServiceTests {
                 .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
-        assertNotNull(response.getTransactions());
-        assertEquals(finalBalance,response.getAccounts().getBalance());
+        assertNotNull(response.transactions());
+        assertEquals(finalBalance,response.accounts().balance());
     }
 
     @Test
@@ -397,8 +397,8 @@ public class TransactionsServiceTests {
                 .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
-        assertNotNull(response.getTransactions());
-        assertEquals(finalBalance,response.getAccounts().getBalance());
+        assertNotNull(response.transactions());
+        assertEquals(finalBalance,response.accounts().balance());
     }
 
     @Test
@@ -450,7 +450,7 @@ public class TransactionsServiceTests {
                 .thenReturn(transactionsState);
 
         OutputDto response=transactionsService.transactionsExecutor(transactionsDto);
-        assertNotNull(response.getTransactions());
-        assertEquals(finalBalance,response.getAccounts().getBalance());
+        assertNotNull(response.transactions());
+        assertEquals(finalBalance,response.accounts().balance());
     }
 }
