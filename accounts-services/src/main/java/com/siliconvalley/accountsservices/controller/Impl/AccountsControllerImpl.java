@@ -140,8 +140,8 @@ public class AccountsControllerImpl implements IAccountsController {
                 .age(0).pageNumber(0).pageSize(0).benAge(0).creditScore(0).build();
         final OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
         final ImageResponseMessages imgResponseMessages= new ImageResponseMessages.Builder()
-                .message(responseBody.getDefaultMessage())
-                .imageName(responseBody.getCustomer().getImageName())
+                .message(responseBody.defaultMessage())
+                .imageName(responseBody.customer().imageName())
                 .status(HttpStatus.CREATED)
                 .success(true)
                 .build();

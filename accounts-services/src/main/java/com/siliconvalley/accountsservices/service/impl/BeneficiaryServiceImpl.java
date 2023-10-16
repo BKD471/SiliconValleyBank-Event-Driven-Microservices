@@ -321,7 +321,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
             case ADD_BEN -> {
                 final Beneficiary beneficiary = addBeneficiary(fetchedAccount, beneficiaryDto);
 
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(customerDto))
                         .accounts(mapToAccountsOutputDto(accountsDto))
                         .beneficiary(mapToBeneficiaryDto(beneficiary))
@@ -348,7 +348,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         switch (requestType) {
             case UPDATE_BEN -> {
                 final Beneficiary loadedBeneficiary = updateBeneficiaryDetailsOfAnAccount(fetchedAccount, beneficiaryDto);
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(loadCustomer)))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
                         .beneficiary(mapToBeneficiaryDto(loadedBeneficiary))
@@ -392,7 +392,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
                         .orElseThrow(()-> new BeneficiaryException(BeneficiaryException.class, String.format("No such beneficiaries present with id:%s",
                             beneficiaryDto.beneficiaryId()), String.format("%s of %s", location, methodName)));
 
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
                         .beneficiary(mapToBeneficiaryDto(beneficiary))
@@ -409,7 +409,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
                 //paging & sorting
                 final PageableResponseDto<BeneficiaryDto> pageableResponseDto=beneficiaryPagination(sortDir,sortBy,pageNumber,pageSize,fetchedAccount);
 
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedAccount.getCustomer())))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
                         .beneficiaryListPages(pageableResponseDto)
@@ -436,13 +436,13 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         switch (requestType) {
             case DELETE_BEN -> {
                 deleteBeneficiariesForAnAccount(fetchedAccount, beneficiaryDto.beneficiaryId());
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .defaultMessage(String.format("Beneficiary with id:%s has been deleted",beneficiaryDto.beneficiaryId()))
                         .build();
             }
             case DELETE_ALL_BEN -> {
                 deleteAllBeneficiaries(fetchedAccount);
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .defaultMessage(String.format("All beneficiaries with id:%s have been deleted",fetchedAccount.getAccountNumber()))
                         .build();
             }

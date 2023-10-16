@@ -141,7 +141,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         switch (transactionsDto.transactionType()) {
             case CREDIT -> {
                 final TransactionsDto transactionDetails=payOrDepositMoney(transactionsDto, CREDIT);
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedCustomer)))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
                         .transactions(transactionDetails)
@@ -150,7 +150,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
             }
             case DEBIT -> {
                 final TransactionsDto transactionDetails=payBills(transactionsDto);
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(fetchedCustomer)))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(fetchedAccount)))
                         .transactions(transactionDetails)

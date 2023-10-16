@@ -187,7 +187,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String accountNumber = savedCustomer.getAccounts().stream().toList().get(0).getAccountNumber();
         log.debug("<------------createAccount(PostInputRequestDto) AccountsServiceImpl ended --------------------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
-        return OutputDto.builder()
+        return new OutputDto.Builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(savedCustomer)))
                 .accounts(mapToAccountsOutputDto(mapToAccountsDto(savedCustomer.getAccounts().stream().toList().get(0))))
                 .defaultMessage(String.format("Account with id %s is created for customer %s", accountNumber, savedCustomer.getCustomerId()))
@@ -213,7 +213,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-------createAccountForAlreadyCreatedUser(long,Accounts,AccountsDto) AccountsServiceImpl ended -----------------------------------" +
                 "--------------------------------------------------------------------------------------------------------------------->");
 
-        return OutputDto.builder()
+        return new OutputDto.Builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(customer)))
                 .accounts(mapToAccountsOutputDto(mapToAccountsDto(savedAccount)))
                 .defaultMessage(String.format("New account with id %s is created for customer with id:%s", savedAccount.getAccountNumber(), customerId))
@@ -233,7 +233,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         log.debug("<-----------getAccountInfo(long) AccountsServiceImpl ended ---------------------------------------------------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
-        return OutputDto.builder()
+        return new OutputDto.Builder()
                 .customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
                 .accounts(mapToAccountsOutputDto(mapToAccountsDto(foundAccount)))
                 .defaultMessage(String.format("Retrieved info about account with id: %s", foundAccount.getAccountNumber()))
@@ -532,7 +532,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         switch (request) {
             case LEND_LOAN -> {
                 //to be done...
-                return OutputDto.builder().defaultMessage("Baad main karenge").build();
+                return new OutputDto.Builder().defaultMessage("Baad main karenge").build();
             }
             default -> throw new AccountsException(AccountsException.class,
                     String.format("Invalid request type %s for POST requests", request),
@@ -576,7 +576,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             case GET_CREDIT_SCORE -> {
                 getCreditScore(accountNumber);
                 //to be done after implementing credit card microservice
-                return OutputDto.builder().defaultMessage("Baad main karenge").build();
+                return new OutputDto.Builder().defaultMessage("Baad main karenge").build();
             }
             case GET_ACC_INFO -> {
                 return getAccountInfo(accountNumber);
@@ -594,7 +594,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 final PageableResponseDto<CustomerDto> pageableResponseDto =
                         customerPagination(sortDir, sortBy, pageNumber, pageSize);
 
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
                         .customerListPages(pageableResponseDto)
                         .defaultMessage("Fetched all customers")
@@ -612,7 +612,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                             String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", location, methodName));
                 final PageableResponseDto<AccountsDto> pageableResponseDto = accountsPagination(sortDir, sortBy, pageNumber, pageSize, customerId);
 
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
                         .accountsListPages(pageableResponseDto)
                         .defaultMessage(String.format("Fetched all accounts for customer id:%s", customerId))
@@ -663,7 +663,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             case UPDATE_HOME_BRANCH -> {
                 final Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
 
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(updatedAccount.getCustomer())))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(updatedAccount)))
                         .defaultMessage(String.format("Home branch is changed from %s to %s for customer with id %s",
@@ -672,17 +672,17 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             }
             case UPDATE_CREDIT_SCORE -> {
                 updateCreditScore(accountsDto);
-                return OutputDto.builder().defaultMessage("Baad main karenge").build();
+                return new OutputDto.Builder().defaultMessage("Baad main karenge").build();
             }
             case UPLOAD_CUSTOMER_IMAGE -> {
                 uploadProfileImage(customerDto);
-                return OutputDto.builder().customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
+                return new OutputDto.Builder().customer(mapToCustomerOutputDto(mapToCustomerDto(foundCustomer)))
                         .defaultMessage(String.format("Profile Image for customer with id:%s has been updated successfully", customerDto.customerId()))
                         .build();
             }
             case INC_TRANSFER_LIMIT -> {
                 final Accounts accountWithUpdatedLimit = increaseTransferLimit(accountsDto, foundAccount);
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(customerDto))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(accountWithUpdatedLimit)))
                         .defaultMessage(String.format("Transfer Limit has been increased from %s to %s", foundAccount.getTransferLimitPerDay(), accountWithUpdatedLimit.getTransferLimitPerDay()))
@@ -690,23 +690,23 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             }
             case CLOSE_ACC -> {
                 closeAccount(foundAccount);
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .defaultMessage(String.format("Account with id %s is successfully closed", accountsDto.accountNumber()))
                         .build();
             }
             case RE_OPEN_ACC -> {
                 unCloseAccount(foundAccount);
-                return OutputDto.builder().defaultMessage(String.format("Account with id %s has been reopened ", accountNumber)).build();
+                return new OutputDto.Builder().defaultMessage(String.format("Account with id %s has been reopened ", accountNumber)).build();
             }
             case BLOCK_ACC -> {
                 //Note: account once blocked , no operations can be performed on it not even get
                 //only authority reserves the right to unblock it
                 blockAccount(foundAccount);
-                return OutputDto.builder().defaultMessage(String.format("Account with id %s has been blocked", accountNumber)).build();
+                return new OutputDto.Builder().defaultMessage(String.format("Account with id %s has been blocked", accountNumber)).build();
             }
             case INC_APPROVED_LOAN_LIMIT -> {
                 //to be done.....
-                return OutputDto.builder().defaultMessage("BAAD MAIN KARNGE").build();
+                return new OutputDto.Builder().defaultMessage("BAAD MAIN KARNGE").build();
             }
             case UPDATE_CUSTOMER_DETAILS -> {
                 location="Inside UPDATE_CUSTOMER_DETAILS";
@@ -714,7 +714,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 final CustomerDto updatedCustomerDto = mapToCustomerDto(updateCustomerDetails(foundCustomer, customerDto));
                 final PageableResponseDto<AccountsDto> pageableResponseDto = accountsPagination(sortDir, sortBy, pageNumber, pageSize, customerId);
 
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(updatedCustomerDto))
                         .accountsListPages(pageableResponseDto)
                         .defaultMessage(String.format("Customer with id %s has been updated", customerId)).build();
@@ -739,11 +739,11 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
             case DELETE_ACC -> {
                 final String accountNumber = accountsDto.accountNumber();
                 deleteAccount(accountNumber);
-                return OutputDto.builder().defaultMessage(String.format("Account with id %s is successfully deleted", accountNumber)).build();
+                return new OutputDto.Builder().defaultMessage(String.format("Account with id %s is successfully deleted", accountNumber)).build();
             }
             case DELETE_ALL_ACC -> {
                 deleteAllAccountsByCustomer(customerDto.customerId());
-                return OutputDto.builder()
+                return new OutputDto.Builder()
                         .defaultMessage(String.format("All accounts that belonged to customer with id %s has been deleted",
                                 customerDto.customerId())).build();
             }
@@ -768,7 +768,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         final Customer foundCustomer = fetchCustomerByCustomerNumber(customerId);
         customerRepository.delete(foundCustomer);
-        return OutputDto.builder()
+        return new OutputDto.Builder()
                 .defaultMessage(String.format("Customer with id %s is deleted", customerId))
                 .build();
     }

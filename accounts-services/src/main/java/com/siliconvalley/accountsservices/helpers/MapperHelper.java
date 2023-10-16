@@ -525,7 +525,7 @@ public class MapperHelper {
     }
 
     public static CustomerOutPutDto mapToCustomerOutputDto(final CustomerDto customerDto) {
-        return CustomerOutPutDto.builder()
+        return new CustomerOutPutDto.Builder()
                 .customerId(customerDto.customerId())
                 .customerName(customerDto.customerName())
                 .DateOfBirth(customerDto.DateOfBirth())
@@ -543,7 +543,7 @@ public class MapperHelper {
     }
 
     public static AccountsOutPutDto mapToAccountsOutputDto(final AccountsDto accountsDto) {
-        return AccountsOutPutDto.builder()
+        return new AccountsOutPutDto.Builder()
                 .accountNumber(accountsDto.accountNumber())
                 .balance(accountsDto.balance())
                 .accountType(accountsDto.accountType())
