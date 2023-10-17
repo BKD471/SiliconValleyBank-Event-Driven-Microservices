@@ -75,7 +75,11 @@ public class AuthController {
         this.doAuthenticate( jwtRequest.email(), jwtRequest.password());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.email());
         final String token = jwtHelper.generateToken(userDetails);
-        final CustomerDto customerDto = modelMapper.map(userDetails, CustomerDto.class);
+
+        final CustomerDto customerDto = new CustomerDto.Builder()
+                .customerName(userDetails.getUsername())
+                .password(userDetails.getPassword())
+                .build();
         final JwtResponse jwtResponse =new JwtResponse.Builder()
                 .jwtToken(token)
                 .customer(customerDto).build();
