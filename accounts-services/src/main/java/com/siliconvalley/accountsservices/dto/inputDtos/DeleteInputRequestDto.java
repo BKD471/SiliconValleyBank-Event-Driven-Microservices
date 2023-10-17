@@ -1,6 +1,5 @@
 package com.siliconvalley.accountsservices.dto.inputDtos;
 
-import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Beneficiary;
@@ -8,7 +7,6 @@ import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.model.Transactions;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 public record DeleteInputRequestDto(String customerId,String name,int age,
                                     String accountNumber,String dateOfBirthInYYYYMMDD,
@@ -81,6 +79,10 @@ public record DeleteInputRequestDto(String customerId,String name,int age,
             return this;
         }
 
+        public Builder name(String name){
+            this.name=name;
+            return this;
+        }
         public Builder age(int age){
             this.age=age;
             return this;
@@ -206,10 +208,41 @@ public record DeleteInputRequestDto(String customerId,String name,int age,
             return this;
         }
 
+        public Builder benPanNumber(String benPanNumber){
+            this.benPanNumber=benPanNumber;
+            return this;
+        }
+
         public Builder benPhoneNumber(String benPhoneNumber){
             this.benPhoneNumber=benPhoneNumber;
             return this;
         }
+
+        public Builder benPassportNumber(String benPassportNumber){
+            this.benPassportNumber=benPassportNumber;
+            return this;
+        }
+
+        public Builder benVoterId(String benVoterId){
+            this.benVoterId=benVoterId;
+            return this;
+        }
+
+        public Builder benDrivingLicense(String benDrivingLicense){
+            this.benDrivingLicense=benDrivingLicense;
+            return this;
+        }
+
+        public Builder balance(BigDecimal balance){
+            this.balance=balance;
+            return this;
+        }
+
+        public Builder beneficiaryEmail(String beneficiaryEmail){
+            this.beneficiaryEmail=beneficiaryEmail;
+            return this;
+        }
+
 
         public Builder transferLimitPerDay(BigDecimal transferLimitPerDay){
             this.transferLimitPerDay=transferLimitPerDay;
