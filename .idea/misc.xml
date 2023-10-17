@@ -16,12 +16,8 @@
         <option value="$PROJECT_DIR$/../ms security/ServiceRegistry/pom.xml" />
         <option value="$PROJECT_DIR$/configServerPostgress/pom.xml" />
         <option value="$PROJECT_DIR$/configServerMysql/pom.xml" />
-      </list>
-    </option>
-    <option name="ignoredFiles">
-      <set>
         <option value="$PROJECT_DIR$/ServiceDiscovery/pom.xml" />
-      </set>
+      </list>
     </option>
   </component>
   <component name="NullableNotNullManager">

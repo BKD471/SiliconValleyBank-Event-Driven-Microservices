@@ -251,29 +251,29 @@ public class MapperHelper {
     public static AccountsDto deleteRequestInputToAccountsDto(final DeleteInputRequestDto deleteInputRequestDto) {
         Set<BeneficiaryDto> beneficiaryDtoList=new LinkedHashSet<>();
         Set<TransactionsDto> transactionsDtoList=new LinkedHashSet<>();
-        if(!isEmpty(deleteInputRequestDto.getListOfBeneficiary())){
-            beneficiaryDtoList=deleteInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
+        if(!isEmpty(deleteInputRequestDto.listOfBeneficiary())){
+            beneficiaryDtoList=deleteInputRequestDto.listOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toSet());
         }
-        if(!isEmpty(deleteInputRequestDto.getListOfTransactions())){
-            transactionsDtoList=deleteInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
+        if(!isEmpty(deleteInputRequestDto.listOfTransactions())){
+            transactionsDtoList=deleteInputRequestDto.listOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toSet());
         }
 
         return new AccountsDto.Builder()
-                .accountNumber(deleteInputRequestDto.getAccountNumber())
-                .balance(deleteInputRequestDto.getBalance())
-                .accountType(deleteInputRequestDto.getAccountType())
-                .branchCode(deleteInputRequestDto.getBranchCode())
-                .homeBranch(deleteInputRequestDto.getHomeBranch())
-                .transferLimitPerDay(deleteInputRequestDto.getTransferLimitPerDay())
-                .creditScore(deleteInputRequestDto.getCreditScore())
-                .updateRequest(deleteInputRequestDto.getUpdateRequest())
-                .approvedLoanLimitBasedOnCreditScore(deleteInputRequestDto.getApprovedLoanLimitBasedOnCreditScore())
-                .anyActiveLoans(deleteInputRequestDto.getAnyActiveLoans())
-                .totLoanIssuedSoFar(deleteInputRequestDto.getTotLoanIssuedSoFar())
-                .totalOutstandingAmountPayableToBank(deleteInputRequestDto.getTotalOutStandingAmountPayableToBank())
-                .accountStatus(deleteInputRequestDto.getAccountStatus())
+                .accountNumber(deleteInputRequestDto.accountNumber())
+                .balance(deleteInputRequestDto.balance())
+                .accountType(deleteInputRequestDto.accountType())
+                .branchCode(deleteInputRequestDto.branchCode())
+                .homeBranch(deleteInputRequestDto.homeBranch())
+                .transferLimitPerDay(deleteInputRequestDto.transferLimitPerDay())
+                .creditScore(deleteInputRequestDto.creditScore())
+                .updateRequest(deleteInputRequestDto.updateRequest())
+                .approvedLoanLimitBasedOnCreditScore(deleteInputRequestDto.approvedLoanLimitBasedOnCreditScore())
+                .anyActiveLoans(deleteInputRequestDto.anyActiveLoans())
+                .totLoanIssuedSoFar(deleteInputRequestDto.totLoanIssuedSoFar())
+                .totalOutstandingAmountPayableToBank(deleteInputRequestDto.totalOutStandingAmountPayableToBank())
+                .accountStatus(deleteInputRequestDto.accountStatus())
                 .listOfBeneficiary(beneficiaryDtoList)
                 .listOfTransactions(transactionsDtoList)
                 .build();
@@ -363,19 +363,19 @@ public class MapperHelper {
 
     public static CustomerDto deleteInputRequestToCustomerDto(final DeleteInputRequestDto deleteInputRequestDto) {
         return new CustomerDto.Builder()
-                .customerId(deleteInputRequestDto.getCustomerId())
-                .customerName(deleteInputRequestDto.getName())
-                .DateOfBirth(dateParserInYYYYMMDD(deleteInputRequestDto.getDateOfBirthInYYYYMMDD()))
-                .age(deleteInputRequestDto.getAge())
-                .email(deleteInputRequestDto.getEmail())
-                .phoneNumber(deleteInputRequestDto.getPhoneNumber())
-                .adharNumber(deleteInputRequestDto.getAdharNumber())
-                .panNumber(deleteInputRequestDto.getPanNumber())
-                .voterId(deleteInputRequestDto.getVoterId())
-                .drivingLicense(deleteInputRequestDto.getDrivingLicense())
-                .passportNumber(deleteInputRequestDto.getPassportNumber())
-                .address(deleteInputRequestDto.getAddress())
-                .imageName(deleteInputRequestDto.getImageName())
+                .customerId(deleteInputRequestDto.customerId())
+                .customerName(deleteInputRequestDto.name())
+                .DateOfBirth(dateParserInYYYYMMDD(deleteInputRequestDto.dateOfBirthInYYYYMMDD()))
+                .age(deleteInputRequestDto.age())
+                .email(deleteInputRequestDto.email())
+                .phoneNumber(deleteInputRequestDto.phoneNumber())
+                .adharNumber(deleteInputRequestDto.adharNumber())
+                .panNumber(deleteInputRequestDto.panNumber())
+                .voterId(deleteInputRequestDto.voterId())
+                .drivingLicense(deleteInputRequestDto.drivingLicense())
+                .passportNumber(deleteInputRequestDto.passportNumber())
+                .address(deleteInputRequestDto.address())
+                .imageName(deleteInputRequestDto.imageName())
                 .build();
     }
 
@@ -460,23 +460,23 @@ public class MapperHelper {
 
     public static BeneficiaryDto mapDeleteInputRequestDtoToBenDto(final DeleteInputRequestDto deleteInputRequestDto) {
         return new BeneficiaryDto.Builder()
-                .beneficiaryAccountNumber(deleteInputRequestDto.getBeneficiaryAccountNumber())
-                .beneficiaryName(deleteInputRequestDto.getBeneficiaryName())
-                .benAge(deleteInputRequestDto.getBenAge())
-                .beneficiaryId(deleteInputRequestDto.getBeneficiaryId())
-                .benPanNumber(deleteInputRequestDto.getBenPanNumber())
-                .benPhoneNumber(deleteInputRequestDto.getBenPhoneNumber())
-                .benAdharNumber(deleteInputRequestDto.getBenAdharNumber())
-                .beneficiaryEmail(deleteInputRequestDto.getEmail())
-                .benPassportNumber(deleteInputRequestDto.getBenPassportNumber())
-                .benBank(deleteInputRequestDto.getBenBank())
-                .benVoterId(deleteInputRequestDto.getBenVoterId())
-                .BenDate_Of_Birth(dateParserInYYYYMMDD(deleteInputRequestDto.getDateOfBirthInYYYYMMDD()))
-                .benDrivingLicense(deleteInputRequestDto.getBenDrivingLicense())
-                .benUpdateRequest(deleteInputRequestDto.getBenRequest())
-                .relation(deleteInputRequestDto.getBloodRelation())
-                .address(deleteInputRequestDto.getAddress())
-                .imageName(deleteInputRequestDto.getImageName())
+                .beneficiaryAccountNumber(deleteInputRequestDto.beneficiaryAccountNumber())
+                .beneficiaryName(deleteInputRequestDto.beneficiaryName())
+                .benAge(deleteInputRequestDto.benAge())
+                .beneficiaryId(deleteInputRequestDto.beneficiaryId())
+                .benPanNumber(deleteInputRequestDto.benPanNumber())
+                .benPhoneNumber(deleteInputRequestDto.benPhoneNumber())
+                .benAdharNumber(deleteInputRequestDto.benAdharNumber())
+                .beneficiaryEmail(deleteInputRequestDto.email())
+                .benPassportNumber(deleteInputRequestDto.benPassportNumber())
+                .benBank(deleteInputRequestDto.benBank())
+                .benVoterId(deleteInputRequestDto.benVoterId())
+                .BenDate_Of_Birth(dateParserInYYYYMMDD(deleteInputRequestDto.dateOfBirthInYYYYMMDD()))
+                .benDrivingLicense(deleteInputRequestDto.benDrivingLicense())
+                .benUpdateRequest(deleteInputRequestDto.benRequest())
+                .relation(deleteInputRequestDto.bloodRelation())
+                .address(deleteInputRequestDto.address())
+                .imageName(deleteInputRequestDto.imageName())
                 .build();
     }
 

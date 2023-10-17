@@ -427,10 +427,10 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "deleteRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapDeleteInputRequestDtoToBenDto(deleteInputRequestDto);
 
-        final String accountNUmber = deleteInputRequestDto.getAccountNumber();
+        final String accountNUmber = deleteInputRequestDto.accountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNUmber);
 
-        final AllConstantHelpers.BenUpdateRequest requestType = deleteInputRequestDto.getBenRequest();
+        final AllConstantHelpers.BenUpdateRequest requestType = deleteInputRequestDto.benRequest();
         if (isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {

@@ -15,12 +15,12 @@
         <module name="configServerMysql" />
         <module name="ServiceRegistry" />
         <module name="configServerPostgress" />
+        <module name="ServiceDiscovery" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="customerbase" target="19" />
       <module name="Schedulers" target="17" />
-      <module name="ServiceDiscovery" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

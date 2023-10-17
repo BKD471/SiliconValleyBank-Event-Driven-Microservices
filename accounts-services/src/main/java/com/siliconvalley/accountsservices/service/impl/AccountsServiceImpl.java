@@ -761,8 +761,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     public OutputDto deleteCustomer(final DeleteInputRequestDto deleteInputRequestDto) {
         final String methodName = "deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
 
-        final String customerId = deleteInputRequestDto.getCustomerId();
-        final AllConstantHelpers.DeleteRequest deleteRequest = deleteInputRequestDto.getDeleteRequest();
+        final String customerId = deleteInputRequestDto.customerId();
+        final AllConstantHelpers.DeleteRequest deleteRequest = deleteInputRequestDto.deleteRequest();
         if (isNull(deleteRequest) || isBlank(customerId))
             throw new BadApiRequestException(BadApiRequestException.class, "Pls specify delete request type or customer id", methodName);
 
