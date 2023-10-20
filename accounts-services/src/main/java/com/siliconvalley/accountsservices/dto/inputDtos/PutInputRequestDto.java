@@ -5,16 +5,9 @@ import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Beneficiary;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.model.Transactions;
-import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public record PutInputRequestDto(String customerId,String name, int age,String accountNumber,String dateOfBirthInYYYYMMDD,

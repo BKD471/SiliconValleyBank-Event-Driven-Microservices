@@ -11,6 +11,7 @@ import com.siliconvalley.accountsservices.exception.BeneficiaryException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
 import com.siliconvalley.accountsservices.exception.ResponseException;
 import com.siliconvalley.accountsservices.service.IBeneficiaryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import java.util.Properties;
 
 @Slf4j
 @RestController
+@Tag(name = "BeneficiaryCOntroller",description = "Api for creation of beneficiary")
 public class BeneficiaryControllerImpl implements IBeneficiaryController {
     private final IBeneficiaryService beneficiaryService;
 

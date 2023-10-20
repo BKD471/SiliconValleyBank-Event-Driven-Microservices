@@ -10,6 +10,7 @@ import com.siliconvalley.accountsservices.exception.TransactionException;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.ITransactionsService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,6 +37,7 @@ import static com.siliconvalley.accountsservices.helpers.MapperHelper.dateParser
 
 @Slf4j
 @RestController
+@Tag(name = "TransactionsController",description = "APi for transactions")
 public class TransactionsControllerImpl implements ITransactionsController {
     private final ITransactionsService transactionsService;
     private final IPdfService pdfService;

@@ -6,10 +6,6 @@ import com.siliconvalley.accountsservices.validator.NotNullEnum;
 import com.siliconvalley.accountsservices.validator.ValidDescription;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
-
-import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

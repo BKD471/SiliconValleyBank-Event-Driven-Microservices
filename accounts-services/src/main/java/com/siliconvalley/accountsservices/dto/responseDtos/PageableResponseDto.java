@@ -1,9 +1,6 @@
 package com.siliconvalley.accountsservices.dto.responseDtos;
 
-import lombok.*;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 
 public record PageableResponseDto<T>(List<T> content,int pageNumber,

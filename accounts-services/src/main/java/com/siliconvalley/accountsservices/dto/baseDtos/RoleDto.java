@@ -1,8 +1,5 @@
 package com.siliconvalley.accountsservices.dto.baseDtos;
 
-
-
-
 public record RoleDto(String roleId,String roleName){
 
     public static final class Builder{

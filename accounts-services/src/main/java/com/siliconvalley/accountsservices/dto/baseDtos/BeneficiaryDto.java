@@ -3,7 +3,6 @@ package com.siliconvalley.accountsservices.dto.baseDtos;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
 
 
 import java.time.LocalDate;

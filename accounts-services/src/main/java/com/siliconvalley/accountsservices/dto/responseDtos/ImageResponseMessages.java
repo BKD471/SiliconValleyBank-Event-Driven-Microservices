@@ -1,10 +1,6 @@
 package com.siliconvalley.accountsservices.dto.responseDtos;
 
-import lombok.*;
 import org.springframework.http.HttpStatus;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 
 public record ImageResponseMessages(String imageName,String message,boolean success,HttpStatus status){

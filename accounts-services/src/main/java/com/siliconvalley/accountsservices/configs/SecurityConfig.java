@@ -22,9 +22,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import springfox.documentation.oas.annotations.EnableOpenApi;
+
 
 @Configuration
 @EnableMethodSecurity
@@ -35,7 +33,10 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_URLS = {
             "/swagger-ui/**",
-            "/v3/api-docs/**"
+            "/webjars/**",
+            "/swagger-resources/**",
+            "/v3/api-docs/**",
+            "/test"
     };
 
     SecurityConfig(final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
@@ -52,7 +53,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) ->
                         auth.requestMatchers("/api/v1/auth/login").permitAll()
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers(PUBLIC_URLS).permitAll()
                                 .requestMatchers("/api/v1/accounts/create").permitAll()
                                 .anyRequest().authenticated()).exceptionHandling(
                         exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))

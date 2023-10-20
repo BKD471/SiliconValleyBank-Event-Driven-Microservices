@@ -5,8 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.Set;
 
-
-
 public record CustomerDto(String customerId,LocalDate DateOfBirth,String customerName,
                           int age,String email,String password,String phoneNumber,
                           String adharNumber,String panNumber,String voterId,

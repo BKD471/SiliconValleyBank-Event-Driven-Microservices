@@ -15,11 +15,14 @@ import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.IAccountsService;
 import com.siliconvalley.accountsservices.service.IImageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +31,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j
 @RestController
+@Tag(name = "AccountsController",description = "Api for Accounts creation")
 public class AccountsControllerImpl implements IAccountsController {
     private final IAccountsService accountsService;
     private final ICustomerRepository customerRepository;
@@ -68,6 +70,7 @@ public class AccountsControllerImpl implements IAccountsController {
      * @throws IOException
      */
     @Override
+    @Operation(summary="Get all users",tags = {"accounts-controller"})
     public ResponseEntity<OutputDto> getRequestForChange(GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException {
             final OutputDto responseBody = accountsService.getRequestExecutor(getInputRequestDto);
             return new ResponseEntity<>(responseBody, HttpStatus.OK);
@@ -94,17 +97,6 @@ public class AccountsControllerImpl implements IAccountsController {
      * @param postInputDto
      * @return
      * @throws AccountsException
-     */
-    @Override
-    public ResponseEntity<OutputDto> postRequestForChange(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
-        final OutputDto responseBody = accountsService.postRequestExecutor(postInputDto);
-        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
-    }
-
-    /**
-     * @param postInputDto
-     * @return
-     * @throws AccountsException
      * @throws ResponseException
      * @throws CustomerException
      * @throws IOException
@@ -112,6 +104,24 @@ public class AccountsControllerImpl implements IAccountsController {
     @Override
     public ResponseEntity<OutputDto> createAccount(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException {
         final OutputDto responseBody = accountsService.accountSetUp(postInputDto);
+        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
+    }
+
+    /**
+     * @param postInputDto
+     * @return
+     * @throws AccountsException
+     */
+
+    @Operation(summary ="Post Api" ,description = "This is post api ,handles all post request for accounts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation successful"),
+            @ApiResponse(responseCode = "400", description = "Not Authorized"),
+            @ApiResponse(responseCode = "201", description = "New Record created")
+    })
+    @Override
+    public ResponseEntity<OutputDto> postRequestForChange(final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException {
+        final OutputDto responseBody = accountsService.postRequestExecutor(postInputDto);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }
 

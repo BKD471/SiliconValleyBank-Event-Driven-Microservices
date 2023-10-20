@@ -1,10 +1,7 @@
 package com.siliconvalley.accountsservices.dto.tokenDtos;
 
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
-import lombok.*;
 
-import java.io.Serial;
-import java.io.Serializable;
 public record JwtResponse(String jwtToken,CustomerDto customer){
   public static final class Builder{
     private String jwtToken;

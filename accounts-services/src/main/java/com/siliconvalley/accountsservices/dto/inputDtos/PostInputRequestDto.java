@@ -7,6 +7,7 @@ import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.validator.ValidAge;
 import com.siliconvalley.accountsservices.helpers.RegexMatchersHelper;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,7 +17,9 @@ import java.math.BigDecimal;
 
 
 public record PostInputRequestDto(String customerId,
-        @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long") String name, int age,String accountNumber,
+        @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long")
+        @Schema(name = "username",accessMode = Schema.AccessMode.READ_ONLY,description="name of user")
+        String name, int age,String accountNumber,
         @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_DOB,
                 message = "Please provide DOB in YYYY-MM-DD format")
         @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_NOT_NULL_CHARS,message = "Please mention date")
