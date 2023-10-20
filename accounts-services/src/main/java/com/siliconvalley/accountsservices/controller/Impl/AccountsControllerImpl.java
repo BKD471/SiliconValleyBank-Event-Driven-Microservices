@@ -133,11 +133,12 @@ public class AccountsControllerImpl implements IAccountsController {
      */
     @Override
     public ResponseEntity<ImageResponseMessages> uploadCustomerImage(final MultipartFile image, final String customerId) throws IOException {
-        final PutInputRequestDto putInputRequestDto = PutInputRequestDto.builder()
+        final PutInputRequestDto putInputRequestDto = new PutInputRequestDto.Builder()
                 .updateRequest(AllConstantHelpers.UpdateRequest.UPLOAD_CUSTOMER_IMAGE)
                 .customerId(customerId)
                 .customerImage(image)
-                .age(0).pageNumber(0).pageSize(0).benAge(0).creditScore(0).build();
+                .pageNumber(0)
+                .build();
         final OutputDto responseBody = accountsService.putRequestExecutor(putInputRequestDto);
         final ImageResponseMessages imgResponseMessages= new ImageResponseMessages.Builder()
                 .message(responseBody.defaultMessage())

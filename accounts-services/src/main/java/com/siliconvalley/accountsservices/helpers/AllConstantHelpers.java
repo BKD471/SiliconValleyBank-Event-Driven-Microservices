@@ -4,15 +4,11 @@ public class AllConstantHelpers {
     public enum UpdateRequest {
         CREATE_ACC,ADD_ACCOUNT,LEND_LOAN,UPDATE_HOME_BRANCH,UPDATE_CREDIT_SCORE,UPDATE_CUSTOMER_DETAILS,
         UPLOAD_CUSTOMER_IMAGE,GET_CUSTOMER_IMAGE,GET_CREDIT_SCORE,GET_ACC_INFO,GET_ALL_CUSTOMER,GET_ALL_ACC,BLOCK_ACC,
-        CLOSE_ACC,RE_OPEN_ACC,INC_TRANSFER_LIMIT,INC_APPROVED_LOAN_LIMIT,DELETE_ACC,DELETE_ALL_ACC
-    }
+        CLOSE_ACC,RE_OPEN_ACC,INC_TRANSFER_LIMIT,INC_APPROVED_LOAN_LIMIT,DELETE_ACC,DELETE_ALL_ACC}
     public enum BenUpdateRequest {
-        ADD_BEN,UPDATE_BEN,GET_ALL_BEN,GET_BEN,DELETE_BEN,DELETE_ALL_BEN
-    }
+        ADD_BEN,UPDATE_BEN,GET_ALL_BEN,GET_BEN,DELETE_BEN,DELETE_ALL_BEN}
 
-    public enum DeleteRequest{
-        DELETE_CUSTOMER
-    }
+    public enum DeleteRequest{DELETE_CUSTOMER}
 
     public  enum  AccountType{
         SAVINGS,CURRENT
@@ -67,7 +63,6 @@ public class AllConstantHelpers {
         HTML,PDF,XML
     }
 
-    public static final DIRECTION ASC=DIRECTION.asc;
     public static final AccountStatus STATUS_BLOCKED=AccountStatus.BLOCKED;
     public static final  AccountStatus STATUS_CLOSED=AccountStatus.CLOSED;
     public static final AccountStatus STATUS_OPENED=AccountStatus.OPEN;
@@ -75,8 +70,6 @@ public class AllConstantHelpers {
     public static final RELATION FATHER=RELATION.FATHER;
     public static final RELATION MOTHER=RELATION.MOTHER;
     public  static  final RELATION SPOUSE=RELATION.SPOUSE;
-    public static final RELATION SON=RELATION.SON;
-    public  static  final RELATION DAUGHTER=RELATION.DAUGHTER;
 
 
     public static final TransactionType CREDIT=TransactionType.CREDIT;

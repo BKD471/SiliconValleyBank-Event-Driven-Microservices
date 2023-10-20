@@ -307,14 +307,14 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "postRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapInputDtoToBenDto(postInputDto);
 
-        final String accountNumber = postInputDto.getAccountNumber();
+        final String accountNumber = postInputDto.accountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
         final AccountsDto accountsDto = mapToAccountsDto(fetchedAccount);
 
         final Customer customer = fetchedAccount.getCustomer();
         final CustomerDto customerDto = mapToCustomerDto(customer);
 
-        final AllConstantHelpers.BenUpdateRequest requestType = postInputDto.getBenRequest();
+        final AllConstantHelpers.BenUpdateRequest requestType = postInputDto.benRequest();
         if (isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {
@@ -338,11 +338,11 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "putRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapPutInputRequestDtoToBenDto(putInputRequestDto);
 
-        final String accountNumber = putInputRequestDto.getAccountNumber();
+        final String accountNumber = putInputRequestDto.accountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
         final Customer loadCustomer = fetchedAccount.getCustomer();
-        final AllConstantHelpers.BenUpdateRequest requestType = putInputRequestDto.getBenRequest();
+        final AllConstantHelpers.BenUpdateRequest requestType = putInputRequestDto.benRequest();
         if (isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
         switch (requestType) {

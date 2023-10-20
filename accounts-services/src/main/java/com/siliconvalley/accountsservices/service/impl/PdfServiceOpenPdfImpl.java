@@ -10,12 +10,15 @@ import com.siliconvalley.accountsservices.model.Transactions;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractPdfService;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.Set;
 
 import java.io.*;
 import java.time.LocalDate;
+
+
 
 /**
  * NOTE TO CONTRIBUTORS
@@ -27,8 +30,8 @@ import java.time.LocalDate;
  * THANK YOU :)
  * */
 @Slf4j
-@Service("OpenPdfImplementation")
-public class PdfServiceOpenPdfImpl extends AbstractPdfService{
+@Service
+public class PdfServiceOpenPdfImpl extends AbstractPdfService {
     protected PdfServiceOpenPdfImpl(IAccountsRepository accountsRepository, ICustomerRepository customerRepository) {
         super(accountsRepository, customerRepository);
     }
@@ -125,6 +128,4 @@ public class PdfServiceOpenPdfImpl extends AbstractPdfService{
         log.info("################# Pdf Creation Service ended #######################################");
         return new ByteArrayInputStream(out.toByteArray());
     }
-
-
 }

@@ -1,6 +1,6 @@
 package com.siliconvalley.accountsservices.service;
 
-import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
+import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.model.Transactions;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
@@ -15,12 +15,10 @@ import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.STATUS_BLOCKED;
 
 
@@ -52,18 +50,4 @@ public abstract class AbstractService{
                 methodName);
         return loadCustomer.get();
     }
-
-    protected final Set<Transactions> prepareTransactionsSetBetweenDate(LocalDate startDate, LocalDate endDate, String accountNumber) {
-        final Accounts accounts=fetchAccountByAccountNumber(accountNumber);
-        LocalDateTime startDateTime=startDate.atTime(LocalTime.from(LocalDateTime.now()));
-        LocalDateTime endDateTime=endDate.atTime(LocalTime.from(LocalDateTime.now()));
-
-        Predicate<Transactions> conditionToFilterOutListOfTransactionBetweenGivenTimeInterval =
-                (transactions)->transactions.getTransactionTimeStamp().isAfter(startDateTime)
-                        && transactions.getTransactionTimeStamp().isBefore(endDateTime);
-
-        return accounts.getListOfTransactions()
-                .stream().filter(conditionToFilterOutListOfTransactionBetweenGivenTimeInterval).collect(Collectors.toSet());
-    }
-
 }

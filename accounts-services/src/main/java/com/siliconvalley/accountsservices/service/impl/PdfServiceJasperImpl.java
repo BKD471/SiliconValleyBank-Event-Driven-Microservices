@@ -1,6 +1,5 @@
 package com.siliconvalley.accountsservices.service.impl;
 
-import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.helpers.TransactionsInvoicableObject;
 import com.siliconvalley.accountsservices.model.Accounts;
@@ -8,12 +7,13 @@ import com.siliconvalley.accountsservices.model.BankStatement;
 import com.siliconvalley.accountsservices.model.Transactions;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
+import com.siliconvalley.accountsservices.service.AbstractPdfService;
 import com.siliconvalley.accountsservices.service.AbstractService;
-import com.siliconvalley.accountsservices.service.IPdfService;
 import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +27,13 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
-import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
+import static com.siliconvalley.accountsservices.helpers.MapperHelper.convertTimeStampToLocalDateTime;
+import static com.siliconvalley.accountsservices.helpers.MapperHelper.convertToUtilDate;
 
 
 @Slf4j
 @Service("jasperPdfService")
-public class PdfServiceJasperImpl extends AbstractService implements IPdfService {
+public class PdfServiceJasperImpl extends AbstractPdfService {
     private static final Map<String,Object> params=new HashMap<>();
     private final IValidationService validationService;
     private final String PATH_TO_JASPER_XML;
@@ -73,17 +74,17 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         this.PATH_TO_DOWNLOADABLES_HTML=PATH_TO_DOWNLOADABLES;
     }
 
-    /**
-     * @param startDate
-     * @param endDate
-     * @param accountNumber
-     * @return
-     * @throws FileNotFoundException
-     */
-    @Override
-    public ByteArrayInputStream generateBankStatement(LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException {
-        return null;
-    }
+//    /**
+//     * @param startDate
+//     * @param endDate
+//     * @param accountNumber
+//     * @return
+//     * @throws FileNotFoundException
+//     */
+//    @Override
+//    public ByteArrayInputStream generateBankStatement(LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException {
+//        return null;
+//    }
 
 
     private void reset(){
@@ -135,13 +136,14 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
         params.put("endDate",convertToUtilDate(endDate));
 
         List<TransactionsInvoicableObject> listOfTransactionsBetweenDate=
-                new ArrayList<>(transactionsListBetweenDate.stream().map(MapperHelper::mapToTransactionsInvoicableObject).toList());
+                new ArrayList<>(transactionsListBetweenDate.stream()
+                        .map(MapperHelper::mapToTransactionsInvoicableObject).toList());
 
         Comparator<TransactionsInvoicableObject> sortByTimeStampInAscendingOrderOfLatestTransaction=(o1,o2)->
-                (convertTimeStampToLocalDateTime(o1.getTransactionTimeStamp())
-                        .isBefore(convertTimeStampToLocalDateTime(o2.getTransactionTimeStamp())))? -1:
-                        (convertTimeStampToLocalDateTime(o1.getTransactionTimeStamp())
-                                .isAfter(convertTimeStampToLocalDateTime(o2.getTransactionTimeStamp())))? 1:0;
+                (convertTimeStampToLocalDateTime(o1.transactionTimeStamp())
+                        .isBefore(convertTimeStampToLocalDateTime(o2.transactionTimeStamp())))? -1:
+                        (convertTimeStampToLocalDateTime(o1.transactionTimeStamp())
+                                .isAfter(convertTimeStampToLocalDateTime(o2.transactionTimeStamp())))? 1:0;
 
         listOfTransactionsBetweenDate.sort(sortByTimeStampInAscendingOrderOfLatestTransaction);
 
@@ -167,6 +169,6 @@ public class PdfServiceJasperImpl extends AbstractService implements IPdfService
                 reset();
             }
         }
-        log.debug("################# Pdf Creation Service ended ###################################");
+        log.debug("######################### Pdf Creation Service ended ###################################");
     }
 }
