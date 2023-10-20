@@ -313,29 +313,29 @@ public class MapperHelper {
     public static AccountsDto getInputToAccountsDto(final GetInputRequestDto getInputRequestDto) {
         Set<BeneficiaryDto> beneficiaryDtoList=new LinkedHashSet<>();
         Set<TransactionsDto> transactionsDtoList=new LinkedHashSet<>();
-        if(!isEmpty(getInputRequestDto.getListOfBeneficiary())){
-            beneficiaryDtoList=getInputRequestDto.getListOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
+        if(!isEmpty(getInputRequestDto.listOfBeneficiary())){
+            beneficiaryDtoList=getInputRequestDto.listOfBeneficiary().stream().map(MapperHelper::mapToBeneficiaryDto)
                     .collect(Collectors.toSet());
         }
-        if(!isEmpty(getInputRequestDto.getListOfTransactions())){
-            transactionsDtoList=getInputRequestDto.getListOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
+        if(!isEmpty(getInputRequestDto.listOfTransactions())){
+            transactionsDtoList=getInputRequestDto.listOfTransactions().stream().map(MapperHelper::mapToTransactionsDto)
                     .collect(Collectors.toSet());
         }
 
         return new AccountsDto.Builder()
-                .accountNumber(getInputRequestDto.getAccountNumber())
-                .balance(getInputRequestDto.getBalance())
-                .accountType(getInputRequestDto.getAccountType())
-                .branchCode(getInputRequestDto.getBranchCode())
-                .homeBranch(getInputRequestDto.getHomeBranch())
-                .transferLimitPerDay(getInputRequestDto.getTransferLimitPerDay())
-                .creditScore(getInputRequestDto.getCreditScore())
-                .updateRequest(getInputRequestDto.getUpdateRequest())
-                .approvedLoanLimitBasedOnCreditScore(getInputRequestDto.getApprovedLoanLimitBasedOnCreditScore())
-                .anyActiveLoans(getInputRequestDto.getAnyActiveLoans())
-                .totLoanIssuedSoFar(getInputRequestDto.getTotLoanIssuedSoFar())
-                .totalOutstandingAmountPayableToBank(getInputRequestDto.getTotalOutStandingAmountPayableToBank())
-                .accountStatus(getInputRequestDto.getAccountStatus())
+                .accountNumber(getInputRequestDto.accountNumber())
+                .balance(getInputRequestDto.balance())
+                .accountType(getInputRequestDto.accountType())
+                .branchCode(getInputRequestDto.branchCode())
+                .homeBranch(getInputRequestDto.homeBranch())
+                .transferLimitPerDay(getInputRequestDto.transferLimitPerDay())
+                .creditScore(getInputRequestDto.creditScore())
+                .updateRequest(getInputRequestDto.updateRequest())
+                .approvedLoanLimitBasedOnCreditScore(getInputRequestDto.approvedLoanLimitBasedOnCreditScore())
+                .anyActiveLoans(getInputRequestDto.anyActiveLoans())
+                .totLoanIssuedSoFar(getInputRequestDto.totLoanIssuedSoFar())
+                .totalOutstandingAmountPayableToBank(getInputRequestDto.totalOutStandingAmountPayableToBank())
+                .accountStatus(getInputRequestDto.accountStatus())
                 .listOfBeneficiary(beneficiaryDtoList)
                 .listOfTransactions(transactionsDtoList)
                 .build();
@@ -401,19 +401,19 @@ public class MapperHelper {
 
     public static CustomerDto getInputToCustomerDto(final GetInputRequestDto getInputRequestDto) {
         return new CustomerDto.Builder()
-                .customerId(getInputRequestDto.getCustomerId())
-                .customerName(getInputRequestDto.getName())
-                .DateOfBirth(dateParserInYYYYMMDD(getInputRequestDto.getDateOfBirthInYYYYMMDD()))
-                .age(getInputRequestDto.getAge())
-                .email(getInputRequestDto.getEmail())
-                .phoneNumber(getInputRequestDto.getPhoneNumber())
-                .adharNumber(getInputRequestDto.getAdharNumber())
-                .panNumber(getInputRequestDto.getPanNumber())
-                .voterId(getInputRequestDto.getVoterId())
-                .drivingLicense(getInputRequestDto.getDrivingLicense())
-                .passportNumber(getInputRequestDto.getPassportNumber())
-                .imageName(getInputRequestDto.getImageName())
-                .address(getInputRequestDto.getAddress())
+                .customerId(getInputRequestDto.customerId())
+                .customerName(getInputRequestDto.name())
+                .DateOfBirth(dateParserInYYYYMMDD(getInputRequestDto.dateOfBirthInYYYYMMDD()))
+                .age(getInputRequestDto.age())
+                .email(getInputRequestDto.email())
+                .phoneNumber(getInputRequestDto.phoneNumber())
+                .adharNumber(getInputRequestDto.adharNumber())
+                .panNumber(getInputRequestDto.panNumber())
+                .voterId(getInputRequestDto.voterId())
+                .drivingLicense(getInputRequestDto.drivingLicense())
+                .passportNumber(getInputRequestDto.passportNumber())
+                .imageName(getInputRequestDto.imageName())
+                .address(getInputRequestDto.address())
                 .build();
     }
 
@@ -504,23 +504,23 @@ public class MapperHelper {
 
     public static BeneficiaryDto mapGetRequestInputDtoToBenDto(final GetInputRequestDto getInputRequestDto) {
         return new BeneficiaryDto.Builder()
-                .beneficiaryAccountNumber(getInputRequestDto.getBeneficiaryAccountNumber())
-                .beneficiaryName(getInputRequestDto.getBeneficiaryName())
-                .benAge(getInputRequestDto.getBenAge())
-                .beneficiaryId(getInputRequestDto.getBeneficiaryId())
-                .benPanNumber(getInputRequestDto.getBenPanNumber())
-                .benPhoneNumber(getInputRequestDto.getBenPhoneNumber())
-                .benAdharNumber(getInputRequestDto.getBenAdharNumber())
-                .beneficiaryEmail(getInputRequestDto.getEmail())
-                .benPassportNumber(getInputRequestDto.getBenPassportNumber())
-                .benBank(getInputRequestDto.getBenBank())
-                .benVoterId(getInputRequestDto.getBenVoterId())
-                .BenDate_Of_Birth(dateParserInYYYYMMDD(getInputRequestDto.getDateOfBirthInYYYYMMDD()))
-                .address(getInputRequestDto.getAddress())
-                .imageName(getInputRequestDto.getImageName())
-                .benDrivingLicense(getInputRequestDto.getBenDrivingLicense())
-                .benUpdateRequest(getInputRequestDto.getBenRequest())
-                .relation(getInputRequestDto.getBloodRelation())
+                .beneficiaryAccountNumber(getInputRequestDto.beneficiaryAccountNumber())
+                .beneficiaryName(getInputRequestDto.beneficiaryName())
+                .benAge(getInputRequestDto.benAge())
+                .beneficiaryId(getInputRequestDto.beneficiaryId())
+                .benPanNumber(getInputRequestDto.benPanNumber())
+                .benPhoneNumber(getInputRequestDto.benPhoneNumber())
+                .benAdharNumber(getInputRequestDto.benAdharNumber())
+                .beneficiaryEmail(getInputRequestDto.email())
+                .benPassportNumber(getInputRequestDto.benPassportNumber())
+                .benBank(getInputRequestDto.benBank())
+                .benVoterId(getInputRequestDto.benVoterId())
+                .BenDate_Of_Birth(dateParserInYYYYMMDD(getInputRequestDto.ben_date_of_birthINYYYYMMDD()))
+                .address(getInputRequestDto.address())
+                .imageName(getInputRequestDto.imageName())
+                .benDrivingLicense(getInputRequestDto.benDrivingLicense())
+                .benUpdateRequest(getInputRequestDto.benRequest())
+                .relation(getInputRequestDto.bloodRelation())
                 .build();
     }
 

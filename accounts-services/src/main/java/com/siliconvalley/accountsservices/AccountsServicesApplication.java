@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.Properties;
 
 @Slf4j
 @SpringBootApplication
+@EnableWebMvc
 public class AccountsServicesApplication{
 	public static void main(String[] args) {
 		SpringApplication.run(AccountsServicesApplication.class, args);

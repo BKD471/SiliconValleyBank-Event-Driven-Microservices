@@ -546,15 +546,15 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     public OutputDto getRequestExecutor(final GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException {
         final String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
 
-        final int pageNumber = getInputRequestDto.getPageNumber();
+        final int pageNumber = getInputRequestDto.pageNumber();
         if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
 
-        if (getInputRequestDto.getPageSize() < 0)
+        if (getInputRequestDto.pageSize() < 0)
             throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
-        final int pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
-        final String sortBy = (isBlank(getInputRequestDto.getSortBy())) ? "balance" : getInputRequestDto.getSortBy();
-        final AllConstantHelpers.DIRECTION sortDir = (Objects.isNull(getInputRequestDto.getSortDir())) ? asc : getInputRequestDto.getSortDir();
+        final int pageSize = (getInputRequestDto.pageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.pageSize();
+        final String sortBy = (isBlank(getInputRequestDto.sortBy())) ? "balance" : getInputRequestDto.sortBy();
+        final AllConstantHelpers.DIRECTION sortDir = (Objects.isNull(getInputRequestDto.sortDir())) ? asc : getInputRequestDto.sortDir();
 
         final AccountsDto accountsDto = getInputToAccountsDto(getInputRequestDto);
         final CustomerDto customerDto = getInputToCustomerDto(getInputRequestDto);

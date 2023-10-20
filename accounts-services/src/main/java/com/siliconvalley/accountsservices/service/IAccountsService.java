@@ -7,11 +7,12 @@ import com.siliconvalley.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
+import org.springframework.stereotype.Repository;
 
 
 import java.io.IOException;
 
-
+@Repository
 public interface IAccountsService {
     OutputDto accountSetUp(final PostInputRequestDto postInputRequestDto);
     OutputDto postRequestExecutor(final PostInputRequestDto postInputRequestDto) throws AccountsException, CustomerException, IOException;

@@ -366,21 +366,21 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
         final String methodName = "getRequestBenExecutor(InputDto) in BeneficiaryServiceImpl";
         final BeneficiaryDto beneficiaryDto = mapGetRequestInputDtoToBenDto(getInputRequestDto);
 
-        final int pageNumber = getInputRequestDto.getPageNumber();
+        final int pageNumber = getInputRequestDto.pageNumber();
         if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
 
-        if (getInputRequestDto.getPageSize() < 0)
+        if (getInputRequestDto.pageSize() < 0)
             throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
-        final int pageSize = (getInputRequestDto.getPageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.getPageSize();
+        final int pageSize = (getInputRequestDto.pageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.pageSize();
 
-        final String sortBy = (isBlank(getInputRequestDto.getSortBy())) ? "beneficiaryName" : getInputRequestDto.getSortBy();
-        final DIRECTION sortDir = (isNull(getInputRequestDto.getSortDir())) ? DIRECTION.asc : getInputRequestDto.getSortDir();
+        final String sortBy = (isBlank(getInputRequestDto.sortBy())) ? "beneficiaryName" : getInputRequestDto.sortBy();
+        final DIRECTION sortDir = (isNull(getInputRequestDto.sortDir())) ? DIRECTION.asc : getInputRequestDto.sortDir();
 
-        final String accountNumber = getInputRequestDto.getAccountNumber();
+        final String accountNumber = getInputRequestDto.accountNumber();
         final Accounts fetchedAccount = fetchAccountByAccountNumber(accountNumber);
 
-        final AllConstantHelpers.BenUpdateRequest requestType = getInputRequestDto.getBenRequest();
+        final AllConstantHelpers.BenUpdateRequest requestType = getInputRequestDto.benRequest();
         if (isNull(requestType)) throw new BeneficiaryException(BeneficiaryException.class,
                 "Please provide a non null request-type", methodName);
 
