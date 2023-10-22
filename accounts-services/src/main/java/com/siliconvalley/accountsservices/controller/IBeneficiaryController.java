@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@RequestMapping("/api/v1/beneficiary")
+@RequestMapping("/api/acnt/v1/beneficiary")
 public interface IBeneficiaryController {
     @GetMapping("/get")
     ResponseEntity<OutputDto> getRequestBenForChange(@Valid @RequestBody final GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;

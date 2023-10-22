@@ -4,7 +4,7 @@ import com.siliconvalley.cardservices.services.ICardsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/cards")
+@RequestMapping("/api/cards")
 public class CardsControllerImpl {
     private final ICardsService cardsService;
 

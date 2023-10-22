@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 
-@RequestMapping("/api/transactions")
+@RequestMapping("/api/acnt/transactions")
 public interface ITransactionsController {
     @PostMapping("/v1/exe")
     ResponseEntity<OutputDto> executeTransactions(@Valid @RequestBody final TransactionsDto transactionsDto) throws TransactionException, AccountsException;

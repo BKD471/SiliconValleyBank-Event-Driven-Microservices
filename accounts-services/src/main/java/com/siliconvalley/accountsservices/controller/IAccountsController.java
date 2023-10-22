@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 
-@RequestMapping("/api/v1/accounts")
+@RequestMapping("/api/acnt/v1/accounts")
 public interface IAccountsController {
     @GetMapping("/get")
     ResponseEntity<OutputDto> getRequestForChange(@Valid @RequestBody final GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException;

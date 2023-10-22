@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -16,6 +17,7 @@
         <option value="$PROJECT_DIR$/configServerPostgress/pom.xml" />
         <option value="$PROJECT_DIR$/configServerMysql/pom.xml" />
         <option value="$PROJECT_DIR$/ServiceDiscovery/pom.xml" />
+        <option value="$PROJECT_DIR$/ApiGateway/pom.xml" />
       </list>
     </option>
   </component>

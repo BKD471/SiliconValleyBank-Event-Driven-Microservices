@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/loans")
+@RequestMapping("/api/loans")
 public class LoansController {
     private final ILoansService loanService;
     LoansController(@Qualifier("loanServicePrimary") ILoansService loanService){
@@ -22,19 +22,19 @@ public class LoansController {
         return new ResponseEntity<>(processedLoansDto, HttpStatus.CREATED);
     }
 
-    @PutMapping("/pay/emi")
+    @PutMapping("/v1/pay/emi")
     public ResponseEntity<OutPutDto> payEmi(@RequestBody LoansDto loansDto) throws PaymentException, InstallmentsException, LoansException, TenureException, ValidationException {
       OutPutDto paidEmi=loanService.loansExecutor(loansDto);
       return new ResponseEntity<>(paidEmi,HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/v1/{id}")
     public ResponseEntity<OutPutDto> getAllLoansByCustomerId(@RequestBody final LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
        OutPutDto allLoans=loanService.loansExecutor(loansDto);
        return new ResponseEntity<>(allLoans,HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/{num}")
+    @GetMapping("/v1/{id}/{num}")
     public  ResponseEntity<OutPutDto> getInfoAboutLoanByCustomerIdAndLoanNumber
             (@RequestBody LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
         OutPutDto loan=loanService.loansExecutor(loansDto);

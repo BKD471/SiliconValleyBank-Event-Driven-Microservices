@@ -15,6 +15,7 @@
         <module name="configServerMysql" />
         <module name="ServiceRegistry" />
         <module name="configServerPostgress" />
+        <module name="ApiGateway" />
         <module name="ServiceDiscovery" />
       </profile>
     </annotationProcessing>
@@ -25,6 +26,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ApiGateway" options="-parameters" />
       <module name="EmailNotificationServices" options="-parameters" />
       <module name="PaymentServices" options="-parameters" />
       <module name="Schedulers" options="-parameters" />
