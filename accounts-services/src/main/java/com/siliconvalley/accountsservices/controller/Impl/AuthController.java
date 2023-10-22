@@ -16,10 +16,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileInputStream;
@@ -39,17 +35,35 @@ import static java.util.Objects.isNull;
 @RequestMapping("/api/v1/auth")
 @Tag(name = "AuthController",description = "Api for Authentication")
 public class AuthController {
-    private final AuthenticationManager manager;
-    private final UserDetailsService userDetailsService;
+    //private final AuthenticationManager manager;
+    //private final UserDetailsService userDetailsService;
     private final ICustomerRepository customerRepository;
     private final JwtHelper jwtHelper;
     private final ModelMapper modelMapper;
     private final String googleClientId;
     private final String newPassword;
 
-    public AuthController(AuthenticationManager manager,UserDetailsService userDetailsService,
-                   JwtHelper jwtHelper,ModelMapper modelMapper,
-                   ICustomerRepository customerRepository, @Value("${path.controller.auth}") String path_auth_controller_properties){
+//    public AuthController(AuthenticationManager manager,UserDetailsService userDetailsService,
+//                   JwtHelper jwtHelper,ModelMapper modelMapper,
+//                   ICustomerRepository customerRepository, @Value("${path.controller.auth}") String path_auth_controller_properties){
+//
+//        Properties properties = new Properties();
+//        try {
+//            properties.load(new FileInputStream(path_auth_controller_properties));
+//        } catch (IOException e) {
+//            log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
+//        }
+//        this.manager=manager;
+//        this.userDetailsService=userDetailsService;
+//        this.jwtHelper=jwtHelper;
+//        this.modelMapper=modelMapper;
+//        this.customerRepository=customerRepository;
+//        this.googleClientId= properties.getProperty("googleClientId");;
+//        this.newPassword= properties.getProperty("newPassword");
+//    }
+
+    public AuthController(JwtHelper jwtHelper,ModelMapper modelMapper,
+                          ICustomerRepository customerRepository, @Value("${path.controller.auth}") String path_auth_controller_properties){
 
         Properties properties = new Properties();
         try {
@@ -57,8 +71,7 @@ public class AuthController {
         } catch (IOException e) {
             log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
         }
-        this.manager=manager;
-        this.userDetailsService=userDetailsService;
+
         this.jwtHelper=jwtHelper;
         this.modelMapper=modelMapper;
         this.customerRepository=customerRepository;
@@ -73,33 +86,35 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody final JwtRequest jwtRequest) {
-        this.doAuthenticate( jwtRequest.email(), jwtRequest.password());
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.email());
-        final String token = jwtHelper.generateToken(userDetails);
-
-        final CustomerDto customerDto = new CustomerDto.Builder()
-                .customerName(userDetails.getUsername())
-                .password(userDetails.getPassword())
-                .build();
-        final JwtResponse jwtResponse =new JwtResponse.Builder()
-                .jwtToken(token)
-                .customer(customerDto).build();
-
-        return new ResponseEntity<>(jwtResponse, HttpStatus.CREATED);
+//        this.doAuthenticate( jwtRequest.email(), jwtRequest.password());
+//        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.email());
+//        final String token = jwtHelper.generateToken(userDetails);
+//
+//        final CustomerDto customerDto = new CustomerDto.Builder()
+//                .customerName(userDetails.getUsername())
+//                .password(userDetails.getPassword())
+//                .build();
+//        final JwtResponse jwtResponse =new JwtResponse.Builder()
+//                .jwtToken(token)
+//                .customer(customerDto).build();
+//
+//        return new ResponseEntity<>(jwtResponse, HttpStatus.CREATED);
+        return null;
     }
 
     @GetMapping("/current")
     public ResponseEntity<CustomerDto> getCurrentUser(final Principal principal) {
-        final String userName = principal.getName();
-        return new ResponseEntity<>(modelMapper.map(userDetailsService.loadUserByUsername(userName)
-                , CustomerDto.class)
-                , HttpStatus.OK);
+//        final String userName = principal.getName();
+//        return new ResponseEntity<>(modelMapper.map(userDetailsService.loadUserByUsername(userName)
+//                , CustomerDto.class)
+//                , HttpStatus.OK);
+        return null;
     }
 
     private void doAuthenticate(final String email,final String password) {
-        final UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(email, password);
-        manager.authenticate(auth);
+//        final UsernamePasswordAuthenticationToken auth =
+//                new UsernamePasswordAuthenticationToken(email, password);
+//        manager.authenticate(auth);
     }
 
     @PostMapping("/google")

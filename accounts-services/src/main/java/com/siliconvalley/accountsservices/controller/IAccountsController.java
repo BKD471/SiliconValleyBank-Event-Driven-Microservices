@@ -12,30 +12,29 @@ import com.siliconvalley.accountsservices.exception.ResponseException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 
-@RequestMapping("/api/acnt/v1/accounts")
+@RequestMapping("/api/acnt")
 public interface IAccountsController {
-    @GetMapping("/get")
+    @GetMapping("/accounts/v1/get")
     ResponseEntity<OutputDto> getRequestForChange(@Valid @RequestBody final GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException;
-    @GetMapping("/serve/image/{customerId}")
+    @GetMapping("/accounts/v1/serve/image/{customerId}")
     void serveUserImage(@PathVariable final String customerId,final HttpServletResponse response) throws IOException;
-    @PostMapping("/post")
+    @PostMapping("/accounts/v1/post")
     ResponseEntity<OutputDto> postRequestForChange(@Valid @RequestBody final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException;
-    @PostMapping("/create")
+    @PostMapping("/accounts/v1/create")
     ResponseEntity<OutputDto> createAccount(@Valid @RequestBody final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException;
-    @PutMapping("/put")
+    @PutMapping("/accounts/v1/put")
     ResponseEntity<OutputDto> putRequestForChange(@Valid @RequestBody final PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, IOException;
-    @PutMapping("/upload/image/{customerId}")
+    @PutMapping("/accounts/v1/upload/image/{customerId}")
     ResponseEntity<ImageResponseMessages> uploadCustomerImage(@RequestParam("customerImage")final MultipartFile image, @PathVariable final String customerId) throws IOException;
-    @DeleteMapping("/delete")
+    @DeleteMapping("/accounts/v1/delete")
     ResponseEntity<OutputDto> deleteRequestForChange(@Valid @RequestBody final DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException;
-    @DeleteMapping("/delete/customer")
-    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/accounts/v1/delete/customer")
+    //@PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<OutputDto> deleteCustomer(@Valid @RequestBody final DeleteInputRequestDto deleteInputRequestDto);
 }

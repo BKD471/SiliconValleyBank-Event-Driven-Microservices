@@ -17,18 +17,18 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 
-@RequestMapping("/api/acnt/transactions")
+@RequestMapping("/api/acnt")
 public interface ITransactionsController {
-    @PostMapping("/v1/exe")
+    @PostMapping("/transactions/v1/exe")
     ResponseEntity<OutputDto> executeTransactions(@Valid @RequestBody final TransactionsDto transactionsDto) throws TransactionException, AccountsException;
 
-    @GetMapping("/v1/pastSixMonthsStmt")
+    @GetMapping("/transactions/v1/pastSixMonthsStmt")
     ResponseEntity<Resource> getPastSixMonthsTransaction(@RequestBody final TransactionsDto transactionsDto) throws AccountsException, JRException, IOException;
 
-    @GetMapping("/v1/generateStatement")
+    @GetMapping("/transactions/v1/generateStatement")
     ResponseEntity<InputStreamResource> generateBankStatementPdf(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws FileNotFoundException;
 
-    @GetMapping("/v2/generateStatement")
+    @GetMapping("/transactions/v2/generateStatement")
     ResponseEntity<Resource> generateBankStatementAnyFormat(@RequestBody BankStatementRequestDto bankStatementRequestDto) throws IOException, JRException;
 
 }

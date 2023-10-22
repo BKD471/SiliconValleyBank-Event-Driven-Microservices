@@ -14,14 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@RequestMapping("/api/acnt/v1/beneficiary")
+@RequestMapping("/api/acnt")
 public interface IBeneficiaryController {
-    @GetMapping("/get")
+    @GetMapping("/beneficiary/v1/get")
     ResponseEntity<OutputDto> getRequestBenForChange(@Valid @RequestBody final GetInputRequestDto getInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;
-    @PostMapping("/post")
+    @PostMapping("/beneficiary/v1/post")
     ResponseEntity<OutputDto> postRequestBenForChange(@Valid @RequestBody final PostInputRequestDto postInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;
-    @PutMapping("/put")
+    @PutMapping("/beneficiary/v1/put")
     ResponseEntity<OutputDto> putRequestBenForChange(@Valid @RequestBody final PutInputRequestDto putInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;
-    @DeleteMapping("/delete")
+    @DeleteMapping("/beneficiary/v1/delete")
     ResponseEntity<OutputDto> deleteRequestBenForChange(@Valid @RequestBody final DeleteInputRequestDto deleteInputRequestDto) throws AccountsException, ResponseException, CustomerException, BeneficiaryException;
 }
