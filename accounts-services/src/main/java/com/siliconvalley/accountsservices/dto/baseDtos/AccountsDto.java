@@ -13,7 +13,9 @@ public record AccountsDto(String accountNumber,BigDecimal balance, AllConstantHe
                           AllConstantHelpers.Branch homeBranch,BigDecimal transferLimitPerDay,
                           int creditScore,BigDecimal approvedLoanLimitBasedOnCreditScore,
                           Boolean anyActiveLoans,BigDecimal totalOutstandingAmountPayableToBank,
-                          BigDecimal totLoanIssuedSoFar, AllConstantHelpers.UpdateRequest updateRequest,
+                          BigDecimal totLoanIssuedSoFar,  @JsonIgnore
+                          @JsonProperty(value = "updateRequest")
+                          AllConstantHelpers.UpdateRequest updateRequest,
                           Set<BeneficiaryDto> listOfBeneficiary,Set<TransactionsDto> listOfTransactions){
 
 
@@ -30,8 +32,7 @@ public record AccountsDto(String accountNumber,BigDecimal balance, AllConstantHe
        private Boolean anyActiveLoans;
        private BigDecimal totalOutstandingAmountPayableToBank;
        private BigDecimal totLoanIssuedSoFar;
-        @JsonIgnore
-        @JsonProperty(value = "updateRequest")
+
         private AllConstantHelpers.UpdateRequest updateRequest;
 
        private Set<BeneficiaryDto> listOfBeneficiary;
