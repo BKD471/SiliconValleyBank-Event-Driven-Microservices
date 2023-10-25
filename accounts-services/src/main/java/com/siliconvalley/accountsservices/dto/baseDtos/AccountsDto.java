@@ -19,6 +19,7 @@ public record AccountsDto(String accountNumber,BigDecimal balance, AllConstantHe
                           Set<BeneficiaryDto> listOfBeneficiary,Set<TransactionsDto> listOfTransactions){
 
 
+
     public static final class Builder{
        private String accountNumber;
        private BigDecimal balance;

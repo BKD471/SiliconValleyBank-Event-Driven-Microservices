@@ -127,7 +127,11 @@
 			<artifactId>jsr311-api</artifactId>
 			<version>0.9</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper-module-record</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>

@@ -250,7 +250,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         log.debug("<------------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl ended ----------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------>");
-        return getPageableResponse(allPagedAccounts, AccountsDto.class);
+        return getPageableResponse(allPagedAccounts, DestinationDtoType.AccountsDto);
     }
 
     private PageableResponseDto<CustomerDto> getAllCustomers( final Pageable pageable) throws AccountsException {
@@ -263,7 +263,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         log.debug("<------------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl ended ----------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------>");
-        return getPageableResponse(allPagedAccounts, CustomerDto.class);
+        return getPageableResponse(allPagedAccounts, DestinationDtoType.CustomerDto);
     }
 
 

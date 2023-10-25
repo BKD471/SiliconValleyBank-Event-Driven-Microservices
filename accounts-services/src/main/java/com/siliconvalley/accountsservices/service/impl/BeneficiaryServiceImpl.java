@@ -136,7 +136,7 @@ public class BeneficiaryServiceImpl extends AbstractService implements IBenefici
 
         log.debug("<---------getAllBeneficiariesOfAnAccountByAccountNumber(Accounts fetchedAccount,Pageable pageable) BeneficiaryServiceImpl ended --------------------------------------" +
                 "----------------------------------------------------------------------------------------------->");
-        return getPageableResponse(allPagedBeneficiary, BeneficiaryDto.class);
+        return getPageableResponse(allPagedBeneficiary, AllConstantHelpers.DestinationDtoType.BeneficiaryDto);
     }
 
     private Beneficiary processedBeneficiaryAccount(final Beneficiary oldBeneficiaryData,final Beneficiary newBeneficiaryData) throws AccountsException {

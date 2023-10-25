@@ -39,6 +39,9 @@ public class AllConstantHelpers {
         CREATE_ACC, ADD_ACC,GET_ALL_CUSTOMER,GET_ALL_ACC, UPDATE_CUSTOMER_DETAILS
     }
 
+    public enum  DestinationDtoType{
+        AccountsDto,BeneficiaryDto,CustomerDto
+    }
     public enum DescriptionType{
         //credit types
         SALARY,DEPOSIT,RECEIVED_FROM_OTHER_ACCOUNT,

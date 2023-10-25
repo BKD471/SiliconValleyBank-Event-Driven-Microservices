@@ -1,19 +1,24 @@
 package com.siliconvalley.accountsservices.helpers;
 
+import com.siliconvalley.accountsservices.dto.baseDtos.AccountsDto;
+import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
+import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.responseDtos.PageableResponseDto;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Beneficiary;
 import com.siliconvalley.accountsservices.model.Customer;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.record.RecordModule;
 import org.springframework.data.domain.Page;
 
+import java.io.FileDescriptor;
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
+import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 
 public class PagingHelper {
     public static final int DEFAULT_PAGE_SIZE = 5;
@@ -57,9 +62,31 @@ public class PagingHelper {
     }
     public static Set<String> getAllPageableFieldsOfBeneficiary(){return getSetsOfBeneficiaryFieldNames();}
 
-    public static <e,d> PageableResponseDto<d> getPageableResponse(Page<e> page, Class<d> type){
+    public static <e,d> PageableResponseDto<d> getPageableResponse(Page<e> page, AllConstantHelpers.DestinationDtoType destinationDtoType){
         final List<e> entity=page.getContent();
-        final List<d> userDtoList=entity.stream().map( Object->new ModelMapper().map(Object,type)).toList();
+
+        List<d> userDtoList=new ArrayList<>();
+
+        switch (destinationDtoType){
+            case AccountsDto -> {
+                if((!entity.isEmpty() && entity.get(0) instanceof Accounts)){
+                    userDtoList= (List<d>) entity.stream().map(e->mapToAccountsDto((Accounts) e)).toList();
+                }
+            }
+
+            case CustomerDto -> {
+                if((!entity.isEmpty() && entity.get(0) instanceof Customer)){
+                    userDtoList= (List<d>) entity.stream().map(e->mapToCustomerDto((Customer) e)).toList();
+                }
+            }
+
+            case BeneficiaryDto -> {
+                if(!entity.isEmpty() && entity.get(0) instanceof Beneficiary){
+                    userDtoList= (List<d>) entity.stream().map(e->mapToBeneficiaryDto((Beneficiary) e)).toList();
+                }
+            }
+        }
+
 
         final PageableResponseDto<d> responseDto=new PageableResponseDto.Builder<d>()
                 .content(userDtoList)
