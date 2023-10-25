@@ -274,7 +274,8 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final AllConstantHelpers.Branch newHomeBranch = accountsDto.homeBranch();
         Accounts savedUpdatedAccount = accounts;
 
-        validationService.accountsUpdateValidator(accounts, null, UPDATE_HOME_BRANCH);
+        validationService.accountsUpdateValidator(mapToAccounts(accountsDto),
+                mapToCustomerDto(accounts.getCustomer()), UPDATE_HOME_BRANCH);
         if (nonNull(newHomeBranch) && !newHomeBranch.equals(oldHomeBranch)) {
             accounts.setHomeBranch(newHomeBranch);
             accounts.setBranchCode(getBranchCode(newHomeBranch));
@@ -661,13 +662,14 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 return createAccountForAlreadyCreatedUser(customerDto.customerId(), mapToAccounts(accountsDto), accountsDto);
             }
             case UPDATE_HOME_BRANCH -> {
+                final Branch oldBranch=foundAccount.getHomeBranch();
                 final Accounts updatedAccount = updateHomeBranch(accountsDto, foundAccount);
 
                 return new OutputDto.Builder()
                         .customer(mapToCustomerOutputDto(mapToCustomerDto(updatedAccount.getCustomer())))
                         .accounts(mapToAccountsOutputDto(mapToAccountsDto(updatedAccount)))
                         .defaultMessage(String.format("Home branch is changed from %s to %s for customer with id %s",
-                                foundAccount.getHomeBranch(), accountsDto.homeBranch(), foundAccount.getCustomer().getCustomerId()))
+                                oldBranch, accountsDto.homeBranch(), foundAccount.getCustomer().getCustomerId()))
                         .build();
             }
             case UPDATE_CREDIT_SCORE -> {

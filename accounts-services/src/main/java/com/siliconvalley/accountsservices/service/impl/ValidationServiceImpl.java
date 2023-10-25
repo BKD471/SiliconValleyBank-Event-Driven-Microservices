@@ -5,6 +5,7 @@ import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.*;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
+import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.*;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.service.IValidationService;
@@ -25,6 +26,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToCustomer;
 import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -91,6 +93,13 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case UPDATE_HOME_BRANCH -> {
                 location="Inside UPDATE_HOME_BRANCH";
+                if(Objects.isNull(accounts.getHomeBranch()) ||
+                        Objects.isNull(accounts.getAccountType())) throw new BadApiRequestException(BadApiRequestException.class,
+                        "homebranch or accountype ccanot be null",
+                        String.format("%s 0f %s",location,methodName));
+
+                Customer customer= mapToCustomer(customerDto);
+                accounts.setCustomer(customer);
                 IValidationService.checkConflictingAccountUpdateConditionForBranch(accounts,
                         String.format("%s of %s", location, methodName));
             }

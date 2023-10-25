@@ -13,6 +13,7 @@ import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.BankStatement;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -27,14 +28,12 @@ public interface IValidationService {
         AccountsDto accountsDto= mapToAccountsDto(accounts);
         final String location = String.format("Inside checkConflictingAccountUpdateConditionForBranch(Accounts) in AccountsServiceImpl" +
                 "coming from %s", locality);
-        final AllConstantHelpers.Branch newhomeBranch =(null == accountsDto) ? accounts.getHomeBranch() : accountsDto.homeBranch();
+        final AllConstantHelpers.Branch newhomeBranch = accountsDto.homeBranch();
         final AllConstantHelpers.AccountType accountType = accounts.getAccountType();
 
         //get all accounts for customer
         final Set<Accounts> listOfAccounts = accounts.getCustomer().getAccounts();
-        final AllConstantHelpers.Branch finalNewhomeBranch = newhomeBranch;
-
-        Predicate<Accounts> checkConflictingHomeBranch= acc->finalNewhomeBranch.equals(acc.getHomeBranch())
+        Predicate<Accounts> checkConflictingHomeBranch= acc->newhomeBranch.equals(acc.getHomeBranch())
                 && accountType.equals(acc.getAccountType());
         boolean isNotPermissible = listOfAccounts.stream().anyMatch(checkConflictingHomeBranch);
 
