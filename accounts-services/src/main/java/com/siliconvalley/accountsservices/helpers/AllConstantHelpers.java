@@ -39,6 +39,10 @@ public class AllConstantHelpers {
         CREATE_ACC, ADD_ACC,GET_ALL_CUSTOMER,GET_ALL_ACC, UPDATE_CUSTOMER_DETAILS
     }
 
+    public enum ValidateField{
+        PAN,PASSPORT,ADHAR,EMAIL,VOTER,DRIVING_LICENSE,PHONE,DOB
+    }
+
     public enum  DestinationDtoType{
         AccountsDto,BeneficiaryDto,CustomerDto
     }

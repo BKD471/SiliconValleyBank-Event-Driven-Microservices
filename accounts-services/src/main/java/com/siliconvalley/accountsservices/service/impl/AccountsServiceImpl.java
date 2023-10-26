@@ -14,6 +14,7 @@ import com.siliconvalley.accountsservices.exception.CustomerException;
 import com.siliconvalley.accountsservices.exception.RolesException;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
+import com.siliconvalley.accountsservices.helpers.RegexMatchersHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.model.Role;
@@ -46,6 +47,8 @@ import java.util.*;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.AccountsValidateType.*;
@@ -56,9 +59,11 @@ import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.RE_O
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UPDATE_CASH_LIMIT;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UPDATE_HOME_BRANCH;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UPLOAD_PROFILE_IMAGE;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ValidateField.*;
 import static com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 import static com.siliconvalley.accountsservices.helpers.PagingHelper.*;
+import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -367,6 +372,25 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 "------------------------------------------------------------------------------------------------------------------->");
     }
 
+    private CustomerDto mapEveryRecordsField(CustomerDto record){
+        return new CustomerDto.Builder()
+                .customerId(record.customerId())
+                .customerName(record.customerName())
+                .DateOfBirth(record.DateOfBirth())
+                .age(record.age())
+                .email(record.email())
+                .phoneNumber(record.phoneNumber())
+                .adharNumber(record.adharNumber())
+                .imageName(record.imageName())
+                .panNumber(record.panNumber())
+                .voterId(record.voterId())
+                .passportNumber(record.passportNumber())
+                .drivingLicense(record.drivingLicense())
+                .password(record.password())
+                .address(record.address())
+                .build();
+    }
+
     private Customer updateCustomerDetails(final Customer oldCustomerRecord, final CustomerDto newCustomerRecord) {
         log.debug("<-----------updateCustomerDetails(Customer,CustomerDto ) AccountsServiceImpl started-----------------------" +
                 "--------------------------------------------------------------------------------------------------------------------->");
@@ -374,7 +398,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String newName = newCustomerRecord.customerName();
         final LocalDate oldDateOfBirth = oldCustomerRecord.getDateOfBirth();
         final LocalDate newDateOfBirth = newCustomerRecord.DateOfBirth();
-        final int newAge = Period.between(newDateOfBirth, LocalDate.now()).getYears();
+
         final String oldEmail = oldCustomerRecord.getEmail();
         final String newEmail = newCustomerRecord.email();
         final String oldPhoneNumber = oldCustomerRecord.getPhoneNumber();
@@ -393,35 +417,83 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         BiPredicate<String, String> isAllowedToUpdate = (newRecord, oldRecord) -> isNotBlank(newRecord) && !oldRecord.equalsIgnoreCase(newRecord);
         BiPredicate<LocalDate, LocalDate> isAllowedToUpdateForObjects = (newObj, oldObj) -> nonNull(newObj) && !oldObj.equals(newObj);
 
-        if (isAllowedToUpdate.test(newName, oldName))
-            newCustomerRecord.withCustomerName(newName);
-        if (isAllowedToUpdateForObjects.test(newDateOfBirth, oldDateOfBirth)) {
-            newCustomerRecord.withDateOfBirth(newDateOfBirth);
-            newCustomerRecord.withAge(newAge);
+
+        CustomerDto newUpdatedRecord = new CustomerDto.Builder()
+                .customerId(oldCustomerRecord.getCustomerId())
+                .customerName(oldCustomerRecord.getName())
+                .DateOfBirth(oldCustomerRecord.getDateOfBirth())
+                .age(oldCustomerRecord.getAge())
+                .email(oldCustomerRecord.getEmail())
+                .phoneNumber(oldCustomerRecord.getPhoneNumber())
+                .adharNumber(oldCustomerRecord.getAdharNumber())
+                .imageName(oldCustomerRecord.getImageName())
+                .panNumber(oldCustomerRecord.getPanNumber())
+                .voterId(oldCustomerRecord.getVoterId())
+                .passportNumber(oldCustomerRecord.getPassportNumber())
+                .drivingLicense(oldCustomerRecord.getDrivingLicense())
+                .password(oldCustomerRecord.getPassword())
+                .address(oldCustomerRecord.getAddress())
+                .password(oldCustomerRecord.getPassword())
+                .build();
+
+        if (isAllowedToUpdate.test(newName, oldName)) {
+            newUpdatedRecord=newUpdatedRecord.withCustomerName(newName);
+            newUpdatedRecord = mapEveryRecordsField(newUpdatedRecord);
         }
-        if (isAllowedToUpdate.test(newEmail, oldEmail))
-            newCustomerRecord.withEmail(newEmail);
-        if (isAllowedToUpdate.test(newPhoneNumber, oldPhoneNumber))
-            newCustomerRecord.withPhoneNumber(newPhoneNumber);
-        if (isAllowedToUpdate.test(newAdharNumber, oldAdharNumber))
-            newCustomerRecord.withAdharNumber(newAdharNumber);
-        if (isAllowedToUpdate.test(newPassportNumber, oldPassportNumber))
-            newCustomerRecord.withPassportNumber(newPassportNumber);
-        if (isAllowedToUpdate.test(newPanNumber, oldPanNumber))
-            newCustomerRecord.withPanNumber(newPanNumber);
-        if (isAllowedToUpdate.test(newVoterId, oldVoterId))
-            newCustomerRecord.withVoterId(newVoterId);
-        if (isAllowedToUpdate.test(newDrivingLicense, oldDrivingLicense))
-            newCustomerRecord.withDrivingLicense(newDrivingLicense);
+        if (isAllowedToUpdateForObjects.test(newDateOfBirth, oldDateOfBirth)) {
+            validationService.fieldValidator(oldCustomerRecord.getCustomerId(), newDateOfBirth.toString(),DOB);
+            newUpdatedRecord=newUpdatedRecord.withDateOfBirth(newDateOfBirth);
+            final int newAge = Period.between(newDateOfBirth, LocalDate.now()).getYears();
+            newUpdatedRecord=newUpdatedRecord.withAge(newAge);
+            newUpdatedRecord = mapEveryRecordsField(newUpdatedRecord);
+        }
+        if (isAllowedToUpdate.test(newEmail, oldEmail)) {
+            validationService.fieldValidator(oldCustomerRecord.getCustomerId(),newEmail,EMAIL);
+            newUpdatedRecord=newUpdatedRecord.withEmail(newEmail);
+            newUpdatedRecord = mapEveryRecordsField(newUpdatedRecord);
+        }
+        if (isAllowedToUpdate.test(newPhoneNumber, oldPhoneNumber)) {
+            validationService.fieldValidator(oldCustomerRecord.getCustomerId(),newPhoneNumber,PHONE);
+            newUpdatedRecord=newUpdatedRecord.withPhoneNumber(newPhoneNumber);
+            newUpdatedRecord = mapEveryRecordsField(newUpdatedRecord);
+        }
+        if (isAllowedToUpdate.test(newAdharNumber, oldAdharNumber)) {
+            validationService.fieldValidator(oldCustomerRecord.getCustomerId(),newAdharNumber,ADHAR);
+            newUpdatedRecord=newUpdatedRecord.withAdharNumber(newAdharNumber);
+            newUpdatedRecord = mapEveryRecordsField(newUpdatedRecord);
+        }
+        if (isAllowedToUpdate.test(newPassportNumber, oldPassportNumber)){
+            validationService.fieldValidator(oldCustomerRecord.getCustomerId(),newPassportNumber,PASSPORT);
+            newUpdatedRecord=newUpdatedRecord.withPassportNumber(newPassportNumber);
+            newUpdatedRecord = mapEveryRecordsField(newUpdatedRecord);
+        }
+        if (isAllowedToUpdate.test(newPanNumber, oldPanNumber)) {
+            validationService.fieldValidator(oldCustomerRecord.getCustomerId(),newPanNumber,PAN);
+            newUpdatedRecord=newUpdatedRecord.withPanNumber(newPanNumber);
+            newUpdatedRecord=mapEveryRecordsField(newUpdatedRecord);
+        }
+        if (isAllowedToUpdate.test(newVoterId, oldVoterId)) {
+            validationService.fieldValidator(oldCustomerRecord.getCustomerId(),newVoterId,VOTER);
+            newUpdatedRecord=newUpdatedRecord.withVoterId(newVoterId);
+            newUpdatedRecord=mapEveryRecordsField(newUpdatedRecord);
+        }
+        if (isAllowedToUpdate.test(newDrivingLicense, oldDrivingLicense)){
+            validationService.fieldValidator(oldCustomerRecord.getCustomerId(),newDrivingLicense,DRIVING_LICENSE);
+            newUpdatedRecord=newUpdatedRecord.withDrivingLicense(newDrivingLicense);
+            newUpdatedRecord=mapEveryRecordsField(newUpdatedRecord);
+        }
 
-        final Customer updatedCustomer = mapToCustomer(newCustomerRecord);
-
+        final Customer updatedCustomer = mapToCustomer(newUpdatedRecord);
+        updatedCustomer.setImageName(oldCustomerRecord.getImageName());
+        updatedCustomer.setAccounts(oldCustomerRecord.getAccounts());
+        updatedCustomer.setRoles(oldCustomerRecord.getRoles());
         //auditing does not work during update so manually set it
         updatedCustomer.setCreatedBy("Admin");
         log.debug("<------------updateCustomerDetails(Customer oldCustomerRecord, CustomerDto newCustomerRecord) AccountsServiceImpl ended -----------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
         return customerRepository.save(updatedCustomer);
     }
+
 
     private int getCreditScore(final String accountNumber) {
         log.debug("<----------getCreditScore(Long ) AccountsServiceImpl started -----------------------------------" +

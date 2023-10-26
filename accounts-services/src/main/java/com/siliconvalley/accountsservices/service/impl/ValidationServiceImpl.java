@@ -1,5 +1,6 @@
 package com.siliconvalley.accountsservices.service.impl;
 
+import com.google.common.collect.Iterables;
 import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
@@ -8,11 +9,13 @@ import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.*;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
+import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,7 +26,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToCustomer;
@@ -36,9 +41,12 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Slf4j
 public final class ValidationServiceImpl implements IValidationService {
     private final IAccountsRepository accountsRepository;
+    private final ICustomerRepository customerRepository;
 
-    ValidationServiceImpl(final IAccountsRepository accountsRepository) {
+    ValidationServiceImpl(final IAccountsRepository accountsRepository,
+                          final ICustomerRepository customerRepository) {
         this.accountsRepository = accountsRepository;
+        this.customerRepository=customerRepository;
     }
 
     @Override
@@ -360,5 +368,131 @@ public final class ValidationServiceImpl implements IValidationService {
         }
         log.debug("<----transactionsUpdateValidator(Accounts,TransactionsDto, ValidateTransactionType) BeneficiaryServiceImpl ended -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------>");
+    }
+
+    @Override
+    public void fieldValidator(String customerId,String field,ValidateField validateField){
+        final String methodName="fieldValidator(String,ValidateField)";
+        Iterable<Customer> listOfCustomers= customerRepository.findAll();
+        BiPredicate<Customer,String> checkWhetherSameCustomer=(customer,id)-> id.equalsIgnoreCase(customer.getCustomerId());
+
+        Pattern pattern=null;
+        Matcher matcher=null;
+        switch (validateField){
+            case PAN -> {
+                pattern= Pattern.compile(PATTERN_FOR_PAN_NUMBER);
+                matcher=pattern.matcher(field);
+                boolean isMatched=matcher.matches();
+                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The pan number %s you " +
+                        "entered is invalid",field),methodName);
+
+                if(Iterables.isEmpty(listOfCustomers)) return;
+                boolean isAnother=StreamSupport
+                           .stream(listOfCustomers.spliterator(),false)
+                           .anyMatch(customer-> field.equals(customer.getPanNumber())
+                                   && !checkWhetherSameCustomer.test(customer,customerId));
+                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
+                           String.format("There exists another customer with same pan %s",field),methodName);
+            }
+            case EMAIL -> {
+                pattern= Pattern.compile(PATTERN_FOR_EMAIL);
+                matcher=pattern.matcher(field);
+                boolean isMatched=matcher.matches();
+                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The email id %s you " +
+                        "entered is invalid",field),methodName);
+
+                if(Iterables.isEmpty(listOfCustomers)) return;
+                boolean isAnother=StreamSupport
+                        .stream(listOfCustomers.spliterator(),false)
+                        .anyMatch(customer-> field.equals(customer.getEmail())
+                                && !checkWhetherSameCustomer.test(customer,customerId));
+                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
+                        String.format("There exists another customer with same email %s",field),methodName);
+            }
+            case PASSPORT -> {
+                pattern= Pattern.compile(PATTERN_FOR_PASSPORT);
+                matcher=pattern.matcher(field);
+                boolean isMatched=matcher.matches();
+                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The passport number %s you " +
+                        "entered is invalid",field),methodName);
+
+                if(Iterables.isEmpty(listOfCustomers)) return;
+                boolean isAnother=StreamSupport
+                        .stream(listOfCustomers.spliterator(),false)
+                        .anyMatch(customer-> field.equals(customer.getPassportNumber()) &&
+                                !checkWhetherSameCustomer.test(customer,customerId));
+                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
+                        String.format("There exists another customer with same passport %s",field),methodName);
+            }
+            case VOTER -> {
+                pattern= Pattern.compile(PATTERN_FOR_VOTER);
+                matcher=pattern.matcher(field);
+                boolean isMatched=matcher.matches();
+                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The voter id %s you " +
+                        "entered is invalid",field),methodName);
+
+                if(Iterables.isEmpty(listOfCustomers)) return;
+                boolean isAnother=StreamSupport
+                        .stream(listOfCustomers.spliterator(),false)
+                        .anyMatch(customer-> field.equals(customer.getVoterId()) &&
+                                !checkWhetherSameCustomer.test(customer,customerId));
+
+                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
+                        String.format("There exists another customer with same voter id %s",field),methodName);
+            }
+            case DRIVING_LICENSE -> {
+                pattern=Pattern.compile(PATTERN_FOR_DRIVING_LICENSE);
+                matcher=pattern.matcher(field);
+                boolean isMatched=matcher.matches();
+                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The Driving License  %s you " +
+                        "entered is invalid",field),methodName);
+                if(Iterables.isEmpty(listOfCustomers)) return;
+                boolean isAnother=StreamSupport
+                        .stream(listOfCustomers.spliterator(),false)
+                        .anyMatch(customer-> field.equals(customer.getDrivingLicense())
+                                && !checkWhetherSameCustomer.test(customer,customerId));
+
+                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
+                        String.format("There exists another customer with same driving license %s",field),methodName);
+            }
+            case PHONE -> {
+                pattern= Pattern.compile(PATTERN_FOR_PHONE_NUMBER);
+                matcher=pattern.matcher(field);
+                boolean isMatched=matcher.matches();
+                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The Phone number  %s you " +
+                        "entered is invalid",field),methodName);
+
+                if(Iterables.isEmpty(listOfCustomers)) return;
+                boolean isAnother=StreamSupport
+                        .stream(listOfCustomers.spliterator(),false)
+                        .anyMatch(customer-> field.equals(customer.getPhoneNumber())
+                                && !checkWhetherSameCustomer.test(customer,customerId));
+                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
+                        String.format("There exists another customer with same phone %s",field),methodName);
+            }
+            case ADHAR -> {
+                pattern= Pattern.compile(PATTERN_FOR_ADHAR);
+                matcher=pattern.matcher(field);
+                boolean isMatched=matcher.matches();
+                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The adhar number  %s you " +
+                        "entered is invalid",field),methodName);
+
+                if(Iterables.isEmpty(listOfCustomers)) return;
+                boolean isAnother=StreamSupport
+                        .stream(listOfCustomers.spliterator(),false)
+                        .anyMatch(customer-> field.equals(customer.getAdharNumber())
+                                && !checkWhetherSameCustomer.test(customer,customerId));
+                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
+                        String.format("There exists another customer with same adhar %s",field),methodName);
+            }
+            case DOB->{
+                pattern= Pattern.compile(PATTERN_FOR_DOB);
+                matcher=pattern.matcher(field);
+                boolean isMatched=matcher.matches();
+                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The birth date  %s you " +
+                        "entered is invalid",field),methodName);
+            }
+        }
+
     }
 }

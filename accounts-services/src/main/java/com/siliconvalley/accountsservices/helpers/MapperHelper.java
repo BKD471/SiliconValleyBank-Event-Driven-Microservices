@@ -106,6 +106,7 @@ public class MapperHelper {
                 .imageName(customerDto.imageName())
                 .drivingLicense(customerDto.drivingLicense())
                 .passportNumber(customerDto.passportNumber())
+                .password(customerDto.password())
                 .accounts(listOfAccounts)
                 .build();
     }

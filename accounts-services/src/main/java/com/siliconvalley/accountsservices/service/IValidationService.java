@@ -48,4 +48,6 @@ public interface IValidationService {
     void accountsUpdateValidator(final Accounts accounts, final CustomerDto customerDto, final AllConstantHelpers.AccountsValidateType request) throws AccountsException, BadApiRequestException;
     void beneficiaryUpdateValidator(final Accounts accounts, final BeneficiaryDto beneficiaryDto, final AllConstantHelpers.validateBenType type) throws BeneficiaryException;
     void transactionsUpdateValidator(final Accounts accounts, final TransactionsDto transactionsDto, final BankStatement bankStatement,final AllConstantHelpers.ValidateTransactionType type);
+
+    void fieldValidator(String customerId,String field, AllConstantHelpers.ValidateField validateField);
 }
