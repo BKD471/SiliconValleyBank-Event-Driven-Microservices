@@ -8,6 +8,7 @@
 9090 --> service registry
 9095 --> config Mysql
 9097 --> config postgress
+9099 --> api gateway
 
 // accounts
 

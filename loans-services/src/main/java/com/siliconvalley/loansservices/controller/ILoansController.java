@@ -14,10 +14,10 @@ public interface ILoansController {
     @PutMapping("/v1/pay/emi")
     ResponseEntity<OutPutDto> payEmi(@RequestBody LoansDto loansDto) throws PaymentException, InstallmentsException, LoansException, TenureException, ValidationException;
 
-    @GetMapping("/v1/{id}")
+    @GetMapping("/v1/getAll")
     ResponseEntity<OutPutDto> getAllLoansByCustomerId(@RequestBody final LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException;
 
-    @GetMapping("/v1/{id}/{num}")
+    @GetMapping("/v1/getInfo")
     ResponseEntity<OutPutDto> getInfoAboutLoanByCustomerIdAndLoanNumber
-            (@RequestBody LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException;
+            (@RequestBody final LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException;
 }

@@ -2,6 +2,7 @@ package com.siliconvalley.accountsservices.dto.baseDtos;
 
 
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
+import com.siliconvalley.accountsservices.helpers.RegexMatchersHelper;
 import com.siliconvalley.accountsservices.validator.NotNullEnum;
 import com.siliconvalley.accountsservices.validator.ValidDescription;
 import jakarta.validation.constraints.Min;
@@ -9,7 +10,6 @@ import jakarta.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.PATTERN_FOR_NOT_NULL_CHARS;
 
 public record TransactionsDto(@NotEmpty(message = "Please provide an account Number") String accountNumber,
                               LocalDateTime transactionTimeStamp,
@@ -17,7 +17,7 @@ public record TransactionsDto(@NotEmpty(message = "Please provide an account Num
                               @Min(value =100,message = "transaction Amount should not be less than 100") BigDecimal transactionAmount,
                               @NotEmpty( message = "Please provide a transacted Account Number") String transactedAccountNumber,
                               AllConstantHelpers.TransactionType transactionType,
-                              @NotNullEnum(regexp = PATTERN_FOR_NOT_NULL_CHARS,message = "Field can;t be null")
+                              @NotNullEnum(regexp =RegexMatchersHelper.PATTERN_FOR_NOT_NULL_CHARS,message = "Field can;t be null")
                               @ValidDescription
                               AllConstantHelpers.DescriptionType description,
                               AllConstantHelpers.FORMAT_TYPE downloadFormat){

@@ -140,10 +140,10 @@ public class PdfServiceJasperImpl extends AbstractPdfService {
                         .map(MapperHelper::mapToTransactionsInvoicableObject).toList());
 
         Comparator<TransactionsInvoicableObject> sortByTimeStampInAscendingOrderOfLatestTransaction=(o1,o2)->
-                (convertTimeStampToLocalDateTime(o1.transactionTimeStamp())
-                        .isBefore(convertTimeStampToLocalDateTime(o2.transactionTimeStamp())))? -1:
-                        (convertTimeStampToLocalDateTime(o1.transactionTimeStamp())
-                                .isAfter(convertTimeStampToLocalDateTime(o2.transactionTimeStamp())))? 1:0;
+                (convertTimeStampToLocalDateTime(o1.getTransactionTimeStamp())
+                        .isBefore(convertTimeStampToLocalDateTime(o2.getTransactionTimeStamp())))? -1:
+                        (convertTimeStampToLocalDateTime(o1.getTransactionTimeStamp())
+                                .isAfter(convertTimeStampToLocalDateTime(o2.getTransactionTimeStamp())))? 1:0;
 
         listOfTransactionsBetweenDate.sort(sortByTimeStampInAscendingOrderOfLatestTransaction);
 

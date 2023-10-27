@@ -6,7 +6,6 @@ import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.*;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
-import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.*;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
@@ -14,16 +13,15 @@ import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -42,11 +40,21 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public final class ValidationServiceImpl implements IValidationService {
     private final IAccountsRepository accountsRepository;
     private final ICustomerRepository customerRepository;
+    private final int MAX_PERMISSIBLE_ACCOUNT;
+
 
     ValidationServiceImpl(final IAccountsRepository accountsRepository,
-                          final ICustomerRepository customerRepository) {
+                          final ICustomerRepository customerRepository,
+                          @Value("${path.service.validation}") final String path_to_properties) {
         this.accountsRepository = accountsRepository;
         this.customerRepository=customerRepository;
+        Properties properties=new Properties();
+        try {
+            properties.load(new FileInputStream(path_to_properties));
+        }catch (IOException e){
+            log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
+        }
+        this.MAX_PERMISSIBLE_ACCOUNT= Integer.parseInt(properties.getProperty("maxPermissibleAccounts"));
     }
 
     @Override
@@ -71,13 +79,12 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case ADD_ACC -> {
                 location="Inside ADD_ACC";
-                final int MAX_PERMISSIBLE_ACCOUNT = 5;
                 final Customer customer = accounts.getCustomer();
 
                 Predicate<Customer> checkUnhappyPathConditionForOpeningNewAccount = customers -> customers.getAccounts().size() >= MAX_PERMISSIBLE_ACCOUNT;
                 if (checkUnhappyPathConditionForOpeningNewAccount.test(customer))
                     throw new AccountsException(AccountsException.class,
-                            "You can;t have more than 10 accounts",
+                            String.format("You can't have more than %s accounts",MAX_PERMISSIBLE_ACCOUNT),
                             String.format("%s of %s", location, methodName));
             }
             case UPDATE_CASH_LIMIT -> {

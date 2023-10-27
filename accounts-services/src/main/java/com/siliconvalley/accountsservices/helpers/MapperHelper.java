@@ -565,7 +565,7 @@ public class MapperHelper {
     //transactionTimeStamp   transactionId   transactionAmount
     // transactedAccountNumber  transactionType  description  balance
    public static TransactionsInvoicableObject mapToTransactionsInvoicableObject(Transactions transactions){
-        return new TransactionsInvoicableObject.Builder()
+        return  TransactionsInvoicableObject.builder()
                 .transactionId(transactions.getTransactionId())
                 .transactionTimeStamp(convertLocalDateTimeToTimeStamp(transactions.getTransactionTimeStamp()))
                 .transactionAmount(transactions.getTransactionAmount())
