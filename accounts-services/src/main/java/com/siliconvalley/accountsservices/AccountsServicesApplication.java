@@ -3,10 +3,10 @@ package com.siliconvalley.accountsservices;
 import com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper;
 import com.siliconvalley.accountsservices.repository.IRoleRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.FileInputStream;
@@ -16,6 +16,7 @@ import java.util.Properties;
 @Slf4j
 @SpringBootApplication
 @EnableWebMvc
+@EnableFeignClients
 public class AccountsServicesApplication{
 	public static void main(String[] args) {
 		SpringApplication.run(AccountsServicesApplication.class, args);

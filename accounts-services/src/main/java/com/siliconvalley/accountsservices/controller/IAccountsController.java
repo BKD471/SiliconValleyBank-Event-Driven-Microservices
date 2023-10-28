@@ -1,10 +1,7 @@
 package com.siliconvalley.accountsservices.controller;
 
+import com.siliconvalley.accountsservices.dto.inputDtos.*;
 import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
-import com.siliconvalley.accountsservices.dto.inputDtos.DeleteInputRequestDto;
-import com.siliconvalley.accountsservices.dto.inputDtos.GetInputRequestDto;
-import com.siliconvalley.accountsservices.dto.inputDtos.PostInputRequestDto;
-import com.siliconvalley.accountsservices.dto.inputDtos.PutInputRequestDto;
 import com.siliconvalley.accountsservices.dto.responseDtos.ImageResponseMessages;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
@@ -26,6 +23,8 @@ public interface IAccountsController {
     void serveUserImage(@PathVariable final String customerId,final HttpServletResponse response) throws IOException;
     @PostMapping("/accounts/v1/post")
     ResponseEntity<OutputDto> postRequestForChange(@Valid @RequestBody final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException;
+    @PostMapping("/accounts/v1/external")
+    ResponseEntity<OutputDto> externalRequestForChange(@RequestBody final ExternalServiceRequestDto externalServiceRequestDto) throws AccountsException, ResponseException, CustomerException, IOException;
     @PostMapping("/accounts/v1/create")
     ResponseEntity<OutputDto> createAccount(@Valid @RequestBody final PostInputRequestDto postInputDto) throws AccountsException, ResponseException, CustomerException, IOException;
     @PutMapping("/accounts/v1/put")

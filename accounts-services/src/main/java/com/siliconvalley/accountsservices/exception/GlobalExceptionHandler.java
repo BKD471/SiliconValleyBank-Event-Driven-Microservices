@@ -1,6 +1,7 @@
 package com.siliconvalley.accountsservices.exception;
 
 import com.siliconvalley.accountsservices.dto.responseDtos.ErrorDetails;
+import com.siliconvalley.accountsservices.externalservice.exception.ServiceDownException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({AccountsException.class, BeneficiaryException.class,
             TransactionException.class, ResponseException.class,
-            CustomerException.class})
+            CustomerException.class, ServiceDownException.class})
     public ResponseEntity<ErrorDetails> handleAllUncheckedCustomException(Exception e, WebRequest web) {
         ErrorDetails error = new ErrorDetails(LocalTime.now(), e.getMessage(), web.getDescription(false));
         log.error(String.format("<==========================%s====================================================================" +

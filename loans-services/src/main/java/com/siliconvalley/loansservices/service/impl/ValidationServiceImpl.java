@@ -55,7 +55,7 @@ public final class ValidationServiceImpl implements IValidationService {
         switch (loansValidateType) {
             case ISSUE_LOAN -> {
                 final int MAX_PERMISSIBLE_LOANS = 5;
-                final String customerId = loansDto.getCustomerId();
+                final String customerId = loansDto.customerId();
                 if (StringUtils.isBlank(customerId)) throw new ValidationException(ValidationException.class
                         , "Please provide customerId", methodName);
                 //get credit score
@@ -71,32 +71,32 @@ public final class ValidationServiceImpl implements IValidationService {
                             String.format("No such loans exist with Loan id %s",
                             loans.getLoanNumber()), methodName);
 
-                boolean isLoanClosed = !loans.isLoanActive();
+                boolean isLoanClosed = !loans.getIsLoanActive();
                 if (isLoanClosed)
                     throw new InstallmentsException(InstallmentsException.class,
                             String.format("Yr loan with id %s is already closed",
-                                    loansDto.getLoanNumber()), methodName);
+                                    loansDto.loanNumber()), methodName);
 
                 BiPredicate<LoansDto,Loans> guardClauseForPaymentAcceptanceCriteria=(dto, entity)->
-                        new BigDecimal(String.valueOf(dto.getPaymentAmount()),mc).compareTo(entity.getEmiAmount())<0
-                        || new BigDecimal(String.valueOf(dto.getPaymentAmount()),mc)
+                        new BigDecimal(String.valueOf(dto.paymentAmount()),mc).compareTo(entity.getEmiAmount())<0
+                        || new BigDecimal(String.valueOf(dto.paymentAmount()),mc)
                                 .divide(entity.getEmiAmount(), RoundingMode.UNNECESSARY)
                                 .remainder(BigDecimal.valueOf(1),mc).compareTo(BigDecimal.ZERO)!=0;
 
                 if (guardClauseForPaymentAcceptanceCriteria.test(loansDto,loans))
                     throw new PaymentException(PaymentException.class,
                             String.format("yr payment %s should be greater equal to or multiple of yr emi %s",
-                                    loansDto.getPaymentAmount(), loans.getEmiAmount()), methodName);
+                                    loansDto.paymentAmount(), loans.getEmiAmount()), methodName);
 
             }
             case GET_ALL_LOAN -> {
                 if (optionalFields.isEmpty()) throw new ValidationException(ValidationException.class,
-                        String.format("There is no loan found for customer with Id %s", loansDto.getCustomerId()),
+                        String.format("There is no loan found for customer with Id %s", loansDto.customerId()),
                         methodName);
             }
             case GET_INFO_LOAN -> {
                 if (optionalFields.isEmpty())
-                    throw new ValidationException(LoansException.class, String.format("No such loan exist with id %s", loansDto.getCustomerId()), methodName);
+                    throw new ValidationException(LoansException.class, String.format("No such loan exist with id %s", loansDto.customerId()), methodName);
             }
             case GEN_EMI_STMT -> {
                 if (optionalFields.isEmpty()) throw new ValidationException(ValidationException.class,"No loans persent for customer WIth Id",methodName);
@@ -104,11 +104,11 @@ public final class ValidationServiceImpl implements IValidationService {
 
             }
             case DRIVER_METHOD_VALIDATION -> {
-                final AllConstantsHelper.RequestType requestType= loansDto.getRequestType();
-                final String customerId=loansDto.getCustomerId();
-                final String loanNumber= loansDto.getLoanNumber();
-                final LocalDate startDate=loansDto.getStartDt();
-                final LocalDate endDate=loansDto.getEndDt();
+                final AllConstantsHelper.RequestType requestType= loansDto.requestType();
+                final String customerId=loansDto.customerId();
+                final String loanNumber= loansDto.loanNumber();
+                final LocalDate startDate=loansDto.startDate();
+                final LocalDate endDate=loansDto.endDate();
                 if(Objects.isNull(requestType)) throw new LoansException(LoansException.class,"Please provide request Type",methodName);
 
                 Predicate<String> testCustomerIdNotNull=StringUtils::isEmpty;

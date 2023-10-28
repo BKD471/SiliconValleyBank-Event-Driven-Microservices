@@ -89,7 +89,7 @@ public class LoanServiceImpl implements ILoansService {
         loan.setTotalInstallmentsInNumber(tenure * 12);
         loan.setInstallmentsPaidInNumber(0);
         loan.setInstallmentsRemainingInNumber(tenure * 12);
-        loan.setLoanActive(true);
+        loan.setIsLoanActive(true);
         log.debug("<############ processLoanInformationAndCreateLoan(final Loans) ended ###############" +
                 "#########################>");
         return loan;
@@ -118,14 +118,14 @@ public class LoanServiceImpl implements ILoansService {
         log.debug("<################### payInstallments(final LoansDto loansDto) started #############################################>");
         MathContext mc=MathContext.DECIMAL128;
         final Optional<Loans> loan = loansRepository.findByCustomerIdAndLoanNumber
-                (loansDto.getCustomerId(), loansDto.getLoanNumber());
+                (loansDto.customerId(), loansDto.loanNumber());
 
         if(loan.isEmpty()) throw new LoansException(LoansException.class,
                 String.format("No loans been found with customerId %s & loanNumber %s"
-                ,loansDto.getCustomerId(),loansDto.getLoanNumber()),"payInstallments(LoansDto)");
+                ,loansDto.customerId(),loansDto.loanNumber()),"payInstallments(LoansDto)");
 
         LoansDto processedLoansDto= mapToLoansDto(loan.get());
-        processedLoansDto.setPaymentAmount(loansDto.getPaymentAmount());
+        processedLoansDto=processedLoansDto.withPaymentAmount(loansDto.paymentAmount());
         validationService.validator(loan.get(), processedLoansDto, PAY_EMI,
                 Optional.of(Set.of(loan.get())));
 
@@ -133,13 +133,13 @@ public class LoanServiceImpl implements ILoansService {
         final BigDecimal emi = currentLoan.getEmiAmount();
         final int paidInstallments = currentLoan.getInstallmentsPaidInNumber();
         final int remainingInstallments = currentLoan.getInstallmentsRemainingInNumber();
-        final BigDecimal payment = processedLoansDto.getPaymentAmount();
+        final BigDecimal payment = processedLoansDto.paymentAmount();
 
         final int NoOfInstallments =new BigDecimal(String.valueOf(payment),mc)
                 .divide(emi,RoundingMode.UNNECESSARY).intValue();
         currentLoan.setInstallmentsPaidInNumber(NoOfInstallments + paidInstallments);
         currentLoan.setInstallmentsRemainingInNumber(remainingInstallments - NoOfInstallments);
-        if(currentLoan.getInstallmentsRemainingInNumber()==0) currentLoan.setLoanActive(false);
+        if(currentLoan.getInstallmentsRemainingInNumber()==0) currentLoan.setIsLoanActive(false);
 
         final BigDecimal outstandingAmount = currentLoan.getOutstandingAmount();
         final BigDecimal amountPaid = currentLoan.getAmountPaid();
@@ -213,7 +213,7 @@ public class LoanServiceImpl implements ILoansService {
     private Set<LoansDto> getAllLoansByCustomerId(final String customerId) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         log.debug("<################### getAllLoansByCustomerId(String CustomerId) started #############################################>");
         final Optional<Set<Loans>> allLoans = loansRepository.findAllByCustomerId(customerId);
-        validationService.validator(null,LoansDto.builder().customerId(customerId).build(), GET_ALL_LOAN,allLoans);
+        validationService.validator(null,new LoansDto.Builder().customerId(customerId).build(), GET_ALL_LOAN,allLoans);
         log.debug("<################### getAllLoansByCustomerId(String customerId) ended #############################################>");
         return allLoans.get().stream().map(LoansMapperHelper::mapToLoansDto).
                 collect(Collectors.toSet());
@@ -248,20 +248,20 @@ public class LoanServiceImpl implements ILoansService {
     @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public OutPutDto loansExecutor(LoansDto loansDto) throws LoansException, ValidationException, PaymentException, InstallmentsException, TenureException {
         validationService.validator(mapToLoans(loansDto),loansDto, DRIVER_METHOD_VALIDATION, Optional.empty());
-        final String customerId=loansDto.getCustomerId();
-        final String loanNumber= loansDto.getLoanNumber();
+        final String customerId=loansDto.customerId();
+        final String loanNumber= loansDto.loanNumber();
 
-        final LocalDate startDate=loansDto.getStartDt();
-        final LocalDate endDate=loansDto.getEndDt();
-        final FormatType formatType=loansDto.getFormatType();
+        final LocalDate startDate=loansDto.startDate();
+        final LocalDate endDate=loansDto.endDate();
+        final FormatType formatType=loansDto.formatType();
 
-        AllConstantsHelper.RequestType requestType=loansDto.getRequestType();
+        AllConstantsHelper.RequestType requestType=loansDto.requestType();
         switch (requestType){
             case BORROW_LOAN -> {
                 final LoansDto responseDto=borrowLoan(loansDto);
                 return OutPutDto.builder()
-                        .defaultMessage(String.format("Loan of %s has been granted for customer: %s",responseDto.getTotalLoan(),
-                                responseDto.getCustomerId()))
+                        .defaultMessage(String.format("Loan of %s has been granted for customer: %s",responseDto.totalLoan(),
+                                responseDto.customerId()))
                         .loansDto(responseDto).build();
             }
             case PAY_INSTALLMENTS -> {

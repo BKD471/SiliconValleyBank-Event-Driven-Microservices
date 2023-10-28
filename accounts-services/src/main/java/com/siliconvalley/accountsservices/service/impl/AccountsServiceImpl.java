@@ -2,19 +2,16 @@ package com.siliconvalley.accountsservices.service.impl;
 
 import com.siliconvalley.accountsservices.dto.baseDtos.AccountsDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
-import com.siliconvalley.accountsservices.dto.inputDtos.DeleteInputRequestDto;
-import com.siliconvalley.accountsservices.dto.inputDtos.GetInputRequestDto;
-import com.siliconvalley.accountsservices.dto.inputDtos.PostInputRequestDto;
-import com.siliconvalley.accountsservices.dto.inputDtos.PutInputRequestDto;
+import com.siliconvalley.accountsservices.dto.inputDtos.*;
 import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.dto.responseDtos.PageableResponseDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
 import com.siliconvalley.accountsservices.exception.RolesException;
+import com.siliconvalley.accountsservices.externalservice.service.ILoansService;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
-import com.siliconvalley.accountsservices.helpers.RegexMatchersHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.model.Role;
@@ -25,6 +22,8 @@ import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.IAccountsService;
 import com.siliconvalley.accountsservices.service.IImageService;
 import com.siliconvalley.accountsservices.service.IValidationService;
+import com.siliconvalley.loansservices.dto.LoansDto;
+import com.siliconvalley.loansservices.dto.OutPutDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +31,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -47,8 +47,6 @@ import java.util.*;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.AccountsValidateType.*;
@@ -63,7 +61,6 @@ import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.Vali
 import static com.siliconvalley.accountsservices.helpers.CodeRetrieverHelper.getBranchCode;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 import static com.siliconvalley.accountsservices.helpers.PagingHelper.*;
-import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -88,6 +85,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private final ICustomerRepository customerRepository;
     private final IImageService fIleService;
     private final IValidationService validationService;
+    private final ILoansService loansService;
     private final PasswordEncoder passwordEncoder;
     private final String UPDATE = "UPDATE";
     private final String NORMAL_ROLE_ID;
@@ -101,6 +99,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                                final ICustomerRepository customerRepository,
                                final IRoleRepository roleRepository,
                                final IValidationService validationService,
+                               final ILoansService loansService,
                                final PasswordEncoder passwordEncoder,
                                @Qualifier("fileServicePrimary") final IImageService fIleService,
                                @Value("${path.service.accounts}") String path_to_accounts_service_properties) {
@@ -116,6 +115,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         this.roleRepository = roleRepository;
         this.fIleService = fIleService;
         this.validationService = validationService;
+        this.loansService=loansService;
         this.passwordEncoder = passwordEncoder;
         this.IMAGE_PATH = properties.getProperty("customer.profile.images.path");
         this.NORMAL_ROLE_ID = properties.getProperty("normal.role.id");
@@ -572,7 +572,6 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 "--------------------------------------------------------------------------------------------------------------------->");
     }
 
-
     /**
      * @param postInputRequestDto
      * @return
@@ -605,7 +604,55 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         switch (request) {
             case LEND_LOAN -> {
                 //to be done...
+//                LoansDto loansDto= new LoansDto.Builder()
+//                        .customerId(customerId)
+//                        .totalLoan(postInputRequestDto.totalLoan())
+//                        .loanType(postInputRequestDto.loanType())
+//                        .requestType(postInputRequestDto.requestType())
+//                        .loanTenureInYears(postInputRequestDto.loanTenureInYears())
+//                        .build();
+//
+//                ResponseEntity<OutPutDto> processedLoan=loansService.borrowLoan(loansDto);
                 return new OutputDto.Builder().defaultMessage("Baad main karenge").build();
+            }
+            default -> throw new AccountsException(AccountsException.class,
+                    String.format("Invalid request type %s for POST requests", request),
+                    methodName);
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
+    public OutputDto externalServiceRequestExecutor(final ExternalServiceRequestDto externalServiceRequestDto) throws AccountsException, CustomerException {
+        final String methodName = "externalServiceRequestExecutor(ExternalServiceRequestDto) in AccountsServiceImpl";
+
+        //Get the accountNumber & account & customer
+        final String accountNumber = externalServiceRequestDto.accountNumber();
+        Accounts foundAccount;
+        if (isNotBlank(accountNumber)) foundAccount = fetchAccountByAccountNumber(accountNumber);
+
+        final String customerId = externalServiceRequestDto.customerId();
+        Customer foundCustomer;
+        if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+        //check the request type
+        if (isNull(externalServiceRequestDto.updateRequest()))
+            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
+        final AllConstantHelpers.UpdateRequest request = externalServiceRequestDto.updateRequest();
+        switch (request) {
+            case LEND_LOAN -> {
+                //to be done...
+                LoansDto loansDto= new LoansDto.Builder()
+                        .customerId(customerId)
+                        .totalLoan(externalServiceRequestDto.totalLoan())
+                        .loanType(externalServiceRequestDto.loanType())
+                        .requestType(externalServiceRequestDto.requestType())
+                        .loanTenureInYears(externalServiceRequestDto.loanTenureInYears())
+                        .build();
+
+                ResponseEntity<OutPutDto> processedLoan=loansService.borrowLoan(loansDto);
+                return new OutputDto.Builder()
+                        .loansOutputDto(processedLoan.getBody())
+                        .defaultMessage("Baad main karenge").build();
             }
             default -> throw new AccountsException(AccountsException.class,
                     String.format("Invalid request type %s for POST requests", request),

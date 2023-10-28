@@ -7,6 +7,7 @@ import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.validator.ValidAge;
 import com.siliconvalley.accountsservices.helpers.RegexMatchersHelper;
+import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,58 +18,58 @@ import java.math.BigDecimal;
 
 
 public record PostInputRequestDto(String customerId,
-        @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long")
+                                  @Size(min=3,max = 60,message = "Name must be at least 3 and at most 60 chars long")
         @Schema(name = "username",accessMode = Schema.AccessMode.READ_ONLY,description="name of user")
-        String name, int age,String accountNumber,
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_DOB,
+        String name, int age, String accountNumber,
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_DOB,
                 message = "Please provide DOB in YYYY-MM-DD format")
         @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_NOT_NULL_CHARS,message = "Please mention date")
         @ValidAge
-         String dateOfBirthInYYYYMMDD,AllConstantHelpers.AccountType accountType,AllConstantHelpers.Branch homeBranch,
+         String dateOfBirthInYYYYMMDD, AllConstantHelpers.AccountType accountType, AllConstantHelpers.Branch homeBranch,
 
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_EMAIL,
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_EMAIL,
                 message = "Invalid Email format")
          String email,
 
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_PASSWORD,message = "Minimum eight characters," +
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_PASSWORD,message = "Minimum eight characters," +
                 " at least one uppercase" +
                 " letter, one lowercase letter, " +
                 "one number and " +
                 "one special character")
          String password,
 
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_PHONE_NUMBER
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_PHONE_NUMBER
                 ,message = "Invalid phone Number format")
          String phoneNumber,
 
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_ADHAR
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_ADHAR
                 ,message = "Invalid Adhar Number")
          String adharNumber,
 
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_PAN_NUMBER,
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_PAN_NUMBER,
                 message = "Invalid Pan Number")
          String panNumber,
 
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_VOTER,message = "Invalid voterId")
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_VOTER,message = "Invalid voterId")
          String voterId,
 
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_DRIVING_LICENSE,
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_DRIVING_LICENSE,
                 message = "Invalid Driving License")
          String drivingLicense,
 
-        @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_PASSPORT,message = "Invalid Passport Number")
+                                  @Pattern(regexp = RegexMatchersHelper.PATTERN_FOR_PASSPORT,message = "Invalid Passport Number")
          String passportNumber,
-         AllConstantHelpers.BenUpdateRequest benRequest,String beneficiaryId,
-        @Size(min=3,max = 60,message = "Beneficiary Name must be at least 3 and at most 60 chars long")
+                                  AllConstantHelpers.BenUpdateRequest benRequest, String beneficiaryId,
+                                  @Size(min=3,max = 60,message = "Beneficiary Name must be at least 3 and at most 60 chars long")
          String beneficiaryName,
 
-        @Size(min=10,max = 1000,message = "Please provide address")
-         String address,String imageName,String beneficiaryAccountNumber,AllConstantHelpers.RELATION bloodRelation,
-         int benAge,AllConstantHelpers.BanksSupported benBank,BigDecimal balance,AllConstantHelpers.UpdateRequest updateRequest,
-         String branchCode,BigDecimal transferLimitPerDay, int creditScore,AllConstantHelpers.AccountStatus accountStatus,
-         BigDecimal approvedLoanLimitBasedOnCreditScore,Boolean anyActiveLoans,BigDecimal totLoanIssuedSoFar,BigDecimal totalOutStandingAmountPayableToBank,
-         MultipartFile customerImage,Set<BeneficiaryDto> listOfBeneficiary,Set<TransactionsDto> listOfTransactions,
-         Customer customer,Set<Accounts> accountsSet,Accounts account){
+                                  @Size(min=10,max = 1000,message = "Please provide address")
+         String address, String imageName, String beneficiaryAccountNumber, AllConstantHelpers.RELATION bloodRelation,
+                                  int benAge, AllConstantHelpers.BanksSupported benBank, BigDecimal balance, AllConstantHelpers.UpdateRequest updateRequest,
+                                  String branchCode, BigDecimal transferLimitPerDay, int creditScore, AllConstantHelpers.AccountStatus accountStatus,
+                                  BigDecimal approvedLoanLimitBasedOnCreditScore, Boolean anyActiveLoans, BigDecimal totLoanIssuedSoFar, BigDecimal totalOutStandingAmountPayableToBank,
+                                  MultipartFile customerImage, Set<BeneficiaryDto> listOfBeneficiary, Set<TransactionsDto> listOfTransactions,
+                                  Customer customer, Set<Accounts> accountsSet, Accounts account){
 
     public static final class Builder{
         private String customerId;
@@ -274,6 +275,7 @@ public record PostInputRequestDto(String customerId,
             this.account=account;
             return this;
         }
+
 
         public PostInputRequestDto build(){
             return new PostInputRequestDto(customerId,name,age,accountNumber,dateOfBirthInYYYYMMDD,accountType,homeBranch,email,password,phoneNumber,

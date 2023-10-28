@@ -36,30 +36,30 @@ public class Loans extends Audit{
     private BigDecimal totalLoan;
 
     @Column(name = "loan_tenure")
-    private int loanTenureInYears;
+    private Integer loanTenureInYears;
 
     @Column(name = "amount_paid")
     private BigDecimal amountPaid;
 
     @Column(name="rate_of_interest")
-    private double Rate_Of_Interest;
+    private Double Rate_Of_Interest;
 
     @Column(name = "emi_amnt")
     private BigDecimal emiAmount;
 
     @Column(name = "tot_inst")
-    private int totalInstallmentsInNumber;
+    private Integer totalInstallmentsInNumber;
     @Column(name = "inst_patd")
-    private int installmentsPaidInNumber;
+    private Integer installmentsPaidInNumber;
 
     @Column(name = "inst_rem")
-    private int installmentsRemainingInNumber;
+    private Integer installmentsRemainingInNumber;
 
     @Column(name = "outstanding_amount")
     private BigDecimal outstandingAmount;
 
     @Column(name="is_loan_active")
-    private boolean isLoanActive;
+    private Boolean isLoanActive;
 
     @Column(name = "last_payment_date")
     private LocalDateTime lastPayMentBeingMade;

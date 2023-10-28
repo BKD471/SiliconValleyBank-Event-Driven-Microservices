@@ -5,20 +5,25 @@ import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.dto.responseDtos.PageableResponseDto;
+import com.siliconvalley.loansservices.dto.LoansDto;
+import com.siliconvalley.loansservices.dto.OutPutDto;
+
 import java.util.Set;
 
 
-public record  OutputDto(String defaultMessage,CustomerOutPutDto customer,
-                         AccountsOutPutDto accounts,BeneficiaryDto beneficiary,
-                         TransactionsDto transactions,PageableResponseDto<AccountsDto> accountsListPages,
-                         PageableResponseDto<CustomerDto> customerListPages,PageableResponseDto<BeneficiaryDto> beneficiaryListPages,
-    Set<AccountsDto> listOfAccounts,Set<BeneficiaryDto> beneficiaryList,Set<TransactionsDto> transactionsList){
+public record  OutputDto(String defaultMessage, CustomerOutPutDto customer,
+                         AccountsOutPutDto accounts, BeneficiaryDto beneficiary,
+                         TransactionsDto transactions, LoansDto loansDto, OutPutDto loansOutPutDto,PageableResponseDto<AccountsDto> accountsListPages,
+                         PageableResponseDto<CustomerDto> customerListPages, PageableResponseDto<BeneficiaryDto> beneficiaryListPages,
+                         Set<AccountsDto> listOfAccounts, Set<BeneficiaryDto> beneficiaryList, Set<TransactionsDto> transactionsList){
     public static final class Builder{
         private String defaultMessage;
         private CustomerOutPutDto customer;
         private AccountsOutPutDto accounts;
         private BeneficiaryDto beneficiary;
         private TransactionsDto transactions;
+        private LoansDto loansDto;
+        private OutPutDto loansOutputDto;
         private PageableResponseDto<AccountsDto> accountsListPages;
         private PageableResponseDto<CustomerDto> customerListPages;
         private PageableResponseDto<BeneficiaryDto> beneficiaryListPages;
@@ -53,6 +58,17 @@ public record  OutputDto(String defaultMessage,CustomerOutPutDto customer,
             return this;
         }
 
+        public Builder loansDto(LoansDto loansDto){
+            this.loansDto=loansDto;
+            return this;
+        }
+
+        public Builder loansOutputDto(OutPutDto loansOutputDto){
+            this.loansOutputDto=loansOutputDto;
+            return this;
+        }
+
+
         public Builder accountsListPages(PageableResponseDto<AccountsDto> accountsListPages){
             this.accountsListPages=accountsListPages;
             return this;
@@ -85,7 +101,7 @@ public record  OutputDto(String defaultMessage,CustomerOutPutDto customer,
 
         public OutputDto build(){
             return new OutputDto(defaultMessage,customer,accounts,beneficiary,transactions,
-                    accountsListPages,customerListPages,beneficiaryListPages,listOfAccounts,beneficiaryList,transactionsList);
+                    loansDto,loansOutputDto,accountsListPages,customerListPages,beneficiaryListPages,listOfAccounts,beneficiaryList,transactionsList);
         }
     }
 }
