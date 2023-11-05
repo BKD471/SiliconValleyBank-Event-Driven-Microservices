@@ -40,21 +40,19 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public final class ValidationServiceImpl implements IValidationService {
     private final IAccountsRepository accountsRepository;
     private final ICustomerRepository customerRepository;
-    private final int MAX_PERMISSIBLE_ACCOUNT;
-
+    private final Properties properties;
 
     ValidationServiceImpl(final IAccountsRepository accountsRepository,
                           final ICustomerRepository customerRepository,
                           @Value("${path.service.validation}") final String path_to_properties) {
         this.accountsRepository = accountsRepository;
         this.customerRepository=customerRepository;
-        Properties properties=new Properties();
+        properties=new Properties();
         try {
             properties.load(new FileInputStream(path_to_properties));
         }catch (IOException e){
             log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
         }
-        this.MAX_PERMISSIBLE_ACCOUNT= Integer.parseInt(properties.getProperty("maxPermissibleAccounts"));
     }
 
     @Override
@@ -80,7 +78,7 @@ public final class ValidationServiceImpl implements IValidationService {
             case ADD_ACC -> {
                 location="Inside ADD_ACC";
                 final Customer customer = accounts.getCustomer();
-
+                final int MAX_PERMISSIBLE_ACCOUNT=Integer.parseInt(properties.getProperty("maxPermissibleAccounts"));
                 Predicate<Customer> checkUnhappyPathConditionForOpeningNewAccount = customers -> customers.getAccounts().size() >= MAX_PERMISSIBLE_ACCOUNT;
                 if (checkUnhappyPathConditionForOpeningNewAccount.test(customer))
                     throw new AccountsException(AccountsException.class,

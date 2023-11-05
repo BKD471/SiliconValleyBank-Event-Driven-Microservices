@@ -88,9 +88,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
     private final ILoansService loansService;
     private final PasswordEncoder passwordEncoder;
     private final String UPDATE = "UPDATE";
-    private final String NORMAL_ROLE_ID;
-    private final String IMAGE_PATH;
-
+    private final Properties properties;
     /**
      * @paramType AccountsRepository
      * @returnType NA
@@ -104,7 +102,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                                @Qualifier("fileServicePrimary") final IImageService fIleService,
                                @Value("${path.service.accounts}") String path_to_accounts_service_properties) {
         super(accountsRepository, customerRepository);
-        Properties properties = new Properties();
+        properties = new Properties();
         try {
             properties.load(new FileInputStream(path_to_accounts_service_properties));
         }catch (IOException e){
@@ -117,12 +115,15 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         this.validationService = validationService;
         this.loansService=loansService;
         this.passwordEncoder = passwordEncoder;
-        this.IMAGE_PATH = properties.getProperty("customer.profile.images.path");
-        this.NORMAL_ROLE_ID = properties.getProperty("normal.role.id");
     }
 
 
     private Accounts processAccountInit(final Accounts accounts, final String req) throws AccountsException {
+        final BigDecimal initialTransferLimitPerDay=BigDecimal.valueOf(Long.parseLong(properties.getProperty("initialTransferLimitPerDay")));
+        final Double initialRateOfInterest= Double.valueOf(properties.getProperty("initialRateOfInterest"));
+        final BigDecimal initialBalance=BigDecimal.valueOf(Long.parseLong(properties.getProperty("initialBalance")));
+        final BigDecimal initialLoanLimitBasedOnCreditScore=BigDecimal.valueOf(Long.parseLong(properties.getProperty("initialLoanLimitBasedOnCreditScore")));
+
         log.debug("<-------processAccountInit(Accounts accounts, String req) AccountsServiceImpl started------------------------------------------------------" +
                 "--------------------------------------------------------------------------------------------------------------------------" +
                 "------------>");
@@ -135,16 +136,16 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String accountNumber = UUID.randomUUID().toString();
         accounts.setAccountNumber(accountNumber);
 
-        accounts.setBalance(BigDecimal.valueOf(0L));
+        accounts.setBalance(initialBalance);
         accounts.setBranchCode(getBranchCode(accounts.getHomeBranch()));
         accounts.setAccountStatus(STATUS_OPENED);
-        accounts.setTransferLimitPerDay(BigDecimal.valueOf(100000L));
-        accounts.setRateOfInterest(5.5);
+        accounts.setTransferLimitPerDay(initialTransferLimitPerDay);
+        accounts.setRateOfInterest(initialRateOfInterest);
 
         accounts.setTotLoanIssuedSoFar(BigDecimal.valueOf(0L));
         accounts.setTotalOutStandingAmountPayableToBank(BigDecimal.valueOf(0L));
         accounts.setAnyActiveLoans(false);
-        accounts.setApprovedLoanLimitBasedOnCreditScore(BigDecimal.valueOf(0L));
+        accounts.setApprovedLoanLimitBasedOnCreditScore(initialLoanLimitBasedOnCreditScore);
         log.debug("<------processAccountInit(Accounts, String) AccountsServiceImpl ended -------------------------------------------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
         return accounts;
@@ -162,6 +163,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         customer.setCustomerId(customerId);
 
         //set role
+        final String NORMAL_ROLE_ID=properties.getProperty("normal.role.id");
         final Role roles = roleRepository.findById(NORMAL_ROLE_ID)
                 .orElseThrow(()-> new RolesException(RolesException.class, "No roles found", methodName));
         customer.setRoles(new HashSet<>(Collections.singletonList(roles)));
@@ -564,6 +566,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-------------uploadProfileImage(CustomerDto) AccountsServiceImpl started --------------------------------------------------------------" +
                 "---------------------------------------------------------------------------------------------------------------------->");
         validationService.accountsUpdateValidator(null,  customerDto, UPLOAD_PROFILE_IMAGE);
+        final String IMAGE_PATH=properties.getProperty("customer.profile.images.path");
         final String imageName = fIleService.uploadFile(customerDto.customerImage(), IMAGE_PATH);
         final Customer customer = fetchCustomerByCustomerNumber(customerDto.customerId());
         customer.setImageName(imageName);

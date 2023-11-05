@@ -26,7 +26,6 @@ public final class ImageServiceImpl extends AbstractService implements IImageSer
     @Override
     public String uploadFile(final MultipartFile file, final String path) throws ResponseException, IOException {
         final String methodName="uploadFile(MultipartFile,String) in FileServiceImpl";
-
         final String originalFileName = file.getOriginalFilename();
 
         if(isBlank(originalFileName)) throw new BadApiRequestException(BadApiRequestException.class,"Faced issue while fetching the image"

@@ -10,6 +10,7 @@
         <module name="PaymentServices" />
         <module name="card-services" />
         <module name="EmailNotificationServices" />
+        <module name="Scheduler" />
         <module name="loans-services" />
         <module name="accounts-services" />
         <module name="configServerMysql" />
@@ -29,6 +30,7 @@
       <module name="ApiGateway" options="-parameters" />
       <module name="EmailNotificationServices" options="-parameters" />
       <module name="PaymentServices" options="-parameters" />
+      <module name="Scheduler" options="-parameters" />
       <module name="Schedulers" options="-parameters" />
       <module name="ServiceDiscovery" options="-parameters" />
       <module name="ServiceRegistry" options="-parameters" />

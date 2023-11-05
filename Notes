@@ -5,10 +5,12 @@
 8087 --> loans
 8089 --> payment
 8090 --> emailservice
+8095 --> scheduler
 9090 --> service registry
 9095 --> config Mysql
 9097 --> config postgress
 9099 --> api gateway
+
 
 // accounts
 
