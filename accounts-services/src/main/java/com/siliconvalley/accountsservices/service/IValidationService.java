@@ -8,15 +8,11 @@ import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.BeneficiaryException;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
-import com.siliconvalley.accountsservices.helpers.MapperHelper;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.BankStatement;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToAccountsDto;
 
 public interface IValidationService {

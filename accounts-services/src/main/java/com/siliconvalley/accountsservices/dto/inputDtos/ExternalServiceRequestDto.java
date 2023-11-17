@@ -3,9 +3,10 @@ package com.siliconvalley.accountsservices.dto.inputDtos;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 
+
 import java.math.BigDecimal;
 
-public record ExternalServiceRequestDto(String customerId,String accountNumber,AllConstantsHelper.LoanType loanType, AllConstantsHelper.RequestType requestType,
+public record ExternalServiceRequestDto(String customerId, String accountNumber, AllConstantsHelper.LoanType loanType, AllConstantsHelper.RequestType requestType,
                                         BigDecimal totalLoan, Integer loanTenureInYears,
                                         AllConstantHelpers.UpdateRequest updateRequest) {
 

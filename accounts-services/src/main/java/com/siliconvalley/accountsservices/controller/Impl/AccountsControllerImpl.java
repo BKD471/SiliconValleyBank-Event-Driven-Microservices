@@ -1,8 +1,8 @@
 package com.siliconvalley.accountsservices.controller.Impl;
 
+import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.controller.IAccountsController;
 import com.siliconvalley.accountsservices.dto.inputDtos.*;
-import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.dto.responseDtos.ImageResponseMessages;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.CustomerException;

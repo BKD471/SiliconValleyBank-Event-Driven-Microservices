@@ -104,6 +104,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         super(accountsRepository, customerRepository);
         properties = new Properties();
         try {
+
             properties.load(new FileInputStream(path_to_accounts_service_properties));
         }catch (IOException e){
             log.error("Error while reading {}'s properties file {}",this.getClass().getSimpleName(),e.getMessage());
