@@ -9,6 +9,7 @@ import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
 import com.siliconvalley.accountsservices.exception.RolesException;
+import com.siliconvalley.accountsservices.exception.exceptionbuilders.ExceptionBuilder;
 import com.siliconvalley.accountsservices.externalservice.service.ILoansService;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;
@@ -53,6 +54,7 @@ import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.Acco
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.BLOCK_ACCOUNT;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.CLOSE_ACCOUNT;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ExceptionCodes.*;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.RE_OPEN_ACCOUNT;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UPDATE_CASH_LIMIT;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.UPDATE_HOME_BRANCH;
@@ -152,7 +154,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         return accounts;
     }
 
-    private Customer processCustomerInformation(final Customer customer) {
+    private Customer processCustomerInformation(final Customer customer) throws RolesException {
         log.debug("<-------processCustomerInformation(Customer) AccountsServiceImpl started--------------------------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------->");
         final String methodName = "processCustomerInformation(Customer)";
@@ -165,8 +167,13 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
         //set role
         final String NORMAL_ROLE_ID=properties.getProperty("normal.role.id");
+
         final Role roles = roleRepository.findById(NORMAL_ROLE_ID)
-                .orElseThrow(()-> new RolesException(RolesException.class, "No roles found", methodName));
+                .orElseThrow(()->(RolesException)ExceptionBuilder.builder()
+                        .className(RolesException.class)
+                        .reason("No roles found")
+                        .methodName(methodName)
+                        .build(ROLE_EXC));
         customer.setRoles(new HashSet<>(Collections.singletonList(roles)));
 
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
@@ -207,10 +214,14 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-------------- createAccountForAlreadyCreatedUser(long,Accounts,AccountsDto) AccountsServiceImpl started -----------------------------" +
                 "------------------------------------------------------------------------------------------------------>--->");
         final String methodName = "createAccountForAlreadyCreatedUser(long,InoutDto) in AccountsServiceImpl";
+
+
         final Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(()-> new AccountsException(AccountsException.class,
-                        String.format("No such customers with id %s found", customerId),
-                        methodName));
+                .orElseThrow(()->  (AccountsException)ExceptionBuilder.builder()
+                        .className(AccountsException.class)
+                        .reason(String.format("No such customers with id %s found", customerId))
+                        .methodName(methodName)
+                        .build(ACC_EXC));
 
         loadAccount.setCustomer(customer);
         validationService.accountsUpdateValidator(loadAccount, null, ADD_ACCOUNT);
@@ -265,9 +276,14 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-----------------getAllActiveCustomer(long,Pageable) AccountsServiceImpl started -----------------------------------" +
                 "----------------------------------------------------------------------------------------------------------------->");
         final String methodName = "getAllActiveCustomer(long) in AccountsServiceImpl";
+
+
         final Page<Customer> allPagedAccounts = customerRepository.findAll(pageable)
-                .orElseThrow(()-> new CustomerException(CustomerException.class,
-                "No such customers", methodName));
+                .orElseThrow(()-> (CustomerException)ExceptionBuilder.builder()
+                        .className(CustomerException.class)
+                        .reason("No such customers")
+                        .methodName(methodName)
+                        .build(CUST_EXC));
 
         log.debug("<------------------getAllActiveAccountsByCustomerId(long,Pageable) AccountsServiceImpl ended ----------------------------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------>");
@@ -364,11 +380,16 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         log.debug("<-----------deleteAllAccountsByCustomer(long) AccountsServiceImpl started-----------------------------------------------------------------------" +
                 "---------------------------------------------------------------------------------------------------------------->");
         final String methodName = "deleteAllAccountsByCustomer(long ) in AccountsServiceImpl";
+
+
+
         //checking whether customer exist
         final Customer foundCustomer = customerRepository.findById(customerId)
-                .orElseThrow(()->
-                        new AccountsException(AccountsException.class,
-                                String.format("No such customer exists with id %s", customerId), methodName));
+                .orElseThrow(()->(AccountsException)ExceptionBuilder.builder()
+                                .className(AccountsException.class)
+                                .reason(String.format("No such customer exists with id %s", customerId))
+                                .methodName(methodName)
+                                .build(ACC_EXC));
 
         accountsRepository.deleteAllByCustomer_CustomerId(customerId);
         log.debug("<-----------deleteAllAccountsByCustomer(long) AccountsServiceImpl ended ----------------------------------------------------------------" +
@@ -517,17 +538,22 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         return 0;
     }
 
-    private PageableResponseDto<AccountsDto> accountsPagination(final DIRECTION sortDir, final String sortBy, final int pageNumber, final int pageSize, final String customerId) {
+    private PageableResponseDto<AccountsDto> accountsPagination(final DIRECTION sortDir, final String sortBy, final int pageNumber, final int pageSize, final String customerId) throws BadApiRequestException{
         log.debug("<---------accountsPagination(DIRECTION,String ,int,int long) AccountsServiceImpl started ------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
         final String methodName = "accountsPagination(DIRECTION,String,int,int,long) in AccountsServiceImpl";
         final Sort sort = sortDir.equals(PAGE_SORT_DIRECTION_ASCENDING) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<AccountsDto> pageableResponseDto = getAllActiveAccountsByCustomerId(customerId, pageable);
+
+
+
         if (isEmpty(pageableResponseDto.content()))
-            throw new BadApiRequestException(BadApiRequestException.class,
-                    String.format("Customer with id %s have no accounts present", customerId),
-                    methodName);
+            throw (BadApiRequestException)ExceptionBuilder.builder()
+                    .className(BadApiRequestException.class)
+                    .reason(String.format("Customer with id %s have no accounts present", customerId))
+                    .methodName(methodName)
+                    .build(BAD_API_EXC);
 
         Predicate<AccountsDto> checkForOnlyActiveAccounts=acc -> !STATUS_BLOCKED.equals(acc.accountStatus())
                 && !STATUS_CLOSED.equals(acc.accountStatus());
@@ -540,7 +566,7 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         return pageableResponseDto;
     }
 
-    private PageableResponseDto<CustomerDto> customerPagination(final DIRECTION sortDir, final String sortBy, final int pageNumber, final int pageSize) {
+    private PageableResponseDto<CustomerDto> customerPagination(final DIRECTION sortDir, final String sortBy, final int pageNumber, final int pageSize) throws BadApiRequestException{
         log.debug("<---------customerPagination(DIRECTION,String ,int,int long) AccountsServiceImpl started ------------------------------------------------" +
                 "-------------------------------------------------------------------------------------------------------------------->");
         final String methodName = "customerPagination(DIRECTION,String,int,int,long) in AccountsServiceImpl";
@@ -548,10 +574,13 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         final Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         final PageableResponseDto<CustomerDto> pageableResponseDto = getAllCustomers(pageable);
+
         if (isEmpty(pageableResponseDto.content()))
-            throw new BadApiRequestException(BadApiRequestException.class,
-                    "No customers found",
-                    methodName);
+            throw (BadApiRequestException)ExceptionBuilder.builder()
+                    .className(BadApiRequestException.class)
+                    .reason("No customers found")
+                    .methodName(methodName)
+                    .build(BAD_API_EXC);
 
         final List<CustomerDto> allCustomers = pageableResponseDto.content()
                 .stream().toList();
@@ -602,8 +631,13 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         Customer foundCustomer;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
         //check the request type
+
+
         if (isNull(accountsDto.updateRequest()))
-            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
+            throw (AccountsException) ExceptionBuilder.builder()
+                    .className(AccountsException.class)
+                    .reason("update request field must not be blank")
+                    .methodName(methodName).build(ACC_EXC);
         final AllConstantHelpers.UpdateRequest request = accountsDto.updateRequest();
         switch (request) {
             case LEND_LOAN -> {
@@ -619,9 +653,10 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 //                ResponseEntity<OutPutDto> processedLoan=loansService.borrowLoan(loansDto);
                 return new OutputDto.Builder().defaultMessage("Baad main karenge").build();
             }
-            default -> throw new AccountsException(AccountsException.class,
-                    String.format("Invalid request type %s for POST requests", request),
-                    methodName);
+            default -> throw (AccountsException) ExceptionBuilder.builder()
+                    .className(AccountsException.class)
+                    .reason(String.format("Invalid request type %s for POST requests", request))
+                    .methodName(methodName).build(ACC_EXC);
         }
     }
 
@@ -638,9 +673,15 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         final String customerId = externalServiceRequestDto.customerId();
         Customer foundCustomer;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
+
+
         //check the request type
         if (isNull(externalServiceRequestDto.updateRequest()))
-            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
+            throw (AccountsException) ExceptionBuilder.builder()
+                .className(AccountsException.class)
+                .reason("update request field must not be blank")
+                .methodName(methodName).build(ACC_EXC);
+
         final AllConstantHelpers.UpdateRequest request = externalServiceRequestDto.updateRequest();
         switch (request) {
             case LEND_LOAN -> {
@@ -658,24 +699,28 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                         .loansOutputDto(processedLoan.getBody())
                         .defaultMessage("Baad main karenge").build();
             }
-            default -> throw new AccountsException(AccountsException.class,
-                    String.format("Invalid request type %s for POST requests", request),
-                    methodName);
+
+            default -> throw (AccountsException) ExceptionBuilder.builder().className(AccountsException.class)
+                    .reason(String.format("Invalid request type %s for POST requests", request))
+                    .methodName(methodName).build(ACC_EXC);
         }
     }
 
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
-    public OutputDto getRequestExecutor(final GetInputRequestDto getInputRequestDto) throws AccountsException, CustomerException {
+    public OutputDto getRequestExecutor(final GetInputRequestDto getInputRequestDto) throws BadApiRequestException,AccountsException, CustomerException {
         final String methodName = "getRequestExecutor(InputDto) in AccountsServiceImpl";
 
         final int pageNumber = getInputRequestDto.pageNumber();
         if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
                 "pageNumber cant be in negative", methodName);
 
+
         if (getInputRequestDto.pageSize() < 0)
-            throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
+            throw (BadApiRequestException) ExceptionBuilder.builder().className(BadApiRequestException.class)
+                    .reason("Page Size can't be in negative")
+                    .methodName(methodName).build(BAD_API_EXC);
         final int pageSize = (getInputRequestDto.pageSize() == 0) ? DEFAULT_PAGE_SIZE : getInputRequestDto.pageSize();
         final String sortBy = (isBlank(getInputRequestDto.sortBy())) ? "balance" : getInputRequestDto.sortBy();
         final AllConstantHelpers.DIRECTION sortDir = (Objects.isNull(getInputRequestDto.sortDir())) ? asc : getInputRequestDto.sortDir();
@@ -691,9 +736,12 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         Customer foundCustomer = null;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
+
         //check the request type
         if (Objects.isNull(accountsDto.updateRequest()))
-            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
+            throw (AccountsException)ExceptionBuilder.builder().className(AccountsException.class)
+                    .reason("update request field must not be blank")
+                    .methodName(methodName).build(ACC_EXC);
         final AllConstantHelpers.UpdateRequest request = accountsDto.updateRequest();
         final String location;
         switch (request) {
@@ -711,10 +759,12 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                         mapToCustomerDto(foundCustomer),GET_ALL_CUSTOMER);
 
                 final Set<String> allPageableFieldsOfCustomer = getAllPageableFieldsOfAcustomer();
+
                 if (!allPageableFieldsOfCustomer.contains(sortBy))
-                    throw new BadApiRequestException(BadApiRequestException.class,
-                            String.format("%s is not a valid field of account", sortBy),
-                            String.format("Inside %s of %s", location, methodName));
+                    throw (BadApiRequestException) ExceptionBuilder.builder().className(BadApiRequestException.class)
+                            .reason(String.format("%s is not a valid field of account", sortBy))
+                            .methodName(String.format("Inside %s of %s", location, methodName))
+                            .build(BAD_API_EXC);
                 final PageableResponseDto<CustomerDto> pageableResponseDto =
                         customerPagination(sortDir, sortBy, pageNumber, pageSize);
 
@@ -731,9 +781,12 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
 
                 //validate the genuineness of sorting fields
                 final Set<String> allPageableFieldsOfAccounts = getAllPageableFieldsOfAccounts();
+
                 if (!allPageableFieldsOfAccounts.contains(sortBy))
-                    throw new BadApiRequestException(BadApiRequestException.class,
-                            String.format("%s is not a valid field of account", sortBy), String.format("Inside %s of %s", location, methodName));
+                    throw (BadApiRequestException) ExceptionBuilder.builder().className(BadApiRequestException.class)
+                            .reason(String.format("%s is not a valid field of account", sortBy))
+                            .methodName(String.format("Inside %s of %s", location, methodName))
+                            .build(BAD_API_EXC);
                 final PageableResponseDto<AccountsDto> pageableResponseDto = accountsPagination(sortDir, sortBy, pageNumber, pageSize, customerId);
 
                 return new OutputDto.Builder()
@@ -743,23 +796,33 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                         .build();
             }
             default ->
-                    throw new AccountsException(AccountsException.class, String.format("Invalid request type %s for GET request", request), methodName);
+                    throw (AccountsException) ExceptionBuilder.builder().className(AccountsException.class)
+                            .reason(String.format("Invalid request type %s for GET request", request))
+                            .methodName( methodName)
+                            .build(ACC_EXC);
         }
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
-    public OutputDto putRequestExecutor(final PutInputRequestDto putInputRequestDto) throws AccountsException, CustomerException, IOException {
+    public OutputDto putRequestExecutor(final PutInputRequestDto putInputRequestDto) throws BadApiRequestException,AccountsException,CustomerException, IOException {
         final String methodName = "putRequestExecutor(InputDto) in AccountsServiceImpl";
         final AccountsDto accountsDto = putInputRequestToAccountsDto(putInputRequestDto);
         final CustomerDto customerDto = putInputRequestToCustomerDto(putInputRequestDto);
 
         final int pageNumber = putInputRequestDto.pageNumber();
-        if (pageNumber < 0) throw new BadApiRequestException(BadApiRequestException.class,
-                "pageNumber cant be in negative", methodName);
+
+        if (pageNumber < 0) throw (BadApiRequestException) ExceptionBuilder.builder().className(BadApiRequestException.class)
+                .reason("pageNumber cant be in negative")
+                .methodName( methodName)
+                .build(BAD_API_EXC);
+
 
         if (putInputRequestDto.pageSize() < 0)
-            throw new BadApiRequestException(BadApiRequestException.class, "Page Size can't be in negative", methodName);
+            throw (BadApiRequestException) ExceptionBuilder.builder().className(BadApiRequestException.class)
+                    .reason("Page Size can't be in negative")
+                    .methodName( methodName)
+                    .build(BAD_API_EXC);
         final int pageSize = (putInputRequestDto.pageSize() == 0) ? DEFAULT_PAGE_SIZE : putInputRequestDto.pageSize();
 
         final String sortBy = (isBlank(putInputRequestDto.sortBy())) ? "balance" : putInputRequestDto.sortBy();
@@ -774,9 +837,13 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         Customer foundCustomer = null;
         if (isNotBlank(customerId)) foundCustomer = fetchCustomerByCustomerNumber(customerId);
 
+
         //check the request type
         if (isNull(accountsDto.updateRequest()))
-            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
+            throw (AccountsException) ExceptionBuilder.builder().className(AccountsException.class)
+                    .reason("update request field must not be blank")
+                    .methodName( methodName)
+                    .build(ACC_EXC);
         final AllConstantHelpers.UpdateRequest request = accountsDto.updateRequest();
 
         final String location;
@@ -844,8 +911,11 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                         .accountsListPages(pageableResponseDto)
                         .defaultMessage(String.format("Customer with id %s has been updated", customerId)).build();
             }
-            default -> throw new AccountsException(AccountsException.class,
-                    String.format("Invalid request type %s for PUT request", request), methodName);
+            default ->
+                    throw (AccountsException) ExceptionBuilder.builder().className(AccountsException.class)
+                            .reason(String.format("Invalid request type %s for PUT request", request))
+                            .methodName( methodName)
+                            .build(ACC_EXC);
         }
     }
 
@@ -856,15 +926,21 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
         //map
         final AccountsDto accountsDto = deleteRequestInputToAccountsDto(deleteInputRequestDto);
         final CustomerDto customerDto = deleteInputRequestToCustomerDto(deleteInputRequestDto);
+
+
         //check the request type
         if (isNull(accountsDto.updateRequest()))
-            throw new AccountsException(AccountsException.class, "update request field must not be blank", methodName);
+            throw (AccountsException)ExceptionBuilder.builder().className(AccountsException.class)
+                    .reason("update request field must not be blank").methodName(methodName).build(ACC_EXC);
+
         final AllConstantHelpers.UpdateRequest request = accountsDto.updateRequest();
         switch (request) {
             case DELETE_ACC -> {
                 final String accountNumber = accountsDto.accountNumber();
                 deleteAccount(accountNumber);
-                return new OutputDto.Builder().defaultMessage(String.format("Account with id %s is successfully deleted", accountNumber)).build();
+                return new OutputDto.Builder()
+                        .defaultMessage(String.format("Account with id %s is successfully deleted", accountNumber))
+                        .build();
             }
             case DELETE_ALL_ACC -> {
                 deleteAllAccountsByCustomer(customerDto.customerId());
@@ -872,8 +948,10 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
                         .defaultMessage(String.format("All accounts that belonged to customer with id %s has been deleted",
                                 customerDto.customerId())).build();
             }
-            default -> throw new AccountsException(AccountsException.class,
-                    String.format("Invalid request type %s for DELETE request", request), methodName);
+            default ->
+                    throw (AccountsException)ExceptionBuilder.builder().className(AccountsException.class)
+                            .reason(String.format("Invalid request type %s for DELETE request", request))
+                            .methodName(methodName).build(ACC_EXC);
         }
     }
 
@@ -883,13 +961,16 @@ public class AccountsServiceImpl extends AbstractService implements IAccountsSer
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
-    public OutputDto deleteCustomer(final DeleteInputRequestDto deleteInputRequestDto) {
+    public OutputDto deleteCustomer(final DeleteInputRequestDto deleteInputRequestDto) throws BadApiRequestException,CustomerException{
         final String methodName = "deleteCustomer(DeleteInputRequestDto) in AccountsServiceImpl";
 
         final String customerId = deleteInputRequestDto.customerId();
         final AllConstantHelpers.DeleteRequest deleteRequest = deleteInputRequestDto.deleteRequest();
         if (isNull(deleteRequest) || isBlank(customerId))
-            throw new BadApiRequestException(BadApiRequestException.class, "Pls specify delete request type or customer id", methodName);
+            throw (BadApiRequestException)ExceptionBuilder.builder()
+                    .className(BadApiRequestException.class)
+                    .reason("Pls specify delete request type or customer id")
+                    .methodName(methodName).build(BAD_API_EXC);
 
         final Customer foundCustomer = fetchCustomerByCustomerNumber(customerId);
         customerRepository.delete(foundCustomer);

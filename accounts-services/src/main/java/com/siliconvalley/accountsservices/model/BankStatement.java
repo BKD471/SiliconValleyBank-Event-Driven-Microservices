@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Builder
-public final class BankStatement {
+public final class BankStatement{
     private String accountName;
     private String accountNumber;
     private String branch;

@@ -69,6 +69,9 @@ public class AllConstantHelpers {
     public enum FORMAT_TYPE{
         HTML,PDF,XML
     }
+    public enum ExceptionCodes{
+        ACC_EXC,BAD_API_EXC,BEN_EXC,CUST_EXC,RES_EXC,ROLE_EXC,TRAN_EXC
+    }
 
     public static final AccountStatus STATUS_BLOCKED=AccountStatus.BLOCKED;
     public static final  AccountStatus STATUS_CLOSED=AccountStatus.CLOSED;

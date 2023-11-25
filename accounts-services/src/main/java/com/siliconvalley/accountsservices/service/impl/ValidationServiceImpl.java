@@ -5,6 +5,7 @@ import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.*;
+import com.siliconvalley.accountsservices.exception.exceptionbuilders.ExceptionBuilder;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.model.*;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ExceptionCodes.*;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.mapToCustomer;
 import static com.siliconvalley.accountsservices.helpers.RegexMatchersHelper.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -56,11 +58,13 @@ public final class ValidationServiceImpl implements IValidationService {
     }
 
     @Override
-    public void accountsUpdateValidator(final Accounts accounts, final CustomerDto customerDto, final AccountsValidateType request) throws AccountsException, BadApiRequestException {
+    public void accountsUpdateValidator(final Accounts accounts, final CustomerDto customerDto, final AccountsValidateType request) throws AccountsException,BadApiRequestException,CustomerException{
         log.debug("<---------------accountsUpdateValidator(Accounts,CustomerDto,ValidateType) ValidationServiceImpl started -----------------------------------" +
                 "------------------------------------------------------------------------------------------------------------------------>");
         final String methodName = "accountsUpdateValidator(Accounts,CustomerDto,ValidateType) in ValidationServiceImpl";
         final String location;
+
+        Predicate<Object> checkNullable= Objects::isNull;
         switch (request) {
             case CREATE_ACC -> {
                 location="Inside CREATE_ACC";
@@ -72,8 +76,10 @@ public final class ValidationServiceImpl implements IValidationService {
                 final String adharNumber = accounts.getCustomer().getAdharNumber();
                 final boolean isNotPossible = accountsList.stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
                 if (isNotPossible)
-                    throw new AccountsException(AccountsException.class, String.format("There is already an account with adhar:%s", adharNumber),
-                            String.format("%s of %s", location, methodName));
+                    throw (AccountsException) ExceptionBuilder.builder()
+                            .className(AccountsException.class)
+                            .reason( String.format("There is already an account with adhar:%s", adharNumber))
+                            .methodName(String.format("%s of %s", location, methodName)).build(ACC_EXC);
             }
             case ADD_ACC -> {
                 location="Inside ADD_ACC";
@@ -81,35 +87,50 @@ public final class ValidationServiceImpl implements IValidationService {
                 final int MAX_PERMISSIBLE_ACCOUNT=Integer.parseInt(properties.getProperty("maxPermissibleAccounts"));
                 Predicate<Customer> checkUnhappyPathConditionForOpeningNewAccount = customers -> customers.getAccounts().size() >= MAX_PERMISSIBLE_ACCOUNT;
                 if (checkUnhappyPathConditionForOpeningNewAccount.test(customer))
-                    throw new AccountsException(AccountsException.class,
-                            String.format("You can't have more than %s accounts",MAX_PERMISSIBLE_ACCOUNT),
-                            String.format("%s of %s", location, methodName));
+                    throw (AccountsException) ExceptionBuilder.builder()
+                            .className(AccountsException.class)
+                            .reason( String.format("You can't have more than %s accounts",MAX_PERMISSIBLE_ACCOUNT))
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(ACC_EXC);
+
             }
             case UPDATE_CASH_LIMIT -> {
                 location="Inside UPDATE_CASH_LIMIT";
                 if (Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() < 6)
-                    throw new AccountsException(AccountsException.class, "Your account must be at least 6 months old to update cash Limit",
-                            String.format("%s of %s", location, methodName));
+                    throw (AccountsException) ExceptionBuilder.builder()
+                            .className(AccountsException.class)
+                            .reason( "Your account must be at least 6 months old to update cash Limit")
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(ACC_EXC);
             }
             case UPLOAD_PROFILE_IMAGE -> {
                 location="Inside UPLOAD_PROFILE_IMAGE";
-                if (Objects.isNull(customerDto.customerImage()))
-                    throw new BadApiRequestException(BadApiRequestException.class,
-                            "Please provide image", String.format("%s of %s", methodName, location));
-                final double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
+                if (checkNullable.test(customerDto.customerImage()))
+                    throw (BadApiRequestException) ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason( "Please provide image")
+                            .methodName(String.format("%s of %s", methodName, location))
+                            .build(BAD_API_EXC);
 
+
+                final double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
                 Predicate<CustomerDto> checkUnhappyPathConditionForUploadingProfileImage = customer -> customer.customerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customer.customerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0;
                 if (checkUnhappyPathConditionForUploadingProfileImage.test(customerDto))
-                    throw new BadApiRequestException(BadApiRequestException.class,
-                            "Your file is either corrupted or you are exceeding the max size of 100mb",
-                            String.format("%s of %s", methodName, location));
+                    throw (BadApiRequestException) ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason( "Your file is either corrupted or you are exceeding the max size of 100mb")
+                            .methodName(String.format("%s of %s", methodName, location))
+                            .build(BAD_API_EXC);
             }
             case UPDATE_HOME_BRANCH -> {
                 location="Inside UPDATE_HOME_BRANCH";
-                if(Objects.isNull(accounts.getHomeBranch()) ||
-                        Objects.isNull(accounts.getAccountType())) throw new BadApiRequestException(BadApiRequestException.class,
-                        "homebranch or accountype ccanot be null",
-                        String.format("%s 0f %s",location,methodName));
+                if(checkNullable.test(accounts.getHomeBranch()) ||
+                        checkNullable.test(accounts.getAccountType()))
+                    throw (BadApiRequestException) ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason( "homebranch or accountype ccanot be null")
+                            .methodName(String.format("%s of %s", methodName, location))
+                            .build(BAD_API_EXC);
 
                 Customer customer= mapToCustomer(customerDto);
                 accounts.setCustomer(customer);
@@ -121,54 +142,83 @@ public final class ValidationServiceImpl implements IValidationService {
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
 
                 if (accounts.getAnyActiveLoans())
-                    throw new AccountsException(AccountsException.class, String.format("This account with id %s still has " +
-                            "running loan. Please consider paying it before closing", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
+                    throw (AccountsException) ExceptionBuilder.builder()
+                            .className(AccountsException.class)
+                            .reason( String.format("This account with id %s still has " +
+                                    "running loan. Please consider paying it before closing", accounts.getAccountNumber()))
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(ACC_EXC);
 
                 switch (status) {
                     case CLOSED ->
-                            throw new AccountsException(AccountsException.class, String.format("Account: %s is already closed", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
+                            throw (AccountsException)ExceptionBuilder.builder()
+                                    .className(AccountsException.class)
+                                    .reason( String.format("Account: %s is already closed", accounts.getAccountNumber()))
+                                    .methodName(String.format("%s of %s", location, methodName))
+                                    .build(ACC_EXC);
                     case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
-                    case OPEN -> {
-                        return;
-                    }
+                            throw (AccountsException)ExceptionBuilder.builder()
+                                    .className(AccountsException.class)
+                                    .reason( String.format("Cant perform anything on Blocked account:%s",
+                                            accounts.getAccountNumber()))
+                                    .methodName(String.format("%s of %s", location, methodName))
+                                    .build(ACC_EXC);
                 }
             }
             case RE_OPEN_ACCOUNT -> {
                 location="Inside RE_OPEN_ACCOUNT";
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
-                    case CLOSED -> {
-                        return;
-                    }
                     case BLOCKED ->
-                            throw new AccountsException(AccountsException.class, String.format("Cant perform anything on Blocked account:%s, Please contact the admin department", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
+                            throw (AccountsException)ExceptionBuilder.builder()
+                                    .className(AccountsException.class)
+                                    .reason( String.format("Cant perform anything on Blocked account:%s, Please contact the admin department",
+                                            accounts.getAccountNumber()))
+                                    .methodName(String.format("%s of %s", location, methodName))
+                                    .build(ACC_EXC);
                     case OPEN ->
-                            throw new AccountsException(AccountsException.class, String.format("Status of Account: %s is already Open", accounts.getAccountNumber()), String.format("%s of %s", location, methodName));
+                            throw (AccountsException)ExceptionBuilder.builder()
+                                    .className(AccountsException.class)
+                                    .reason( String.format("Status of Account: %s is already Open", accounts.getAccountNumber()))
+                                    .methodName(String.format("%s of %s", location, methodName))
+                                    .build(ACC_EXC);
                 }
             }
             case BLOCK_ACCOUNT -> {
                 location="Inside BLOCK_ACCOUNT";
                 if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
-                    throw new AccountsException(AccountsException.class,
-                            String.format("Status of Account: %s is already Blocked",
-                                    accounts.getAccountStatus()), String.format("%s of %s", location, methodName));
+                    throw (AccountsException)ExceptionBuilder.builder()
+                            .className(AccountsException.class)
+                            .reason(String.format("Status of Account: %s is already Blocked",
+                                    accounts.getAccountStatus()))
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(ACC_EXC);
             }
             case GET_ALL_ACC -> {
                 location="GET_ALL_ACC";
                 if (CollectionUtils.isEmpty(customerDto.accounts()))
-                    throw new AccountsException(AccountsException.class,
-                            "No accounts found", String.format("%s of %s", location, methodName));
+                    throw (AccountsException)ExceptionBuilder.builder()
+                            .className(AccountsException.class)
+                            .reason("No accounts found")
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(ACC_EXC);
             }
             case UPDATE_CUSTOMER_DETAILS -> {
                 location="UPDATE_CUSTOMER_DETAILS";
-                if (Objects.isNull(customerDto)) throw new CustomerException(CustomerException.class,
-                        "Please specify a customer id to update details", String.format("%s of %s", location, methodName));
+                if (checkNullable.test(customerDto))
+                    throw (CustomerException) ExceptionBuilder.builder()
+                            .className(CustomerException.class)
+                            .reason("Please specify a customer id to update details")
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(CUST_EXC);
             }
             case GET_ALL_CUSTOMER -> {
                 location="GET_ALL_CUSTOMER";
-                if(Objects.isNull(customerDto)) throw  new CustomerException(CustomerException.class,
-                        "No customer provided",String.format("%s of %s",location,methodName));
+                if(checkNullable.test(customerDto)) throw (CustomerException) ExceptionBuilder.builder()
+                        .className(CustomerException.class)
+                        .reason("No Customer Provided")
+                        .methodName(String.format("%s of %s", location, methodName))
+                        .build(CUST_EXC);
             }
         }
 
