@@ -5,6 +5,7 @@ import com.siliconvalley.accountsservices.dto.outputDtos.OutputDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.TransactionException;
+import com.siliconvalley.accountsservices.exception.builders.ExceptionBuilder;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ExceptionCodes.TRAN_EXC;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ValidateTransactionType.GET_PAST_SIX_MONTHS_TRANSACTIONS;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 import static java.util.Objects.isNull;
@@ -71,7 +73,7 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                     case DEBIT -> {
                         updatedAmount = new BigDecimal(String.valueOf(previousBalance)).subtract(amount);
                         if (previousBalance.compareTo(amount) >= 0) accounts.setBalance(updatedAmount);
-                        else throw new TransactionException(TransactionException.class, "Insufficient Balance", methodName);
+                        else throw (TransactionException) ExceptionBuilder.builder().className(TransactionException.class).reason("Insufficient  Balance").methodName(methodName).build(TRAN_EXC);
                         transactions.setTransactionType(DEBIT);
                     }
                 }
@@ -135,8 +137,10 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
         final Customer fetchedCustomer=fetchedAccount.getCustomer();
 
 
-        if(isNull(transactionsDto.transactionType())) throw new TransactionException(TransactionException.class,
-                "Please provide transaction Type",methodName);
+        if(isNull(transactionsDto.transactionType())) throw (TransactionException)ExceptionBuilder.builder()
+                .className(TransactionException.class).reason("Please provide transaction Type")
+                .methodName(methodName).build(TRAN_EXC);
+
         switch (transactionsDto.transactionType()) {
             case CREDIT -> {
                 final TransactionsDto transactionDetails=payOrDepositMoney(transactionsDto, CREDIT);
@@ -156,8 +160,8 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                         .defaultMessage(String.format("Recent Transaction details for account:%s",accountNumber))
                         .build();
             }
-            default -> throw new TransactionException(TransactionException.class,
-                    "Please Specify a valid transaction type",methodName);
+            default -> throw (TransactionException) ExceptionBuilder.builder().className(TransactionException.class)
+                    .reason("Please Specify a valid transaction type").methodName(methodName).build(TRAN_EXC);
         }
     }
 
@@ -223,8 +227,8 @@ public class TransactionsServiceImpl extends AbstractService implements ITransac
                 return payOrDepositMoney(transactionsDto, DEBIT);
             }
 
-            default -> throw  new TransactionException(TransactionException.class,
-                    "we do not support this types of transaction yet",methodName);
+            default -> throw (TransactionException)ExceptionBuilder.builder().className(TransactionException.class)
+                    .reason("we do not support this types of transaction yet").methodName(methodName).build(TRAN_EXC);
         }
         log.debug("<--------------------payBills(TransactionsDto) ended -------------------" +
                 "------------------------------------------------------------------------------------------------>");

@@ -1,4 +1,4 @@
-package com.siliconvalley.accountsservices.exception.exceptionbuilders;
+package com.siliconvalley.accountsservices.exception.builders;
 
 public interface IReasonBuilder {
     IMethodNameBuilder reason(String reason);

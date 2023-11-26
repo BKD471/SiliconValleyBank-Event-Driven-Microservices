@@ -2,6 +2,8 @@ package com.siliconvalley.accountsservices.service.impl;
 
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.ResponseException;
+import com.siliconvalley.accountsservices.exception.builders.ExceptionBuilder;
+import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
@@ -15,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ExceptionCodes.RES_EXC;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service("fileServicePrimary")
@@ -46,7 +49,7 @@ public final class ImageServiceImpl extends AbstractService implements IImageSer
             }
             Files.copy(file.getInputStream(), Paths.get(fullPathWithFileName));
             return fileNameWithExtension;
-        }else throw  new ResponseException(ResponseException.class,String.format("%s type not supported yet",extension),methodName);
+        }else throw (ResponseException) ExceptionBuilder.builder().className(ResponseException.class).reason(String.format("%s type not supported yet",extension)).methodName(methodName).build(RES_EXC);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.baseDtos.TransactionsDto;
 import com.siliconvalley.accountsservices.exception.*;
-import com.siliconvalley.accountsservices.exception.exceptionbuilders.ExceptionBuilder;
+import com.siliconvalley.accountsservices.exception.builders.ExceptionBuilder;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.model.*;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
@@ -75,8 +75,7 @@ public final class ValidationServiceImpl implements IValidationService {
 
                 final String adharNumber = accounts.getCustomer().getAdharNumber();
                 final boolean isNotPossible = accountsList.stream().anyMatch(acc -> adharNumber.equalsIgnoreCase(acc.getCustomer().getAdharNumber()));
-                if (isNotPossible)
-                    throw (AccountsException) ExceptionBuilder.builder()
+                if (isNotPossible) throw (AccountsException) ExceptionBuilder.builder()
                             .className(AccountsException.class)
                             .reason( String.format("There is already an account with adhar:%s", adharNumber))
                             .methodName(String.format("%s of %s", location, methodName)).build(ACC_EXC);
@@ -86,8 +85,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 final Customer customer = accounts.getCustomer();
                 final int MAX_PERMISSIBLE_ACCOUNT=Integer.parseInt(properties.getProperty("maxPermissibleAccounts"));
                 Predicate<Customer> checkUnhappyPathConditionForOpeningNewAccount = customers -> customers.getAccounts().size() >= MAX_PERMISSIBLE_ACCOUNT;
-                if (checkUnhappyPathConditionForOpeningNewAccount.test(customer))
-                    throw (AccountsException) ExceptionBuilder.builder()
+                if (checkUnhappyPathConditionForOpeningNewAccount.test(customer)) throw (AccountsException) ExceptionBuilder.builder()
                             .className(AccountsException.class)
                             .reason( String.format("You can't have more than %s accounts",MAX_PERMISSIBLE_ACCOUNT))
                             .methodName(String.format("%s of %s", location, methodName))
@@ -96,8 +94,7 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case UPDATE_CASH_LIMIT -> {
                 location="Inside UPDATE_CASH_LIMIT";
-                if (Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() < 6)
-                    throw (AccountsException) ExceptionBuilder.builder()
+                if (Period.between(accounts.getCreatedDate(), LocalDate.now()).getMonths() < 6) throw (AccountsException) ExceptionBuilder.builder()
                             .className(AccountsException.class)
                             .reason( "Your account must be at least 6 months old to update cash Limit")
                             .methodName(String.format("%s of %s", location, methodName))
@@ -105,8 +102,7 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case UPLOAD_PROFILE_IMAGE -> {
                 location="Inside UPLOAD_PROFILE_IMAGE";
-                if (checkNullable.test(customerDto.customerImage()))
-                    throw (BadApiRequestException) ExceptionBuilder.builder()
+                if (checkNullable.test(customerDto.customerImage())) throw (BadApiRequestException) ExceptionBuilder.builder()
                             .className(BadApiRequestException.class)
                             .reason( "Please provide image")
                             .methodName(String.format("%s of %s", methodName, location))
@@ -115,8 +111,7 @@ public final class ValidationServiceImpl implements IValidationService {
 
                 final double FIlE_SIZE_TO_MB_CONVERTER_FACTOR = 0.00000095367432;
                 Predicate<CustomerDto> checkUnhappyPathConditionForUploadingProfileImage = customer -> customer.customerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR <= 0.0 || customer.customerImage().getSize() * FIlE_SIZE_TO_MB_CONVERTER_FACTOR > 100.0;
-                if (checkUnhappyPathConditionForUploadingProfileImage.test(customerDto))
-                    throw (BadApiRequestException) ExceptionBuilder.builder()
+                if (checkUnhappyPathConditionForUploadingProfileImage.test(customerDto)) throw (BadApiRequestException) ExceptionBuilder.builder()
                             .className(BadApiRequestException.class)
                             .reason( "Your file is either corrupted or you are exceeding the max size of 100mb")
                             .methodName(String.format("%s of %s", methodName, location))
@@ -125,8 +120,7 @@ public final class ValidationServiceImpl implements IValidationService {
             case UPDATE_HOME_BRANCH -> {
                 location="Inside UPDATE_HOME_BRANCH";
                 if(checkNullable.test(accounts.getHomeBranch()) ||
-                        checkNullable.test(accounts.getAccountType()))
-                    throw (BadApiRequestException) ExceptionBuilder.builder()
+                        checkNullable.test(accounts.getAccountType())) throw (BadApiRequestException) ExceptionBuilder.builder()
                             .className(BadApiRequestException.class)
                             .reason( "homebranch or accountype ccanot be null")
                             .methodName(String.format("%s of %s", methodName, location))
@@ -141,8 +135,7 @@ public final class ValidationServiceImpl implements IValidationService {
                 location="Inside CLOSE_ACCOUNT";
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
 
-                if (accounts.getAnyActiveLoans())
-                    throw (AccountsException) ExceptionBuilder.builder()
+                if (accounts.getAnyActiveLoans()) throw (AccountsException) ExceptionBuilder.builder()
                             .className(AccountsException.class)
                             .reason( String.format("This account with id %s still has " +
                                     "running loan. Please consider paying it before closing", accounts.getAccountNumber()))
@@ -150,14 +143,12 @@ public final class ValidationServiceImpl implements IValidationService {
                             .build(ACC_EXC);
 
                 switch (status) {
-                    case CLOSED ->
-                            throw (AccountsException)ExceptionBuilder.builder()
+                    case CLOSED -> throw (AccountsException)ExceptionBuilder.builder()
                                     .className(AccountsException.class)
                                     .reason( String.format("Account: %s is already closed", accounts.getAccountNumber()))
                                     .methodName(String.format("%s of %s", location, methodName))
                                     .build(ACC_EXC);
-                    case BLOCKED ->
-                            throw (AccountsException)ExceptionBuilder.builder()
+                    case BLOCKED -> throw (AccountsException)ExceptionBuilder.builder()
                                     .className(AccountsException.class)
                                     .reason( String.format("Cant perform anything on Blocked account:%s",
                                             accounts.getAccountNumber()))
@@ -169,15 +160,13 @@ public final class ValidationServiceImpl implements IValidationService {
                 location="Inside RE_OPEN_ACCOUNT";
                 final AllConstantHelpers.AccountStatus status = accounts.getAccountStatus();
                 switch (status) {
-                    case BLOCKED ->
-                            throw (AccountsException)ExceptionBuilder.builder()
+                    case BLOCKED -> throw (AccountsException)ExceptionBuilder.builder()
                                     .className(AccountsException.class)
                                     .reason( String.format("Cant perform anything on Blocked account:%s, Please contact the admin department",
                                             accounts.getAccountNumber()))
                                     .methodName(String.format("%s of %s", location, methodName))
                                     .build(ACC_EXC);
-                    case OPEN ->
-                            throw (AccountsException)ExceptionBuilder.builder()
+                    case OPEN -> throw (AccountsException)ExceptionBuilder.builder()
                                     .className(AccountsException.class)
                                     .reason( String.format("Status of Account: %s is already Open", accounts.getAccountNumber()))
                                     .methodName(String.format("%s of %s", location, methodName))
@@ -186,8 +175,7 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case BLOCK_ACCOUNT -> {
                 location="Inside BLOCK_ACCOUNT";
-                if (accounts.getAccountStatus().equals(STATUS_BLOCKED))
-                    throw (AccountsException)ExceptionBuilder.builder()
+                if (accounts.getAccountStatus().equals(STATUS_BLOCKED)) throw (AccountsException)ExceptionBuilder.builder()
                             .className(AccountsException.class)
                             .reason(String.format("Status of Account: %s is already Blocked",
                                     accounts.getAccountStatus()))
@@ -196,8 +184,7 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case GET_ALL_ACC -> {
                 location="GET_ALL_ACC";
-                if (CollectionUtils.isEmpty(customerDto.accounts()))
-                    throw (AccountsException)ExceptionBuilder.builder()
+                if (CollectionUtils.isEmpty(customerDto.accounts())) throw (AccountsException)ExceptionBuilder.builder()
                             .className(AccountsException.class)
                             .reason("No accounts found")
                             .methodName(String.format("%s of %s", location, methodName))
@@ -205,8 +192,7 @@ public final class ValidationServiceImpl implements IValidationService {
             }
             case UPDATE_CUSTOMER_DETAILS -> {
                 location="UPDATE_CUSTOMER_DETAILS";
-                if (checkNullable.test(customerDto))
-                    throw (CustomerException) ExceptionBuilder.builder()
+                if (checkNullable.test(customerDto)) throw (CustomerException) ExceptionBuilder.builder()
                             .className(CustomerException.class)
                             .reason("Please specify a customer id to update details")
                             .methodName(String.format("%s of %s", location, methodName))
@@ -238,8 +224,11 @@ public final class ValidationServiceImpl implements IValidationService {
                 location = "Inside ADD_BEN";
                 boolean notPossible;
                 final Set<Beneficiary> listOfBeneficiaries = accounts.getListOfBeneficiary();
-                if (listOfBeneficiaries.size() >= 5) throw new BeneficiaryException(BeneficiaryException.class,
-                        "You can't add more than 5 beneficiaries", String.format("%s of %s", location, methodName));
+                if (listOfBeneficiaries.size() >= 5) throw (BeneficiaryException) ExceptionBuilder.builder()
+                            .className(BeneficiaryException.class)
+                            .reason("You can't add more than 5 beneficiaries")
+                            .methodName(String.format("Inside %s of %s",location,methodName))
+                            .build(BEN_EXC);
 
                 BiPredicate<Accounts, BeneficiaryDto> checkUnhappyConditionForAddingBeneficiaryCompulsoryFields = (acc, ben) ->
                         ben.benAdharNumber().equalsIgnoreCase(acc.getCustomer().getAdharNumber()) ||
@@ -266,8 +255,10 @@ public final class ValidationServiceImpl implements IValidationService {
                 // if any matches then either yr info is incorrect or
                 //you already have this as beneficiary
                 if (checkUnhappyConditionForAddingBeneficiaryCompulsoryFields.or(checkUnhappyConditionForAddingBeneficiaryOptionalFields).test(accounts, beneficiaryDto))
-                    throw new BeneficiaryException(BeneficiaryException.class, "You can't add yourself as beneficiary",
-                            String.format("%s of %s", location, methodName));
+                    throw (BeneficiaryException) ExceptionBuilder.builder().className(BeneficiaryException.class)
+                            .reason("You can't add yourself as beneficiary")
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(BEN_EXC);
 
 
                 Predicate<Beneficiary> checkWheteherBeneficiaryAlreadyPresentCompulSoryFields = (ben) ->
@@ -291,24 +282,35 @@ public final class ValidationServiceImpl implements IValidationService {
                         checkWheteherBeneficiaryAlreadyPresentCompulSoryFields
                                 .or(checkWhetherBeneficiaryAlreadyPresentOptionalFields)
                                 .test(ben));
-                if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
-                        "This person is already added as a beneficiary", String.format("%s of %s", location, methodName));
+                if (notPossible) throw (BeneficiaryException) ExceptionBuilder.builder().className(BeneficiaryException.class)
+                            .reason("This person is already added as a beneficiary")
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(BEN_EXC);
 
                 switch (beneficiaryDto.relation()) {
                     case FATHER -> {
                         notPossible = listOfBeneficiaries.stream().anyMatch(ben -> ben.getRelation().equals(FATHER));
-                        if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
-                                "You already have added one person as a father", String.format("%s of %s", location, methodName));
+                        if (notPossible) throw (BeneficiaryException) ExceptionBuilder.builder().className(BeneficiaryException.class)
+                                    .reason("You already have added one person as a father")
+                                    .methodName(String.format("%s of %s", location, methodName))
+                                    .build(BEN_EXC);
                     }
                     case MOTHER -> {
                         notPossible = listOfBeneficiaries.stream().anyMatch(ben -> ben.getRelation().equals(MOTHER));
-                        if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
-                                "You already have added one person as a mother", String.format("%s of %s", location, methodName));
+
+                        if (notPossible)  throw (BeneficiaryException) ExceptionBuilder.builder()
+                                .className(BeneficiaryException.class)
+                                .reason("You already have added one person as a mother")
+                                .methodName(String.format("%s of %s", location, methodName))
+                                .build(BEN_EXC);
                     }
                     case SPOUSE -> {
                         notPossible = listOfBeneficiaries.stream().anyMatch(ben -> ben.getRelation().equals(SPOUSE));
-                        if (notPossible) throw new BeneficiaryException(BeneficiaryException.class,
-                                "You already have added one person as a spouse", String.format("%s of %s", location, methodName));
+                        if (notPossible) throw (BeneficiaryException) ExceptionBuilder.builder()
+                                    .className(BeneficiaryException.class)
+                                    .reason("You already have added one person as a spouse")
+                                    .methodName(String.format("%s of %s", location, methodName))
+                                    .build(BEN_EXC);
                     }
                 }
 
@@ -322,76 +324,105 @@ public final class ValidationServiceImpl implements IValidationService {
 
                 if (guardClauseForEmptyObjectCheck.test(beneficiaryDto.BenDate_Of_Birth())) {
                     isTrue = Pattern.matches(PATTERN_FOR_DOB, beneficiaryDto.BenDate_Of_Birth().toString());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give DOB in YYYY-mm-dd format",
-                                String.format("%s of %s", location, methodName));
+                    if (!isTrue) throw (BeneficiaryException) ExceptionBuilder.builder()
+                                .className(BeneficiaryException.class)
+                                .reason("Please give DOB in YYYY-mm-dd format")
+                                .methodName(String.format("%s of %s", location, methodName))
+                                .build(BEN_EXC);
                 }
 
                 if (guardClauseForEmptyStringCheck.test(beneficiaryDto.beneficiaryEmail())) {
                     isTrue = Pattern.matches(PATTERN_FOR_EMAIL, beneficiaryDto.beneficiaryEmail());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give email in valid format",
-                                String.format("%s of %s", location, methodName));
+                    if (!isTrue) throw (BeneficiaryException) ExceptionBuilder.builder()
+                            .className(BeneficiaryException.class)
+                            .reason("Please give email in valid format")
+                                .methodName(String.format("%s of %s", location, methodName))
+                            .build(BEN_EXC);
                 }
 
                 if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benPhoneNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PHONE_NUMBER, beneficiaryDto.benPhoneNumber());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give phone Number in valid format e.g +xx-xxxxxxxxxx",
-                                String.format("%s of %s", location, methodName));
+                    if (!isTrue) throw (BeneficiaryException) ExceptionBuilder.builder()
+                                .className(BeneficiaryException.class)
+                                .reason("Please give phone Number in valid format e.g +xx-xxxxxxxxxx")
+                                .methodName(String.format("%s of %s", location, methodName))
+                                .build(BEN_EXC);
                 }
                 if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benAdharNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_ADHAR, beneficiaryDto.benAdharNumber());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give adhar number in valid xxxx-xxxx-xxxx format",
-                                String.format("%s of %s", location, methodName));
+                    if (!isTrue) throw (BeneficiaryException) ExceptionBuilder.builder()
+                                .className(BeneficiaryException.class)
+                                .reason("Please give adhar number in valid xxxx-xxxx-xxxx format")
+                                .methodName(String.format("%s of %s", location, methodName))
+                                .build(BEN_EXC);
                 }
                 if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benPanNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PAN_NUMBER, beneficiaryDto.benPanNumber());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give pan number in valid format",
-                                String.format("%s of %s", location, methodName));
+                    if (!isTrue) throw (BeneficiaryException) ExceptionBuilder.builder()
+                                .className(BeneficiaryException.class)
+                                .reason("Please give pan number in valid format")
+                                .methodName(String.format("%s of %s", location, methodName))
+                                .build(BEN_EXC);
                 }
                 if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benPassportNumber())) {
                     isTrue = Pattern.matches(PATTERN_FOR_PASSPORT, beneficiaryDto.benPassportNumber());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give passport number in valid format",
-                                String.format("%s of %s", location, methodName));
+                    if (!isTrue) throw (BeneficiaryException) ExceptionBuilder.builder()
+                                .className(BeneficiaryException.class)
+                                .reason("Please give passport number in valid format")
+                                .methodName(String.format("%s of %s", location, methodName))
+                                .build(BEN_EXC);
                 }
                 if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benVoterId())) {
                     isTrue = Pattern.matches(PATTERN_FOR_VOTER, beneficiaryDto.benVoterId());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give voter in valid format",
-                                String.format("%s of %s", location, methodName));
+                    if (!isTrue) throw (BeneficiaryException) ExceptionBuilder.builder()
+                                .className(BeneficiaryException.class)
+                                .reason("Please give voter in valid format")
+                                .methodName(String.format("%s of %s", location, methodName))
+                                .build(BEN_EXC);
                 }
                 if (guardClauseForEmptyStringCheck.test(beneficiaryDto.benDrivingLicense())) {
                     isTrue = Pattern.matches(PATTERN_FOR_DRIVING_LICENSE, beneficiaryDto.benDrivingLicense());
-                    if (!isTrue)
-                        throw new BeneficiaryException(BeneficiaryException.class, "Please give driving license in valid format",
-                                String.format("%s of %s", location, methodName));
+                    if (!isTrue) throw (BeneficiaryException) ExceptionBuilder.builder()
+                                .className(BeneficiaryException.class)
+                                .reason("Please give driving license in valid format")
+                                .methodName(String.format("%s of %s", location, methodName))
+                                .build(BEN_EXC);
                 }
             }
             case DELETE_BEN -> {
                 location = "Inside Delete Ben";
                 String beneficiaryId = beneficiaryDto.beneficiaryId();
-                if (CollectionUtils.isEmpty(accounts.getListOfBeneficiary())) throw new BeneficiaryException(BeneficiaryException.class,
-                        "Account has no beneficiaries to delete", String.format("%s of %s", location, methodName));
+                if (CollectionUtils.isEmpty(accounts.getListOfBeneficiary())) throw (BeneficiaryException) ExceptionBuilder.builder()
+                            .className(BeneficiaryException.class)
+                            .reason("Account has no beneficiaries to delete")
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(BEN_EXC);
+
+
 
                 //filter out the beneficiary to be deleted for that account
                 final Beneficiary filteredBeneficiary = accounts.getListOfBeneficiary().
                         stream().filter(beneficiary -> beneficiaryId.equalsIgnoreCase(beneficiary.getBeneficiaryId())).
                         findFirst()
-                        .orElseThrow(()-> new BeneficiaryException(BeneficiaryException.class,
-                        String.format("No such beneficiaries with id %s exist for this account", beneficiaryId)
-                        , String.format("%s of %s", location, methodName)));
+                        .orElseThrow(()-> (BeneficiaryException) ExceptionBuilder.builder()
+                        .className(BeneficiaryException.class)
+                        .reason(String.format("No such beneficiaries with id %s exist for this account", beneficiaryId))
+                        .methodName(String.format("%s of %s", location, methodName))
+                        .build(BEN_EXC));
 
                 //your account must need to have at least one  beneficiary
-                if (accounts.getListOfBeneficiary().size() == 1)
-                    throw new BeneficiaryException(BeneficiaryException.class,
-                            "Your account must have at least one beneficiary", String.format("%s of %s", location, methodName));
+                if(accounts.getListOfBeneficiary().size() == 1) throw (BeneficiaryException) ExceptionBuilder.builder()
+                            .className(BeneficiaryException.class)
+                            .reason("Your account must have at least one beneficiary")
+                            .methodName(String.format("%s of %s", location, methodName))
+                            .build(BEN_EXC);
             }
-            default -> throw new BeneficiaryException(BeneficiaryException.class,
-                    "Invalid type of Validation request", methodName);
+            default ->
+                    throw (BeneficiaryException) ExceptionBuilder.builder()
+                            .className(BeneficiaryException.class)
+                            .reason("Invalid type of Validation request")
+                            .methodName( methodName)
+                            .build(BEN_EXC);
         }
         log.debug("<-------------------beneficiaryUpdateValidator(Accounts,BeneficiaryDto, validateBenType) ValidationServiceImpl ended ---------------------" +
                 "--------------------------------------------------------------------------------------------------->");
@@ -409,16 +440,20 @@ public final class ValidationServiceImpl implements IValidationService {
                    final Set<Transactions> setOfTransactions=bankStatement.getListOfTransaction();
                    final LocalDate startDate=bankStatement.getStartDate();
                    final LocalDate endDate=bankStatement.getEndDate();
-                   if(CollectionUtils.isEmpty(setOfTransactions)) throw new TransactionException(TransactionException.class,
-                           String.format("You have no transactions between %s & %s",startDate,endDate),
-                           String.format("Inside %s of %s",location,methodName));
+                   if(CollectionUtils.isEmpty(setOfTransactions)) throw (TransactionException) ExceptionBuilder.builder()
+                               .className(TransactionException.class)
+                               .reason(String.format("You have no transactions between %s & %s",startDate,endDate))
+                               .methodName(String.format("%s of %s", location, methodName))
+                               .build(TRAN_EXC);
             }
             case GET_PAST_SIX_MONTHS_TRANSACTIONS -> {
                 location="GET_PAST_SIX_MONTHS_TRANSACTIONS";
                 final Set<Transactions> transactionsSet=accounts.getListOfTransactions();
-                if(CollectionUtils.isEmpty(transactionsSet)) throw new TransactionException(TransactionException.class,
-                        String.format("No transactions available for account with id:%s",accounts.getAccountNumber())
-                        ,String.format("Inside %s of %s",location,methodName));
+                if(CollectionUtils.isEmpty(transactionsSet)) throw (TransactionException) ExceptionBuilder.builder()
+                            .className(TransactionException.class)
+                            .reason(String.format("No transactions available for account with id:%s",accounts.getAccountNumber()))
+                            .methodName(String.format("Inside %s of %s",location,methodName))
+                            .build(TRAN_EXC);
             }
         }
         log.debug("<----transactionsUpdateValidator(Accounts,TransactionsDto, ValidateTransactionType) BeneficiaryServiceImpl ended -----------------------------------" +
@@ -438,53 +473,78 @@ public final class ValidationServiceImpl implements IValidationService {
                 pattern= Pattern.compile(PATTERN_FOR_PAN_NUMBER);
                 matcher=pattern.matcher(field);
                 boolean isMatched=matcher.matches();
-                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The pan number %s you " +
-                        "entered is invalid",field),methodName);
+                if(!isMatched) throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("The pan number %s you entered is invalid",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
 
                 if(Iterables.isEmpty(listOfCustomers)) return;
                 boolean isAnother=StreamSupport
                            .stream(listOfCustomers.spliterator(),false)
                            .anyMatch(customer-> field.equals(customer.getPanNumber())
                                    && !checkWhetherSameCustomer.test(customer,customerId));
-                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
-                           String.format("There exists another customer with same pan %s",field),methodName);
+                if(isAnother) throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("There exists another customer with same pan %s",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
             }
             case EMAIL -> {
                 pattern= Pattern.compile(PATTERN_FOR_EMAIL);
                 matcher=pattern.matcher(field);
                 boolean isMatched=matcher.matches();
-                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The email id %s you " +
-                        "entered is invalid",field),methodName);
+                if(!isMatched) throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("The email id %s you entered is invalid",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
 
                 if(Iterables.isEmpty(listOfCustomers)) return;
                 boolean isAnother=StreamSupport
                         .stream(listOfCustomers.spliterator(),false)
                         .anyMatch(customer-> field.equals(customer.getEmail())
                                 && !checkWhetherSameCustomer.test(customer,customerId));
-                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
-                        String.format("There exists another customer with same email %s",field),methodName);
+
+                if(isAnother) throw (BadApiRequestException)ExceptionBuilder.builder()
+                        .className(BadApiRequestException.class)
+                        .reason(String.format("There exists another customer with same email %s",field))
+                        .methodName(methodName)
+                        .build(BAD_API_EXC);
             }
             case PASSPORT -> {
                 pattern= Pattern.compile(PATTERN_FOR_PASSPORT);
                 matcher=pattern.matcher(field);
                 boolean isMatched=matcher.matches();
-                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The passport number %s you " +
-                        "entered is invalid",field),methodName);
+                if(!isMatched)
+                    throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("The passport number %s you entered is invalid",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
 
                 if(Iterables.isEmpty(listOfCustomers)) return;
                 boolean isAnother=StreamSupport
                         .stream(listOfCustomers.spliterator(),false)
                         .anyMatch(customer-> field.equals(customer.getPassportNumber()) &&
                                 !checkWhetherSameCustomer.test(customer,customerId));
-                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
-                        String.format("There exists another customer with same passport %s",field),methodName);
+                if(isAnother)
+                    throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("There exists another customer with same passport %s",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
             }
             case VOTER -> {
                 pattern= Pattern.compile(PATTERN_FOR_VOTER);
                 matcher=pattern.matcher(field);
                 boolean isMatched=matcher.matches();
-                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The voter id %s you " +
-                        "entered is invalid",field),methodName);
+                if(!isMatched)
+                    throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("The voter id %s you entered is invalid",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
 
                 if(Iterables.isEmpty(listOfCustomers)) return;
                 boolean isAnother=StreamSupport
@@ -492,60 +552,88 @@ public final class ValidationServiceImpl implements IValidationService {
                         .anyMatch(customer-> field.equals(customer.getVoterId()) &&
                                 !checkWhetherSameCustomer.test(customer,customerId));
 
-                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
-                        String.format("There exists another customer with same voter id %s",field),methodName);
+                if(isAnother) throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("There exists another customer with same voter id %s",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
             }
             case DRIVING_LICENSE -> {
                 pattern=Pattern.compile(PATTERN_FOR_DRIVING_LICENSE);
                 matcher=pattern.matcher(field);
                 boolean isMatched=matcher.matches();
-                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The Driving License  %s you " +
-                        "entered is invalid",field),methodName);
+                if(!isMatched) throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("The Driving License %s you entered is invalid",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
+
                 if(Iterables.isEmpty(listOfCustomers)) return;
                 boolean isAnother=StreamSupport
                         .stream(listOfCustomers.spliterator(),false)
                         .anyMatch(customer-> field.equals(customer.getDrivingLicense())
                                 && !checkWhetherSameCustomer.test(customer,customerId));
 
-                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
-                        String.format("There exists another customer with same driving license %s",field),methodName);
+                if(isAnother) throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("There exists another customer with same driving license %s",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
             }
             case PHONE -> {
                 pattern= Pattern.compile(PATTERN_FOR_PHONE_NUMBER);
                 matcher=pattern.matcher(field);
                 boolean isMatched=matcher.matches();
-                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The Phone number  %s you " +
-                        "entered is invalid",field),methodName);
+                if(!isMatched)
+                    throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("The Phone number %s you entered is invalid",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
 
                 if(Iterables.isEmpty(listOfCustomers)) return;
                 boolean isAnother=StreamSupport
                         .stream(listOfCustomers.spliterator(),false)
                         .anyMatch(customer-> field.equals(customer.getPhoneNumber())
                                 && !checkWhetherSameCustomer.test(customer,customerId));
-                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
-                        String.format("There exists another customer with same phone %s",field),methodName);
+
+                if(isAnother)  throw (BadApiRequestException)ExceptionBuilder.builder()
+                        .className(BadApiRequestException.class)
+                        .reason(String.format("There exists another customer with same phone %s",field))
+                        .methodName(methodName)
+                        .build(BAD_API_EXC);
             }
             case ADHAR -> {
                 pattern= Pattern.compile(PATTERN_FOR_ADHAR);
                 matcher=pattern.matcher(field);
                 boolean isMatched=matcher.matches();
-                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The adhar number  %s you " +
-                        "entered is invalid",field),methodName);
+                if(!isMatched)
+                    throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("The adhar number %s you entered is invalid",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
 
                 if(Iterables.isEmpty(listOfCustomers)) return;
                 boolean isAnother=StreamSupport
                         .stream(listOfCustomers.spliterator(),false)
                         .anyMatch(customer-> field.equals(customer.getAdharNumber())
                                 && !checkWhetherSameCustomer.test(customer,customerId));
-                if(isAnother) throw new BadApiRequestException(BadApiRequestException.class,
-                        String.format("There exists another customer with same adhar %s",field),methodName);
+                if(isAnother)
+                    throw (BadApiRequestException)ExceptionBuilder.builder()
+                            .className(BadApiRequestException.class)
+                            .reason(String.format("There exists another customer with same adhar %s",field))
+                            .methodName(methodName)
+                            .build(BAD_API_EXC);
             }
             case DOB->{
                 pattern= Pattern.compile(PATTERN_FOR_DOB);
                 matcher=pattern.matcher(field);
                 boolean isMatched=matcher.matches();
-                if(!isMatched) throw new BadApiRequestException(BadApiRequestException.class,String.format("The birth date  %s you " +
-                        "entered is invalid",field),methodName);
+                if(!isMatched)
+                    throw (BadApiRequestException) ExceptionBuilder.builder().className(BadApiRequestException.class)
+                            .reason(String.format("The birth date  %s you " +
+                                    "entered is invalid",field)).methodName(methodName).build(BAD_API_EXC);
             }
         }
 

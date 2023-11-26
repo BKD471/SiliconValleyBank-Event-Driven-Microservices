@@ -1,9 +1,9 @@
-package com.siliconvalley.accountsservices.exception.exceptionbuilders;
+package com.siliconvalley.accountsservices.exception.builders;
 
 import com.siliconvalley.accountsservices.exception.*;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 
-public class ExceptionBuilder implements IClassNameBuilder, IMethodNameBuilder, IReasonBuilder {
+public class ExceptionBuilder implements IClassNameBuilder, IMethodNameBuilder, IReasonBuilder,IBuild {
     private Object classsName;
     private String reason;
     private String methodName;
@@ -37,7 +37,7 @@ public class ExceptionBuilder implements IClassNameBuilder, IMethodNameBuilder, 
      * @return
      */
     @Override
-    public IMethodNameBuilder methodName(String methodName) {
+    public IBuild methodName(String methodName) {
         this.methodName=methodName;
         return this;
     }

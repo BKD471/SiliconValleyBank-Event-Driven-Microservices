@@ -72,19 +72,6 @@ public class PdfServiceJasperImpl extends AbstractPdfService {
         this.PATH_TO_DOWNLOADABLES_HTML=PATH_TO_DOWNLOADABLES;
     }
 
-//    /**
-//     * @param startDate
-//     * @param endDate
-//     * @param accountNumber
-//     * @return
-//     * @throws FileNotFoundException
-//     */
-//    @Override
-//    public ByteArrayInputStream generateBankStatement(LocalDate startDate, LocalDate endDate, String accountNumber) throws FileNotFoundException {
-//        return null;
-//    }
-
-
     private void reset(){
         PATH_TO_DOWNLOADABLES_PDF=this.PATH_TO_DOWNLOADABLES;
         PATH_TO_DOWNLOADABLES_HTML=this.PATH_TO_DOWNLOADABLES;

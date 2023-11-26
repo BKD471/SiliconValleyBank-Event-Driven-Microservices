@@ -9,7 +9,7 @@ import com.siliconvalley.accountsservices.exception.AccountsException;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.CustomerException;
 import com.siliconvalley.accountsservices.exception.RolesException;
-import com.siliconvalley.accountsservices.exception.exceptionbuilders.ExceptionBuilder;
+import com.siliconvalley.accountsservices.exception.builders.ExceptionBuilder;
 import com.siliconvalley.accountsservices.externalservice.service.ILoansService;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.helpers.MapperHelper;

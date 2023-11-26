@@ -1,4 +1,4 @@
-package com.siliconvalley.accountsservices.exception.exceptionbuilders;
+package com.siliconvalley.accountsservices.exception.builders;
 
 public interface IClassNameBuilder {
     IReasonBuilder className(Object className);
