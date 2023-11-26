@@ -49,7 +49,10 @@ public final class ImageServiceImpl extends AbstractService implements IImageSer
             }
             Files.copy(file.getInputStream(), Paths.get(fullPathWithFileName));
             return fileNameWithExtension;
-        }else throw (ResponseException) ExceptionBuilder.builder().className(ResponseException.class).reason(String.format("%s type not supported yet",extension)).methodName(methodName).build(RES_EXC);
+        }else throw (ResponseException) ExceptionBuilder.builder()
+                .className(ResponseException.class)
+                .reason(String.format("%s type not supported yet",extension))
+                .methodName(methodName).build(RES_EXC);
     }
 
     @Override
