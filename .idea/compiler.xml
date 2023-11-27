@@ -15,18 +15,22 @@
         <module name="configServerMysql" />
         <module name="ServiceRegistry" />
         <module name="configServerPostgress" />
+        <module name="ServiceDiscovery" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="ApiGateway" target="21" />
       <module name="customerbase" target="19" />
+      <module name="Scheduler" target="21" />
       <module name="Schedulers" target="17" />
-      <module name="ServiceDiscovery" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ApiGateway" options="-parameters" />
       <module name="EmailNotificationServices" options="-parameters" />
       <module name="PaymentServices" options="-parameters" />
+      <module name="Scheduler" options="-parameters" />
       <module name="Schedulers" options="-parameters" />
       <module name="ServiceDiscovery" options="-parameters" />
       <module name="ServiceRegistry" options="-parameters" />

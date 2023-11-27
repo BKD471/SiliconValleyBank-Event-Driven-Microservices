@@ -1,10 +1,8 @@
 package com.siliconvalley.loansservices.service.impl;
 
 import com.siliconvalley.loansservices.dto.LoansDto;
-import com.siliconvalley.loansservices.exception.InstallmentsException;
-import com.siliconvalley.loansservices.exception.LoansException;
-import com.siliconvalley.loansservices.exception.PaymentException;
-import com.siliconvalley.loansservices.exception.ValidationException;
+import com.siliconvalley.loansservices.exception.*;
+import com.siliconvalley.loansservices.exception.builders.ExceptionBuilder;
 import com.siliconvalley.loansservices.helpers.TriPredicateCustom;
 import com.siliconvalley.loansservices.model.Loans;
 import com.siliconvalley.loansservices.repository.ILoansRepository;
@@ -25,6 +23,7 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.ExceptionCodes.*;
 
 
 @Slf4j
@@ -56,26 +55,39 @@ public final class ValidationServiceImpl implements IValidationService {
             case ISSUE_LOAN -> {
                 final int MAX_PERMISSIBLE_LOANS = 5;
                 final String customerId = loansDto.getCustomerId();
-                if (StringUtils.isBlank(customerId)) throw new ValidationException(ValidationException.class
-                        , "Please provide customerId", methodName);
+
+
+
+                if (StringUtils.isBlank(customerId)) throw (ValidationException) ExceptionBuilder.builder()
+                        .className(ValidationException.class)
+                        .reason("Please provide customerId")
+                        .methodName(methodName)
+                        .build(VALIDATION_EXEC);
                 //get credit score
 
                 //get any pre existing running loan
                 final Optional<Set<Loans>> allActiveLoans =loansRepository.getAllByCustomerIdForActiveOrInactiveLoans(customerId, true);
                 if (allActiveLoans.isPresent() && allActiveLoans.get().size() > MAX_PERMISSIBLE_LOANS)
-                    throw new LoansException(LoansException.class, "You already have too much loans active", methodName);
+                    throw (LoansException) ExceptionBuilder.builder().className(LoansException.class)
+                            .reason("You already have too much loans active")
+                            .methodName(methodName)
+                            .build(LOAN_EXEC);
             }
             case PAY_EMI -> {
                 if (optionalFields.isEmpty())
-                    throw new ValidationException(ValidationException.class,
-                            String.format("No such loans exist with Loan id %s",
-                            loans.getLoanNumber()), methodName);
+                    throw (ValidationException) ExceptionBuilder.builder().className(ValidationException.class)
+                        .reason(String.format("No such loans exist with Loan id %s",
+                                loans.getLoanNumber()))
+                        .methodName(methodName)
+                        .build(VALIDATION_EXEC);
 
                 boolean isLoanClosed = !loans.isLoanActive();
                 if (isLoanClosed)
-                    throw new InstallmentsException(InstallmentsException.class,
-                            String.format("Yr loan with id %s is already closed",
-                                    loansDto.getLoanNumber()), methodName);
+                    throw (InstallmentsException) ExceptionBuilder.builder().className(InstallmentsException.class)
+                        .reason(String.format("Yr loan with id %s is already closed",
+                                loansDto.getLoanNumber()))
+                        .methodName(methodName)
+                        .build(INSTALLMENT_EXEC);
 
                 BiPredicate<LoansDto,Loans> guardClauseForPaymentAcceptanceCriteria=(dto, entity)->
                         new BigDecimal(String.valueOf(dto.getPaymentAmount()),mc).compareTo(entity.getEmiAmount())<0
@@ -84,22 +96,30 @@ public final class ValidationServiceImpl implements IValidationService {
                                 .remainder(BigDecimal.valueOf(1),mc).compareTo(BigDecimal.ZERO)!=0;
 
                 if (guardClauseForPaymentAcceptanceCriteria.test(loansDto,loans))
-                    throw new PaymentException(PaymentException.class,
-                            String.format("yr payment %s should be greater equal to or multiple of yr emi %s",
-                                    loansDto.getPaymentAmount(), loans.getEmiAmount()), methodName);
+                    throw (PaymentException) ExceptionBuilder.builder().className(PaymentException.class)
+                            .reason(String.format("yr payment %s should be greater equal to or multiple of yr emi %s",
+                                    loansDto.getPaymentAmount(), loans.getEmiAmount()))
+                            .methodName(methodName)
+                            .build(PAYMENT_EXEC);;
 
             }
             case GET_ALL_LOAN -> {
-                if (optionalFields.isEmpty()) throw new ValidationException(ValidationException.class,
-                        String.format("There is no loan found for customer with Id %s", loansDto.getCustomerId()),
-                        methodName);
+                if (optionalFields.isEmpty()) throw (ValidationException) ExceptionBuilder.builder().className(ValidationException.class)
+                        .reason(String.format("There is no loan found for customer with Id %s", loansDto.getCustomerId()))
+                        .methodName(methodName)
+                        .build(VALIDATION_EXEC);
             }
             case GET_INFO_LOAN -> {
-                if (optionalFields.isEmpty())
-                    throw new ValidationException(LoansException.class, String.format("No such loan exist with id %s", loansDto.getCustomerId()), methodName);
+                if (optionalFields.isEmpty()) throw (LoansException) ExceptionBuilder.builder().className(LoansException.class)
+                            .reason(String.format("No such loan exist with id %s", loansDto.getCustomerId()))
+                            .methodName(methodName)
+                            .build(LOAN_EXEC);
             }
             case GEN_EMI_STMT -> {
-                if (optionalFields.isEmpty()) throw new ValidationException(ValidationException.class,"No loans persent for customer WIth Id",methodName);
+                if (optionalFields.isEmpty()) throw (ValidationException) ExceptionBuilder.builder().className(ValidationException.class)
+                        .reason("No loans persent for customer WIth Id")
+                        .methodName(methodName)
+                        .build(VALIDATION_EXEC);
             }
             case DRIVER_METHOD_VALIDATION -> {
                 final AllConstantsHelper.RequestType requestType= loansDto.getRequestType();
@@ -107,7 +127,11 @@ public final class ValidationServiceImpl implements IValidationService {
                 final String loanNumber= loansDto.getLoanNumber();
                 final LocalDate startDate=loansDto.getStartDt();
                 final LocalDate endDate=loansDto.getEndDt();
-                if(Objects.isNull(requestType)) throw new LoansException(LoansException.class,"Please provide request Type",methodName);
+
+                if(Objects.isNull(requestType)) throw (LoansException) ExceptionBuilder.builder().className(LoansException.class)
+                        .reason("Please provide request Type")
+                        .methodName(methodName)
+                        .build(LOAN_EXEC);
 
                 Predicate<String> testCustomerIdNotNull=StringUtils::isEmpty;
                 Predicate<LocalDate> testDateNotNull=Objects::isNull;
@@ -118,16 +142,24 @@ public final class ValidationServiceImpl implements IValidationService {
                         || testDateNotNull.test(d1)
                         || testDateNotNull.test(d2);
 
-
                 switch (requestType){
                     case GET_INFO -> {
-                        if(testGetInfo.test(customerId,loanNumber)) throw new LoansException(LoansException.class,"Please provide customerId or loanNumber",methodName);
+                        if(testGetInfo.test(customerId,loanNumber)) throw (LoansException) ExceptionBuilder.builder().className(LoansException.class)
+                                .reason("Please provide customerId or loanNumber")
+                                .methodName(methodName)
+                                .build(LOAN_EXEC);;
                     }
                     case GET_ALL_LOANS_FOR_CUSTOMER -> {
-                        if(testCustomerIdNotNull.test(customerId)) throw new LoansException(LoansException.class,"Please provide customerId",methodName);
+                        if(testCustomerIdNotNull.test(customerId))  throw (LoansException) ExceptionBuilder.builder().className(LoansException.class)
+                                .reason("Please provide customerId")
+                                .methodName(methodName)
+                                .build(LOAN_EXEC);
                     }
                     case DOWNLOAD_EMI_STMT -> {
-                        if(testDownloadEmiStmt.test(customerId,startDate,endDate)) throw new LoansException(LoansException.class,"Please provide startDate or endDate or customerId",methodName);
+                        if(testDownloadEmiStmt.test(customerId,startDate,endDate)) throw (LoansException) ExceptionBuilder.builder().className(LoansException.class)
+                                .reason("Please provide startDate or endDate or customerId")
+                                .methodName(methodName)
+                                .build(LOAN_EXEC);
                     }
                 }
             }

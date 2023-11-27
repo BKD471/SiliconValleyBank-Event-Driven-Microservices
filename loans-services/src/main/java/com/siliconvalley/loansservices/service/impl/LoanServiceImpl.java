@@ -3,6 +3,7 @@ package com.siliconvalley.loansservices.service.impl;
 import com.siliconvalley.loansservices.dto.EmiDto;
 import com.siliconvalley.loansservices.dto.LoansDto;
 import com.siliconvalley.loansservices.dto.OutPutDto;
+import com.siliconvalley.loansservices.exception.builders.ExceptionBuilder;
 import com.siliconvalley.loansservices.helpers.LoansMapperHelper;
 import com.siliconvalley.loansservices.model.Emi;
 import com.siliconvalley.loansservices.model.Loans;
@@ -28,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.*;
+import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.ExceptionCodes.*;
 import static com.siliconvalley.loansservices.helpers.AllConstantsHelper.LoansValidateType.GEN_EMI_STMT;
 import static com.siliconvalley.loansservices.helpers.LoansMapperHelper.*;
 import static com.siliconvalley.loansservices.helpers.RateOfInterestHelper.getRateOfInterest;
@@ -117,10 +119,13 @@ public class LoanServiceImpl implements ILoansService {
     private EmiDto payInstallments(final LoansDto loansDto) throws LoansException, PaymentException, InstallmentsException, ValidationException {
         log.debug("<################### payInstallments(final LoansDto loansDto) started #############################################>");
         MathContext mc=MathContext.DECIMAL128;
+
+
         final Loans loan = loansRepository.findByCustomerIdAndLoanNumber
-                (loansDto.getCustomerId(), loansDto.getLoanNumber()).orElseThrow(() -> new LoansException(LoansException.class,
-                String.format("No loans been found with customerId %s & loanNumber %s"
-                        , loansDto.getCustomerId(), loansDto.getLoanNumber()), "payInstallments(LoansDto)"));
+                (loansDto.getCustomerId(), loansDto.getLoanNumber()).orElseThrow(() -> (LoansException) ExceptionBuilder.builder().className(LoansException.class)
+                .reason(String.format("No loans been found with customerId %s & loanNumber %s"
+                        , loansDto.getCustomerId(), loansDto.getLoanNumber()))
+                .methodName("payInstallments(LoansDto)").build(LOAN_EXEC));
 
 
         LoansDto processedLoansDto= mapToLoansDto(loan);
@@ -175,8 +180,10 @@ public class LoanServiceImpl implements ILoansService {
         final String methodName = "calculateEmi(BigDecimal,int) in LoanServiceImpl";
         final MathContext mc=MathContext.DECIMAL128;
         final Double rate_of_interest = getRateOfInterest(tenure);
-        if (Objects.isNull(rate_of_interest)) throw new TenureException(TenureException.class,
-                String.format("Tenure %s is not available", tenure), methodName);
+
+        if (Objects.isNull(rate_of_interest)) throw (TenureException)ExceptionBuilder.builder().className(TenureException.class)
+                .reason(String.format("Tenure %s is not available", tenure)).methodName(methodName)
+                .build(TENURE_EXEC);
 
         final BigDecimal magic_co_eff = BigDecimal.valueOf(((rate_of_interest / 100) / 12));
         final BigDecimal interest =  new BigDecimal(String.valueOf(loanAmount),mc).multiply(magic_co_eff,mc);
@@ -198,9 +205,13 @@ public class LoanServiceImpl implements ILoansService {
     private LoansDto getLoanInfoByCustomerIdAndLoanNumber(final String customerId, final String loanNumber) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         log.debug("<################### getLoanInfoByCUstomerIdAndLoanNumber(final LoansDto loansDto) started #############################################>");
         final String methodName="LoansDto getLoanInfoByCustomerIdAndLoanNumber(final String customerId, final String loanNumber) ";
+
+
         final Loans loan = loansRepository.findByCustomerIdAndLoanNumber(customerId, loanNumber).orElseThrow(()->
-                new ValidationException(LoansException.class,
-                        String.format("No such loan exist with id %s", customerId), methodName));
+                (ValidationException)ExceptionBuilder.builder().className(ValidationException.class)
+                        .reason(String.format("No such loan exist with id %s", customerId))
+                        .methodName(methodName).build(VALIDATION_EXEC));
+
         log.debug("<################### getLoanInfoByCustomerIdAndLoanNumber(final LoansDto loansDto) ended #############################################>");
         return mapToLoansDto(loan);
     }
@@ -214,10 +225,12 @@ public class LoanServiceImpl implements ILoansService {
     private Set<LoansDto> getAllLoansByCustomerId(final String customerId) throws LoansException, ValidationException, PaymentException, InstallmentsException {
         log.debug("<################### getAllLoansByCustomerId(String CustomerId) started #############################################>");
         final String methodName="Set<LoansDto> getAllLoansByCustomerId(String)";
+
         final Set<Loans> allLoans = loansRepository.findAllByCustomerId(customerId)
-                .orElseThrow(()-> new ValidationException(ValidationException.class,
-                String.format("There is no loan found for customer with Id %s", customerId),
-                methodName));
+                .orElseThrow(()-> (ValidationException)ExceptionBuilder.builder().className(ValidationException.class)
+                        .reason(String.format("There is no loan found for customer with Id %s", customerId))
+                        .methodName(methodName).build(VALIDATION_EXEC));
+
         log.debug("<################### getAllLoansByCustomerId(String customerId) ended #############################################>");
         return allLoans.stream().map(LoansMapperHelper::mapToLoansDto).
                 collect(Collectors.toSet());
@@ -232,9 +245,12 @@ public class LoanServiceImpl implements ILoansService {
                                          final String customerId,final String loanNumber,
                                          final FormatType formatType) throws ValidationException, PaymentException, LoansException, InstallmentsException {
         final String methodName="downloadAllEmiStatements(LocalDate,LocalDate,String ,String,FormatType)";
+
+
+
         Loans fetchedLoan=loansRepository.findByCustomerIdAndLoanNumber(customerId,loanNumber)
-                .orElseThrow(()->new ValidationException(ValidationException.class,
-                        "No loans persent for customer WIth Id",methodName));
+                .orElseThrow(()-> (ValidationException)ExceptionBuilder.builder().className(ValidationException.class)
+                        .reason("No loans persent for customer WIth Id").methodName(methodName).build(VALIDATION_EXEC));
 
 
         List<Emi> listOfEmis=fetchedLoan.getSetOfEmis().stream().toList();
@@ -263,6 +279,7 @@ public class LoanServiceImpl implements ILoansService {
 
         AllConstantsHelper.RequestType requestType=loansDto.getRequestType();
         switch (requestType){
+
             case BORROW_LOAN -> {
                 final LoansDto responseDto=borrowLoan(loansDto);
                 return OutPutDto.builder()
@@ -288,7 +305,10 @@ public class LoanServiceImpl implements ILoansService {
                 downloadAllEmiStatements(startDate,endDate,customerId,loanNumber,formatType);
                 return OutPutDto.builder().defaultMessage(String.format("Emi Stmt generated for customer with id %s",customerId)).build();
             }
-            default -> throw  new BadApiRequestException(BadApiRequestException.class,"Invalid request type","transactionsExecutor(LoansDto loansDto)");
+
+            default -> throw  (BadApiRequestException)ExceptionBuilder.builder().className(BadApiRequestException.class)
+                    .reason("Invalid request type")
+                    .methodName("transactionsExecutor(LoansDto loansDto)").build(BAD_API_EXEC);
         }
     }
 }

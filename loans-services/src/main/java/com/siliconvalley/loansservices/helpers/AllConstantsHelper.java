@@ -17,6 +17,10 @@ public class AllConstantsHelper {
         PDF,XML,HTML
     }
 
+    public enum ExceptionCodes{
+        BAD_API_EXEC,INSTALLMENT_EXEC,LOAN_EXEC,PAYMENT_EXEC,TENURE_EXEC,VALIDATION_EXEC
+    }
+
     public static final FormatType PDF=FormatType.PDF;
     public static final FormatType XML=FormatType.XML;
     public static final FormatType HTML=FormatType.HTML;
