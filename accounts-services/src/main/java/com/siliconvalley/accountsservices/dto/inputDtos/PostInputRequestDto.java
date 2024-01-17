@@ -7,9 +7,9 @@ import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.validator.ValidAge;
 import com.siliconvalley.accountsservices.helpers.RegexMatchersHelper;
-import com.siliconvalley.loansservices.helpers.AllConstantsHelper;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.web.multipart.MultipartFile;
 
 

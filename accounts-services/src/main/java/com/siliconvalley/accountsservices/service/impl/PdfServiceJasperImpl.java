@@ -10,24 +10,38 @@ import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractPdfService;
 import com.siliconvalley.accountsservices.service.IValidationService;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jasperreports.engine.*;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Properties;
+import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileInputStream;
 import java.time.LocalDate;
-import java.util.*;
 
-import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.FORMAT_TYPE;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.GEN_BANK_STATEMENT;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.convertTimeStampToLocalDateTime;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.convertToUtilDate;
-
 
 @Slf4j
 @Service("jasperPdfService")

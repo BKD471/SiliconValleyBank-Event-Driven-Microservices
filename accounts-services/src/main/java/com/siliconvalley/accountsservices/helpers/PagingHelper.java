@@ -1,8 +1,5 @@
 package com.siliconvalley.accountsservices.helpers;
 
-import com.siliconvalley.accountsservices.dto.baseDtos.AccountsDto;
-import com.siliconvalley.accountsservices.dto.baseDtos.BeneficiaryDto;
-import com.siliconvalley.accountsservices.dto.baseDtos.CustomerDto;
 import com.siliconvalley.accountsservices.dto.responseDtos.PageableResponseDto;
 import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Beneficiary;
@@ -10,13 +7,19 @@ import com.siliconvalley.accountsservices.model.Customer;
 import org.springframework.data.domain.Page;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DIRECTION.asc;
 import static com.siliconvalley.accountsservices.helpers.MapperHelper.*;
 
 public class PagingHelper {
+    private PagingHelper(){
+        //Utility class no need to instantiate
+    }
     public static final int DEFAULT_PAGE_SIZE = 5;
     public static final DIRECTION PAGE_SORT_DIRECTION_ASCENDING = asc;
 
