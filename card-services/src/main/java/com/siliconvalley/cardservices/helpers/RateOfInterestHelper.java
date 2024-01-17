@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RateOfInterestHelper {
+    private RateOfInterestHelper(){
+        //Utility class no need to instantiate
+    }
     private static final Map<Integer,Double> RateOfInterestHash=new HashMap<>();
 
     static {
