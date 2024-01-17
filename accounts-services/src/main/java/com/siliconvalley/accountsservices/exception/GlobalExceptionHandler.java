@@ -18,17 +18,6 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-//    @ExceptionHandler({AccountsException.class, BeneficiaryException.class,
-//            TransactionException.class, ResponseException.class,
-//            CustomerException.class, BadCredentialsException.class})
-//    public ResponseEntity<ErrorDetails> handleAllUncheckedCustomException(Exception e, WebRequest web) {
-//        ErrorDetails error = new ErrorDetails(LocalTime.now(), e.getMessage(), web.getDescription(false));
-//        log.error(String.format("<==========================%s====================================================================" +
-//                "=======================================================================>",e.getMessage()));
-//        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-//    }
-
     @ExceptionHandler({AccountsException.class, BeneficiaryException.class,
             TransactionException.class, ResponseException.class,
             CustomerException.class, ServiceDownException.class})

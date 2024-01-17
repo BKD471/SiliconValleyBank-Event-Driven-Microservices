@@ -1,13 +1,26 @@
 package com.siliconvalley.accountsservices.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.Email;
-import lombok.*;
 
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+
 
 @Getter
 @Setter
@@ -65,62 +78,6 @@ public class Customer extends Audit implements Comparable<Customer>{
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Role> roles=new HashSet<>();
 
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return this.roles.stream()
-//                .map(role->new SimpleGrantedAuthority(role.getRoleName()))
-//                .collect(Collectors.toSet());
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public String getUsername() {
-//        return this.email;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public String getPassword(){
-//        return this.password;
-//    }
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public boolean isEnabled() {
-//        return true;
-//    }
     /**
      * @param cust
      * @return

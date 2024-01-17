@@ -14,14 +14,15 @@ import com.siliconvalley.accountsservices.model.Accounts;
 import com.siliconvalley.accountsservices.model.Beneficiary;
 import com.siliconvalley.accountsservices.model.Customer;
 import com.siliconvalley.accountsservices.model.Transactions;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
+
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -565,7 +566,7 @@ public class MapperHelper {
     //transactionTimeStamp   transactionId   transactionAmount
     // transactedAccountNumber  transactionType  description  balance
    public static TransactionsInvoicableObject mapToTransactionsInvoicableObject(Transactions transactions){
-        return  TransactionsInvoicableObject.builder()
+        return  new TransactionsInvoicableObject.builder()
                 .transactionId(transactions.getTransactionId())
                 .transactionTimeStamp(convertLocalDateTimeToTimeStamp(transactions.getTransactionTimeStamp()))
                 .transactionAmount(transactions.getTransactionAmount())

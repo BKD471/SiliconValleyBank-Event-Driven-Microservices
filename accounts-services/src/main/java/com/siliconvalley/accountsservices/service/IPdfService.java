@@ -1,6 +1,5 @@
 package com.siliconvalley.accountsservices.service;
 
-import com.siliconvalley.accountsservices.dto.baseDtos.BankStatementRequestDto;
 import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import net.sf.jasperreports.engine.JRException;
 

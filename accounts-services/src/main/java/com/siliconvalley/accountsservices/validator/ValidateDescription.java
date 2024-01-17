@@ -8,7 +8,19 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.*;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DescriptionType;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.ELECTRICITY;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.SALARY;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.RENT;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.E_SHOPPING;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.RECEIVED_FROM_OTHER_ACCOUNT;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.CREDIT_CARD_BILL_PAYMENT;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.BUSINESS;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.INVESTMENT;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.FAMILY;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.OTHERS;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DEPOSIT;
+import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DONATION;
 import static com.siliconvalley.accountsservices.helpers.AllConstantHelpers.DescriptionType.EMI;
 
 public class ValidateDescription implements ConstraintValidator<ValidDescription, DescriptionType> {

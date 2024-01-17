@@ -3,16 +3,19 @@ package com.siliconvalley.accountsservices.service.impl;
 import com.siliconvalley.accountsservices.exception.BadApiRequestException;
 import com.siliconvalley.accountsservices.exception.ResponseException;
 import com.siliconvalley.accountsservices.exception.builders.ExceptionBuilder;
-import com.siliconvalley.accountsservices.helpers.AllConstantHelpers;
 import com.siliconvalley.accountsservices.repository.IAccountsRepository;
 import com.siliconvalley.accountsservices.repository.ICustomerRepository;
 import com.siliconvalley.accountsservices.service.AbstractService;
 import com.siliconvalley.accountsservices.service.IImageService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.FileInputStream;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
