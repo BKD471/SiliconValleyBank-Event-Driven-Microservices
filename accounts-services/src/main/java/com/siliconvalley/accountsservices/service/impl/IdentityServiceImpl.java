@@ -16,7 +16,7 @@ public class IdentityServiceImpl implements IIdentityValidationService {
      */
     @Override
     public boolean isValidEmail(String email) {
-        emailValidationService.validateEmail(email);
+        //emailValidationService.validateEmail(email);
         return false;
     }
 
