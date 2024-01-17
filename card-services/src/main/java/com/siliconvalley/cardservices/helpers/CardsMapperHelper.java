@@ -4,7 +4,6 @@ import com.siliconvalley.cardservices.dto.CardsDto;
 import com.siliconvalley.cardservices.model.Cards;
 
 public class CardsMapperHelper {
-
    public static Cards mapToCards(final CardsDto cardsDto){
        return Cards.builder()
                .customerId(cardsDto.getCustomerId())
